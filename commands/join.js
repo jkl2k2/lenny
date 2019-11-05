@@ -4,7 +4,7 @@ module.exports = {
 	name: 'join',
 	description: `Joins the user's voice channel`,
 	// aliases: ['aliases'],
-	usage: '[join]',
+	usage: '[no arguments]',
 	// cooldown: seconds,
 	execute(message, args) {
         if(message.member.voiceChannel) {

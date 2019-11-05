@@ -10,7 +10,6 @@ const cooldowns = new Discord.Collection();
 
 // Load all command files
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
-
 for (const file of commandFiles) {
 	const command = require(`./commands/${file}`);
 
@@ -23,7 +22,6 @@ for (const file of commandFiles) {
 client.once('ready', () => {
     console.log("// Bot initialized //");
 });
-
 
 // On message
 client.on('message', message => {

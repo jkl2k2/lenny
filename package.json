@@ -21,7 +21,7 @@
   "homepage": "https://github.com/jkl2k2/L-Bot-Rewrite#readme",
   "dependencies": {
     "discord.js": "^11.5.1",
-    "ffmpeg": "0.0.4",
+    "ffmpeg-binaries": "^4.0.0",
     "node-opus": "^0.3.3"
   }
 }

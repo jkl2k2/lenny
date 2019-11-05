@@ -8,6 +8,7 @@ module.exports = {
 	// cooldown: seconds,
 	execute(message, args) {
         if(message.member.voiceChannel) {
+            message.member.voiceChannel.join();
             let joinEmbed = new Discord.RichEmbed()
                 .setTitle(`:white_check_mark: **I joined your channel, ${message.author.username}**`)
                 .setColor(`#44C408`)

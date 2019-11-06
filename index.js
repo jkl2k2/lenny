@@ -2,7 +2,7 @@
 const fs = require('fs');
 const Discord = require('discord.js');
 const { prefix, token, api, ownerID, jahyID } = require('./config.json');
-const ytdl = require("ytdl-core");
+const ytdl = require("ytdl-core-discord");
 const { YouTube } = require('better-youtube-api');
 const youtube = new YouTube(api);
 var ffmpeg = require('ffmpeg-static');
@@ -54,7 +54,7 @@ function sendDetails(input, c) {
     c.send(musicEmbed);
 }
 
-function playMusic(disabled){
+async function playMusic(disabled){
     // console.log(message);
     // console.log(serverMessage);
     if(queue == undefined) {
@@ -66,15 +66,16 @@ function playMusic(disabled){
         return;
     }
     if(queue[0].getType() == undefined || queue[0].getType() == false) {
-        dispatcher = serverMessage.member.voiceChannel.connection.playStream(ytdl(queue[0].videoUrl));
+        dispatcher = serverMessage.member.voiceChannel.connection.playOpusStream(await ytdl(queue[0].videoUrl));
     } else if (queue[0].getType() == "live") {
-        dispatcher = serverMessage.member.voiceChannel.connection.playStream(ytdl(queue[0].videoUrl, {quality: 95}));
+        dispatcher = serverMessage.member.voiceChannel.connection.playOpusStream(await ytdl(queue[0].videoUrl, {quality: 95}));
     } else {
         serverMessage.channel.send("Error assigning dispatcher");
     }
+    
     sendDetails(queue[0], serverMessage.channel)
     queue.shift();
-
+    
     serverMessage.member.voiceChannel.connection.player.streamingData.pausedTime = 0;
 
     dispatcher.on("end", function() {
@@ -304,5 +305,8 @@ client.on('message', message => {
         message.reply('there was an error trying to execute that command!');
     }
 });
+
+// Handle uncaught promise rejection
+process.on('unhandledRejection', error => console.error('Uncaught Promise Rejection', error));
 
 client.login(token);

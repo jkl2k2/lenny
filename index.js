@@ -5,6 +5,8 @@ const { prefix, token, api, ownerID, jahyID } = require('./config.json');
 const ytdl = require("ytdl-core");
 const { YouTube } = require('better-youtube-api');
 const youtube = new YouTube(api);
+var ffmpeg = require('ffmpeg-static');
+console.log(ffmpeg.path);
 
 var queue = [];
 

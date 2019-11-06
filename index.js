@@ -3,10 +3,117 @@ const fs = require('fs');
 const Discord = require('discord.js');
 const { prefix, token, api, ownerID, jahyID } = require('./config.json');
 
+var queue = [];
+
 // Initialize client
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 const cooldowns = new Discord.Collection();
+
+// Global variables
+// var queue = [];
+
+var dispatcher = undefined;
+
+function playMusic(){
+    if(queue[0].getType() == undefined || queue[0].getType() == false) {
+        dispatcher = message.member.voiceChannel.connection.playStream(ytdl(queue[0].videoUrl, {filters: "audioonly"}));
+    } else if (queue[0].getType() == "live") {
+        dispatcher = message.member.voiceChannel.connection.playStream(ytdl(queue[0].videoUrl, {quality: 95}));
+    } else {
+        message.channel.send("Error assigning dispatcher");
+    }
+    sendDetails(queue[0], message.channel).catch(function(error) {
+        console.error(`${error}Failed to send video details\nTimestamp of error: timestamp`)
+    });
+    queue.shift();
+
+    message.member.voiceChannel.connection.player.streamingData.pausedTime = 0;
+
+    dispatcher.on("end", function() {
+        if(queue[0]) {
+            playMusic();
+        }
+    });
+}
+
+function readIndexQueue(thingToPush) {
+    queue.push(thingToPush);
+    console.log(queue);
+}
+
+function handleVC(discordMessage) {
+    if (discordMessage.member.voiceChannel) {
+        discordMessage.member.voiceChannel.join()
+            .then(connection => {
+                if(!connection.speaking) {
+                    playMusic();
+                }
+            })
+            .catch(`${console.log} Timestamp: timestamp`);
+    } else {
+        let vcFailEmbed = new Discord.RichEmbed()
+            .setTitle(`:warning: ${discordMessage.author.username}, you are not in a voice channel. Your video has been queued, but I am unable to join you.`)
+            .setColor(`#FF0000`)
+        discordMessage.channel.send(vcFailEmbed);
+    }
+}
+
+// Functions
+module.exports = {
+    constructVideo: async function (title, url, type, requester) {
+        return new YTVideo(title, url, type, requester);
+    },
+    pushQueue: function (toPush) {
+        queue.push(toPush);
+        console.log("pushed: " + toPush);
+    },
+    sendDetails: function (input, c) {
+        var musicEmbed = new Discord.RichEmbed()
+            .setColor(`#00c292`)
+            .setTitle(` `)
+            .addField(`:arrow_forward: **Now playing**`, `[title](url)`)
+            .setFooter(`Requested by requester • timestamp`)
+        c.send(musicEmbed);
+        // nowPlayingEmbed = musicEmbed;
+    },
+    endDispatcher: function (c, author, method) {
+        if(dispatcher != undefined && dispatcher.speaking == true){
+            if(method == "skip") {
+                let endDispatcherEmbed = new Discord.RichEmbed()
+                .setTitle(`:fast_forward: **${author} skipped the current song**`)
+                .setColor(`#44C408`)
+                c.send(endDispatcherEmbed);
+            } else if(method == "skipall") {
+                let endDispatcherEmbed = new Discord.RichEmbed()
+                .setTitle(`:fast_forward: **${author} emptied the queue and skipped everything**`)
+                .setColor(`#44C408`)
+                c.send(endDispatcherEmbed);
+            } else if(method == "playnow") {
+                let endDispatcherEmbed = new Discord.RichEmbed()
+                .setTitle(`:fast_forward: **${author} force played a song**`)
+                .setColor(`#44C408`)
+                c.send(endDispatcherEmbed);
+            }
+    
+            setTimeout(function() {
+                dispatcher.end();
+            }, 500);
+    
+        } else {
+            let endDispatcherEmbed = new Discord.RichEmbed()
+                .setTitle(`:eyes: ${author}, there's nothing to skip, dumbo`)
+                .setColor(`#FF0000`)
+            c.send(endDispatcherEmbed);
+        }
+    },
+    callQueueRead: function (toPush) {
+        readIndexQueue(toPush);
+    },
+    callHandleVC: function (discordMessage) {
+        handleVC(discordMessage);
+    }
+};
 
 // Load all command files
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
@@ -16,6 +123,30 @@ for (const file of commandFiles) {
 	// set a new item in the Collection
 	// with the key as the command name and the value as the exported module
 	client.commands.set(command.name, command);
+}
+
+class YTVideo {
+	constructor(videoTitle, videoUrl, type, requester) {
+		this.videoTitle = videoTitle;
+		this.videoUrl = videoUrl;
+		this.type = type;
+		this.requester = requester;
+	}
+	getTitle() {
+		return this.videoTitle;
+	}
+	getURL() {
+		return this.videoUrl;
+	}
+	getRequester() {
+		return this.requester;
+	}
+	getRequesterName() {
+		return this.requester.username;
+	}
+	getType() {
+		return this.type;
+	}
 }
 
 // On ready

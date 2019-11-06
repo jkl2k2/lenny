@@ -2,6 +2,9 @@
 const fs = require('fs');
 const Discord = require('discord.js');
 const { prefix, token, api, ownerID, jahyID } = require('./config.json');
+const ytdl = require("ytdl-core");
+const { YouTube } = require('better-youtube-api');
+const youtube = new YouTube(api);
 
 var queue = [];
 
@@ -13,22 +16,64 @@ const cooldowns = new Discord.Collection();
 // Global variables
 // var queue = [];
 
-var dispatcher = undefined;
+var dispatcher;
 
-function playMusic(){
-    if(queue[0].getType() == undefined || queue[0].getType() == false) {
-        dispatcher = message.member.voiceChannel.connection.playStream(ytdl(queue[0].videoUrl, {filters: "audioonly"}));
-    } else if (queue[0].getType() == "live") {
-        dispatcher = message.member.voiceChannel.connection.playStream(ytdl(queue[0].videoUrl, {quality: 95}));
-    } else {
-        message.channel.send("Error assigning dispatcher");
+var serverMessage;
+
+class YTVideo {
+	constructor(videoTitle, videoUrl, type, requester) {
+		this.videoTitle = videoTitle;
+		this.videoUrl = videoUrl;
+		this.type = type;
+		this.requester = requester;
+	}
+	getTitle() {
+		return this.videoTitle;
+	}
+	getURL() {
+		return this.videoUrl;
+	}
+	getRequester() {
+		return this.requester;
+	}
+	getRequesterName() {
+		return this.requester.username;
+	}
+	getType() {
+		return this.type;
+	}
+}
+function sendDetails(input, c) {
+    var musicEmbed = new Discord.RichEmbed()
+            .setColor(`#00c292`)
+            .setTitle(` `)
+            .addField(`:arrow_forward: **Now playing**`, `[${input.getTitle()}](${input.getURL()})`)
+            .setFooter(`Requested by ${input.getRequesterName()} • timestamp`)
+    c.send(musicEmbed);
+}
+
+function playMusic(disabled){
+    // console.log(message);
+    // console.log(serverMessage);
+    if(queue == undefined) {
+        console.log("playMusic() called, but queue undefined");
+        return;
     }
-    sendDetails(queue[0], message.channel).catch(function(error) {
-        console.error(`${error}Failed to send video details\nTimestamp of error: timestamp`)
-    });
+    if(queue[0] == undefined) {
+        console.log("playMusic() called, but queue[0] is undefined");
+        return;
+    }
+    if(queue[0].getType() == undefined || queue[0].getType() == false) {
+        dispatcher = serverMessage.member.voiceChannel.connection.playStream(ytdl(queue[0].videoUrl));
+    } else if (queue[0].getType() == "live") {
+        dispatcher = serverMessage.member.voiceChannel.connection.playStream(ytdl(queue[0].videoUrl, {quality: 95}));
+    } else {
+        serverMessage.channel.send("Error assigning dispatcher");
+    }
+    sendDetails(queue[0], serverMessage.channel)
     queue.shift();
 
-    message.member.voiceChannel.connection.player.streamingData.pausedTime = 0;
+    serverMessage.member.voiceChannel.connection.player.streamingData.pausedTime = 0;
 
     dispatcher.on("end", function() {
         if(queue[0]) {
@@ -37,17 +82,12 @@ function playMusic(){
     });
 }
 
-function readIndexQueue(thingToPush) {
-    queue.push(thingToPush);
-    console.log(queue);
-}
-
 function handleVC(discordMessage) {
     if (discordMessage.member.voiceChannel) {
         discordMessage.member.voiceChannel.join()
             .then(connection => {
                 if(!connection.speaking) {
-                    playMusic();
+                    playMusic(discordMessage);
                 }
             })
             .catch(`${console.log} Timestamp: timestamp`);
@@ -59,6 +99,64 @@ function handleVC(discordMessage) {
     }
 }
 
+async function handleVideoNoPlaylist(method, message, args) {
+    var videoResult = await youtube.getVideo(args.join(" "));
+
+    let newVideo = new YTVideo(videoResult.title, videoResult.url, videoResult.liveStatus, message.author);
+
+    if(method === "playnow") {
+        queue.unshift(newVideo);
+        endDispatcher(message.channel, message.author, "playnow");
+    } else if(method === "playnext") {
+        queue.unshift(newVideo);
+    } else {
+        queue.push(newVideo);
+    }
+
+    var playEmbed = new Discord.RichEmbed()
+    .setColor(`#00c292`)
+    .setTitle(` `)
+    .addField(`**:arrow_up_small: Queued**`, `[${newVideo.getTitle()}](${newVideo.getURL()})`)
+    .setFooter(`Requested by ${newVideo.getRequesterName()} • timestamp`)
+    message.channel.send(playEmbed);
+
+}
+
+function readIndexQueue(thingToPush) {
+    queue.push(thingToPush);
+    console.log(queue);
+}
+
+function onlyJoinVC(message) {
+    if(message.member.voiceChannel) {
+          message.member.voiceChannel.join();
+          let joinEmbed = new Discord.RichEmbed()
+              .setTitle(`:white_check_mark: **I joined your channel, ${message.author.username}**`)
+              .setColor(`#44C408`)
+      message.channel.send(joinEmbed);
+    } else {
+      message.channel.send(`:eyes: ${message.author}, I can't join your VC if you're not in a VC, ya doofus`);
+    }
+}
+
+async function handlePlayCommand(method, message, args) {
+    if (args[0] == undefined) {
+        let undefArgsEmbed = new Discord.RichEmbed()
+            .setTitle(`:eyes: ${message.author.username}, please include at least one search term or URL`)
+            .setColor(`#FF0000`)
+        message.channel.send(undefArgsEmbed);
+        
+        return;
+    }
+
+    handleVideoNoPlaylist(method, message, args);
+
+    
+    setTimeout(function () {
+        handleVC(message);
+    }, 500)
+}
+
 // Functions
 module.exports = {
     constructVideo: async function (title, url, type, requester) {
@@ -68,7 +166,7 @@ module.exports = {
         queue.push(toPush);
         console.log("pushed: " + toPush);
     },
-    sendDetails: function (input, c) {
+    sendDetailsExport: function (input, c) {
         var musicEmbed = new Discord.RichEmbed()
             .setColor(`#00c292`)
             .setTitle(` `)
@@ -110,8 +208,13 @@ module.exports = {
     callQueueRead: function (toPush) {
         readIndexQueue(toPush);
     },
-    callHandleVC: function (discordMessage) {
-        handleVC(discordMessage);
+    callJoinVC: function (discordMessage) {
+        onlyJoinVC(discordMessage);
+    },
+    playCommand: function (method, message, args) {
+        // serverMessage = message;
+        // console.log(serverMessage);
+        handlePlayCommand(method, message, args);
     }
 };
 
@@ -125,30 +228,6 @@ for (const file of commandFiles) {
 	client.commands.set(command.name, command);
 }
 
-class YTVideo {
-	constructor(videoTitle, videoUrl, type, requester) {
-		this.videoTitle = videoTitle;
-		this.videoUrl = videoUrl;
-		this.type = type;
-		this.requester = requester;
-	}
-	getTitle() {
-		return this.videoTitle;
-	}
-	getURL() {
-		return this.videoUrl;
-	}
-	getRequester() {
-		return this.requester;
-	}
-	getRequesterName() {
-		return this.requester.username;
-	}
-	getType() {
-		return this.type;
-	}
-}
-
 // On ready
 client.once('ready', () => {
     console.log("// Bot initialized //");
@@ -159,9 +238,13 @@ client.on('message', message => {
     // Return if no prefix or said by bot
 	if (!message.content.startsWith(prefix) || message.author.bot) return;
 
+    serverMessage = message;
+
     // Put args into array
     const args = message.content.slice(prefix.length).split(/ +/);
     
+    console.log(args);
+
     // Extract command name
     const commandName = args.shift().toLowerCase();
     

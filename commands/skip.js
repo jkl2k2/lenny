@@ -1,13 +1,12 @@
-const Discord = require('discord.js');
 const index = require(`C:\\Users\\Joshua\\Desktop\\Programming Stuff\\L-Bot Files\\L-Bot-Rewrite\\index.js`);
 
 module.exports = {
-	name: 'join',
-	description: `Joins the user's voice channel`,
+	name: 'skip',
+	description: 'Skips the current song',
 	// aliases: ['aliases'],
-	usage: '[no arguments]',
-	// cooldown: seconds,
+	usage: '[command]',
+	// cooldown: 5,
 	execute(message, args) {
-        index.callJoinVC(message);
+        index.endDispatcher(message.channel, message.author.username, "skip");
     }
 }

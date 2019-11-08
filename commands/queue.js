@@ -8,6 +8,6 @@ module.exports = {
 	// cooldown: 5,
 	guildOnly: true,
 	execute(message, args) {
-        index.viewQueue();
-    }
+		index.viewQueue();
+	}
 }

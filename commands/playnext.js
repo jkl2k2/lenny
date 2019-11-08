@@ -9,6 +9,6 @@ module.exports = {
 	// cooldown: 5,
 	guildOnly: true,
 	execute(message, args) {
-        index.playCommand("playnext", message, args);
-    }
+		index.playCommand("playnext", message, args);
+	}
 }

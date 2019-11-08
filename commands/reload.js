@@ -1,9 +1,9 @@
 module.exports = {
-	name: 'reload',
+    name: 'reload',
     description: 'Reloads a command, mostly for testing commands while changing code. Don\'t use if you don\'t know what you\'re doing.',
     guildOnly: true,
-	execute(message, args) {
-		if (!args.length) return message.channel.send(`You didn't pass any command to reload, ${message.author}!`);
+    execute(message, args) {
+        if (!args.length) return message.channel.send(`You didn't pass any command to reload, ${message.author}!`);
         const commandName = args[0].toLowerCase();
         const command = message.client.commands.get(commandName)
             || message.client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
@@ -21,6 +21,6 @@ module.exports = {
         }
 
         message.channel.send(`Command \`${commandName}\` was reloaded!`);
-        
-	},
+
+    },
 };

@@ -8,6 +8,6 @@ module.exports = {
 	// cooldown: 5,
 	guildOnly: true,
 	execute(message, args) {
-        index.callEndDispatcher(message.channel, message.author.username, "skipall");
-    }
+		index.callEndDispatcher(message.channel, message.author.username, "skipall");
+	}
 }

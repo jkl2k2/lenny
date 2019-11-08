@@ -2,11 +2,11 @@ const index = require(`C:\\Users\\Joshua\\Desktop\\Programming Stuff\\L-Bot File
 const fs = require('fs');
 
 module.exports = {
-	name: 'test',
-	description: 'Description',
-	// aliases: ['aliases'],
-	usage: '[command]',
-	// cooldown: 5,
+    name: 'test',
+    description: 'Description',
+    // aliases: ['aliases'],
+    usage: '[command]',
+    // cooldown: 5,
     async execute(message, args) {
         /*
         index.queue = ["hi", "bye", "test!"];

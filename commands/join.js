@@ -9,6 +9,6 @@ module.exports = {
 	// cooldown: seconds,
 	guildOnly: true,
 	execute(message, args) {
-        index.callJoinVC(message);
-    }
+		index.callJoinVC(message);
+	}
 }

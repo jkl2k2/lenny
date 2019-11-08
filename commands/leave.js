@@ -23,5 +23,5 @@ module.exports = {
 			.setTitle(`:white_check_mark: **I left your channel, ${message.author.username}**`)
 			.setColor(`#44C408`)
 		message.channel.send(leaveEmbed);
-    }
+	}
 }

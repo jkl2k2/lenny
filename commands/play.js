@@ -8,8 +8,8 @@ module.exports = {
 	// cooldown: 5,
 	guildOnly: true,
 	execute(message, args) {
-        args.unshift();
-        console.log(args);
-        index.playCommand("play", message, args)
-    }
+		args.unshift();
+		console.log(args);
+		index.playCommand("play", message, args)
+	}
 }

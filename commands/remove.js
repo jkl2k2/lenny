@@ -9,7 +9,7 @@ module.exports = {
 	// cooldown: 5,
 	guildOnly: true,
 	execute(message, args) {
-        args.unshift();
-        index.removeFromQueue(args[0]);
-    }
+		args.unshift();
+		index.removeFromQueue(args[0]);
+	}
 }

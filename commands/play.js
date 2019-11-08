@@ -2,9 +2,9 @@ const index = require(`C:\\Users\\Joshua\\Desktop\\Programming Stuff\\L-Bot File
 
 module.exports = {
 	name: 'play',
-	description: 'plays stuff',
+	description: 'Plays videos from YouTube, either by search or URL',
 	// aliases: ['aliases'],
-	usage: '[command]',
+	usage: '[search term(s) or URL]',
 	// cooldown: 5,
 	execute(message, args) {
         args.unshift();

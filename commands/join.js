@@ -5,7 +5,7 @@ module.exports = {
 	name: 'join',
 	description: `Joins the user's voice channel`,
 	// aliases: ['aliases'],
-	usage: '[no arguments]',
+	// usage: '[usage]',
 	// cooldown: seconds,
 	execute(message, args) {
         index.callJoinVC(message);

@@ -50,7 +50,8 @@ function sendDetails(input, c) {
             .setColor(`#00c292`)
             .setTitle(` `)
             .addField(`:arrow_forward: **Now playing**`, `[${input.getTitle()}](${input.getURL()})`)
-            .setFooter(`Requested by ${input.getRequesterName()} • timestamp`)
+            .setTimestamp()
+            .setFooter(`Requested by ${input.getRequesterName()}`)
     c.send(musicEmbed);
 }
 
@@ -90,7 +91,10 @@ function handleVC(discordMessage) {
         discordMessage.member.voiceChannel.join()
             .then(connection => {
                 if(!connection.speaking) {
-                    playMusic(discordMessage);
+                    setTimeout(function () {
+                        playMusic(discordMessage);
+                    }, 250);
+                    
                 }
             })
             .catch(`${console.log} Timestamp: timestamp`);
@@ -120,7 +124,8 @@ async function handleVideoNoPlaylist(method, message, args) {
     .setColor(`#00c292`)
     .setTitle(` `)
     .addField(`**:arrow_up_small: Queued**`, `[${newVideo.getTitle()}](${newVideo.getURL()})`)
-    .setFooter(`Requested by ${newVideo.getRequesterName()} • timestamp`)
+    .setTimestamp()
+    .setFooter(`Requested by ${newVideo.getRequesterName()}`)
     message.channel.send(playEmbed);
 
 }
@@ -174,7 +179,8 @@ module.exports = {
             .setColor(`#00c292`)
             .setTitle(` `)
             .addField(`:arrow_forward: **Now playing**`, `[title](url)`)
-            .setFooter(`Requested by requester • timestamp`)
+            .setTimestamp()
+            .setFooter(`Requested by requester`)
         c.send(musicEmbed);
         // nowPlayingEmbed = musicEmbed;
     },
@@ -306,7 +312,7 @@ client.on('message', message => {
     }
 });
 
-// Handle uncaught promise rejection
+// Handle uncaught promise rejections
 process.on('unhandledRejection', error => console.error('Uncaught Promise Rejection', error));
 
 client.login(token);

@@ -1,3 +1,4 @@
+const index = require(`C:\\Users\\Joshua\\Desktop\\Programming Stuff\\L-Bot Files\\L-Bot-Rewrite\\index.js`);
 // Any 'require'
 
 module.exports = {

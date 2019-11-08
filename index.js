@@ -45,6 +45,7 @@ class YTVideo {
 		return this.type;
 	}
 }
+
 function sendDetails(input, c) {
     var musicEmbed = new Discord.RichEmbed()
             .setColor(`#00c292`)
@@ -53,6 +54,22 @@ function sendDetails(input, c) {
             .setTimestamp()
             .setFooter(`Requested by ${input.getRequesterName()}`)
     c.send(musicEmbed);
+}
+
+function handleVolume(volume) {
+    var newVolume = volume / 100;
+    if(volume >= 0 && volume <= 500) {
+        dispatcher.setVolume(newVolume);
+        let vEmbed = new Discord.RichEmbed()
+            .setTitle(`:loud_sound: Set volume to ${volume}%`)
+            .setColor(`#44C408`)
+        serverMessage.channel.send(vEmbed);
+    } else {
+        let vEmbed = new Discord.RichEmbed()
+            .setTitle(`:unamused: You can't set the volume to that number`)
+            .setColor(`#FF0000`)
+        serverMessage.channel.send(vEmbed);
+    }
 }
 
 async function playMusic(disabled){
@@ -224,6 +241,9 @@ module.exports = {
         // serverMessage = message;
         // console.log(serverMessage);
         handlePlayCommand(method, message, args);
+    },
+    changeVolume: function (volume) {
+        handleVolume(volume);
     }
 };
 

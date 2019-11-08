@@ -1,0 +1,14 @@
+const index = require(`C:\\Users\\Joshua\\Desktop\\Programming Stuff\\L-Bot Files\\L-Bot-Rewrite\\index.js`);
+
+module.exports = {
+	name: 'volume',
+	description: 'Changes the volume of music playback',
+	// aliases: ['aliases'],
+	usage: '[volume]',
+	// cooldown: 5,
+	execute(message, args) {
+        args.unshift();
+        console.log(args);
+        index.changeVolume(args);
+    }
+}

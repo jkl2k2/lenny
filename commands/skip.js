@@ -7,6 +7,6 @@ module.exports = {
 	// usage: '[command]',
 	// cooldown: 5,
 	execute(message, args) {
-        index.endDispatcher(message.channel, message.author.username, "skip");
+        index.callEndDispatcher(message.channel, message.author.username, "skip");
     }
 }

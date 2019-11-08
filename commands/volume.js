@@ -8,7 +8,6 @@ module.exports = {
 	// cooldown: 5,
 	execute(message, args) {
         args.unshift();
-        console.log(args);
-        index.changeVolume(args);
+        index.changeVolume(args[0]);
     }
 }

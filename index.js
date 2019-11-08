@@ -72,6 +72,22 @@ function handleVolume(volume) {
     }
 }
 
+function queueResolver(arr, index) {
+    if(arr[index]) {
+        return `${index + 1}. [${arr[index].getTitle()}](${arr[index].getURL()})`;
+    } else {
+        return " ";
+    }
+}
+
+function queueOverflowResolver(arr) {
+    if(arr.length <= 5) {
+        return " ";
+    } else if(arr.length > 5) {
+        return `**Plus ${arr.length-5} more songs**`;
+    }
+}
+
 async function playMusic(disabled){
     // console.log(message);
     // console.log(serverMessage);
@@ -90,7 +106,7 @@ async function playMusic(disabled){
         dispatcher = serverMessage.member.voiceChannel.connection.playConvertedStream(pcm);
     } else if (queue[0].getType() == "live") {
         // dispatcher = serverMessage.member.voiceChannel.connection.playOpusStream(await ytdl(queue[0].videoUrl, {quality: 95}));
-        let input = await ytdl(queue[0].videoUrl, {quality: 95});
+        let input = await ytdl(queue[0].videoUrl, {quality: 93});
         const pcm = input.pipe(new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 }));
         dispatcher = serverMessage.member.voiceChannel.connection.playConvertedStream(pcm);
     } else {
@@ -250,6 +266,57 @@ module.exports = {
     },
     changeVolume: function (volume) {
         handleVolume(volume);
+    },
+    viewQueue: function () {
+        if(queue.length == 0) {
+			let emptyQueueEmbed = new Discord.RichEmbed()
+				.setTitle(`:information_source: **The queue is currently empty**`)
+                .setColor(`#0083FF`)
+                .setTimestamp()
+				.setFooter(`Use /play to request songs or playlists!`)
+			serverMessage.channel.send(emptyQueueEmbed);
+		} else {
+			let queueEmbed = new Discord.RichEmbed()
+				.setTitle(`**:information_source: Current queue**`)
+				// .setDescription(`${queueResolver(parsedQueue, 0)}\n\n${queueResolver(parsedQueue, 1)}\n\n${queueResolver(parsedQueue, 2)}\n\n${queueResolver(parsedQueue, 3)}\n\n${queueResolver(parsedQueue, 4)}\n\n${queueOverflowResolver(parsedQueue)}`)
+				.setDescription(`${queueResolver(queue, 0)}\n\n${queueResolver(queue, 1)}\n\n${queueResolver(queue, 2)}\n\n${queueResolver(queue, 3)}\n\n${queueResolver(queue, 4)}\n\n${queueOverflowResolver(queue)}`)
+                .setColor(`#0083FF`)
+                .setTimestamp()
+				.setFooter(`Use /play to request songs or playlists`)
+			// message.channel.send(`Current queue: ${parsedQueue[0]}\n\nComing up next: ${parsedQueue[1]}`);
+			serverMessage.channel.send(queueEmbed);
+		}
+    },
+    removeFromQueue(target) {
+		if(queue[target - 1] == undefined) {
+			let indexDNEEmbed = new Discord.RichEmbed()
+				.setTitle(`:no_entry: Index ${target - 1} of array with given input ${target} does not exist`)
+                .setTimestamp()
+                .setFooter(`Requested by ${serverMessage.author.username}`)
+				.setColor(`#FF0000`);
+			serverMessage.channel.send(indexDNEEmbed);
+			return;
+		}
+		var elementToRemove = queue[target - 1];
+		queue.splice(target - 1, 1);
+		if(elementToRemove != queue[target]) {
+			let queueRemoveEmbed = new Discord.RichEmbed()
+				.setTitle(` `)
+				.addField(`:white_check_mark: **Successfully removed from queue**`, `[${elementToRemove.getTitle()}](${elementToRemove.getURL()})`)
+                .setTimestamp()
+                .setFooter(`Requested by ${serverMessage.author.username}`)
+				.setColor(`#44C408`)
+			serverMessage.channel.send(queueRemoveEmbed);
+			// message.reply(`successfully removed "${elementToRemove.videoTitle}" from queue!`);
+		} else {
+			let queueRemoveEmbed = new Discord.RichEmbed()
+				.setTitle(`Somehow, I failed to remove "[${elementToRemove.getTitle()}](${elementToRemove.getURL()})" from queue. This should never happen.`)
+                .setTimestamp()
+                .setFooter(`Requested by ${serverMessage.author.username}`)
+				.setColor(`#FF0000`);
+			serverMessage.channel.send(queueRemoveEmbed);
+			// message.reply(`:thinking: I don't understand.`);
+		}
     }
 };
 

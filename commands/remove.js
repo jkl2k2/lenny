@@ -7,6 +7,7 @@ module.exports = {
 	aliases: ['queueremove'],
 	usage: '[video number in queue]',
 	// cooldown: 5,
+	guildOnly: true,
 	execute(message, args) {
         args.unshift();
         index.removeFromQueue(args[0]);

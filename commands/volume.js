@@ -6,6 +6,7 @@ module.exports = {
 	// aliases: ['aliases'],
 	usage: '[volume]',
 	// cooldown: 5,
+	guildOnly: true,
 	execute(message, args) {
         args.unshift();
         index.changeVolume(args[0]);

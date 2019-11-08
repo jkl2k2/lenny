@@ -22,5 +22,7 @@ module.exports = {
         // index.sendDetails(undefined, message.channel);
 
         // index.endDispatcher(message.channel, "author", "skip");
+
+        message.channel.send("Test message!");
     }
 }

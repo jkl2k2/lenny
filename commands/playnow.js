@@ -7,6 +7,7 @@ module.exports = {
 	aliases: ['now'],
 	usage: '[video]',
 	// cooldown: 5,
+	guildOnly: true,
 	execute(message, args) {
         index.playCommand("playnow", message, args);
     }

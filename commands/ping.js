@@ -3,6 +3,10 @@ const Discord = require('discord.js');
 module.exports = {
 	name: 'ping',
 	description: 'Performs a latency test and shows the results',
+	// aliases: ['aliases'],
+	// usage: '[command]',
+	// cooldown: 5,
+	guildOnly: false,
 	async execute(message, args) {
 		let pingEmbed = new Discord.RichEmbed()
 			.setTitle(`:arrows_counterclockwise: Testing latency...`)

@@ -7,6 +7,7 @@ module.exports = {
 	// aliases: ['aliases'],
 	// usage: '[usage]',
 	// cooldown: seconds,
+	guildOnly: true,
 	execute(message, args) {
         index.callJoinVC(message);
     }

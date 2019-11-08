@@ -6,6 +6,7 @@ module.exports = {
 	// aliases: ['aliases'],
 	// usage: '[usage]',
 	// cooldown: seconds,
+	guildOnly: true,
 	execute(message, args) {
         /*
         if(dispatcher != undefined && dispatcher.speaking) {

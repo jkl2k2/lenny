@@ -7,6 +7,7 @@ module.exports = {
 	// aliases: ['aliases'],
 	// usage: '[command]',
 	// cooldown: 5,
+	guildOnly: true,
 	execute(message, args) {
         index.shuffleQueue(message);
     }

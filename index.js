@@ -6,7 +6,7 @@ const ytdl = require("ytdl-core-discord");
 const { YouTube } = require('better-youtube-api');
 const youtube = new YouTube(api);
 var ffmpeg = require('ffmpeg-static');
-console.log(ffmpeg.path);
+const prism = require('prism-media');
 
 var queue = [];
 
@@ -84,13 +84,19 @@ async function playMusic(disabled){
         return;
     }
     if(queue[0].getType() == undefined || queue[0].getType() == false) {
-        dispatcher = serverMessage.member.voiceChannel.connection.playOpusStream(await ytdl(queue[0].videoUrl));
+        // dispatcher = serverMessage.member.voiceChannel.connection.playOpusStream(await ytdl(queue[0].videoUrl));
+        let input = await ytdl(queue[0].videoUrl);
+        const pcm = input.pipe(new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 }));
+        dispatcher = serverMessage.member.voiceChannel.connection.playConvertedStream(pcm);
     } else if (queue[0].getType() == "live") {
-        dispatcher = serverMessage.member.voiceChannel.connection.playOpusStream(await ytdl(queue[0].videoUrl, {quality: 95}));
+        // dispatcher = serverMessage.member.voiceChannel.connection.playOpusStream(await ytdl(queue[0].videoUrl, {quality: 95}));
+        let input = await ytdl(queue[0].videoUrl, {quality: 95});
+        const pcm = input.pipe(new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 }));
+        dispatcher = serverMessage.member.voiceChannel.connection.playConvertedStream(pcm);
     } else {
         serverMessage.channel.send("Error assigning dispatcher");
     }
-    
+
     sendDetails(queue[0], serverMessage.channel)
     queue.shift();
     

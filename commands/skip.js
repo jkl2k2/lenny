@@ -4,7 +4,7 @@ module.exports = {
 	name: 'skip',
 	description: 'Skips the current song',
 	// aliases: ['aliases'],
-	usage: '[command]',
+	// usage: '[command]',
 	// cooldown: 5,
 	execute(message, args) {
         index.endDispatcher(message.channel, message.author.username, "skip");

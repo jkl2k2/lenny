@@ -4,7 +4,7 @@ module.exports = {
 	name: 'leave',
 	description: `Leaves the user's voice channel`,
 	// aliases: ['aliases'],
-	usage: '[no arguments]',
+	// usage: '[usage]',
 	// cooldown: seconds,
 	execute(message, args) {
         /*

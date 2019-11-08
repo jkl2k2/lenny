@@ -46,6 +46,53 @@ class YTVideo {
 	}
 }
 
+// Fisher-Yates Shuffle
+function shuffle(array) {
+    var currentIndex = array.length, temporaryValue, randomIndex;
+
+    while (0 !== currentIndex) {
+
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
+    }
+
+    return array;
+}
+
+function endDispatcher(c, author, method) {
+    if(dispatcher != undefined && dispatcher.speaking == true){
+        if(method == "skip") {
+            let endDispatcherEmbed = new Discord.RichEmbed()
+            .setTitle(`:fast_forward: **${author} skipped the current song**`)
+            .setColor(`#44C408`)
+            c.send(endDispatcherEmbed);
+        } else if(method == "skipall") {
+            queue = [];
+            let endDispatcherEmbed = new Discord.RichEmbed()
+            .setTitle(`:fast_forward: **${author} emptied the queue and skipped everything**`)
+            .setColor(`#44C408`)
+            c.send(endDispatcherEmbed);
+        } else if(method == "playnow") {
+            let endDispatcherEmbed = new Discord.RichEmbed()
+            .setTitle(`:fast_forward: **${author} force played a song**`)
+            .setColor(`#44C408`)
+            c.send(endDispatcherEmbed);
+        }
+
+        dispatcher.end();
+
+    } else {
+        let endDispatcherEmbed = new Discord.RichEmbed()
+            .setTitle(`:eyes: ${author}, there's nothing to skip, dumbo`)
+            .setColor(`#FF0000`)
+        c.send(endDispatcherEmbed);
+    }
+}
+
 function sendDetails(input, c) {
     var musicEmbed = new Discord.RichEmbed()
             .setColor(`#00c292`)
@@ -145,14 +192,48 @@ function handleVC(discordMessage) {
     }
 }
 
+async function handlePlaylist(message, args) {
+    var playlistInfo = await youtube.getPlaylist(args[0]);
+    var playlistArray = await youtube.getPlaylistItems(args[0]).catch(function(error) {
+        console.error(`${error}`);
+    });
+
+    var listEmbed = new Discord.RichEmbed()
+                .setColor(`#00c292`)
+                .setTitle(` `)
+                .addField(`:arrow_up_small: **Playlist added to queue (${playlistInfo.length} songs)**`, `[${playlistInfo.title}](${args[0]})`)
+                // .setThumbnail(videoRequestObject.videoThumbnail)
+                .setTimestamp()
+                .setFooter(`Requested by ${message.author.username}`)
+    message.channel.send(listEmbed);
+
+    var listProcessingEmbed = new Discord.RichEmbed()
+            .setTitle(`:arrows_counterclockwise: Please wait while your playlist is being processed`)
+            .setColor(`#FF0000`)
+
+    var listProcessingMessage = await message.channel.send(listProcessingEmbed);
+    
+        for(var i = 0; i < playlistArray.length; i++) {
+            let playlistVideo = new YTVideo(await playlistArray[i].title, await playlistArray[i].url, playlistArray[i].liveStatus, message.author);
+            queue.push(playlistVideo);
+            
+            // DEBUG - CAUSES SPAM
+            // message.channel.send(`EXPECTED OUTCOME:\n\nQueued video with title ${await playlistArray.videos[i].title}\nURL of queued video is: ${await playlistArray.videos[i].url}\n\nRESULT:\n\nQueued video with title ${await videoRequestObject.videoTitle}\nURL of queued video is: ${await videoRequestObject.videoUrl}`);
+            
+        }
+        let newProcessingEmbed = new Discord.RichEmbed()
+            .setTitle(`:white_check_mark: The playlist has finished processing!`)
+            .setColor(`#44C408`)
+        message.channel.send(newProcessingEmbed);
+}
+
 async function handleVideoNoPlaylist(method, message, args) {
     var videoResult = await youtube.getVideo(args.join(" "));
 
     let newVideo = new YTVideo(videoResult.title, videoResult.url, videoResult.liveStatus, message.author);
-
     if(method === "playnow") {
         queue.unshift(newVideo);
-        endDispatcher(message.channel, message.author, "playnow");
+        endDispatcher(message.channel, message.author.username, "playnow");
     } else if(method === "playnext") {
         queue.unshift(newVideo);
     } else {
@@ -196,13 +277,19 @@ async function handlePlayCommand(method, message, args) {
         return;
     }
 
-    handleVideoNoPlaylist(method, message, args);
-
-    
+    if(args[0].includes("playlist?list=")) {
+        handlePlaylist(message, args);
+    } else {
+        handleVideoNoPlaylist(method, message, args);
+    }  
     setTimeout(function () {
         handleVC(message);
-    }, 500)
+    }, 1000)
 }
+
+client.on("playlistReady", () => {
+    handleVC(servermessage);
+});
 
 // Functions
 module.exports = {
@@ -223,35 +310,8 @@ module.exports = {
         c.send(musicEmbed);
         // nowPlayingEmbed = musicEmbed;
     },
-    endDispatcher: function (c, author, method) {
-        if(dispatcher != undefined && dispatcher.speaking == true){
-            if(method == "skip") {
-                let endDispatcherEmbed = new Discord.RichEmbed()
-                .setTitle(`:fast_forward: **${author} skipped the current song**`)
-                .setColor(`#44C408`)
-                c.send(endDispatcherEmbed);
-            } else if(method == "skipall") {
-                let endDispatcherEmbed = new Discord.RichEmbed()
-                .setTitle(`:fast_forward: **${author} emptied the queue and skipped everything**`)
-                .setColor(`#44C408`)
-                c.send(endDispatcherEmbed);
-            } else if(method == "playnow") {
-                let endDispatcherEmbed = new Discord.RichEmbed()
-                .setTitle(`:fast_forward: **${author} force played a song**`)
-                .setColor(`#44C408`)
-                c.send(endDispatcherEmbed);
-            }
-    
-            setTimeout(function() {
-                dispatcher.end();
-            }, 500);
-    
-        } else {
-            let endDispatcherEmbed = new Discord.RichEmbed()
-                .setTitle(`:eyes: ${author}, there's nothing to skip, dumbo`)
-                .setColor(`#FF0000`)
-            c.send(endDispatcherEmbed);
-        }
+    callEndDispatcher: function (c, author, method) {
+        endDispatcher(c, author, method);
     },
     callQueueRead: function (toPush) {
         readIndexQueue(toPush);
@@ -287,7 +347,7 @@ module.exports = {
 			serverMessage.channel.send(queueEmbed);
 		}
     },
-    removeFromQueue(target) {
+    removeFromQueue: function(target) {
 		if(queue[target - 1] == undefined) {
 			let indexDNEEmbed = new Discord.RichEmbed()
 				.setTitle(`:no_entry: Index ${target - 1} of array with given input ${target} does not exist`)
@@ -316,6 +376,24 @@ module.exports = {
 				.setColor(`#FF0000`);
 			serverMessage.channel.send(queueRemoveEmbed);
 			// message.reply(`:thinking: I don't understand.`);
+		}
+    },
+    shuffleQueue: function (message) {
+        if(queue.length > 0) {
+			queue = shuffle(queue);
+			let shuffleCompleteEmbed = new Discord.RichEmbed()
+                .setTitle(`:white_check_mark: **Shuffled ${queue.length} songs in queue**`)
+                .setTimestamp()
+				.setFooter(`Requested by ${message.author.username}`)
+				.setColor(`#44C408`)
+			message.channel.send(shuffleCompleteEmbed);
+		} else {
+			let shuffleFailEmbed = new Discord.RichEmbed()
+                .setTitle(`:no_entry: **Cannot shuffle an empty queue**`)
+                .setTimestamp()
+                .setFooter(`Requested by ${message.author.username}`)
+                .setColor(`#FF0000`)
+			message.channel.send(shuffleFailEmbed);
 		}
     }
 };

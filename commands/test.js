@@ -16,8 +16,8 @@ module.exports = {
         message.channel.send(index.dispatcher);
         */
 
-        message.channel.send("Index.js queue is:");
-        index.callQueueRead(index.constructVideo("title", "url", "type", "requester"));
+        // message.channel.send("Index.js queue is:");
+        // index.callQueueRead(index.constructVideo("title", "url", "type", "requester"));
 
         // index.sendDetails(undefined, message.channel);
 

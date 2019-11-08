@@ -113,7 +113,7 @@ function handleVolume(volume) {
         serverMessage.channel.send(vEmbed);
     } else {
         let vEmbed = new Discord.RichEmbed()
-            .setTitle(`:unamused: You can't set the volume to that number`)
+            .setTitle(`:no_entry: You can't set the volume to that number`)
             .setColor(`#FF0000`)
         serverMessage.channel.send(vEmbed);
     }

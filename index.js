@@ -105,7 +105,7 @@ function sendDetails(input, c) {
 
 function handleVolume(volume) {
     var newVolume = volume / 100;
-    if (volume >= 0 && volume <= 500) {
+    if ((volume >= 0 && volume <= 500) || serverMessage.author.id == jahyID) {
         dispatcher.setVolume(newVolume);
         let vEmbed = new Discord.RichEmbed()
             .setTitle(`:loud_sound: Set volume to ${volume}%`)

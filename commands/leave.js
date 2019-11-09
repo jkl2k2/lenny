@@ -3,7 +3,7 @@ const Discord = require('discord.js');
 module.exports = {
 	name: 'leave',
 	description: `Leaves the user's voice channel`,
-	// aliases: ['aliases'],
+	aliases: ['l'],
 	// usage: '[usage]',
 	// cooldown: seconds,
 	guildOnly: true,

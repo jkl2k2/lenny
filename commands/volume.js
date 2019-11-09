@@ -3,7 +3,7 @@ const index = require(`C:\\Users\\Joshua\\Desktop\\Programming Stuff\\L-Bot File
 module.exports = {
 	name: 'volume',
 	description: 'Changes the volume of music playback',
-	// aliases: ['aliases'],
+	aliases: ['v', 'vol'],
 	usage: '[volume]',
 	// cooldown: 5,
 	guildOnly: true,

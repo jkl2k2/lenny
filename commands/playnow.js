@@ -4,7 +4,7 @@ const index = require(`C:\\Users\\Joshua\\Desktop\\Programming Stuff\\L-Bot File
 module.exports = {
 	name: 'playnow',
 	description: 'Immediately skips the current song and plays the requested one',
-	aliases: ['now'],
+	aliases: ['now', 'pnow'],
 	usage: '[video]',
 	// cooldown: 5,
 	guildOnly: true,

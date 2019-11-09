@@ -4,7 +4,7 @@ const index = require(`C:\\Users\\Joshua\\Desktop\\Programming Stuff\\L-Bot File
 module.exports = {
 	name: 'playnext',
 	description: 'Processes a video and places it next in queue',
-	aliases: ['next'],
+	aliases: ['next', 'pnext', 'pn'],
 	usage: '[video]',
 	// cooldown: 5,
 	guildOnly: true,

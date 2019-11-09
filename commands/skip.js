@@ -3,7 +3,7 @@ const index = require(`C:\\Users\\Joshua\\Desktop\\Programming Stuff\\L-Bot File
 module.exports = {
 	name: 'skip',
 	description: 'Skips the current song',
-	// aliases: ['aliases'],
+	aliases: ['skip'],
 	// usage: '[command]',
 	// cooldown: 5,
 	guildOnly: true,

@@ -3,7 +3,7 @@ const index = require(`C:\\Users\\Joshua\\Desktop\\Programming Stuff\\L-Bot File
 module.exports = {
 	name: 'skipall',
 	description: 'Empties the queue and skips the current song',
-	// aliases: ['aliases'],
+	aliases: ['sa', 'skipa'],
 	// usage: '[command]',
 	// cooldown: 5,
 	guildOnly: true,

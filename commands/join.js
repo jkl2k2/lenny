@@ -4,7 +4,7 @@ const index = require(`C:\\Users\\Joshua\\Desktop\\Programming Stuff\\L-Bot File
 module.exports = {
 	name: 'join',
 	description: `Joins the user's voice channel`,
-	// aliases: ['aliases'],
+	aliases: ['j'],
 	// usage: '[usage]',
 	// cooldown: seconds,
 	guildOnly: true,

@@ -4,7 +4,7 @@ const index = require(`C:\\Users\\Joshua\\Desktop\\Programming Stuff\\L-Bot File
 module.exports = {
 	name: 'remove',
 	description: 'Removes a video from the queue',
-	aliases: ['queueremove'],
+	aliases: ['queueremove', 'r'],
 	usage: '[video number in queue]',
 	// cooldown: 5,
 	guildOnly: true,

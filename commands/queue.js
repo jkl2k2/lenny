@@ -3,7 +3,7 @@ const index = require(`C:\\Users\\Joshua\\Desktop\\Programming Stuff\\L-Bot File
 module.exports = {
 	name: 'queue',
 	description: 'Returns the current music queue (up to 5 songs)',
-	// aliases: ['aliases'],
+	aliases: ['q'],
 	// usage: '[command]',
 	// cooldown: 5,
 	guildOnly: true,

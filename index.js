@@ -41,17 +41,15 @@ var dispatcher;
 var serverMessage;
 
 class YTVideo {
-    constructor(videoTitle, videoUrl, type, requester) {
-        this.videoTitle = videoTitle;
-        this.videoUrl = videoUrl;
-        this.type = type;
+    constructor(video, requester) {
+        this.video = video;
         this.requester = requester;
     }
     getTitle() {
-        return this.videoTitle;
+        return this.video.title;
     }
     getURL() {
-        return this.videoUrl;
+        return this.video.url;
     }
     getRequester() {
         return this.requester;
@@ -60,7 +58,7 @@ class YTVideo {
         return this.requester.username;
     }
     getType() {
-        return this.type;
+        return this.video.liveStatus;
     }
 }
 
@@ -166,12 +164,12 @@ async function playMusic(disabled) {
     }
     if (queue[0].getType() == undefined || queue[0].getType() == false) {
         // dispatcher = serverMessage.member.voiceChannel.connection.playOpusStream(await ytdl(queue[0].videoUrl));
-        let input = await ytdl(queue[0].videoUrl);
+        let input = await ytdl(queue[0].getURL());
         const pcm = input.pipe(new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 }));
         dispatcher = serverMessage.member.voiceChannel.connection.playConvertedStream(pcm);
     } else if (queue[0].getType() == "live") {
         // dispatcher = serverMessage.member.voiceChannel.connection.playOpusStream(await ytdl(queue[0].videoUrl, {quality: 95}));
-        let input = await ytdl(queue[0].videoUrl, { quality: 93 });
+        let input = await ytdl(queue[0].getURL(), { quality: 93 });
         const pcm = input.pipe(new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 }));
         dispatcher = serverMessage.member.voiceChannel.connection.playConvertedStream(pcm);
     } else {
@@ -232,7 +230,8 @@ async function handlePlaylist(message, args) {
     var listProcessingMessage = await message.channel.send(listProcessingEmbed);
 
     for (var i = 0; i < playlistArray.length; i++) {
-        let playlistVideo = new YTVideo(await playlistArray[i].title, await playlistArray[i].url, playlistArray[i].liveStatus, message.author);
+        // let playlistVideo = new YTVideo(await playlistArray[i].title, await playlistArray[i].url, playlistArray[i].liveStatus, message.author);
+        let playlistVideo = new YTVideo(playlistArray[i], message.author);
         queue.push(playlistVideo);
 
         // DEBUG - CAUSES SPAM
@@ -248,7 +247,8 @@ async function handlePlaylist(message, args) {
 async function handleVideoNoPlaylist(method, message, args) {
     var videoResult = await youtube.getVideo(args.join(" "));
 
-    let newVideo = new YTVideo(videoResult.title, videoResult.url, videoResult.liveStatus, message.author);
+    // let newVideo = new YTVideo(videoResult.title, videoResult.url, videoResult.liveStatus, message.author);
+    let newVideo = new YTVideo(videoResult, message.author);
     if (method === "playnow") {
         queue.unshift(newVideo);
         endDispatcher(message.channel, message.author.username, "playnow");

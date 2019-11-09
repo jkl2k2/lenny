@@ -18,6 +18,24 @@ const cooldowns = new Discord.Collection();
 // Global variables
 // var queue = [];
 
+const activities_list = [
+    "with Cat!",
+    "Cat's PC melt",
+    "trash music",
+    "Russian spies",
+    "your private convos",
+    "Sege"
+];
+
+const activities_list_types = [
+    "PLAYING",
+    "WATCHING",
+    "LISTENING",
+    "LISTENING",
+    "WATCHING",
+    "PLAYING"
+];
+
 var dispatcher;
 
 var serverMessage;
@@ -410,6 +428,10 @@ for (const file of commandFiles) {
 
 // On ready
 client.once('ready', () => {
+    setInterval(() => {
+        const index = Math.floor(Math.random() * (activities_list.length - 1) + 1); // random number between 1 and array length
+        client.user.setActivity(activities_list[index], { type: activities_list_types[index] }); // sets bot's activities to one of the phrases in the arraylist
+    }, 15000); // Time interval
     console.log("// Bot initialized //");
 });
 

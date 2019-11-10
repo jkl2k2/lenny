@@ -9,6 +9,6 @@ module.exports = {
 	// cooldown: 5,
 	guildOnly: true,
 	execute(message, args) {
-		index.pauseMusic(message);
+		index.resumeMusic(message);
 	}
 }

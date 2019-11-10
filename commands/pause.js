@@ -2,8 +2,8 @@ const index = require(`C:\\Users\\Joshua\\Desktop\\Programming Stuff\\L-Bot File
 // Any 'require'
 
 module.exports = {
-	name: 'template',
-	description: 'Template command for easier coding, does nothing',
+	name: 'pause',
+	description: 'Pauses music playback if it wasn\'t already',
 	// aliases: ['aliases'],
 	// usage: '[command]',
 	// cooldown: 5,

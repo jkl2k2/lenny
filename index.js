@@ -60,6 +60,20 @@ class YTVideo {
     getType() {
         return this.video.liveStatus;
     }
+    getThumbnail() {
+        return this.video.thumbnails.default.url;
+    }
+    async getChannelName() {
+        var id = `${this.video.channelId}`;
+        var resolved = await youtube.getChannel(id);
+        return resolved.name;
+    }
+    getChannelURL() {
+        return `https://www.youtube.com/channel/${this.video.channelId}`;
+    }
+    getVideo() {
+        return this.video;
+    }
 }
 
 // Fisher-Yates Shuffle
@@ -109,11 +123,13 @@ function endDispatcher(c, author, method) {
     }
 }
 
-function sendDetails(input, c) {
+async function sendDetails(input, c) {
     var musicEmbed = new Discord.RichEmbed()
         .setColor(`#00c292`)
         .setTitle(` `)
         .addField(`:arrow_forward: **Now playing**`, `[${input.getTitle()}](${input.getURL()})`)
+        .addField(`Uploader`, `[${await input.getChannelName()}](${input.getChannelURL()})`)
+        .setThumbnail(input.getThumbnail())
         .setTimestamp()
         .setFooter(`Requested by ${input.getRequesterName()}`)
     c.send(musicEmbed);
@@ -218,7 +234,7 @@ async function handlePlaylist(message, args) {
         .setColor(`#00c292`)
         .setTitle(` `)
         .addField(`:arrow_up_small: **Playlist added to queue (${playlistInfo.length} songs)**`, `[${playlistInfo.title}](${args[0]})`)
-        // .setThumbnail(videoRequestObject.videoThumbnail)
+        .setThumbnail(playlistInfo.thumbnails.default.url)
         .setTimestamp()
         .setFooter(`Requested by ${message.author.username}`)
     message.channel.send(listEmbed);
@@ -241,7 +257,8 @@ async function handlePlaylist(message, args) {
     let newProcessingEmbed = new Discord.RichEmbed()
         .setTitle(`:white_check_mark: The playlist has finished processing!`)
         .setColor(`#44C408`)
-    message.channel.send(newProcessingEmbed);
+    listProcessingMessage.edit(newProcessingEmbed);
+    // message.channel.send(newProcessingEmbed);
 }
 
 async function handleVideoNoPlaylist(method, message, args) {
@@ -262,6 +279,8 @@ async function handleVideoNoPlaylist(method, message, args) {
         .setColor(`#00c292`)
         .setTitle(` `)
         .addField(`**:arrow_up_small: Queued**`, `[${newVideo.getTitle()}](${newVideo.getURL()})`)
+        .addField(`Uploader`, `[${await newVideo.getChannelName()}](${newVideo.getChannelURL()})`)
+        .setThumbnail(newVideo.getThumbnail())
         .setTimestamp()
         .setFooter(`Requested by ${newVideo.getRequesterName()}`)
     message.channel.send(playEmbed);
@@ -297,12 +316,15 @@ async function handlePlayCommand(method, message, args) {
 
     if (args[0].includes("playlist?list=")) {
         handlePlaylist(message, args);
+        setTimeout(function () {
+            handleVC(message);
+        }, 1000)
     } else {
         handleVideoNoPlaylist(method, message, args);
+        setTimeout(function () {
+            handleVC(message);
+        }, 500)
     }
-    setTimeout(function () {
-        handleVC(message);
-    }, 250)
 }
 
 function pauseDispatcher(message) {

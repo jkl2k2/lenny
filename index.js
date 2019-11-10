@@ -302,7 +302,37 @@ async function handlePlayCommand(method, message, args) {
     }
     setTimeout(function () {
         handleVC(message);
-    }, 1000)
+    }, 250)
+}
+
+function pauseDispatcher(message) {
+    if (dispatcher != undefined && dispatcher.paused == false) {
+        dispatcher.pause();
+        let pauseEmbed = new Discord.RichEmbed()
+            .setTitle(`:pause_button: ${message.author.username} paused playback`)
+            .setColor(`#44C408`)
+        message.channel.send(pauseEmbed);
+    } else {
+        let pauseFailEmbed = new Discord.RichEmbed()
+            .setTitle(`:no_entry: ${message.author.username}, the music is already paused`)
+            .setColor(`#FF0000`)
+        message.channel.send(pauseFailEmbed);
+    }
+}
+
+function resumeDispatcher(message) {
+    if (dispatcher != undefined && dispatcher.paused == true) {
+        dispatcher.resume();
+        let resumeEmbed = new Discord.RichEmbed()
+            .setTitle(`:arrow_forward: ${message.author.username} resumed playback`)
+            .setColor(`#44C408`)
+        message.channel.send(resumeEmbed);
+    } else {
+        let resumeFailEmbed = new Discord.RichEmbed()
+            .setTitle(`:no_entry: ${message.author.username}, the music is already playing`)
+            .setColor(`#FF0000`)
+        message.channel.send(resumeFailEmbed);
+    }
 }
 
 client.on("playlistReady", () => {
@@ -413,6 +443,12 @@ module.exports = {
                 .setColor(`#FF0000`)
             message.channel.send(shuffleFailEmbed);
         }
+    },
+    pauseMusic: function (message) {
+        pauseDispatcher(message);
+    },
+    resumeMusic: function (message) {
+        resumeDispatcher(message);
     }
 };
 

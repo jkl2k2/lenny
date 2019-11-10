@@ -192,7 +192,7 @@ async function playMusic(disabled) {
         serverMessage.channel.send("Error assigning dispatcher");
     }
 
-    sendDetails(queue[0], serverMessage.channel)
+    sendDetails(queue[0], serverMessage.channel);
     queue.shift();
 
     serverMessage.member.voiceChannel.connection.player.streamingData.pausedTime = 0;

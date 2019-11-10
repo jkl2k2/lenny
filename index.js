@@ -386,9 +386,6 @@ module.exports = {
     callQueueRead: function (toPush) {
         readIndexQueue(toPush);
     },
-    callJoinVC: function (discordMessage) {
-        onlyJoinVC(discordMessage);
-    },
     playCommand: function (method, message, args) {
         // serverMessage = message;
         // console.log(serverMessage);

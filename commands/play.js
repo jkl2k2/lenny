@@ -45,7 +45,7 @@ module.exports = {
 	description: 'Plays videos from YouTube, either by search or URL',
 	aliases: ['p'],
 	usage: '[search term(s) or URL]',
-	// cooldown: 5,
+	cooldown: 3,
 	guildOnly: true,
 	execute(message, args) {
 		args.unshift();

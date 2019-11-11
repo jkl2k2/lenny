@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const index = require(`C:\\Users\\Joshua\\Desktop\\Programming Stuff\\L-Bot Files\\L-Bot-Rewrite\\index.js`);
+const index = require(`../index.js`);
 var client = index.getClient();
 
 module.exports = {

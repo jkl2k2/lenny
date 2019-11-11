@@ -135,10 +135,11 @@ for (const file of commandFiles) {
 
 // On ready
 client.once('ready', () => {
+    // Randomly select status
     setInterval(() => {
-        const index = Math.floor(Math.random() * (activities_list.length - 1) + 1); // random number between 1 and array length
-        client.user.setActivity(activities_list[index], { type: activities_list_types[index] }); // sets bot's activities to one of the phrases in the arraylist
-    }, 15000); // Time interval
+        const index = Math.floor(Math.random() * (activities_list.length - 1) + 1);
+        client.user.setActivity(activities_list[index], { type: activities_list_types[index] });
+    }, 15000);
     console.log("// Bot initialized //");
 });
 
@@ -146,7 +147,7 @@ client.once('ready', () => {
 client.on('message', message => {
     // Return if no prefix or said by bot
     if (!message.content.startsWith(prefix) || message.author.bot) return;
-    
+
     // Put args into array
     const args = message.content.slice(prefix.length).split(/ +/);
 

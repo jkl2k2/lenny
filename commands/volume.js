@@ -1,5 +1,5 @@
-const index = require(`C:\\Users\\Joshua\\Desktop\\Programming Stuff\\L-Bot Files\\L-Bot-Rewrite\\index.js`);
-const { prefix, token, api, ownerID, jahyID } = require(`C:\\Users\\Joshua\\Desktop\\Programming Stuff\\L-Bot Files\\L-Bot-Rewrite\\config.json`);
+const index = require(`../index.js`);
+const { prefix, token, api, ownerID, jahyID } = require(`../config.json`);
 const Discord = require(`discord.js`);
 
 function decideWording(input) {

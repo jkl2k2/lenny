@@ -1,4 +1,4 @@
-const index = require(`C:\\Users\\Joshua\\Desktop\\Programming Stuff\\L-Bot Files\\L-Bot-Rewrite\\index.js`);
+const index = require(`../index.js`);
 const Discord = require(`discord.js`);
 
 module.exports = {

@@ -1,6 +1,6 @@
-const index = require(`C:\\Users\\Joshua\\Desktop\\Programming Stuff\\L-Bot Files\\L-Bot-Rewrite\\index.js`);
+const index = require(`../index.js`);
 const Discord = require(`discord.js`)
-const { prefix, token, api, ownerID, jahyID } = require(`C:\\Users\\Joshua\\Desktop\\Programming Stuff\\L-Bot Files\\L-Bot-Rewrite\\config.json`);
+const { prefix, token, api, ownerID, jahyID } = require(`../config.json`);
 const { YouTube } = require('better-youtube-api');
 const youtube = new YouTube(api);
 

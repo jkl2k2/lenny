@@ -14,7 +14,7 @@ module.exports = {
 			message.member.voiceChannel.join();
 			let joinEmbed = new Discord.RichEmbed()
 				.setTitle(` `)
-				.addField(`:white_check_mark: Joined voice channel`, `**I joined your channel, ${message.author.username}**`)
+				.addField(`:white_check_mark: Joined voice channel`, `I joined your channel, ${message.author.username}`)
 				.setColor(`#44C408`)
 			message.channel.send(joinEmbed);
 		} else {

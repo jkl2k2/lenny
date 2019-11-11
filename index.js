@@ -5,14 +5,13 @@ const { prefix, token, api, ownerID, jahyID } = require('./config.json');
 const ytdl = require("ytdl-core-discord");
 const prism = require('prism-media');
 
-var queue = [];
-
 // Initialize client
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 const cooldowns = new Discord.Collection();
 
 // Global variables
+var queue = [];
 
 const activities_list = [
     "with Cat!",

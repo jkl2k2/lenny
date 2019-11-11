@@ -50,7 +50,7 @@ module.exports = {
 	execute(message, args) {
 		args.unshift();
 
-		if(!message.member.voiceChannel) {
+		if (!message.member.voiceChannel) {
 			let vcFailEmbed = new Discord.RichEmbed()
 				.setTitle(` `)
 				.addField(`<:error:643341473772863508> Play failed`, `${message.author.username}, you are not in a voice channel`)
@@ -86,7 +86,7 @@ module.exports = {
 			for (var i = 0; i < playlistArray.length; i++) {
 				// let playlistVideo = new YTVideo(await playlistArray[i].title, await playlistArray[i].url, playlistArray[i].liveStatus, message.author);
 				let playlistVideo = new YTVideo(playlistArray[i], message.author);
-				if(method == "playnext") {
+				if (method == "playnext") {
 					queue.unshift(playlistVideo);
 				} else {
 					queue.push(playlistVideo);

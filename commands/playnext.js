@@ -50,6 +50,16 @@ module.exports = {
 	execute(message, args) {
 		args.unshift();
 
+		if(!message.member.voiceChannel) {
+			let vcFailEmbed = new Discord.RichEmbed()
+				.setTitle(` `)
+				.addField(`<:error:643341473772863508> Play failed`, `${message.author.username}, you are not in a voice channel`)
+				.setColor(`#FF0000`)
+			message.channel.send(vcFailEmbed);
+
+			return;
+		}
+
 		var queue = index.getQueue();
 
 		async function handlePlaylist(method, message, args) {

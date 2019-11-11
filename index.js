@@ -182,12 +182,17 @@ async function playMusic(disabled) {
         // dispatcher = serverMessage.member.voiceChannel.connection.playOpusStream(await ytdl(queue[0].videoUrl));
         let input = await ytdl(queue[0].getURL());
         const pcm = input.pipe(new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 }));
-        dispatcher = serverMessage.member.voiceChannel.connection.playConvertedStream(pcm);
+        // dispatcher = serverMessage.member.voiceChannel.connection.playConvertedStream(pcm);
+        var connectionArray = client.voiceConnections.array();
+        dispatcher = connectionArray[0].playConvertedStream(pcm);
+
     } else if (queue[0].getType() == "live") {
         // dispatcher = serverMessage.member.voiceChannel.connection.playOpusStream(await ytdl(queue[0].videoUrl, {quality: 95}));
         let input = await ytdl(queue[0].getURL(), { quality: 93 });
         const pcm = input.pipe(new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 }));
-        dispatcher = serverMessage.member.voiceChannel.connection.playConvertedStream(pcm);
+        // dispatcher = serverMessage.member.voiceChannel.connection.playConvertedStream(pcm);
+        var connectionArray = client.voiceConnections.array();
+        dispatcher = connectionArray[0].playConvertedStream(pcm);
     } else {
         serverMessage.channel.send("Error assigning dispatcher");
     }

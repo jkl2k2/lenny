@@ -160,7 +160,7 @@ module.exports = {
 						if(playlistQueued == false) {
 							setTimeout(function () {
 								index.callPlayMusic(message);
-							}, 250);
+							}, 500);
 						} else {
 							setTimeout(function () {
 								index.callPlayMusic(message);

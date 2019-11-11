@@ -118,9 +118,6 @@ module.exports = {
     endDispatcher: function () {
         dispatcher.end();
     },
-    playCommand: function (method, message, args) {
-        handlePlayCommand(method, message, args);
-    },
     callPlayMusic: function (message) {
         playMusic(message);
     }
@@ -149,7 +146,7 @@ client.once('ready', () => {
 client.on('message', message => {
     // Return if no prefix or said by bot
     if (!message.content.startsWith(prefix) || message.author.bot) return;
-
+    
     // Put args into array
     const args = message.content.slice(prefix.length).split(/ +/);
 

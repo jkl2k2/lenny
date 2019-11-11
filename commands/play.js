@@ -144,6 +144,12 @@ module.exports = {
 			return;
 		}
 
+		if (args[0].includes("playlist?list=")) {
+			handlePlaylist(message, args);
+		} else {
+			handleVideoNoPlaylist("play", message, args);
+		}
+
 		if (message.member.voiceChannel) {
 			message.member.voiceChannel.join()
 				.then(connection => {
@@ -159,12 +165,6 @@ module.exports = {
 				.setTitle(`:warning: ${message.author.username}, you are not in a voice channel. Your video has been queued, but I am unable to join you.`)
 				.setColor(`#FF0000`)
 			message.channel.send(vcFailEmbed);
-		}
-
-		if (args[0].includes("playlist?list=")) {
-			handlePlaylist(message, args);
-		} else {
-			handleVideoNoPlaylist("play", message, args);
 		}
 	}
 }

@@ -83,7 +83,7 @@ module.exports = {
 
 			var listProcessingMessage = await message.channel.send(listProcessingEmbed);
 
-			for (var i = 0; i < playlistArray.length; i++) {
+			for (var i = playlistArray.length; i > 0; i--) {
 				let playlistVideo = new YTVideo(playlistArray[i], message.author);
 				if (method == "playnext") {
 					queue.unshift(playlistVideo);

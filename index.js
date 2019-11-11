@@ -61,7 +61,9 @@ async function playMusic(message) {
     }
     if (queue[0] == undefined) {
         console.log("playMusic() called, but queue[0] is undefined");
-        return;
+        setTimeout(function () {
+            playMusic(message);
+        }, 100);
     }
     if (queue[0].getType() == undefined || queue[0].getType() == false) {
         let input = await ytdl(queue[0].getURL());

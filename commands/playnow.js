@@ -9,6 +9,8 @@ module.exports = {
 	// cooldown: 5,
 	guildOnly: true,
 	execute(message, args) {
-		index.playCommand("playnow", message, args);
+		// index.playCommand("playnow", message, args);
+
+		message.channel.send("This broke lmao");
 	}
 }

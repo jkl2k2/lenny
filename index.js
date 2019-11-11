@@ -13,7 +13,6 @@ client.commands = new Discord.Collection();
 const cooldowns = new Discord.Collection();
 
 // Global variables
-// var queue = [];
 
 const activities_list = [
     "with Cat!",

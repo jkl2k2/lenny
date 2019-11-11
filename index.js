@@ -76,23 +76,6 @@ class YTVideo {
     }
 }
 
-// Fisher-Yates Shuffle
-function shuffle(array) {
-    var currentIndex = array.length, temporaryValue, randomIndex;
-
-    while (0 !== currentIndex) {
-
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-
-        temporaryValue = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temporaryValue;
-    }
-
-    return array;
-}
-
 function endDispatcher(c, author, method) {
     if (dispatcher != undefined && dispatcher.speaking == true) {
         if (method == "skip") {
@@ -133,38 +116,6 @@ async function sendDetails(input, c) {
         .setTimestamp()
         .setFooter(`Requested by ${input.getRequesterName()}`)
     c.send(musicEmbed);
-}
-
-function handleVolume(volume) {
-    var newVolume = volume / 100;
-    if ((volume >= 0 && volume <= 500) || serverMessage.author.id == jahyID) {
-        dispatcher.setVolume(newVolume);
-        let vEmbed = new Discord.RichEmbed()
-            .setTitle(`:loud_sound: Set volume to ${volume}%`)
-            .setColor(`#44C408`)
-        serverMessage.channel.send(vEmbed);
-    } else {
-        let vEmbed = new Discord.RichEmbed()
-            .setTitle(`:no_entry: You can't set the volume to that number`)
-            .setColor(`#FF0000`)
-        serverMessage.channel.send(vEmbed);
-    }
-}
-
-function queueResolver(arr, index) {
-    if (arr[index]) {
-        return `${index + 1}. [${arr[index].getTitle()}](${arr[index].getURL()})`;
-    } else {
-        return " ";
-    }
-}
-
-function queueOverflowResolver(arr) {
-    if (arr.length <= 5) {
-        return " ";
-    } else if (arr.length > 5) {
-        return `**Plus ${arr.length - 5} more songs**`;
-    }
 }
 
 async function playMusic(disabled) {
@@ -332,58 +283,34 @@ async function handlePlayCommand(method, message, args) {
     }
 }
 
-function pauseDispatcher(message) {
-    if (dispatcher != undefined && dispatcher.paused == false) {
-        dispatcher.pause();
-        let pauseEmbed = new Discord.RichEmbed()
-            .setTitle(`:pause_button: ${message.author.username} paused playback`)
-            .setColor(`#44C408`)
-        message.channel.send(pauseEmbed);
-    } else {
-        let pauseFailEmbed = new Discord.RichEmbed()
-            .setTitle(`:no_entry: ${message.author.username}, the music is already paused`)
-            .setColor(`#FF0000`)
-        message.channel.send(pauseFailEmbed);
-    }
-}
-
-function resumeDispatcher(message) {
-    if (dispatcher != undefined && dispatcher.paused == true) {
-        dispatcher.resume();
-        let resumeEmbed = new Discord.RichEmbed()
-            .setTitle(`:arrow_forward: ${message.author.username} resumed playback`)
-            .setColor(`#44C408`)
-        message.channel.send(resumeEmbed);
-    } else {
-        let resumeFailEmbed = new Discord.RichEmbed()
-            .setTitle(`:no_entry: ${message.author.username}, the music is already playing`)
-            .setColor(`#FF0000`)
-        message.channel.send(resumeFailEmbed);
-    }
-}
-
-client.on("playlistReady", () => {
-    handleVC(servermessage);
-});
-
 // Functions
 module.exports = {
-    constructVideo: async function (title, url, type, requester) {
-        return new YTVideo(title, url, type, requester);
+    getVolume: function () {
+        return dispatcher.volume;
     },
-    pushQueue: function (toPush) {
-        queue.push(toPush);
-        console.log("pushed: " + toPush);
+    getQueue: function () {
+        return queue;
     },
-    sendDetailsExport: function (input, c) {
-        var musicEmbed = new Discord.RichEmbed()
-            .setColor(`#00c292`)
-            .setTitle(` `)
-            .addField(`:arrow_forward: **Now playing**`, `[title](url)`)
-            .setTimestamp()
-            .setFooter(`Requested by requester`)
-        c.send(musicEmbed);
-        // nowPlayingEmbed = musicEmbed;
+    getDispatcher: function () {
+        return dispatcher;
+    },
+    getQueue: function () {
+        return queue;
+    },
+    getClient: function () {
+        return client;
+    },
+    setQueue: function (newQueue) {
+        queue = newQueue;
+    },
+    setDispatcherVolume: function (newVolume) {
+        dispatcher.setVolume(newVolume);
+    },
+    pauseMusic: function () {
+        dispatcher.pause();
+    },
+    resumeMusic: function () {
+        dispatcher.resume();
     },
     callEndDispatcher: function (c, author, method) {
         endDispatcher(c, author, method);
@@ -392,87 +319,7 @@ module.exports = {
         readIndexQueue(toPush);
     },
     playCommand: function (method, message, args) {
-        // serverMessage = message;
-        // console.log(serverMessage);
         handlePlayCommand(method, message, args);
-    },
-    changeVolume: function (volume) {
-        handleVolume(volume);
-    },
-    viewQueue: function () {
-        if (queue.length == 0) {
-            let emptyQueueEmbed = new Discord.RichEmbed()
-                .setTitle(`:information_source: **The queue is currently empty**`)
-                .setColor(`#0083FF`)
-                .setTimestamp()
-                .setFooter(`Use /play to request songs or playlists!`)
-            serverMessage.channel.send(emptyQueueEmbed);
-        } else {
-            let queueEmbed = new Discord.RichEmbed()
-                .setTitle(`**:information_source: Current queue**`)
-                // .setDescription(`${queueResolver(parsedQueue, 0)}\n\n${queueResolver(parsedQueue, 1)}\n\n${queueResolver(parsedQueue, 2)}\n\n${queueResolver(parsedQueue, 3)}\n\n${queueResolver(parsedQueue, 4)}\n\n${queueOverflowResolver(parsedQueue)}`)
-                .setDescription(`${queueResolver(queue, 0)}\n\n${queueResolver(queue, 1)}\n\n${queueResolver(queue, 2)}\n\n${queueResolver(queue, 3)}\n\n${queueResolver(queue, 4)}\n\n${queueOverflowResolver(queue)}`)
-                .setColor(`#0083FF`)
-                .setTimestamp()
-                .setFooter(`Use /play to request songs or playlists`)
-            // message.channel.send(`Current queue: ${parsedQueue[0]}\n\nComing up next: ${parsedQueue[1]}`);
-            serverMessage.channel.send(queueEmbed);
-        }
-    },
-    removeFromQueue: function (target) {
-        if (queue[target - 1] == undefined) {
-            let indexDNEEmbed = new Discord.RichEmbed()
-                .setTitle(`:no_entry: Index ${target - 1} of array with given input ${target} does not exist`)
-                .setTimestamp()
-                .setFooter(`Requested by ${serverMessage.author.username}`)
-                .setColor(`#FF0000`);
-            serverMessage.channel.send(indexDNEEmbed);
-            return;
-        }
-        var elementToRemove = queue[target - 1];
-        queue.splice(target - 1, 1);
-        if (elementToRemove != queue[target]) {
-            let queueRemoveEmbed = new Discord.RichEmbed()
-                .setTitle(` `)
-                .addField(`:white_check_mark: **Successfully removed from queue**`, `[${elementToRemove.getTitle()}](${elementToRemove.getURL()})`)
-                .setTimestamp()
-                .setFooter(`Requested by ${serverMessage.author.username}`)
-                .setColor(`#44C408`)
-            serverMessage.channel.send(queueRemoveEmbed);
-            // message.reply(`successfully removed "${elementToRemove.videoTitle}" from queue!`);
-        } else {
-            let queueRemoveEmbed = new Discord.RichEmbed()
-                .setTitle(`Somehow, I failed to remove "[${elementToRemove.getTitle()}](${elementToRemove.getURL()})" from queue. This should never happen.`)
-                .setTimestamp()
-                .setFooter(`Requested by ${serverMessage.author.username}`)
-                .setColor(`#FF0000`);
-            serverMessage.channel.send(queueRemoveEmbed);
-            // message.reply(`:thinking: I don't understand.`);
-        }
-    },
-    shuffleQueue: function (message) {
-        if (queue.length > 0) {
-            queue = shuffle(queue);
-            let shuffleCompleteEmbed = new Discord.RichEmbed()
-                .setTitle(`:white_check_mark: **Shuffled ${queue.length} songs in queue**`)
-                .setTimestamp()
-                .setFooter(`Requested by ${message.author.username}`)
-                .setColor(`#44C408`)
-            message.channel.send(shuffleCompleteEmbed);
-        } else {
-            let shuffleFailEmbed = new Discord.RichEmbed()
-                .setTitle(`:no_entry: **Cannot shuffle an empty queue**`)
-                .setTimestamp()
-                .setFooter(`Requested by ${message.author.username}`)
-                .setColor(`#FF0000`)
-            message.channel.send(shuffleFailEmbed);
-        }
-    },
-    pauseMusic: function (message) {
-        pauseDispatcher(message);
-    },
-    resumeMusic: function (message) {
-        resumeDispatcher(message);
     }
 };
 

@@ -152,9 +152,15 @@ module.exports = {
 			message.member.voiceChannel.join()
 				.then(connection => {
 					if (!connection.speaking) {
-						setTimeout(function () {
-							index.callPlayMusic(message);
-						}, 250);
+						if(playlistQueued == false) {
+							setTimeout(function () {
+								index.callPlayMusic(message);
+							}, 250);
+						} else {
+							setTimeout(function () {
+								index.callPlayMusic(message);
+							}, 1500);
+						}
 					}
 				})
 				.catch(`${console.log} Timestamp: timestamp`);

@@ -60,9 +60,12 @@ module.exports = {
 			return;
 		}
 
+		var playlistQueued = false;
+
 		var queue = index.getQueue();
 
-		async function handlePlaylist(message, args) {
+		async function handlePlaylist(method, message, args) {
+			playlistQueued = true;
 			var playlistInfo = await youtube.getPlaylist(args[0]);
 			var playlistArray = await youtube.getPlaylistItems(args[0]).catch(function (error) {
 				console.error(`${error}`);
@@ -145,7 +148,7 @@ module.exports = {
 		}
 
 		if (args[0].includes("playlist?list=")) {
-			handlePlaylist(message, args);
+			handlePlaylist("play", message, args);
 		} else {
 			handleVideoNoPlaylist("play", message, args);
 		}
@@ -154,9 +157,15 @@ module.exports = {
 			message.member.voiceChannel.join()
 				.then(connection => {
 					if (!connection.speaking) {
-						setTimeout(function () {
-							index.callPlayMusic(message);
-						}, 250);
+						if(playlistQueued == false) {
+							setTimeout(function () {
+								index.callPlayMusic(message);
+							}, 250);
+						} else {
+							setTimeout(function () {
+								index.callPlayMusic(message);
+							}, 1500);
+						}
 					}
 				})
 				.catch(`${console.log} Timestamp: timestamp`);

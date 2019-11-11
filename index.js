@@ -197,7 +197,11 @@ client.on('message', message => {
 
         if (now < expirationTime && message.author.id != ownerID) {
             const timeLeft = (expirationTime - now) / 1000;
-            return message.reply(`please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`);
+            let cooldownEmbed = new Discord.RichEmbed()
+                .setTitle(` `)
+                .addField(`<:error:643341473772863508> Command cooldown`, `Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command`)
+                .setColor(`#FF0000`)
+            return message.channel.send(cooldownEmbed);
         }
     }
 

@@ -9,7 +9,6 @@ module.exports = {
 	guildOnly: true,
 	execute(message, args) {
 		args.unshift();
-		console.log(args);
 		index.playCommand("play", message, args)
 	}
 }

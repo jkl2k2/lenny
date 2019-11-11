@@ -10,7 +10,5 @@ module.exports = {
 	guildOnly: true,
 	execute(message, args) {
 		// index.playCommand("playnow", message, args);
-
-		message.channel.send("This broke lmao");
 	}
 }

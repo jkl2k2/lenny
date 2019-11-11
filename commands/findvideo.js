@@ -1,6 +1,7 @@
 const index = require(`../index.js`);
 const Discord = require(`discord.js`)
-const { prefix, token, api, ownerID, jahyID } = require(`../config.json`);
+const config = require('config');
+const api = config.get(`Bot.api`);
 const { YouTube } = require('better-youtube-api');
 const youtube = new YouTube(api);
 

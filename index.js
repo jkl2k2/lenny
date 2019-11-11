@@ -1,7 +1,7 @@
 // Load discord.js library and load config
 const fs = require('fs');
 const Discord = require('discord.js');
-const { prefix, token, api, ownerID, jahyID } = require('./config.json');
+const config = require('config');
 const ytdl = require("ytdl-core-discord");
 const prism = require('prism-media');
 
@@ -12,6 +12,10 @@ const cooldowns = new Discord.Collection();
 
 // Global variables
 var queue = [];
+
+const prefix = config.get(`Bot.prefix`);
+const token = config.get(`Bot.token`);
+const ownerID = config.get(`Users.ownerID`);
 
 const activities_list = [
     "with Cat!",

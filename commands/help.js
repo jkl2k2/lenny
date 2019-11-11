@@ -1,4 +1,5 @@
-const { prefix } = require('../config.json');
+const config = require('config');
+const prefix = config.get(`Bot.prefix`);
 
 module.exports = {
     name: 'help',

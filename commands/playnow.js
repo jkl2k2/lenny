@@ -1,4 +1,5 @@
 const index = require(`../index.js`);
+const Discord = require(`discord.js`);
 // Any 'require'
 
 module.exports = {
@@ -10,5 +11,10 @@ module.exports = {
 	guildOnly: true,
 	execute(message, args) {
 		// index.playCommand("playnow", message, args);
+		let disabledEmbed = new Discord.RichEmbed()
+			.setTitle(` `)
+			.addField(`<:error:643341473772863508> Command disabled`, `Sorry, "playnow" is disabled right now`)
+			.setColor(`#FF0000`)
+		message.channel.send(disabledEmbed);
 	}
 }

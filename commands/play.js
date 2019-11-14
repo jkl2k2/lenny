@@ -82,7 +82,8 @@ module.exports = {
 			message.channel.send(listEmbed);
 
 			var listProcessingEmbed = new Discord.RichEmbed()
-				.setTitle(`:arrows_counterclockwise: Please wait while your playlist is being processed`)
+				.setTitle(` `)
+				.addField(`:arrows_counterclockwise: Processing playlist`, `Please wait...`)
 				.setColor(`#FF0000`)
 
 			var listProcessingMessage = await message.channel.send(listProcessingEmbed);
@@ -104,7 +105,8 @@ module.exports = {
 			index.setQueue(queue);
 
 			let newProcessingEmbed = new Discord.RichEmbed()
-				.setTitle(`:white_check_mark: The playlist has finished processing!`)
+				.setTitle(` `)
+				.addField(`:white_check_mark: Playlist added`, `The playlist has finished processing`)
 				.setColor(`#44C408`)
 			listProcessingMessage.edit(newProcessingEmbed);
 			// message.channel.send(newProcessingEmbed);

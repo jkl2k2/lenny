@@ -14,17 +14,40 @@ module.exports = {
 
 		var queue = index.getQueue();
 
-		var target = args[0];
+		var target = parseInt(args[0]);
+
+		var splitArgs = args[0].split('-');
+
+		console.log(splitArgs);
 
         if (queue[target - 1] == undefined) {
             let indexDNEEmbed = new Discord.RichEmbed()
-                .setTitle(`<:error:643341473772863508> Index ${target - 1} of array with given input ${target} does not exist`)
-                .setTimestamp()
-                .setFooter(`Requested by ${message.author.username}`)
+                .setTitle(` `)
+                .addField(`<:error:643341473772863508> Failed to remove`, `${target} is not a valid position in the queue`)
                 .setColor(`#FF0000`);
             message.channel.send(indexDNEEmbed);
             return;
         }
+
+        if(splitArgs.length == 2) {
+			console.log(`splitArgs is exactly 2 entries long`);
+			
+			var index1 = parseInt(splitArgs[0]) - 1;
+			var index2 = parseInt(splitArgs[1]) - 1;
+
+			if(queue[index1] && queue[index2]) {
+				message.channel.send(`Remove range is valid for start index [${index1}] and end index [${index2}]`);
+				queue.splice(index1, (index2 - index1) + 1);
+                index.setQueue(queue);
+                
+                return;
+			} else {
+                message.channel.send(`Remove range is NOT valid for start index [${index1}] and end index [${index2}]`);
+                
+                return;
+			}
+		}
+
         var elementToRemove = queue[target - 1];
         queue.splice(target - 1, 1);
         if (elementToRemove != queue[target]) {

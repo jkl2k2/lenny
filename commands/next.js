@@ -5,7 +5,7 @@ async function sendDetails(input, c) {
     var musicEmbed = new Discord.RichEmbed()
         .setColor(`#00c292`)
         .setTitle(` `)
-        .addField(`:arrow_forward: **Coming up next**`, `[${input.getTitle()}](${input.getURL()})`)
+        .addField(`:information_source: **Coming up next**`, `[${input.getTitle()}](${input.getURL()})`)
         .addField(`Uploader`, `[${await input.getChannelName()}](${input.getChannelURL()})`)
         .setThumbnail(input.getThumbnail())
         .setTimestamp()

@@ -36,13 +36,23 @@ module.exports = {
 			var index2 = parseInt(splitArgs[1]) - 1;
 
 			if(queue[index1] && queue[index2]) {
-				message.channel.send(`Remove range is valid for start index [${index1}] and end index [${index2}]`);
+                // message.channel.send(`Remove range is valid for start index [${index1}] and end index [${index2}]`);
+                let removeRangeEmbed = new Discord.RichEmbed()
+                    .setTitle(` `)
+                    .addField(`:white_check_mark: Successfully removed from queue`, `Removed videos from\n[${queue[index1].getTitle()}](${queue[index1].getURL()})\nup to\n[${queue[index2].getTitle()}](${queue[index2].getURL()})`)
+                    .setColor(`#44C408`)
+                message.channel.send(removeRangeEmbed);
 				queue.splice(index1, (index2 - index1) + 1);
                 index.setQueue(queue);
                 
                 return;
 			} else {
-                message.channel.send(`Remove range is NOT valid for start index [${index1}] and end index [${index2}]`);
+                // message.channel.send(`Remove range is NOT valid for start index [${index1}] and end index [${index2}]`);
+                let invalidRemoveEmbed = new Discord.RichEmbed()
+                    .setTitle(` `)
+                    .addField(`<:error:643341473772863508> Failed to remove`, `The range you provided is not valid`)
+                    .setColor(`#FF0000`)
+                message.channel.send(invalidRemoveEmbed);
                 
                 return;
 			}
@@ -53,7 +63,7 @@ module.exports = {
         if (elementToRemove != queue[target]) {
             let queueRemoveEmbed = new Discord.RichEmbed()
                 .setTitle(` `)
-                .addField(`:white_check_mark: **Successfully removed from queue**`, `[${elementToRemove.getTitle()}](${elementToRemove.getURL()})`)
+                .addField(`:white_check_mark: Successfully removed from queue`, `[${elementToRemove.getTitle()}](${elementToRemove.getURL()})`)
                 .setTimestamp()
                 .setFooter(`Requested by ${message.author.username}`)
                 .setColor(`#44C408`)

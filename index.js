@@ -17,22 +17,26 @@ const prefix = config.get(`Bot.prefix`);
 const token = config.get(`Bot.token`);
 const ownerID = config.get(`Users.ownerID`);
 
-const activities_list = [
-    "with Cat!",
-    "Cat's PC melt",
-    "trash music",
-    "Russian spies",
-    "your private convos",
-    "Sege"
-];
+class activity {
+    constructor(text, format) {
+        this.text = text;
+        this.format = format;
+    }
+    getText() {
+        return this.text;
+    }
+    getFormat() {
+        return this.format;
+    }
+}
 
-const activities_list_types = [
-    "PLAYING",
-    "WATCHING",
-    "LISTENING",
-    "LISTENING",
-    "WATCHING",
-    "PLAYING"
+const activities = [
+    new activity("with Cat!", "PLAYING"),
+    new activity("Sege", "PLAYING"),
+    new activity("Cat's PC melt", "WATCHING"),
+    new activity("your private convos", "WATCHING"),
+    new activity("trash music", "LISTENING"),
+    new activity("Russian spies", "LISTENING")
 ];
 
 var dispatcher;
@@ -143,8 +147,8 @@ for (const file of commandFiles) {
 client.once('ready', () => {
     // Randomly select status
     setInterval(() => {
-        const index = Math.floor(Math.random() * (activities_list.length - 1) + 1);
-        client.user.setActivity(activities_list[index], { type: activities_list_types[index] });
+        const index = Math.floor(Math.random() * (activities.length - 1) + 1);
+        client.user.setActivity(activities[index].getText(), { type: activities[index].getFormat() });
     }, 15000);
     console.log("// Bot initialized //");
 });

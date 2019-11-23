@@ -1,8 +1,15 @@
+const config = require(`config`);
+const ownerID = config.get(`Users.ownerID`);
+
 module.exports = {
     name: 'reload',
     description: 'Reloads a command, mostly for testing commands while changing code. Don\'t use if you don\'t know what you\'re doing.',
     guildOnly: true,
     execute(message, args) {
+        if(message.author.id != ownerID) {
+            message.channel.send("Sorry, this command can only be used by the bot owner");
+            return;
+        }
         if (!args.length) return message.channel.send(`You didn't pass any command to reload, ${message.author}!`);
         const commandName = args[0].toLowerCase();
         const command = message.client.commands.get(commandName)

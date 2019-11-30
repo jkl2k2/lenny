@@ -159,33 +159,37 @@ client.on('message', message => {
     // Return if message from bot
     if (message.author.bot) return;
 
-    // message.react('👍').then(() => message.react('👎'));
-
+    // Declare reaction filter
     const filter = (reaction, user) => {
         return ['⭐'].includes(reaction.emoji.name);
     };
 
+    // Find starboard channel by specific ID
     var starChannel = client.channels.get(`554868648964259861`);
 
     function checkContent(msg) {
-        if(!msg.cleanContent) {
+        if (!msg.cleanContent) {
             return "*Message had no text*";
         } else {
             return msg.cleanContent;
         }
     }
 
+    // Check for star reactions for 48 hours
     message.awaitReactions(filter, { max: 1, time: 172800000, errors: ['time'] })
         .then(collected => {
             const reaction = collected.first();
 
+            // If reaction is a star
             if (reaction.emoji.name === '⭐') {
                 console.log(`User ${message.author.username} reacted with a star`);
             }
 
+            // If starboard channel exists
             if (starChannel) {
                 var attachmentsArray = (message.attachments).array();
 
+                // If image attached to message
                 if (attachmentsArray[0]) {
                     let starEmbed = new Discord.RichEmbed()
                         .setTitle(`⭐ Starred Message ⭐`)
@@ -199,6 +203,7 @@ client.on('message', message => {
                     starChannel.send(starEmbed);
                     console.log(`Sent embed with image to starboard`);
                 } else {
+                    // If image NOT attached to image
                     let starEmbed = new Discord.RichEmbed()
                         .setTitle(`⭐ Starred Message ⭐`)
                         .addField(`Author`, message.author.username)

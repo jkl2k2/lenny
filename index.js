@@ -150,13 +150,75 @@ client.once('ready', () => {
         const index = Math.floor(Math.random() * (activities.length - 1) + 1);
         client.user.setActivity(activities[index].getText(), { type: activities[index].getFormat() });
     }, 15000);
+
     console.log("// Bot initialized //");
 });
 
 // On message
 client.on('message', message => {
-    // Return if no prefix or said by bot
-    if (!message.content.startsWith(prefix) || message.author.bot) return;
+    // Return if message from bot
+    if (message.author.bot) return;
+
+    // message.react('👍').then(() => message.react('👎'));
+
+    const filter = (reaction, user) => {
+        return ['⭐'].includes(reaction.emoji.name);
+    };
+
+    var starChannel = client.channels.get(`554868648964259861`);
+
+    function checkContent(msg) {
+        if(!msg.cleanContent) {
+            return "*Message had no text*";
+        } else {
+            return msg.cleanContent;
+        }
+    }
+
+    message.awaitReactions(filter, { max: 1, time: 172800000, errors: ['time'] })
+        .then(collected => {
+            const reaction = collected.first();
+
+            if (reaction.emoji.name === '⭐') {
+                console.log(`User ${message.author.username} reacted with a star`);
+            }
+
+            if (starChannel) {
+                var attachmentsArray = (message.attachments).array();
+
+                if (attachmentsArray[0]) {
+                    let starEmbed = new Discord.RichEmbed()
+                        .setTitle(`⭐ Starred Message ⭐`)
+                        .addField(`Author`, message.author.username)
+                        .addField(`Message`, checkContent(message))
+                        .setThumbnail(message.author.avatarURL)
+                        .setImage(attachmentsArray[0].url)
+                        .setColor(`#FCF403`)
+                        .setTimestamp()
+
+                    starChannel.send(starEmbed);
+                    console.log(`Sent embed with image to starboard`);
+                } else {
+                    let starEmbed = new Discord.RichEmbed()
+                        .setTitle(`⭐ Starred Message ⭐`)
+                        .addField(`Author`, message.author.username)
+                        .addField(`Message`, checkContent(message))
+                        .setThumbnail(message.author.avatarURL)
+                        .setColor(`#FCF403`)
+                        .setTimestamp()
+
+                    starChannel.send(starEmbed);
+                    console.log(`Sent embed WITHOUT image to starboard`);
+                }
+            }
+        })
+        .catch(collected => {
+            // message.channel.send(`No star detected`);
+            console.log(`No star detected on a message after 48 hours or message failed to send`);
+        });
+
+    // Return if no prefix
+    if (!message.content.startsWith(prefix)) return;
 
     // Put args into array
     const args = message.content.slice(prefix.length).split(/ +/);

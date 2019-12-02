@@ -1,5 +1,29 @@
 const index = require(`../index.js`);
+const fs = require('fs');
 const Discord = require(`discord.js`);
+
+function executeSkip(message) {
+	var dispatcher = index.getDispatcher();
+
+	if (dispatcher == undefined || dispatcher.speaking == false) {
+		let skipFailEmbed = new Discord.RichEmbed()
+			.setTitle(` `)
+			.addField(`<:error:643341473772863508> Skip failed`, `There is nothing to skip`)
+			.setColor(`#FF0000`)
+		message.channel.send(skipFailEmbed);
+
+		return;
+	}
+
+	index.endDispatcher();
+
+	let endDispatcherEmbed = new Discord.RichEmbed()
+		.setTitle(` `)
+		.addField(`:fast_forward: Skipped song`, `${message.author.username} skipped the current song`)
+		.setColor(`#44C408`)
+	message.channel.send(endDispatcherEmbed);
+
+}
 
 module.exports = {
 	name: 'skip',
@@ -11,25 +35,37 @@ module.exports = {
 	execute(message, args) {
 		// index.callEndDispatcher(message.channel, message.author.username, "skip");
 
-		var dispatcher = index.getDispatcher();
+		var objectToWrite = {
+			list: []
+		};
 
-		if (dispatcher == undefined || dispatcher.speaking == false) {
-			let skipFailEmbed = new Discord.RichEmbed()
-				.setTitle(` `)
-				.addField(`<:error:643341473772863508> Skip failed`, `There is nothing to skip`)
-				.setColor(`#FF0000`)
-			message.channel.send(skipFailEmbed);
+		fs.readFile('./commands/ligma.json',
+			// callback function that is called when reading file is done
+			function (err, data) {
+				// json data
+				var jsonData = data;
 
-			return;
-		}
+				// parse json
+				var jsonParsed = JSON.parse(jsonData);
 
-		index.endDispatcher();
+				objectToWrite.list = jsonParsed.list
 
-		let endDispatcherEmbed = new Discord.RichEmbed()
-			.setTitle(` `)
-			.addField(`:fast_forward: Skipped song`, `${message.author.username} skipped the current song`)
-			.setColor(`#44C408`)
-		message.channel.send(endDispatcherEmbed);
+				if (objectToWrite.list.indexOf(message.author.id) != -1) {
+					let ligmaEmbed = new Discord.RichEmbed()
+						.setTitle(` `)
+						.addField(`:warning: LIGMA DETECTED :warning:`, `Sorry, ${message.author.username}, but you cannot use the skip command because you have ligma`)
+						.setColor(`#FF0000`)
+					message.channel.send(ligmaEmbed);
 
+					return;
+				} else {
+					executeSkip(message);
+				}
+
+				// console.log(objectToWrite.list);
+
+				// access elements
+				// console.log(jsonParsed.list);
+			});
 	}
 }

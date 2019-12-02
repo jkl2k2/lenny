@@ -113,7 +113,18 @@ module.exports = {
 		}
 
 		async function handleVideoNoPlaylist(method, message, args) {
-			var videoResult = await youtube.getVideo(args.join(" "));
+			var videoResult = await youtube.getVideo(args.join(" ")).catch(err => {
+				console.log(error);
+				let notFoundEmbed = new Discord.RichEmbed()
+					.setTitle(` `)
+					.addField(`<:error:643341473772863508> Video not found`, `Sorry, no video could be found with your input`)
+					.setColor(`#FF0000`)
+				message.channel.send(notFoundEmbed);
+
+				console.log(`Video search fail\nError is: ${err}`);
+				
+				return;
+			});
 
 			// let newVideo = new YTVideo(videoResult.title, videoResult.url, videoResult.liveStatus, message.author);
 			let newVideo = new YTVideo(videoResult, message.author);

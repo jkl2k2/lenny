@@ -36,6 +36,9 @@ class YTVideo {
 	getChannelURL() {
 		return `https://www.youtube.com/channel/${this.video.channelId}`;
 	}
+	getLength() {
+		return `${this.video.minutes}:${this.video.seconds}`;
+	}
 	getVideo() {
 		return this.video;
 	}
@@ -144,7 +147,8 @@ module.exports = {
 				.setColor(`#00c292`)
 				.setTitle(` `)
 				.addField(`**:arrow_up_small: Queued**`, `[${newVideo.getTitle()}](${newVideo.getURL()})`)
-				.addField(`Uploader`, `[${await newVideo.getChannelName()}](${newVideo.getChannelURL()})`)
+				.addField(`Uploader`, `[${await newVideo.getChannelName()}](${newVideo.getChannelURL()})`, true)
+				.addField(`Length`, newVideo.getLength(), true)
 				.setThumbnail(newVideo.getThumbnail())
 				.setTimestamp()
 				.setFooter(`Requested by ${newVideo.getRequesterName()}`)

@@ -48,7 +48,8 @@ async function sendDetails(input, c) {
         .setColor(`#00c292`)
         .setTitle(` `)
         .addField(`:arrow_forward: **Now playing**`, `[${input.getTitle()}](${input.getURL()})`)
-        .addField(`Uploader`, `[${await input.getChannelName()}](${input.getChannelURL()})`)
+        .addField(`Uploader`, `[${await input.getChannelName()}](${input.getChannelURL()})`, true)
+        .addField(`Length`, `${input.getLength()}`, true)
         .setThumbnail(input.getThumbnail())
         .setTimestamp()
         .setFooter(`Requested by ${input.getRequesterName()}`)
@@ -219,7 +220,7 @@ client.on('message', message => {
         })
         .catch(collected => {
             // message.channel.send(`No star detected`);
-            console.log(`No star detected on a message after 48 hours or message failed to send`);
+            // console.log(`No star detected on a message after 48 hours or message failed to send`);
         });
 
     // Return if no prefix

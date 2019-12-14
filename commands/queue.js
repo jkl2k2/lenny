@@ -2,19 +2,86 @@ const index = require(`../index.js`);
 const Discord = require(`discord.js`);
 
 function queueResolver(arr, index) {
-    if (arr[index]) {
-        return `${index + 1}. [${arr[index].getTitle()}](${arr[index].getURL()})`;
-    } else {
-        return " ";
-    }
+	if (arr[index]) {
+		return `${index + 1}. [${arr[index].getTitle()}](${arr[index].getURL()})`;
+	} else {
+		return " ";
+	}
 }
 
 function queueOverflowResolver(arr) {
-    if (arr.length <= 5) {
-        return " ";
-    } else if (arr.length > 5) {
-        return `**Plus ${arr.length - 5} more songs**`;
-    }
+	if (arr.length <= 5) {
+		return " ";
+	} else if (arr.length > 5) {
+		return `**Total of ${arr.length} songs**`;
+	}
+}
+
+async function sendEmbed(page, message) {
+	var queue = index.getQueue();
+
+	let queueEmbed = new Discord.RichEmbed()
+		.setTitle(` `)
+		// .setDescription(`${queueResolver(parsedQueue, 0)}\n\n${queueResolver(parsedQueue, 1)}\n\n${queueResolver(parsedQueue, 2)}\n\n${queueResolver(parsedQueue, 3)}\n\n${queueResolver(parsedQueue, 4)}\n\n${queueOverflowResolver(parsedQueue)}`)
+		.addField(`**:information_source: Current queue - Page ${page + 1}**`, `${queueResolver(queue, 0 + page * 5)}\n\n${queueResolver(queue, 1 + page * 5)}\n\n${queueResolver(queue, 2 + page * 5)}\n\n${queueResolver(queue, 3 + page * 5)}\n\n${queueResolver(queue, 4 + page * 5)}\n\n${queueOverflowResolver(queue)}`)
+		.setColor(`#0083FF`)
+	return await message.channel.send(queueEmbed);
+}
+
+async function reactionHandler(sent, message, page) {
+	var queue = index.getQueue();
+
+	const filter = (reaction, user) => {
+		return ['◀️', '🔘', '▶️'].includes(reaction.emoji.name) && user.id === message.author.id;
+	};
+
+	if (page == 0 && !queue[4]) {
+		// sent.react('🔘');
+	} else if (queueResolver(queue, 4 + page * 5) == " ") {
+		sent.react('◀️')
+			.then(() => (sent.react('🔘'))
+				//.then(() => sent.react('▶️'))
+				.catch(() => console.error('One of the emojis failed to react.')));
+	} else if (page == 0) {
+		sent.react('🔘')
+			.then(() => (sent.react('▶️')));
+	} else if (page > 0) {
+		sent.react('◀️')
+			.then(() => (sent.react('🔘'))
+				.then(() => sent.react('▶️'))
+				.catch(() => console.error('One of the emojis failed to react.')));
+	}
+
+	sent.awaitReactions(filter, { max: 1, time: 60000, errors: ['time'] })
+		.then(async collected => {
+			const reaction = collected.first();
+
+			if (reaction.emoji.name === '◀️') {
+				//message.channel.send('(This would go back a page)');
+				sent.delete();
+				let newEmbed = new Discord.RichEmbed()
+					.setTitle(`(What would be page ${page - 1})`)
+				var newSent = await sendEmbed(page - 1, message);
+				reactionHandler(newSent, message, page - 1);
+			} else if (reaction.emoji.name === "🔘") {
+				//message.channel.send('(This would go to page 1)');
+				sent.delete();
+				let newEmbed = new Discord.RichEmbed()
+					.setTitle(`(What would be page ${0})`)
+				var newSent = await sendEmbed(0, message);
+				reactionHandler(newSent, message, 0);
+			} else if (reaction.emoji.name === "▶️") {
+				//message.channel.send('(This would go to the next page)');
+				sent.delete();
+				let newEmbed = new Discord.RichEmbed()
+					.setTitle(`(What would be page ${page + 1})`)
+				var newSent = await sendEmbed(page + 1, message);
+				reactionHandler(newSent, message, page + 1);
+			}
+		})
+		.catch(collected => {
+			// message.reply('Reaction timeout');
+		});
 }
 
 module.exports = {
@@ -24,9 +91,11 @@ module.exports = {
 	// usage: '[command]',
 	// cooldown: 5,
 	guildOnly: true,
-	execute(message, args) {
+	async execute(message, args) {
 
 		var queue = index.getQueue();
+
+		var page = 0;
 
 		if (queue.length == 0) {
 			let emptyQueueEmbed = new Discord.RichEmbed()
@@ -35,13 +104,8 @@ module.exports = {
 				.setColor(`#0083FF`)
 			message.channel.send(emptyQueueEmbed);
 		} else {
-			let queueEmbed = new Discord.RichEmbed()
-				.setTitle(` `)
-				// .setDescription(`${queueResolver(parsedQueue, 0)}\n\n${queueResolver(parsedQueue, 1)}\n\n${queueResolver(parsedQueue, 2)}\n\n${queueResolver(parsedQueue, 3)}\n\n${queueResolver(parsedQueue, 4)}\n\n${queueOverflowResolver(parsedQueue)}`)
-				.addField(`**:information_source: Current queue**`, `${queueResolver(queue, 0)}\n\n${queueResolver(queue, 1)}\n\n${queueResolver(queue, 2)}\n\n${queueResolver(queue, 3)}\n\n${queueResolver(queue, 4)}\n\n${queueOverflowResolver(queue)}`)
-				.setColor(`#0083FF`)
-			// message.channel.send(`Current queue: ${parsedQueue[0]}\n\nComing up next: ${parsedQueue[1]}`);
-			message.channel.send(queueEmbed);
+			var sent = await sendEmbed(page, message);
+			reactionHandler(sent, message, page);
 		}
 	}
 }

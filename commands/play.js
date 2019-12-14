@@ -37,7 +37,15 @@ class YTVideo {
 		return `https://www.youtube.com/channel/${this.video.channelId}`;
 	}
 	getLength() {
-		return `${this.video.minutes}:${this.video.seconds}`;
+		if(this.video.seconds < 10) {
+			return `${this.video.minutes}:0${this.video.seconds}`;
+		} else {
+			return `${this.video.minutes}:${this.video.seconds}`;
+		}
+	}
+	getPosition() {
+		let queue = index.getQueue();
+		return queue.indexOf(this) + 1;
 	}
 	getVideo() {
 		return this.video;
@@ -149,6 +157,7 @@ module.exports = {
 				.addField(`**:arrow_up_small: Queued**`, `[${newVideo.getTitle()}](${newVideo.getURL()})`)
 				.addField(`Uploader`, `[${await newVideo.getChannelName()}](${newVideo.getChannelURL()})`, true)
 				.addField(`Length`, newVideo.getLength(), true)
+				.addField(`Position`, newVideo.getPosition(), true)
 				.setThumbnail(newVideo.getThumbnail())
 				.setTimestamp()
 				.setFooter(`Requested by ${newVideo.getRequesterName()}`)

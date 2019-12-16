@@ -55,32 +55,37 @@ class YTVideo {
 }
 
 class SCSong {
-	constructor(url, title, requester, thumbnail) {
+	constructor(url, requester, info) {
 		this.url = url;
-		this.title = title;
 		this.requester = requester;
-		this.thumbnail = thumbnail;
+		this.info = info;
 	}
 	getURL() {
-		return this.url;
+		return this.info.url;
 	}
 	getType() {
 		return "soundcloud";
 	}
 	getTitle() {
-		return this.title;
+		return this.info._filename;
 	}
 	getCleanTitle() {
-		return this.title.substring(0, (this.title.length) - 14);
+		return this.info._filename.substring(0, (this.info._filename.length) - 14);
 	}
-	setTitle(title) {
-		this.title = title;
+	getUploader() {
+		return this.info.uploader;
+	}
+	getUploaderUrl() {
+		return this.info.uploader_url;
 	}
 	getRequesterName() {
 		return this.requester.username;
 	}
+	getLength() {
+		return this.info._duration_hms.substring(3, 8)
+	}
 	getThumbnail() {
-		return this.thumbnail;
+		return this.info.thumbnail;
 	}
 	getPosition() {
 		let queue = index.getQueue();
@@ -227,7 +232,7 @@ module.exports = {
 			});
 
 			video.on('end', function () {
-				var newSC = new SCSong(args[0], gInfo._filename, message.author, gInfo.thumbnail);
+				var newSC = new SCSong(args[0], message.author, gInfo);
 
 				queue.push(newSC);
 				index.setQueue(queue);

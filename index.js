@@ -61,6 +61,8 @@ function sendSCDetails(input, c) {
         .setColor(`#00c292`)
         .setTitle(` `)
         .addField(`:arrow_forward: **Now playing**`, `[${input.getCleanTitle()}](${input.getURL()})`)
+        .addField(`Uploader`, `[${input.getUploader()}](${input.getUploaderUrl()})`, true)
+        .addField(`Length`, input.getLength(), true)
         .setThumbnail(input.getThumbnail())
         .setTimestamp()
         .setFooter(`Requested by ${input.getRequesterName()}`)
@@ -75,10 +77,20 @@ async function playMusic(message) {
         console.log("playMusic() called, but queue undefined");
         return;
     }
+
+    const SENTINEL = 15
+    var loopCounter = 0;
+
     if (queue[0] == undefined) {
         console.log("playMusic() called, but queue[0] is undefined");
         setTimeout(function () {
-            playMusic(message);
+            if(loopCounter != SENTINEL) {
+                playMusic(message);
+                loopCounter++;
+            } else {
+                console.log(`SENTINEL reached in playMusic() loop`);
+                return;
+            }
         }, 100);
     }
     if (queue[0].getType() == undefined || queue[0].getType() == false) {
@@ -103,6 +115,8 @@ async function playMusic(message) {
     queue.shift();
 
     message.member.voiceChannel.connection.player.streamingData.pausedTime = 0;
+
+    loopCounter = 0;
 
     dispatcher.on("end", function () {
         if (queue[0]) {

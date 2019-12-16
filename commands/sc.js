@@ -15,6 +15,7 @@ module.exports = {
     // cooldown: 5,
     // guildOnly: true,
     async execute(message, args) {
+        /*
         message.member.voiceChannel.join();
         var connectionArray = client.voiceConnections.array();
 
@@ -51,5 +52,12 @@ module.exports = {
 
         // dispatcher = connectionArray[0].playStream(video);
         // dispatcher = connectionArray[0].playConvertedStream(pcm);
+        */
+
+        let disabledEmbed = new Discord.RichEmbed()
+            .setTitle(` `)
+            .addField(`<:error:643341473772863508> Command disabled`, `Sorry, "sc" is no longer of use and has been disabled`)
+            .setColor(`#FF0000`)
+        message.channel.send(disabledEmbed);
     }
 }

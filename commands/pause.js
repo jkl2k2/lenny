@@ -23,7 +23,7 @@ module.exports = {
 		} else {
 			let pauseFailEmbed = new Discord.RichEmbed()
 				.setTitle(` `)
-				.addField(`<:error:643341473772863508> Pause failed`, `${message.author.username}, the music is already pause`)
+				.addField(`<:error:643341473772863508> Pause failed`, `${message.author.username}, the music is already paused`)
 				.setColor(`#FF0000`)
 			message.channel.send(pauseFailEmbed);
 		}

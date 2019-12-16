@@ -1,5 +1,7 @@
 const index = require(`../index.js`);
 const config = require('config');
+var fs = require('fs');
+const youtubedl = require('youtube-dl');
 const api = config.get(`Bot.api`);
 const Discord = require(`discord.js`);
 const { YouTube } = require('better-youtube-api');
@@ -37,7 +39,7 @@ class YTVideo {
 		return `https://www.youtube.com/channel/${this.video.channelId}`;
 	}
 	getLength() {
-		if(this.video.seconds < 10) {
+		if (this.video.seconds < 10) {
 			return `${this.video.minutes}:0${this.video.seconds}`;
 		} else {
 			return `${this.video.minutes}:${this.video.seconds}`;
@@ -49,6 +51,40 @@ class YTVideo {
 	}
 	getVideo() {
 		return this.video;
+	}
+}
+
+class SCSong {
+	constructor(url, title, requester, thumbnail) {
+		this.url = url;
+		this.title = title;
+		this.requester = requester;
+		this.thumbnail = thumbnail;
+	}
+	getURL() {
+		return this.url;
+	}
+	getType() {
+		return "soundcloud";
+	}
+	getTitle() {
+		return this.title;
+	}
+	getCleanTitle() {
+		return this.title.substring(0, (this.title.length) - 14);
+	}
+	setTitle(title) {
+		this.title = title;
+	}
+	getRequesterName() {
+		return this.requester.username;
+	}
+	getThumbnail() {
+		return this.thumbnail;
+	}
+	getPosition() {
+		let queue = index.getQueue();
+		return queue.indexOf(this) + 1;
 	}
 }
 
@@ -73,8 +109,10 @@ module.exports = {
 		}
 
 		var playlistQueued = false;
+		var soundcloudQueued = false;
 
 		var queue = index.getQueue();
+		var client = index.getClient();
 
 		async function handlePlaylist(method, message, args) {
 			playlistQueued = true;
@@ -133,7 +171,7 @@ module.exports = {
 				message.channel.send(notFoundEmbed);
 
 				console.log(`Video search fail\nError is: ${err}`);
-				
+
 				return;
 			});
 
@@ -165,6 +203,48 @@ module.exports = {
 
 		}
 
+		async function handleSoundCloud() {
+			soundcloudQueued = true;
+
+			const video = youtubedl(args[0]);
+
+			var gInfo;
+
+			let scDownload = new Discord.RichEmbed()
+				.setTitle(` `)
+				.addField(`:arrows_counterclockwise: Downloading SoundCloud song`, `[Download in progress...](${args[0]})`)
+				.setColor(`#0083FF`)
+			var sent = await message.channel.send(scDownload);
+
+			video.on('info', function (info) {
+				console.log('Download started');
+				console.log('filename: ' + info._filename);
+				console.log('size: ' + info.size);
+				gInfo = info;
+
+				video.pipe(fs.createWriteStream(`./soundcloud/${gInfo._filename}`));
+
+			});
+
+			video.on('end', function () {
+				var newSC = new SCSong(args[0], gInfo._filename, message.author, gInfo.thumbnail);
+
+				queue.push(newSC);
+				index.setQueue(queue);
+
+				client.emit("SC ready");
+
+				let scDownloadComplete = new Discord.RichEmbed()
+					.setColor(`#00c292`)
+					.setTitle(` `)
+					.addField(`**:arrow_up_small: Queued**`, `[${newSC.getCleanTitle()}](${newSC.getURL()})`)
+					.addField(`Position`, newSC.getPosition())
+					.setThumbnail(newSC.getThumbnail());
+				sent.edit(scDownloadComplete);
+			});
+
+		}
+
 		if (args[0] == undefined) {
 			let undefArgsEmbed = new Discord.RichEmbed()
 				.setTitle(`:eyes: ${message.author.username}, please include at least one search term or URL`)
@@ -176,6 +256,8 @@ module.exports = {
 
 		if (args[0].includes("playlist?list=")) {
 			handlePlaylist("play", message, args);
+		} else if (args[0].includes("soundcloud")) {
+			handleSoundCloud();
 		} else {
 			handleVideoNoPlaylist("play", message, args);
 		}
@@ -184,10 +266,16 @@ module.exports = {
 			message.member.voiceChannel.join()
 				.then(connection => {
 					if (!connection.speaking) {
-						if(playlistQueued == false) {
+						if (playlistQueued == false && soundcloudQueued == false) {
 							setTimeout(function () {
 								index.callPlayMusic(message);
 							}, 500);
+						} else if (soundcloudQueued = true) {
+							client.on("SC ready", function () {
+								if (!connection.speaking) {
+									index.callPlayMusic(message);
+								}
+							});
 						} else {
 							setTimeout(function () {
 								index.callPlayMusic(message);

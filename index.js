@@ -56,6 +56,17 @@ async function sendDetails(input, c) {
     c.send(musicEmbed);
 }
 
+function sendSCDetails(input, c) {
+    var scMusicEmbed = new Discord.RichEmbed()
+        .setColor(`#00c292`)
+        .setTitle(` `)
+        .addField(`:arrow_forward: **Now playing**`, `[${input.getCleanTitle()}](${input.getURL()})`)
+        .setThumbnail(input.getThumbnail())
+        .setTimestamp()
+        .setFooter(`Requested by ${input.getRequesterName()}`)
+    c.send(scMusicEmbed);
+}
+
 async function playMusic(message) {
     // console.log(message);
     // console.log(lastMusicMessage);
@@ -75,17 +86,20 @@ async function playMusic(message) {
         const pcm = input.pipe(new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 }));
         var connectionArray = client.voiceConnections.array();
         dispatcher = connectionArray[0].playConvertedStream(pcm);
-
+        sendDetails(queue[0], message.channel);
     } else if (queue[0].getType() == "live") {
         let input = await ytdl(queue[0].getURL(), { quality: 93 });
         const pcm = input.pipe(new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 }));
         var connectionArray = client.voiceConnections.array();
         dispatcher = connectionArray[0].playConvertedStream(pcm);
+        sendDetails(queue[0], message.channel);
+    } else if (queue[0].getType() == "soundcloud") {
+        var connectionArray = client.voiceConnections.array();
+        dispatcher = connectionArray[0].playStream(fs.createReadStream(`./soundcloud/${queue[0].getTitle()}`));
+        sendSCDetails(queue[0], message.channel);
     } else {
         message.channel.send("Error assigning dispatcher");
     }
-
-    sendDetails(queue[0], message.channel);
     queue.shift();
 
     message.member.voiceChannel.connection.player.streamingData.pausedTime = 0;

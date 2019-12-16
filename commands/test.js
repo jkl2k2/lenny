@@ -8,21 +8,6 @@ module.exports = {
     usage: '[command]',
     // cooldown: 5,
     async execute(message, args) {
-        /*
-        index.queue = ["hi", "bye", "test!"];
-        message.channel.send(index.queue);
-
-        index.dispatcher = "asdf";
-        message.channel.send(index.dispatcher);
-        */
-
-        // message.channel.send("Index.js queue is:");
-        // index.callQueueRead(index.constructVideo("title", "url", "type", "requester"));
-
-        // index.sendDetails(undefined, message.channel);
-
-        // index.endDispatcher(message.channel, "author", "skip");
-
         message.channel.send("Test message!");
     }
 }

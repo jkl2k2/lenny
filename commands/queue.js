@@ -3,11 +3,7 @@ const Discord = require(`discord.js`);
 
 function queueResolver(arr, index) {
 	if (arr[index]) {
-		if(arr[0].getType() != "soundcloud") {
-			return `${index + 1}. [${arr[index].getTitle()}](${arr[index].getURL()})`;
-		} else {
-			return `${index + 1}. [${arr[index].getCleanTitle()}](${arr[index].getURL()})`;
-		}
+		return `${index + 1}. [${arr[index].getCleanTitle()}](${arr[index].getURL()})`;
 	} else {
 		return " ";
 	}

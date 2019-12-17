@@ -83,8 +83,8 @@ async function playMusic(message) {
     if (queue[0] == undefined) {
         console.log("playMusic() called, but queue[0] is undefined");
         setTimeout(function () {
-            if(count < 4)
-            playMusic(message);
+            if (count < 4)
+                playMusic(message);
             count++;
         }, 250);
     }

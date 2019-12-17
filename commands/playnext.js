@@ -4,6 +4,8 @@ const api = config.get(`Bot.api`);
 const Discord = require(`discord.js`);
 const { YouTube } = require('better-youtube-api');
 const youtube = new YouTube(api);
+const youtubedl = require('youtube-dl');
+const fs = require('fs');
 
 class YTVideo {
 	constructor(video, requester) {
@@ -11,6 +13,9 @@ class YTVideo {
 		this.requester = requester;
 	}
 	getTitle() {
+		return this.video.title;
+	}
+	getCleanTitle() {
 		return this.video.title;
 	}
 	getURL() {
@@ -36,8 +41,58 @@ class YTVideo {
 	getChannelURL() {
 		return `https://www.youtube.com/channel/${this.video.channelId}`;
 	}
+	getLength() {
+		if (this.video.seconds < 10) {
+			return `${this.video.minutes}:0${this.video.seconds}`;
+		} else {
+			return `${this.video.minutes}:${this.video.seconds}`;
+		}
+	}
+	getPosition() {
+		let queue = index.getQueue();
+		return queue.indexOf(this) + 1;
+	}
 	getVideo() {
 		return this.video;
+	}
+}
+
+class SCSong {
+	constructor(url, requester, info) {
+		this.url = url;
+		this.requester = requester;
+		this.info = info;
+	}
+	getURL() {
+		return this.info.url;
+	}
+	getType() {
+		return "soundcloud";
+	}
+	getTitle() {
+		return this.info._filename;
+	}
+	getCleanTitle() {
+		return this.info._filename.substring(0, (this.info._filename.length) - 14);
+	}
+	getUploader() {
+		return this.info.uploader;
+	}
+	getUploaderUrl() {
+		return this.info.uploader_url;
+	}
+	getRequesterName() {
+		return this.requester.username;
+	}
+	getLength() {
+		return this.info._duration_hms.substring(3, 8)
+	}
+	getThumbnail() {
+		return this.info.thumbnail;
+	}
+	getPosition() {
+		let queue = index.getQueue();
+		return queue.indexOf(this) + 1;
 	}
 }
 
@@ -62,6 +117,9 @@ module.exports = {
 		}
 
 		var queue = index.getQueue();
+		var client = index.getClient();
+
+		var soundcloudQueued = false;
 
 		async function handlePlaylist(method, message, args) {
 			var playlistInfo = await youtube.getPlaylist(args[0]);
@@ -134,6 +192,48 @@ module.exports = {
 
 		}
 
+		async function handleSoundCloud() {
+			soundcloudQueued = true;
+
+			const video = youtubedl(args[0]);
+
+			var gInfo;
+
+			let scDownload = new Discord.RichEmbed()
+				.setTitle(` `)
+				.addField(`:arrows_counterclockwise: Downloading SoundCloud song`, `[Download in progress...](${args[0]})`)
+				.setColor(`#0083FF`)
+			var sent = await message.channel.send(scDownload);
+
+			video.on('info', function (info) {
+				console.log('Download started');
+				console.log('filename: ' + info._filename);
+				console.log('size: ' + info.size);
+				gInfo = info;
+
+				video.pipe(fs.createWriteStream(`./soundcloud/${gInfo._filename}`));
+
+			});
+
+			video.on('end', function () {
+				var newSC = new SCSong(args[0], message.author, gInfo);
+
+				queue.unshift(newSC);
+				index.setQueue(queue);
+
+				client.emit("SC ready");
+
+				let scDownloadComplete = new Discord.RichEmbed()
+					.setColor(`#00c292`)
+					.setTitle(` `)
+					.addField(`**:arrow_up_small: Queued**`, `[${newSC.getCleanTitle()}](${newSC.getURL()})`)
+					.addField(`Position`, newSC.getPosition())
+					.setThumbnail(newSC.getThumbnail());
+				sent.edit(scDownloadComplete);
+			});
+
+		}
+
 		if (args[0] == undefined) {
 			let undefArgsEmbed = new Discord.RichEmbed()
 				.setTitle(`:eyes: ${message.author.username}, please include at least one search term or URL`)
@@ -145,6 +245,8 @@ module.exports = {
 
 		if (args[0].includes("playlist?list=")) {
 			handlePlaylist("playnext", message, args);
+		} else if(args[0].includes("soundcloud")) {
+			handleSoundCloud(message);
 		} else {
 			handleVideoNoPlaylist("playnext", message, args);
 		}
@@ -153,10 +255,12 @@ module.exports = {
 			message.member.voiceChannel.join()
 				.then(connection => {
 					if (!connection.speaking) {
-						if(playlistQueued == false) {
+						if (playlistQueued == false && soundcloudQueued == false) {
 							setTimeout(function () {
 								index.callPlayMusic(message);
 							}, 250);
+						} else if(soundcloudQueued == true) {
+
 						} else {
 							setTimeout(function () {
 								index.callPlayMusic(message);

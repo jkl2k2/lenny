@@ -78,39 +78,39 @@ async function playMusic(message) {
         return;
     }
 
-    const SENTINEL = 15
-    var loopCounter = 0;
+    var count = 0;
 
     if (queue[0] == undefined) {
         console.log("playMusic() called, but queue[0] is undefined");
         setTimeout(function () {
-            if(loopCounter != SENTINEL) {
-                playMusic(message);
-                loopCounter++;
-            } else {
-                console.log(`SENTINEL reached in playMusic() loop`);
-                return;
-            }
-        }, 100);
+            if(count < 4)
+            playMusic(message);
+            count++;
+        }, 250);
     }
+
     if (queue[0].getType() == undefined || queue[0].getType() == false) {
         let input = await ytdl(queue[0].getURL());
         const pcm = input.pipe(new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 }));
         var connectionArray = client.voiceConnections.array();
         dispatcher = connectionArray[0].playConvertedStream(pcm);
         sendDetails(queue[0], message.channel);
+        count = 0;
     } else if (queue[0].getType() == "live") {
         let input = await ytdl(queue[0].getURL(), { quality: 93 });
         const pcm = input.pipe(new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 }));
         var connectionArray = client.voiceConnections.array();
         dispatcher = connectionArray[0].playConvertedStream(pcm);
         sendDetails(queue[0], message.channel);
+        count = 0;
     } else if (queue[0].getType() == "soundcloud") {
         var connectionArray = client.voiceConnections.array();
         dispatcher = connectionArray[0].playStream(fs.createReadStream(`./soundcloud/${queue[0].getTitle()}`));
         sendSCDetails(queue[0], message.channel);
+        count = 0;
     } else {
         message.channel.send("Error assigning dispatcher");
+        count = 0;
     }
     queue.shift();
 

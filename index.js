@@ -82,11 +82,15 @@ async function playMusic(message) {
 
     if (queue[0] == undefined) {
         console.log("playMusic() called, but queue[0] is undefined");
-        setTimeout(function () {
-            if (count < 4)
+        
+        var retry = setTimeout(function () {
+            if (count < 4) {
                 playMusic(message);
-            count++;
-        }, 250);
+                count++;
+            } else {
+                clearTimeout(retry);
+            }
+        }, 500);
     }
 
     if (queue[0].getType() == undefined || queue[0].getType() == false) {
@@ -112,13 +116,29 @@ async function playMusic(message) {
         message.channel.send("Error assigning dispatcher");
         count = 0;
     }
-    queue.shift();
+
+    var lastPlayed = queue.shift();
+    if (lastPlayed.getType() == "soundcloud") {
+        var path = `./soundcloud/${lastPlayed.getTitle()}`;
+    } else {
+        var path = " ";
+    }
 
     message.member.voiceChannel.connection.player.streamingData.pausedTime = 0;
 
     loopCounter = 0;
 
     dispatcher.on("end", function () {
+        if (path != " ") {
+            fs.unlink(path, (err) => {
+                if (err) {
+                    console.error(`FAILED to delete file at path ${path}`);
+                    console.error(err);
+                    return;
+                }
+                console.log(`Removed file at path ${path}`);
+            });
+        }
         if (queue[0]) {
             playMusic(message);
         }

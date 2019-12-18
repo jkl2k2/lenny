@@ -30,7 +30,7 @@
     "prism-media": "^1.1.0",
     "soundcloud-v2-api": "0.0.6",
     "youtube-dl": "^2.2.0",
-    "ytdl-core": "^1.0.0",
+    "ytdl-core": "^1.0.3",
     "ytdl-core-discord": "^1.0.3"
   }
 }

@@ -15,6 +15,9 @@ class YTVideo {
 	getTitle() {
 		return this.video.title;
 	}
+	getCleanTitle()  {
+		return this.video.title;
+	}
 	getURL() {
 		return this.video.url;
 	}

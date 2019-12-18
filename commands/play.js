@@ -245,7 +245,7 @@ module.exports = {
 					.addField(`**:arrow_up_small: Queued**`, `[${newSC.getCleanTitle()}](${newSC.getURL()})`)
 					.addField(`Uploader`, `[${newSC.getUploader()}](${newSC.getUploaderUrl()})`, true)
 					.addField(`Length`, newSC.getLength(), true)
-					.addField(`Position`, newSC.getPosition())
+					.addField(`Position`, newSC.getPosition(), true)
 					.setThumbnail(newSC.getThumbnail());
 				sent.edit(scDownloadComplete);
 			});

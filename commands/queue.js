@@ -81,6 +81,7 @@ async function reactionHandler(sent, message, page) {
 		})
 		.catch(collected => {
 			// message.reply('Reaction timeout');
+			sent.clearReactions();
 		});
 }
 

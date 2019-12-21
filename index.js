@@ -40,7 +40,7 @@ const activities = [
 ];
 
 var dispatcher;
-
+var lastDetails;
 // var lastMusicMessage;
 
 async function sendDetails(input, c) {
@@ -54,6 +54,7 @@ async function sendDetails(input, c) {
         .setTimestamp()
         .setFooter(`Requested by ${input.getRequesterName()}`)
     c.send(musicEmbed);
+    lastDetails = musicEmbed;
 }
 
 function sendSCDetails(input, c) {
@@ -67,6 +68,7 @@ function sendSCDetails(input, c) {
         .setTimestamp()
         .setFooter(`Requested by ${input.getRequesterName()}`)
     c.send(scMusicEmbed);
+    lastDetails = scMusicEmbed;
 }
 
 async function playMusic(message) {
@@ -166,6 +168,16 @@ module.exports = {
     },
     getClient: function () {
         return client;
+    },
+    getPlaying: function() {
+        if(dispatcher && dispatcher.speaking) {
+            return lastDetails;
+        } else {
+            return new Discord.RichEmbed()
+                .setTitle(` `)
+                .addField(`:information_source: Nothing is playing`, `Nothing is currently playing`)
+                .setColor(`#0083FF`)
+        }
     },
     setQueue: function (newQueue) {
         queue = newQueue;

@@ -27,6 +27,7 @@
     "discord.js": "^11.5.1",
     "ffmpeg-static": "^2.7.0",
     "node-opus": "^0.3.3",
+    "parse-time": "^0.1.4",
     "prism-media": "^1.1.0",
     "soundcloud-v2-api": "0.0.6",
     "youtube-dl": "^2.2.0",

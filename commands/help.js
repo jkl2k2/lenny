@@ -1,5 +1,7 @@
 const config = require('config');
+const index = require(`../index.js`);
 const prefix = config.get(`Bot.prefix`);
+const Discord = require(`discord.js`);
 
 module.exports = {
     name: 'help',
@@ -11,12 +13,30 @@ module.exports = {
     execute(message, args) {
         const data = [];
         const { commands } = message.client;
+        var client = index.getClient;
 
         if (!args.length) {
-            data.push('Here\'s a list of all my commands:');
-            data.push(commands.map(command => command.name).join(', '));
-            data.push(`\nYou can send \`${prefix}help [command name]\` to get info on a specific command!`);
+            var generalHelp = new Discord.RichEmbed();
+            generalHelp.setTitle(` `);
 
+            // data.push('Here\'s a list of all my commands:');
+            // data.push(commands.map(command => command.name).join(', '));
+            generalHelp.addField(`**All commands**`, commands.map(command => command.name).join(', '));
+
+            // data.push(`\nYou can send \`${prefix}help [command name]\` to get info on a specific command!`);
+            generalHelp.setAuthor(`Use ${prefix}help [command name] to get info on a specific command`, `https://cdn.discordapp.com/app-icons/641137495886528513/35676b341ed8ba268e5fff9dcc5c570e.png?size=256`);
+
+            return message.author.send(generalHelp)
+                .then(() => {
+                    if (message.channel.type === 'dm') return;
+                    message.reply('I\'ve sent you a DM with all my commands!');
+                })
+                .catch(error => {
+                    console.error(`Could not send help DM to ${message.author.tag}.\n`, error);
+                    message.reply('it seems like I can\'t DM you! Do you have DMs disabled?');
+                });
+
+            /*
             return message.author.send(data, { split: true })
                 .then(() => {
                     if (message.channel.type === 'dm') return;
@@ -26,6 +46,7 @@ module.exports = {
                     console.error(`Could not send help DM to ${message.author.tag}.\n`, error);
                     message.reply('it seems like I can\'t DM you! Do you have DMs disabled?');
                 });
+            */
         }
 
         const name = args[0].toLowerCase();
@@ -35,14 +56,25 @@ module.exports = {
             return message.reply('that\'s not a valid command!');
         }
 
-        data.push(`**Name:** ${command.name}`);
+        var commandHelp = new Discord.RichEmbed();
+        commandHelp.setTitle(` `);
 
-        if (command.aliases) data.push(`**Aliases:** ${command.aliases.join(', ')}`);
-        if (command.description) data.push(`**Description:** ${command.description}`);
-        if (command.usage) data.push(`**Usage:** ${prefix}${command.name} ${command.usage}`);
+        // data.push(`**Name:** ${command.name}`);
+        commandHelp.setAuthor(command.name, `https://cdn.discordapp.com/app-icons/641137495886528513/35676b341ed8ba268e5fff9dcc5c570e.png?size=256`);
 
-        data.push(`**Cooldown:** ${command.cooldown || 3} second(s)`);
+        // if (command.aliases) data.push(`**Aliases:** ${command.aliases.join(', ')}`);
+        if (command.aliases) commandHelp.addField(`**Aliases**`, command.aliases.join(', '));
 
-        message.channel.send(data, { split: true });
+        // if (command.description) data.push(`**Description:** ${command.description}`);
+        if (command.description) commandHelp.addField(`**Description**`, command.description);
+
+        // if (command.usage) data.push(`**Usage:** ${prefix}${command.name} ${command.usage}`);
+        if (command.usage) commandHelp.addField(`**Usage**`, `${prefix}${command.name} ${command.usage}`);
+
+        // data.push(`**Cooldown:** ${command.cooldown || 3} second(s)`);
+        commandHelp.addField(`**Cooldown**`, `${command.cooldown || 3} second(s)`);
+
+        // message.channel.send(data, { split: true });
+        message.channel.send(commandHelp);
     },
 };

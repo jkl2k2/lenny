@@ -4,7 +4,7 @@ const ownerID = config.get(`Users.ownerID`);
 module.exports = {
     name: 'reload',
     description: 'Reloads a command, mostly for testing commands while changing code. Don\'t use if you don\'t know what you\'re doing.',
-    guildOnly: true,
+    // guildOnly: true,
     execute(message, args) {
         if(message.author.id != ownerID) {
             message.channel.send("Sorry, this command can only be used by the bot owner");

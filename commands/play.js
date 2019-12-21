@@ -171,7 +171,7 @@ module.exports = {
 
 		async function handleVideoNoPlaylist(method, message, args) {
 			var videoResult = await youtube.getVideo(args.join(" ")).catch(err => {
-				console.log(error);
+				console.log(err);
 				let notFoundEmbed = new Discord.RichEmbed()
 					.setTitle(` `)
 					.addField(`<:error:643341473772863508> Video not found`, `Sorry, no video could be found with your input`)

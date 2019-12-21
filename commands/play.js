@@ -104,7 +104,6 @@ module.exports = {
 	cooldown: 3,
 	guildOnly: true,
 	execute(message, args) {
-		args.unshift();
 
 		if (!message.member.voiceChannel) {
 			let vcFailEmbed = new Discord.RichEmbed()
@@ -210,7 +209,6 @@ module.exports = {
 				.setTimestamp()
 				.setFooter(`Requested by ${newVideo.getRequesterName()}`)
 			message.channel.send(playEmbed);
-
 		}
 
 		async function handleSoundCloud() {
@@ -259,7 +257,8 @@ module.exports = {
 
 		if (args[0] == undefined) {
 			let undefArgsEmbed = new Discord.RichEmbed()
-				.setTitle(`:eyes: ${message.author.username}, please include at least one search term or URL`)
+				.setTitle(` `)
+				.setAuthor(`⛔ Please include at least one search term or URL`)
 				.setColor(`#FF0000`)
 			message.channel.send(undefArgsEmbed);
 

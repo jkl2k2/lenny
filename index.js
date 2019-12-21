@@ -2,7 +2,7 @@
 const fs = require('fs');
 const Discord = require('discord.js');
 const config = require('config');
-const ytdl = require("ytdl-core");
+const ytdl = require("ytdl-core-discord");
 const prism = require('prism-media');
 
 // Initialize client
@@ -94,22 +94,25 @@ async function playMusic(message) {
     }
 
     if (queue[0].getType() == undefined || queue[0].getType() == false) {
-        let input = ytdl(queue[0].getURL());
-        // const pcm = input.pipe(new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 }));
+        // console.log("Requested video is normal, not a livestream");
+        let input = await ytdl(queue[0].getURL(), { quality: "highestaudio" });
+        const pcm = input.pipe(new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 }));
         var connectionArray = client.voiceConnections.array();
-        // dispatcher = connectionArray[0].playConvertedStream(pcm);
-        dispatcher = connectionArray[0].playStream(input);
+        dispatcher = connectionArray[0].playConvertedStream(pcm);
+        // dispatcher = connectionArray[0].playStream(input);
         sendDetails(queue[0], message.channel);
         count = 0;
     } else if (queue[0].getType() == "live") {
-        let input = ytdl(queue[0].getURL(), { quality: 93 });
-        // const pcm = input.pipe(new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 }));
+        // console.log("Requested video is a livestream");
+        let input = await ytdl(queue[0].getURL(), { quality: 93 });
+        const pcm = input.pipe(new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 }));
         var connectionArray = client.voiceConnections.array();
-        // dispatcher = connectionArray[0].playConvertedStream(pcm);
-        dispatcher = connectionArray[0].playStream(input);
+        dispatcher = connectionArray[0].playConvertedStream(pcm);
+        // dispatcher = connectionArray[0].playStream(input);
         sendDetails(queue[0], message.channel);
         count = 0;
     } else if (queue[0].getType() == "soundcloud") {
+        console.log("Requested SoundCloud song");
         var connectionArray = client.voiceConnections.array();
         dispatcher = connectionArray[0].playStream(fs.createReadStream(`./soundcloud/${queue[0].getTitle()}`));
         sendSCDetails(queue[0], message.channel);

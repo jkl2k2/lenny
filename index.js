@@ -17,7 +17,7 @@ const prefix = config.get(`Bot.prefix`);
 const token = config.get(`Bot.token`);
 const ownerID = config.get(`Users.ownerID`);
 
-class activity {
+class Activity {
     constructor(text, format) {
         this.text = text;
         this.format = format;
@@ -31,12 +31,12 @@ class activity {
 }
 
 const activities = [
-    new activity("with Cat!", "PLAYING"),
-    new activity("Sege", "PLAYING"),
-    new activity("Cat's PC melt", "WATCHING"),
-    new activity("your private convos", "WATCHING"),
-    new activity("trash music", "LISTENING"),
-    new activity("Russian spies", "LISTENING")
+    new Activity("with Cat!", "PLAYING"),
+    new Activity("Sege", "PLAYING"),
+    new Activity("Cat's PC melt", "WATCHING"),
+    new Activity("your private convos", "WATCHING"),
+    new Activity("trash music", "LISTENING"),
+    new Activity("Russian spies", "LISTENING")
 ];
 
 var dispatcher;
@@ -45,9 +45,11 @@ var lastDetails;
 
 async function sendDetails(input, c) {
     var musicEmbed = new Discord.RichEmbed()
-        .setColor(`#00c292`)
+        // .setColor(`#00c292`)
         .setTitle(` `)
-        .addField(`:arrow_forward: **Now playing**`, `[${input.getTitle()}](${input.getURL()})`)
+        .setAuthor(`▶️ Now playing`)
+        // .addField(`:arrow_forward: **Now playing**`, `[${input.getTitle()}](${input.getURL()})`)
+        .setDescription(`[${input.getTitle()}](${input.getURL()})`)
         .addField(`Uploader`, `[${await input.getChannelName()}](${input.getChannelURL()})`, true)
         .addField(`Length`, `${input.getLength()}`, true)
         .setThumbnail(input.getThumbnail())

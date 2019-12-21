@@ -41,7 +41,7 @@ const activities = [
 
 var dispatcher;
 
-var lastMusicMessage;
+// var lastMusicMessage;
 
 async function sendDetails(input, c) {
     var musicEmbed = new Discord.RichEmbed()

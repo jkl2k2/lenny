@@ -86,7 +86,7 @@ async function playMusic(message) {
 
     if (queue[0] == undefined) {
         console.log("playMusic() called, but queue[0] is undefined");
-        
+
         var retry = setTimeout(function () {
             if (count < 4) {
                 playMusic(message);
@@ -171,8 +171,8 @@ module.exports = {
     getClient: function () {
         return client;
     },
-    getPlaying: function() {
-        if(dispatcher && dispatcher.speaking) {
+    getPlaying: function () {
+        if (dispatcher && dispatcher.speaking) {
             return lastDetails;
         } else {
             return new Discord.RichEmbed()

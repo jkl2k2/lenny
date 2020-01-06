@@ -30,7 +30,7 @@ module.exports = {
         }
 
         if(splitArgs.length == 2) {
-			console.log(`splitArgs is exactly 2 entries long`);
+			// console.log(`splitArgs is exactly 2 entries long`);
 			
 			var index1 = parseInt(splitArgs[0]) - 1;
 			var index2 = parseInt(splitArgs[1]) - 1;

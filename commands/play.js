@@ -258,7 +258,7 @@ module.exports = {
 		if (args[0] == undefined) {
 			let undefArgsEmbed = new Discord.RichEmbed()
 				.setTitle(` `)
-				.setAuthor(`⛔ Please include at least one search term or URL`)
+				.setDescription(`:no_entry: Please include at least one search term or URL`)
 				.setColor(`#FF0000`)
 			message.channel.send(undefArgsEmbed);
 

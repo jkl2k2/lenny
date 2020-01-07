@@ -44,17 +44,31 @@ var lastDetails;
 // var lastMusicMessage;
 
 async function sendDetails(input, c) {
-    var musicEmbed = new Discord.RichEmbed()
-        // .setColor(`#00c292`)
-        .setTitle(` `)
-        .setAuthor(`▶️ Now playing`)
-        // .addField(`:arrow_forward: **Now playing**`, `[${input.getTitle()}](${input.getURL()})`)
-        .setDescription(`[${input.getTitle()}](${input.getURL()})`)
-        .addField(`Uploader`, `[${await input.getChannelName()}](${input.getChannelURL()})`, true)
-        .addField(`Length`, `${input.getLength()}`, true)
-        .setThumbnail(input.getThumbnail())
-        .setTimestamp()
-        .setFooter(`Requested by ${input.getRequesterName()}`)
+    if (input.getLength() == `unknown`) {
+        var musicEmbed = new Discord.RichEmbed()
+            // .setColor(`#00c292`)
+            .setTitle(` `)
+            .setAuthor(`▶️ Now playing`)
+            // .addField(`:arrow_forward: **Now playing**`, `[${input.getTitle()}](${input.getURL()})`)
+            .setDescription(`[${input.getTitle()}](${input.getURL()})`)
+            .addField(`Uploader`, `[${await input.getChannelName()}](${input.getChannelURL()})`, true)
+            // .addField(`Length`, `${input.getLength()}`, true)
+            .setThumbnail(input.getThumbnail())
+            .setTimestamp()
+            .setFooter(`Requested by ${input.getRequesterName()}`)
+    } else {
+        var musicEmbed = new Discord.RichEmbed()
+            // .setColor(`#00c292`)
+            .setTitle(` `)
+            .setAuthor(`▶️ Now playing`)
+            // .addField(`:arrow_forward: **Now playing**`, `[${input.getTitle()}](${input.getURL()})`)
+            .setDescription(`[${input.getTitle()}](${input.getURL()})`)
+            .addField(`Uploader`, `[${await input.getChannelName()}](${input.getChannelURL()})`, true)
+            .addField(`Length`, `${input.getLength()}`, true)
+            .setThumbnail(input.getThumbnail())
+            .setTimestamp()
+            .setFooter(`Requested by ${input.getRequesterName()}`)
+    }
     c.send(musicEmbed);
     lastDetails = musicEmbed;
 }

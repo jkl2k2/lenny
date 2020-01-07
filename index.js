@@ -113,7 +113,10 @@ async function playMusic(message) {
 
     if (queue[0].getType() == undefined || queue[0].getType() == false) {
         // console.log("Requested video is normal, not a livestream");
-        let input = await ytdl(queue[0].getURL(), { quality: "highestaudio" });
+        let input = await ytdl(queue[0].getURL(), { quality: "highestaudio" }).catch(err => {
+            console.error(err);
+            message.channel.send("Encountered an error attempting to download from YouTube. Probably copyrighted.");
+        });
         const pcm = input.pipe(new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 }));
         var connectionArray = client.voiceConnections.array();
         dispatcher = connectionArray[0].playConvertedStream(pcm);
@@ -122,7 +125,10 @@ async function playMusic(message) {
         count = 0;
     } else if (queue[0].getType() == "live") {
         // console.log("Requested video is a livestream");
-        let input = await ytdl(queue[0].getURL(), { quality: 93 });
+        let input = await ytdl(queue[0].getURL(), { quality: 93 }).catch(err => {
+            console.error(err);
+            message.channel.send("Encountered an error attempting to download from YouTube. Probably copyrighted.");
+        });
         const pcm = input.pipe(new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 }));
         var connectionArray = client.voiceConnections.array();
         dispatcher = connectionArray[0].playConvertedStream(pcm);

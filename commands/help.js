@@ -21,7 +21,7 @@ module.exports = {
 
             // data.push('Here\'s a list of all my commands:');
             // data.push(commands.map(command => command.name).join(', '));
-            generalHelp.addField(`**All commands**`, commands.map(command => command.name).join(', '));
+            generalHelp.addField(`**All commands**`, `*${commands.map(command => command.name).join(`\n`)}*`);
 
             // data.push(`\nYou can send \`${prefix}help [command name]\` to get info on a specific command!`);
             generalHelp.setAuthor(`Use ${prefix}help [command name] to get info on a specific command`, `https://cdn.discordapp.com/app-icons/641137495886528513/35676b341ed8ba268e5fff9dcc5c570e.png?size=256`);

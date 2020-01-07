@@ -42,6 +42,10 @@ class YTVideo {
 		return `https://www.youtube.com/channel/${this.video.channelId}`;
 	}
 	getLength() {
+		if(!this.video.seconds) {
+			return `unknown`;
+		}
+
 		if (this.video.seconds < 10) {
 			return `${this.video.minutes}:0${this.video.seconds}`;
 		} else {

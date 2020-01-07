@@ -23,7 +23,8 @@ async function sendEmbed(page, message) {
 	let queueEmbed = new Discord.RichEmbed()
 		.setTitle(` `)
 		// .setDescription(`${queueResolver(parsedQueue, 0)}\n\n${queueResolver(parsedQueue, 1)}\n\n${queueResolver(parsedQueue, 2)}\n\n${queueResolver(parsedQueue, 3)}\n\n${queueResolver(parsedQueue, 4)}\n\n${queueOverflowResolver(parsedQueue)}`)
-		.addField(`**:information_source: Current queue - Page ${page + 1}**`, `${queueResolver(queue, 0 + page * 5)}\n\n${queueResolver(queue, 1 + page * 5)}\n\n${queueResolver(queue, 2 + page * 5)}\n\n${queueResolver(queue, 3 + page * 5)}\n\n${queueResolver(queue, 4 + page * 5)}\n\n${queueOverflowResolver(queue)}`)
+		.setDescription(`${queueResolver(queue, 0 + page * 5)}\n\n${queueResolver(queue, 1 + page * 5)}\n\n${queueResolver(queue, 2 + page * 5)}\n\n${queueResolver(queue, 3 + page * 5)}\n\n${queueResolver(queue, 4 + page * 5)}\n\n${queueOverflowResolver(queue)}`)
+		.setAuthor(`Current queue - Page ${page + 1}`)
 		.setColor(`#0083FF`)
 	return await message.channel.send(queueEmbed);
 }
@@ -52,7 +53,7 @@ async function reactionHandler(sent, message, page) {
 				.catch(() => console.error('One of the emojis failed to react.')));
 	}
 
-	sent.awaitReactions(filter, { max: 1, time: 60000, errors: ['time'] })
+	sent.awaitReactions(filter, { max: 1, time: 30000, errors: ['time'] })
 		.then(async collected => {
 			const reaction = collected.first();
 
@@ -81,6 +82,14 @@ async function reactionHandler(sent, message, page) {
 		})
 		.catch(collected => {
 			// message.reply('Reaction timeout');
+			let noControlQueue = new Discord.RichEmbed()
+				.setTitle(` `)
+				// .setDescription(`${queueResolver(parsedQueue, 0)}\n\n${queueResolver(parsedQueue, 1)}\n\n${queueResolver(parsedQueue, 2)}\n\n${queueResolver(parsedQueue, 3)}\n\n${queueResolver(parsedQueue, 4)}\n\n${queueOverflowResolver(parsedQueue)}`)
+				.setDescription(`${queueResolver(queue, 0 + page * 5)}\n\n${queueResolver(queue, 1 + page * 5)}\n\n${queueResolver(queue, 2 + page * 5)}\n\n${queueResolver(queue, 3 + page * 5)}\n\n${queueResolver(queue, 4 + page * 5)}\n\n${queueOverflowResolver(queue)}`)
+				.setAuthor(`Current queue - Page ${page + 1}`)
+				.setColor(`#0083FF`)
+				.setFooter(`Controls cleared due to inactivity`)
+			sent.edit(noControlQueue);
 			sent.clearReactions();
 		});
 }

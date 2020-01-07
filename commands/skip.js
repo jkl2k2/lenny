@@ -28,7 +28,7 @@ function executeSkip(message) {
 module.exports = {
 	name: 'skip',
 	description: 'Skips the current song',
-	aliases: ['skip'],
+	aliases: ['s'],
 	// usage: '[command]',
 	// cooldown: 5,
 	guildOnly: true,

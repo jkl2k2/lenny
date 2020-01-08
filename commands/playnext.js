@@ -99,7 +99,7 @@ class SCSong {
 module.exports = {
 	name: 'playnext',
 	description: 'Plays videos from YouTube, either by search or URL',
-	aliases: ['pn', 'playn', 'next'],
+	aliases: ['pn', 'playn', 'pnext'],
 	usage: '[search term(s) or URL]',
 	cooldown: 3,
 	guildOnly: true,

@@ -21,11 +21,12 @@ module.exports = {
 
             // data.push('Here\'s a list of all my commands:');
             // data.push(commands.map(command => command.name).join(', '));
-            generalHelp.addField(`**All commands**`, `*${commands.map(command => command.name).join(`\n`)}*`);
+            generalHelp.addField(`**All commands**`, `${commands.map(command => command.name).join(`\n`)}`);
 
             // data.push(`\nYou can send \`${prefix}help [command name]\` to get info on a specific command!`);
             generalHelp.setAuthor(`Use ${prefix}help [command name] to get info on a specific command`, `https://cdn.discordapp.com/app-icons/641137495886528513/35676b341ed8ba268e5fff9dcc5c570e.png?size=256`);
 
+            /*
             return message.author.send(generalHelp)
                 .then(() => {
                     if (message.channel.type === 'dm') return;
@@ -35,6 +36,9 @@ module.exports = {
                     console.error(`Could not send help DM to ${message.author.tag}.\n`, error);
                     message.reply('it seems like I can\'t DM you! Do you have DMs disabled?');
                 });
+            */
+
+            return message.channel.send(generalHelp);
 
             /*
             return message.author.send(data, { split: true })
@@ -60,7 +64,7 @@ module.exports = {
         commandHelp.setTitle(` `);
 
         // data.push(`**Name:** ${command.name}`);
-        commandHelp.setAuthor(command.name, `https://cdn.discordapp.com/app-icons/641137495886528513/35676b341ed8ba268e5fff9dcc5c570e.png?size=256`);
+        commandHelp.setAuthor(config.get(`Bot.prefix`) + command.name);
 
         // if (command.aliases) data.push(`**Aliases:** ${command.aliases.join(', ')}`);
         if (command.aliases) commandHelp.addField(`**Aliases**`, command.aliases.join(', '));

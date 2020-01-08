@@ -94,9 +94,38 @@ async function reactionHandler(sent, message, page) {
 		});
 }
 
+async function sendDetails(input, c, index) {
+	if (input.getLength() == `unknown`) {
+		var musicEmbed = new Discord.RichEmbed()
+			// .setColor(`#00c292`)
+			.setTitle(` `)
+			.setAuthor(`➡️ In queue: Video #${index + 1}`)
+			// .addField(`:arrow_forward: **Now playing**`, `[${input.getTitle()}](${input.getURL()})`)
+			.setDescription(`[${input.getTitle()}](${input.getURL()})`)
+			.addField(`Uploader`, `[${await input.getChannelName()}](${input.getChannelURL()})`, true)
+			// .addField(`Length`, `${input.getLength()}`, true)
+			.setThumbnail(input.getThumbnail())
+			.setTimestamp()
+			.setFooter(`Requested by ${input.getRequesterName()}`)
+	} else {
+		var musicEmbed = new Discord.RichEmbed()
+			// .setColor(`#00c292`)
+			.setTitle(` `)
+			.setAuthor(`➡️ In queue: Video #${index + 1}`)
+			// .addField(`:arrow_forward: **Now playing**`, `[${input.getTitle()}](${input.getURL()})`)
+			.setDescription(`[${input.getTitle()}](${input.getURL()})`)
+			.addField(`Uploader`, `[${await input.getChannelName()}](${input.getChannelURL()})`, true)
+			.addField(`Length`, `${input.getLength()}`, true)
+			.setThumbnail(input.getThumbnail())
+			.setTimestamp()
+			.setFooter(`Requested by ${input.getRequesterName()}`)
+	}
+	c.send(musicEmbed);
+}
+
 module.exports = {
 	name: 'queue',
-	description: 'Returns the current music queue (up to 5 songs)',
+	description: 'Displays the music queue. Controllable with reaction buttons (times out after 30 seconds of inactivity).',
 	aliases: ['q'],
 	// usage: '[command]',
 	// cooldown: 5,
@@ -107,6 +136,12 @@ module.exports = {
 
 		var page = 0;
 
+		var reqIndex;
+
+		if(args[0]) {
+			reqIndex = args[0] - 1;
+		}
+
 		if (queue.length == 0) {
 			let emptyQueueEmbed = new Discord.RichEmbed()
 				.setTitle(` `)
@@ -114,8 +149,18 @@ module.exports = {
 				.setColor(`#0083FF`)
 			message.channel.send(emptyQueueEmbed);
 		} else {
-			var sent = await sendEmbed(page, message);
-			reactionHandler(sent, message, page);
+			if (args[0] && queue[reqIndex]) {
+				sendDetails(queue[reqIndex], message.channel, args[0]);
+			} else if (args[0] && !queue[reqIndex]) {
+				let invalidQueuePos = new Discord.RichEmbed()
+					.setTitle(` `)
+					.setDescription(`❌ There is not a video at that spot in the queue`)
+					.setColor(`#FF0000`)
+				message.channel.send(invalidQueuePos);
+			} else if (!args[0]) {
+				var sent = await sendEmbed(page, message);
+				reactionHandler(sent, message, page);
+			}
 		}
 	}
 }

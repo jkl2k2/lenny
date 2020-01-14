@@ -99,7 +99,7 @@ async function sendDetails(input, c, index) {
 		var musicEmbed = new Discord.RichEmbed()
 			// .setColor(`#00c292`)
 			.setTitle(` `)
-			.setAuthor(`➡️ In queue: Video #${index + 1}`)
+			.setAuthor(`➡️ In queue: Video #${index}`)
 			// .addField(`:arrow_forward: **Now playing**`, `[${input.getTitle()}](${input.getURL()})`)
 			.setDescription(`[${input.getTitle()}](${input.getURL()})`)
 			.addField(`Uploader`, `[${await input.getChannelName()}](${input.getChannelURL()})`, true)
@@ -111,7 +111,7 @@ async function sendDetails(input, c, index) {
 		var musicEmbed = new Discord.RichEmbed()
 			// .setColor(`#00c292`)
 			.setTitle(` `)
-			.setAuthor(`➡️ In queue: Video #${index + 1}`)
+			.setAuthor(`➡️ In queue: Video #${index}`)
 			// .addField(`:arrow_forward: **Now playing**`, `[${input.getTitle()}](${input.getURL()})`)
 			.setDescription(`[${input.getTitle()}](${input.getURL()})`)
 			.addField(`Uploader`, `[${await input.getChannelName()}](${input.getChannelURL()})`, true)
@@ -145,7 +145,7 @@ module.exports = {
 		if (queue.length == 0) {
 			let emptyQueueEmbed = new Discord.RichEmbed()
 				.setTitle(` `)
-				.addField(`:information_source: **Current queue**`, `The queue is currently empty`)
+				.setDescription(`:information_source: *The queue is currently empty*`)
 				.setColor(`#0083FF`)
 			message.channel.send(emptyQueueEmbed);
 		} else {
@@ -154,7 +154,7 @@ module.exports = {
 			} else if (args[0] && !queue[reqIndex]) {
 				let invalidQueuePos = new Discord.RichEmbed()
 					.setTitle(` `)
-					.setDescription(`❌ There is not a video at that spot in the queue`)
+					.setDescription(`<:error:643341473772863508> There is not a video at that spot in the queue`)
 					.setColor(`#FF0000`)
 				message.channel.send(invalidQueuePos);
 			} else if (!args[0]) {

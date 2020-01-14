@@ -294,7 +294,7 @@ module.exports = {
 						} else {
 							setTimeout(function () {
 								index.callPlayMusic(message);
-							}, 1500);
+							}, 4000);
 						}
 					}
 				})

@@ -104,8 +104,7 @@ module.exports = {
 	cooldown: 3,
 	guildOnly: true,
 	execute(message, args) {
-		args.unshift();
-
+		
 		if (!message.member.voiceChannel) {
 			let vcFailEmbed = new Discord.RichEmbed()
 				.setTitle(` `)
@@ -116,12 +115,14 @@ module.exports = {
 			return;
 		}
 
+		var playlistQueued = false;
+		var soundcloudQueued = false;
+
 		var queue = index.getQueue();
 		var client = index.getClient();
 
-		var soundcloudQueued = false;
-
 		async function handlePlaylist(method, message, args) {
+			playlistQueued = true;
 			var playlistInfo = await youtube.getPlaylist(args[0]);
 			var playlistArray = await youtube.getPlaylistItems(args[0]).catch(function (error) {
 				console.error(`${error}`);
@@ -137,12 +138,14 @@ module.exports = {
 			message.channel.send(listEmbed);
 
 			var listProcessingEmbed = new Discord.RichEmbed()
-				.setTitle(`:arrows_counterclockwise: Please wait while your playlist is being processed`)
+				.setTitle(` `)
+				.addField(`:arrows_counterclockwise: Processing playlist`, `Please wait...`)
 				.setColor(`#FF0000`)
 
 			var listProcessingMessage = await message.channel.send(listProcessingEmbed);
 
-			for (var i = playlistArray.length; i > 0; i--) {
+			for (var i = 0; i < playlistArray.length; i++) {
+				// let playlistVideo = new YTVideo(await playlistArray[i].title, await playlistArray[i].url, playlistArray[i].liveStatus, message.author);
 				let playlistVideo = new YTVideo(playlistArray[i], message.author);
 				if (method == "playnext") {
 					queue.unshift(playlistVideo);
@@ -158,15 +161,28 @@ module.exports = {
 			index.setQueue(queue);
 
 			let newProcessingEmbed = new Discord.RichEmbed()
-				.setTitle(`:white_check_mark: The playlist has finished processing!`)
+				.setTitle(` `)
+				.addField(`:white_check_mark: Playlist added`, `The playlist has finished processing`)
 				.setColor(`#44C408`)
 			listProcessingMessage.edit(newProcessingEmbed);
 			// message.channel.send(newProcessingEmbed);
 		}
 
 		async function handleVideoNoPlaylist(method, message, args) {
-			var videoResult = await youtube.getVideo(args.join(" "));
+			var videoResult = await youtube.getVideo(args.join(" ")).catch(err => {
+				console.log(err);
+				let notFoundEmbed = new Discord.RichEmbed()
+					.setTitle(` `)
+					.addField(`<:error:643341473772863508> Video not found`, `Sorry, no video could be found with your input`)
+					.setColor(`#FF0000`)
+				message.channel.send(notFoundEmbed);
 
+				console.log(`Video search fail\nError is: ${err}`);
+
+				return;
+			});
+
+			// let newVideo = new YTVideo(videoResult.title, videoResult.url, videoResult.liveStatus, message.author);
 			let newVideo = new YTVideo(videoResult, message.author);
 			if (method === "playnow") {
 				queue.unshift(newVideo);
@@ -181,15 +197,18 @@ module.exports = {
 			}
 
 			var playEmbed = new Discord.RichEmbed()
-				.setColor(`#00c292`)
+				// .setColor(`#00c292`)
 				.setTitle(` `)
-				.addField(`**:arrow_up_small: Queued**`, `[${newVideo.getTitle()}](${newVideo.getURL()})`)
-				.addField(`Uploader`, `[${await newVideo.getChannelName()}](${newVideo.getChannelURL()})`)
+				.setAuthor(`➕ Queued`)
+				// .addField(`**:arrow_up_small: Queued**`, `[${newVideo.getTitle()}](${newVideo.getURL()})`)
+				.setDescription(`[${newVideo.getTitle()}](${newVideo.getURL()})`)
+				.addField(`Uploader`, `[${await newVideo.getChannelName()}](${newVideo.getChannelURL()})`, true)
+				.addField(`Length`, newVideo.getLength(), true)
+				.addField(`Position`, newVideo.getPosition(), true)
 				.setThumbnail(newVideo.getThumbnail())
 				.setTimestamp()
 				.setFooter(`Requested by ${newVideo.getRequesterName()}`)
 			message.channel.send(playEmbed);
-
 		}
 
 		async function handleSoundCloud() {
@@ -218,7 +237,7 @@ module.exports = {
 			video.on('end', function () {
 				var newSC = new SCSong(args[0], message.author, gInfo);
 
-				queue.unshift(newSC);
+				queue.push(newSC);
 				index.setQueue(queue);
 
 				client.emit("SC ready");
@@ -227,7 +246,9 @@ module.exports = {
 					.setColor(`#00c292`)
 					.setTitle(` `)
 					.addField(`**:arrow_up_small: Queued**`, `[${newSC.getCleanTitle()}](${newSC.getURL()})`)
-					.addField(`Position`, newSC.getPosition())
+					.addField(`Uploader`, `[${newSC.getUploader()}](${newSC.getUploaderUrl()})`, true)
+					.addField(`Length`, newSC.getLength(), true)
+					.addField(`Position`, newSC.getPosition(), true)
 					.setThumbnail(newSC.getThumbnail());
 				sent.edit(scDownloadComplete);
 			});
@@ -236,7 +257,8 @@ module.exports = {
 
 		if (args[0] == undefined) {
 			let undefArgsEmbed = new Discord.RichEmbed()
-				.setTitle(`:eyes: ${message.author.username}, please include at least one search term or URL`)
+				.setTitle(` `)
+				.setDescription(`:no_entry: Please include at least one search term or URL`)
 				.setColor(`#FF0000`)
 			message.channel.send(undefArgsEmbed);
 
@@ -245,8 +267,8 @@ module.exports = {
 
 		if (args[0].includes("playlist?list=")) {
 			handlePlaylist("playnext", message, args);
-		} else if(args[0].includes("soundcloud")) {
-			handleSoundCloud(message);
+		} else if (args[0].includes("soundcloud")) {
+			handleSoundCloud();
 		} else {
 			handleVideoNoPlaylist("playnext", message, args);
 		}
@@ -258,13 +280,17 @@ module.exports = {
 						if (playlistQueued == false && soundcloudQueued == false) {
 							setTimeout(function () {
 								index.callPlayMusic(message);
-							}, 250);
-						} else if(soundcloudQueued == true) {
-
+							}, 500);
+						} else if (soundcloudQueued = true) {
+							client.on("SC ready", function () {
+								if (!connection.speaking) {
+									index.callPlayMusic(message);
+								}
+							});
 						} else {
 							setTimeout(function () {
 								index.callPlayMusic(message);
-							}, 1500);
+							}, 4000);
 						}
 					}
 				})

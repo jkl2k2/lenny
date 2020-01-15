@@ -41,6 +41,7 @@ const activities = [
 
 var dispatcher;
 var lastDetails;
+var lastPlayed;
 // var lastMusicMessage;
 
 async function sendDetails(input, c) {
@@ -146,7 +147,7 @@ async function playMusic(message) {
         count = 0;
     }
 
-    var lastPlayed = queue.shift();
+    lastPlayed = queue.shift();
     if (lastPlayed.getType() == "soundcloud") {
         var path = `./soundcloud/${lastPlayed.getTitle()}`;
     } else {
@@ -201,6 +202,9 @@ module.exports = {
                 .setColor(`#0083FF`)
         }
     },
+    getPlayingVideo: function () {
+        return lastPlayed;
+    },
     setQueue: function (newQueue) {
         queue = newQueue;
     },
@@ -247,6 +251,11 @@ client.on('message', message => {
     // Return if message from bot
     if (message.author.bot) return;
 
+    if (message.content.includes("banana")) {
+        message.react('🇴')
+			.then(() => (message.react('🇼'))
+				.then(() => message.react('🅾️')));
+    }
     // Declare reaction filter
     const filter = (reaction, user) => {
         return ['⭐'].includes(reaction.emoji.name);

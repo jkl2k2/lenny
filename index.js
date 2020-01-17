@@ -120,7 +120,11 @@ async function playMusic(message) {
         });
         const pcm = input.pipe(new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 }));
         var connectionArray = client.voiceConnections.array();
+
         dispatcher = connectionArray[0].playConvertedStream(pcm);
+
+        // dispatcher = connectionArray[0].playOpusStream(input);
+
         // dispatcher = connectionArray[0].playStream(input);
         sendDetails(queue[0], message.channel);
         count = 0;
@@ -134,7 +138,14 @@ async function playMusic(message) {
         var connectionArray = client.voiceConnections.array();
         dispatcher = connectionArray[0].playConvertedStream(pcm);
         // dispatcher = connectionArray[0].playStream(input);
+        // dispatcher = connectionArray[0].playOpusStream(input);
         sendDetails(queue[0], message.channel);
+        /*
+        let catchingUp = new Discord.RichEmbed()
+            .setDescription(`:arrows_counterclockwise: Catching up to livestream`)
+            .setFooter(`Just a moment...`)
+        var catchingUpMessage = await message.channel.send(catchingUp);
+        */
         count = 0;
     } else if (queue[0].getType() == "soundcloud") {
         console.log("Requested SoundCloud song");
@@ -253,8 +264,8 @@ client.on('message', message => {
 
     if (message.content.includes("banana")) {
         message.react('🇴')
-			.then(() => (message.react('🇼'))
-				.then(() => message.react('🅾️')));
+            .then(() => (message.react('🇼'))
+                .then(() => message.react('🅾️')));
     }
     // Declare reaction filter
     const filter = (reaction, user) => {

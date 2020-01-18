@@ -133,9 +133,8 @@ module.exports = {
 			});
 
 			var listEmbed = new Discord.RichEmbed()
-				.setColor(`#00c292`)
 				.setTitle(` `)
-				.addField(`:arrow_up_small: **Playlist added to queue (${playlistInfo.length} songs)**`, `[${playlistInfo.title}](${args[0]})`)
+				.addField(`:arrow_up_small: *Playlist added to queue (${playlistInfo.length} songs)*`, `[${playlistInfo.title}](${args[0]})`)
 				.setThumbnail(playlistInfo.thumbnails.default.url)
 				.setTimestamp()
 				.setFooter(`Requested by ${message.author.username}`)
@@ -143,8 +142,7 @@ module.exports = {
 
 			var listProcessingEmbed = new Discord.RichEmbed()
 				.setTitle(` `)
-				.addField(`:arrows_counterclockwise: Processing playlist`, `Please wait...`)
-				.setColor(`#FF0000`)
+				.setDescription(`:arrows_counterclockwise: *Processing playlist...*`)
 
 			var listProcessingMessage = await message.channel.send(listProcessingEmbed);
 
@@ -166,8 +164,7 @@ module.exports = {
 
 			let newProcessingEmbed = new Discord.RichEmbed()
 				.setTitle(` `)
-				.addField(`:white_check_mark: Playlist added`, `The playlist has finished processing`)
-				.setColor(`#44C408`)
+				.addField(`:white_check_mark: *The playlist has finished processing*`)
 			listProcessingMessage.edit(newProcessingEmbed);
 			// message.channel.send(newProcessingEmbed);
 		}
@@ -177,7 +174,7 @@ module.exports = {
 				console.log(err);
 				let notFoundEmbed = new Discord.RichEmbed()
 					.setTitle(` `)
-					.addField(`<:error:643341473772863508> Video not found`, `Sorry, no video could be found with your input`)
+					.setDescription(`<:error:643341473772863508> *Sorry, YouTube could not find any video with that input*`)
 					.setColor(`#FF0000`)
 				message.channel.send(notFoundEmbed);
 

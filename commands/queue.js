@@ -86,7 +86,7 @@ async function reactionHandler(sent, message, page) {
 				.setTitle(` `)
 				// .setDescription(`${queueResolver(parsedQueue, 0)}\n\n${queueResolver(parsedQueue, 1)}\n\n${queueResolver(parsedQueue, 2)}\n\n${queueResolver(parsedQueue, 3)}\n\n${queueResolver(parsedQueue, 4)}\n\n${queueOverflowResolver(parsedQueue)}`)
 				.setDescription(`${queueResolver(queue, 0 + page * 5)}\n\n${queueResolver(queue, 1 + page * 5)}\n\n${queueResolver(queue, 2 + page * 5)}\n\n${queueResolver(queue, 3 + page * 5)}\n\n${queueResolver(queue, 4 + page * 5)}\n\n${queueOverflowResolver(queue)}`)
-				.setAuthor(`Current queue - Page ${page + 1}`)
+				.setAuthor(`*Current queue - Page ${page + 1}*`)
 				.setColor(`#0083FF`)
 				.setFooter(`Controls cleared due to inactivity`)
 			sent.edit(noControlQueue);
@@ -154,7 +154,7 @@ module.exports = {
 			} else if (args[0] && !queue[reqIndex]) {
 				let invalidQueuePos = new Discord.RichEmbed()
 					.setTitle(` `)
-					.setDescription(`<:error:643341473772863508> There is not a video at that spot in the queue`)
+					.setDescription(`<:error:643341473772863508> *There is not a video at that spot in the queue*`)
 					.setColor(`#FF0000`)
 				message.channel.send(invalidQueuePos);
 			} else if (!args[0]) {

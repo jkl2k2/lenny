@@ -17,13 +17,13 @@ module.exports = {
 			index.resumeMusic();
 			let resumeEmbed = new Discord.RichEmbed()
 				.setTitle(` `)
-				.addField(`:arrow_forward: Resumed playback`, `${message.author.username} resumed playback`)
-				.setColor(`#44C408`)
+				.setDescription(`:fast_forward: *${message.author.username} resumed playback*`)
+				.setColor(`#0083FF`)
 			message.channel.send(resumeEmbed);
 		} else {
 			let resumeFailEmbed = new Discord.RichEmbed()
 				.setTitle(` `)
-				.addField(`<:error:643341473772863508> Resume failed`, `${message.author.username}, the music is already playing`)
+				.setDescription(`<:error:643341473772863508> *${message.author.username}, the music is already playing*`)
 				.setColor(`#FF0000`)
 			message.channel.send(resumeFailEmbed);
 		}

@@ -98,6 +98,8 @@ async function playMusic(message) {
     }
 
     var count = 0;
+    var awaitingLivestream = false;
+    var catchingUpMessage;
 
     if (queue[0] == undefined) {
         console.log("playMusic() called, but queue[0] is undefined");
@@ -118,13 +120,11 @@ async function playMusic(message) {
             console.error(err);
             message.channel.send("Encountered an error attempting to download from YouTube. Probably copyrighted.");
         });
-        const pcm = input.pipe(new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 }));
+        // const pcm = input.pipe(new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 }));
         var connectionArray = client.voiceConnections.array();
 
-        dispatcher = connectionArray[0].playConvertedStream(pcm);
-
-        // dispatcher = connectionArray[0].playOpusStream(input);
-
+        // dispatcher = connectionArray[0].playConvertedStream(pcm);
+        dispatcher = connectionArray[0].playOpusStream(input);
         // dispatcher = connectionArray[0].playStream(input);
         sendDetails(queue[0], message.channel);
         count = 0;
@@ -134,18 +134,21 @@ async function playMusic(message) {
             console.error(err);
             message.channel.send("Encountered an error attempting to download from YouTube. Probably copyrighted.");
         });
-        const pcm = input.pipe(new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 }));
+        // const pcm = input.pipe(new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 }));
         var connectionArray = client.voiceConnections.array();
-        dispatcher = connectionArray[0].playConvertedStream(pcm);
+        // dispatcher = connectionArray[0].playConvertedStream(pcm);
         // dispatcher = connectionArray[0].playStream(input);
-        // dispatcher = connectionArray[0].playOpusStream(input);
+        dispatcher = connectionArray[0].playOpusStream(input);
+
         sendDetails(queue[0], message.channel);
-        /*
+
         let catchingUp = new Discord.RichEmbed()
-            .setDescription(`:arrows_counterclockwise: Catching up to livestream`)
+            .setDescription(`:arrows_counterclockwise: *Catching up to livestream*`)
             .setFooter(`Just a moment...`)
-        var catchingUpMessage = await message.channel.send(catchingUp);
-        */
+        
+        catchingUpMessage = await message.channel.send(catchingUp);
+        awaitingLivestream = true;
+        
         count = 0;
     } else if (queue[0].getType() == "soundcloud") {
         console.log("Requested SoundCloud song");
@@ -182,6 +185,16 @@ async function playMusic(message) {
         }
         if (queue[0]) {
             playMusic(message);
+        }
+    });
+    
+    dispatcher.on("start", function () {
+        if(awaitingLivestream) {
+            let caughtUp = new Discord.RichEmbed()
+                .setDescription(`:white_check_mark: *Caught up to livestream*`);
+
+            catchingUpMessage.edit(caughtUp);
+            awaitingLivestream = false;
         }
     });
 }

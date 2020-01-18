@@ -17,13 +17,13 @@ module.exports = {
 			index.pauseMusic();
 			let pauseEmbed = new Discord.RichEmbed()
 				.setTitle(` `)
-				.addField(`:pause_button: Paused playback`, `${message.author.username} paused playback`)
-				.setColor(`#44C408`)
+				.setDescription(`:pause_button: *${message.author.username} paused playback*`)
+				.setColor(`#0083FF`)
 			message.channel.send(pauseEmbed);
 		} else {
 			let pauseFailEmbed = new Discord.RichEmbed()
 				.setTitle(` `)
-				.addField(`<:error:643341473772863508> Pause failed`, `${message.author.username}, the music is already paused`)
+				.setDescription(`<:error:643341473772863508> *${message.author.username}, the music is already paused*`)
 				.setColor(`#FF0000`)
 			message.channel.send(pauseFailEmbed);
 		}

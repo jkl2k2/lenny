@@ -108,7 +108,7 @@ module.exports = {
 		if (!message.member.voiceChannel) {
 			let vcFailEmbed = new Discord.RichEmbed()
 				.setTitle(` `)
-				.addField(`<:error:643341473772863508> Play failed`, `${message.author.username}, you are not in a voice channel`)
+				.setDescription(`<:error:643341473772863508> ${message.author.username}, you are not in a voice channel`)
 				.setColor(`#FF0000`)
 			message.channel.send(vcFailEmbed);
 
@@ -139,8 +139,7 @@ module.exports = {
 
 			var listProcessingEmbed = new Discord.RichEmbed()
 				.setTitle(` `)
-				.addField(`:arrows_counterclockwise: Processing playlist`, `Please wait...`)
-				.setColor(`#FF0000`)
+				.setDescription(`:arrows_counterclockwise: *Processing playlist...*`)
 
 			var listProcessingMessage = await message.channel.send(listProcessingEmbed);
 
@@ -162,8 +161,7 @@ module.exports = {
 
 			let newProcessingEmbed = new Discord.RichEmbed()
 				.setTitle(` `)
-				.addField(`:white_check_mark: Playlist added`, `The playlist has finished processing`)
-				.setColor(`#44C408`)
+				.setDescription(`:white_check_mark: *The playlist has finished processing*`)
 			listProcessingMessage.edit(newProcessingEmbed);
 			// message.channel.send(newProcessingEmbed);
 		}
@@ -243,7 +241,6 @@ module.exports = {
 				client.emit("SC ready");
 
 				let scDownloadComplete = new Discord.RichEmbed()
-					.setColor(`#00c292`)
 					.setTitle(` `)
 					.addField(`**:arrow_up_small: Queued**`, `[${newSC.getCleanTitle()}](${newSC.getURL()})`)
 					.addField(`Uploader`, `[${newSC.getUploader()}](${newSC.getUploaderUrl()})`, true)
@@ -258,7 +255,7 @@ module.exports = {
 		if (args[0] == undefined) {
 			let undefArgsEmbed = new Discord.RichEmbed()
 				.setTitle(` `)
-				.setDescription(`:no_entry: Please include at least one search term or URL`)
+				.setDescription(`<:error:643341473772863508> *Please include at least one search term or URL*`)
 				.setColor(`#FF0000`)
 			message.channel.send(undefArgsEmbed);
 

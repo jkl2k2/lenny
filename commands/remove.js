@@ -5,7 +5,7 @@ module.exports = {
 	name: 'remove',
 	description: 'Removes a video from the queue',
 	aliases: ['queueremove', 'r'],
-	usage: '[video number in queue]',
+	usage: '[video number in queue] OR [range in queue to remove]',
 	// cooldown: 5,
 	guildOnly: true,
 	execute(message, args) {
@@ -23,7 +23,7 @@ module.exports = {
         if (queue[target - 1] == undefined) {
             let indexDNEEmbed = new Discord.RichEmbed()
                 .setTitle(` `)
-                .addField(`<:error:643341473772863508> Failed to remove`, `${target} is not a valid position in the queue`)
+                .setDescription(`<:error:643341473772863508> *${target} is not a valid position in the queue*`)
                 .setColor(`#FF0000`);
             message.channel.send(indexDNEEmbed);
             return;
@@ -39,8 +39,8 @@ module.exports = {
                 // message.channel.send(`Remove range is valid for start index [${index1}] and end index [${index2}]`);
                 let removeRangeEmbed = new Discord.RichEmbed()
                     .setTitle(` `)
-                    .addField(`:white_check_mark: Successfully removed from queue`, `Removed videos from\n[${queue[index1].getTitle()}](${queue[index1].getURL()})\nup to\n[${queue[index2].getTitle()}](${queue[index2].getURL()})`)
-                    .setColor(`#44C408`)
+                    .setDescription(`:eject: *Removed videos from*\n[${queue[index1].getTitle()}](${queue[index1].getURL()})\n*up to*\n[${queue[index2].getTitle()}](${queue[index2].getURL()})`)
+                    .setColor(`#0083FF`)
                 message.channel.send(removeRangeEmbed);
 				queue.splice(index1, (index2 - index1) + 1);
                 index.setQueue(queue);
@@ -50,7 +50,7 @@ module.exports = {
                 // message.channel.send(`Remove range is NOT valid for start index [${index1}] and end index [${index2}]`);
                 let invalidRemoveEmbed = new Discord.RichEmbed()
                     .setTitle(` `)
-                    .addField(`<:error:643341473772863508> Failed to remove`, `The range you provided is not valid`)
+                    .setDescription(`<:error:643341473772863508> *The range you provided is not valid*`)
                     .setColor(`#FF0000`)
                 message.channel.send(invalidRemoveEmbed);
                 
@@ -63,17 +63,13 @@ module.exports = {
         if (elementToRemove != queue[target]) {
             let queueRemoveEmbed = new Discord.RichEmbed()
                 .setTitle(` `)
-                .addField(`:white_check_mark: Successfully removed from queue`, `[${elementToRemove.getTitle()}](${elementToRemove.getURL()})`)
-                .setTimestamp()
-                .setFooter(`Requested by ${message.author.username}`)
-                .setColor(`#44C408`)
+                .setDescription(`:eject: *${message.author.username} removed [${elementToRemove.getTitle()}](${elementToRemove.getURL()}) from queue*`)
+                .setColor(`#0083FF`)
             message.channel.send(queueRemoveEmbed);
             // message.reply(`successfully removed "${elementToRemove.videoTitle}" from queue!`);
         } else {
             let queueRemoveEmbed = new Discord.RichEmbed()
                 .setTitle(`Somehow, I failed to remove "[${elementToRemove.getTitle()}](${elementToRemove.getURL()})" from queue. This should never happen.`)
-                .setTimestamp()
-                .setFooter(`Requested by ${message.author.username}`)
                 .setColor(`#FF0000`);
             message.channel.send(queueRemoveEmbed);
             // message.reply(`:thinking: I don't understand.`);

@@ -8,7 +8,7 @@ function executeSkip(message) {
 	if (dispatcher == undefined || dispatcher.speaking == false) {
 		let skipFailEmbed = new Discord.RichEmbed()
 			.setTitle(` `)
-			.addField(`<:error:643341473772863508> Skip failed`, `There is nothing to skip`)
+			.setDescription(`<:error:643341473772863508> *There is nothing to skip*`)
 			.setColor(`#FF0000`)
 		message.channel.send(skipFailEmbed);
 
@@ -19,8 +19,8 @@ function executeSkip(message) {
 
 	let endDispatcherEmbed = new Discord.RichEmbed()
 		.setTitle(` `)
-		.addField(`:fast_forward: Skipped song`, `${message.author.username} skipped the current song`)
-		.setColor(`#44C408`)
+		.setDescription(`:fast_forward: *${message.author.username} skipped the current song*`)
+		.setColor(`#0083FF`)
 	message.channel.send(endDispatcherEmbed);
 
 }

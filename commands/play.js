@@ -134,7 +134,7 @@ module.exports = {
 
 			var listEmbed = new Discord.RichEmbed()
 				.setTitle(` `)
-				.addField(`:arrow_up_small: *Playlist added to queue (${playlistInfo.length} songs)*`, `[${playlistInfo.title}](${args[0]})`)
+				.setDescription(`:arrow_up_small: Playlist added to queue (${playlistInfo.length} songs)\n[${playlistInfo.title}](${args[0]})`)
 				.setThumbnail(playlistInfo.thumbnails.default.url)
 				.setTimestamp()
 				.setFooter(`Requested by ${message.author.username}`)
@@ -164,7 +164,7 @@ module.exports = {
 
 			let newProcessingEmbed = new Discord.RichEmbed()
 				.setTitle(` `)
-				.addField(`:white_check_mark: *The playlist has finished processing*`)
+				.setDescription(`:white_check_mark: *The playlist has finished processing*`)
 			listProcessingMessage.edit(newProcessingEmbed);
 			// message.channel.send(newProcessingEmbed);
 		}

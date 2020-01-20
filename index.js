@@ -76,9 +76,9 @@ async function sendDetails(input, c) {
 
 function sendSCDetails(input, c) {
     var scMusicEmbed = new Discord.RichEmbed()
-        .setColor(`#00c292`)
         .setTitle(` `)
-        .addField(`:arrow_forward: **Now playing**`, `[${input.getCleanTitle()}](${input.getURL()})`)
+        .setAuthor(`▶️ Now playing`)
+        .setDescription(`[${input.getCleanTitle()}](${input.getURL()})`)
         .addField(`Uploader`, `[${input.getUploader()}](${input.getUploaderUrl()})`, true)
         .addField(`Length`, input.getLength(), true)
         .setThumbnail(input.getThumbnail())
@@ -112,53 +112,53 @@ async function playMusic(message) {
                 clearTimeout(retry);
             }
         }, 500);
-    }
-
-    if (queue[0].getType() == undefined || queue[0].getType() == false) {
-        // console.log("Requested video is normal, not a livestream");
-        let input = await ytdl(queue[0].getURL(), { quality: "highestaudio" }).catch(err => {
-            console.error(err);
-            message.channel.send("Encountered an error attempting to download from YouTube. Probably copyrighted.");
-        });
-        // const pcm = input.pipe(new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 }));
-        var connectionArray = client.voiceConnections.array();
-
-        // dispatcher = connectionArray[0].playConvertedStream(pcm);
-        dispatcher = connectionArray[0].playOpusStream(input);
-        // dispatcher = connectionArray[0].playStream(input);
-        sendDetails(queue[0], message.channel);
-        count = 0;
-    } else if (queue[0].getType() == "live") {
-        // console.log("Requested video is a livestream");
-        let input = await ytdl(queue[0].getURL(), { quality: 93 }).catch(err => {
-            console.error(err);
-            message.channel.send("Encountered an error attempting to download from YouTube. Probably copyrighted.");
-        });
-        // const pcm = input.pipe(new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 }));
-        var connectionArray = client.voiceConnections.array();
-        // dispatcher = connectionArray[0].playConvertedStream(pcm);
-        // dispatcher = connectionArray[0].playStream(input);
-        dispatcher = connectionArray[0].playOpusStream(input);
-
-        sendDetails(queue[0], message.channel);
-
-        let catchingUp = new Discord.RichEmbed()
-            .setDescription(`:arrows_counterclockwise: *Catching up to livestream*`)
-            .setFooter(`Just a moment...`)
-        
-        catchingUpMessage = await message.channel.send(catchingUp);
-        awaitingLivestream = true;
-        
-        count = 0;
-    } else if (queue[0].getType() == "soundcloud") {
-        console.log("Requested SoundCloud song");
-        var connectionArray = client.voiceConnections.array();
-        dispatcher = connectionArray[0].playStream(fs.createReadStream(`./soundcloud/${queue[0].getTitle()}`));
-        sendSCDetails(queue[0], message.channel);
-        count = 0;
     } else {
-        message.channel.send("Error assigning dispatcher");
-        count = 0;
+        if (queue[0].getType() == undefined || queue[0].getType() == false) {
+            // console.log("Requested video is normal, not a livestream");
+            let input = await ytdl(queue[0].getURL(), { quality: "highestaudio" }).catch(err => {
+                console.error(err);
+                message.channel.send("Encountered an error attempting to download from YouTube. Probably copyrighted.");
+            });
+            // const pcm = input.pipe(new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 }));
+            var connectionArray = client.voiceConnections.array();
+
+            // dispatcher = connectionArray[0].playConvertedStream(pcm);
+            dispatcher = connectionArray[0].playOpusStream(input);
+            // dispatcher = connectionArray[0].playStream(input);
+            sendDetails(queue[0], message.channel);
+            count = 0;
+        } else if (queue[0].getType() == "live") {
+            // console.log("Requested video is a livestream");
+            let input = await ytdl(queue[0].getURL(), { quality: 93 }).catch(err => {
+                console.error(err);
+                message.channel.send("Encountered an error attempting to download from YouTube. Probably copyrighted.");
+            });
+            // const pcm = input.pipe(new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 }));
+            var connectionArray = client.voiceConnections.array();
+            // dispatcher = connectionArray[0].playConvertedStream(pcm);
+            // dispatcher = connectionArray[0].playStream(input);
+            dispatcher = connectionArray[0].playOpusStream(input);
+
+            sendDetails(queue[0], message.channel);
+
+            let catchingUp = new Discord.RichEmbed()
+                .setDescription(`:arrows_counterclockwise: *Catching up to livestream*`)
+                .setFooter(`Just a moment...`)
+
+            catchingUpMessage = await message.channel.send(catchingUp);
+            awaitingLivestream = true;
+
+            count = 0;
+        } else if (queue[0].getType() == "soundcloud") {
+            console.log("Requested SoundCloud song");
+            var connectionArray = client.voiceConnections.array();
+            dispatcher = connectionArray[0].playStream(fs.createReadStream(`./soundcloud/${queue[0].getTitle()}`));
+            sendSCDetails(queue[0], message.channel);
+            count = 0;
+        } else {
+            message.channel.send("Error assigning dispatcher");
+            count = 0;
+        }
     }
 
     lastPlayed = queue.shift();
@@ -187,9 +187,9 @@ async function playMusic(message) {
             playMusic(message);
         }
     });
-    
+
     dispatcher.on("start", function () {
-        if(awaitingLivestream) {
+        if (awaitingLivestream) {
             let caughtUp = new Discord.RichEmbed()
                 .setDescription(`:white_check_mark: *Caught up to livestream*`);
 

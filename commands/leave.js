@@ -18,14 +18,14 @@ module.exports = {
 
 			let leaveEmbed = new Discord.RichEmbed()
 				.setTitle(` `)
-				.addField(`:eject: I left the voice channel`)
+				.setDescription(`:eject: *I left the voice channel*`)
 				.setColor(`#0083FF`)
 
 			message.channel.send(leaveEmbed);
 		} else {
 			let leaveFailEmbed = new Discord.RichEmbed()
 				.setTitle(` `)
-				.setDescription(`<:error:643341473772863508> I'm not in a voice channel`)
+				.setDescription(`<:error:643341473772863508> *I'm not in a voice channel*`)
 				.setColor(`#FF0000`)
 
 			message.channel.send(leaveFailEmbed);

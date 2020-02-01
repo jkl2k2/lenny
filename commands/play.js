@@ -82,7 +82,13 @@ class SCSong {
 	getUploader() {
 		return this.info.uploader;
 	}
+	getChannelName() {
+		return this.info.uploader;
+	}
 	getUploaderUrl() {
+		return this.info.uploader_url;
+	}
+	getChannelURL() {
 		return this.info.uploader_url;
 	}
 	getRequesterName() {
@@ -184,7 +190,12 @@ module.exports = {
 			});
 
 			// let newVideo = new YTVideo(videoResult.title, videoResult.url, videoResult.liveStatus, message.author);
-			let newVideo = new YTVideo(videoResult, message.author);
+			let newVideo;
+			if (videoResult) {
+				newVideo = new YTVideo(videoResult, message.author);
+			} else {
+				return;
+			}
 			if (method === "playnow") {
 				queue.unshift(newVideo);
 				index.setQueue(queue);
@@ -215,7 +226,7 @@ module.exports = {
 		async function handleSoundCloud() {
 			soundcloudQueued = true;
 
-			const video = youtubedl(args[0]);
+			const video = youtubedl(args[0], [`--simulate`, `--get-url`]);
 
 			var gInfo;
 
@@ -226,16 +237,11 @@ module.exports = {
 			var sent = await message.channel.send(scDownload);
 
 			video.on('info', function (info) {
-				console.log('Download started');
-				console.log('filename: ' + info._filename);
-				console.log('size: ' + info.size);
+				// console.log('Download started');
+				// console.log('filename: ' + info._filename);
+				// console.log('size: ' + info.size);
 				gInfo = info;
 
-				video.pipe(fs.createWriteStream(`./soundcloud/${gInfo._filename}`));
-
-			});
-
-			video.on('end', function () {
 				var newSC = new SCSong(args[0], message.author, gInfo);
 
 				queue.push(newSC);
@@ -244,14 +250,21 @@ module.exports = {
 				client.emit("SC ready");
 
 				let scDownloadComplete = new Discord.RichEmbed()
-					.setColor(`#00c292`)
 					.setTitle(` `)
-					.addField(`**:arrow_up_small: Queued**`, `[${newSC.getCleanTitle()}](${newSC.getURL()})`)
+					.setAuthor(`➕ Queued`)
+					.setDescription(`[${newSC.getCleanTitle()}](${newSC.getURL()})`)
 					.addField(`Uploader`, `[${newSC.getUploader()}](${newSC.getUploaderUrl()})`, true)
 					.addField(`Length`, newSC.getLength(), true)
 					.addField(`Position`, newSC.getPosition(), true)
 					.setThumbnail(newSC.getThumbnail());
 				sent.edit(scDownloadComplete);
+
+				video.pipe(fs.createWriteStream(`./soundcloud/${gInfo._filename}`));
+
+			});
+
+			video.on('end', function () {
+				
 			});
 
 		}

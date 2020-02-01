@@ -14,7 +14,7 @@ module.exports = {
 			message.member.voiceChannel.join();
 			let joinEmbed = new Discord.RichEmbed()
 				.setTitle(` `)
-				.setDescription(`:arrow_right: *I joined your channel, ${message.author.username}*`)
+				.setDescription(`:arrow_right: I joined your channel, ${message.author.username}`)
 				.setColor(`#0083FF`)
 			message.channel.send(joinEmbed);
 		} else {

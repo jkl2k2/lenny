@@ -7,7 +7,7 @@ async function sendDetails(input, c) {
             // .setColor(`#00c292`)
             .setTitle(` `)
             .setAuthor(`➡️ Coming up next`)
-            // .addField(`:arrow_forward: **Now playing**`, `[${input.getTitle()}](${input.getURL()})`)
+            // .addField(`:arrow_forward: Now playing`, `[${input.getTitle()}](${input.getURL()})`)
             .setDescription(`[${input.getTitle()}](${input.getURL()})`)
             .addField(`Uploader`, `[${await input.getChannelName()}](${input.getChannelURL()})`, true)
             // .addField(`Length`, `${input.getLength()}`, true)
@@ -19,7 +19,7 @@ async function sendDetails(input, c) {
             // .setColor(`#00c292`)
             .setTitle(` `)
             .setAuthor(`➡️ Coming up next`)
-            // .addField(`:arrow_forward: **Now playing**`, `[${input.getTitle()}](${input.getURL()})`)
+            // .addField(`:arrow_forward: Now playing`, `[${input.getTitle()}](${input.getURL()})`)
             .setDescription(`[${input.getTitle()}](${input.getURL()})`)
             .addField(`Uploader`, `[${await input.getChannelName()}](${input.getChannelURL()})`, true)
             .addField(`Length`, `${input.getLength()}`, true)
@@ -45,7 +45,7 @@ module.exports = {
         } else {
             let nextUndefEmbed = new Discord.RichEmbed()
                 .setTitle(` `)
-                .setDescription(`<:error:643341473772863508> *There is no video coming up in the queue*`)
+                .setDescription(`<:error:643341473772863508> There is no video coming up in the queue`)
                 .setColor(`#FF0000`)
             message.channel.send(nextUndefEmbed);
         }

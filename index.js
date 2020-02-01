@@ -2,7 +2,8 @@
 const fs = require('fs');
 const Discord = require('discord.js');
 const config = require('config');
-const ytdl = require("ytdl-core-discord");
+// const ytdl = require("ytdl-core-discord");
+const ytdl = require("ytdl-core");
 const prism = require('prism-media');
 
 // Initialize client
@@ -115,88 +116,98 @@ async function playMusic(message) {
     } else {
         if (queue[0].getType() == undefined || queue[0].getType() == false) {
             // console.log("Requested video is normal, not a livestream");
+            /*
             let input = await ytdl(queue[0].getURL(), { quality: "highestaudio" }).catch(err => {
                 console.error(err);
                 message.channel.send("Encountered an error attempting to download from YouTube. Probably copyrighted.");
             });
+            */
+            let input = ytdl(queue[0].getURL(), { quality: "highestaudio", highWaterMark: 1 << 25 });
+
             // const pcm = input.pipe(new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 }));
             var connectionArray = client.voiceConnections.array();
 
             // dispatcher = connectionArray[0].playConvertedStream(pcm);
-            dispatcher = connectionArray[0].playOpusStream(input);
-            // dispatcher = connectionArray[0].playStream(input);
+            // dispatcher = connectionArray[0].playOpusStream(input);
+            dispatcher = connectionArray[0].playStream(input);
             sendDetails(queue[0], message.channel);
-            count = 0;
         } else if (queue[0].getType() == "live") {
             // console.log("Requested video is a livestream");
+            /*
             let input = await ytdl(queue[0].getURL(), { quality: 93 }).catch(err => {
                 console.error(err);
                 message.channel.send("Encountered an error attempting to download from YouTube. Probably copyrighted.");
             });
+            */
+            let input = ytdl(queue[0].getURL(), { quality: 93, highWaterMark: 1 << 25 });
+
             // const pcm = input.pipe(new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 }));
             var connectionArray = client.voiceConnections.array();
             // dispatcher = connectionArray[0].playConvertedStream(pcm);
-            // dispatcher = connectionArray[0].playStream(input);
-            dispatcher = connectionArray[0].playOpusStream(input);
+            dispatcher = connectionArray[0].playStream(input);
+            // dispatcher = connectionArray[0].playOpusStream(input);
 
             sendDetails(queue[0], message.channel);
 
             let catchingUp = new Discord.RichEmbed()
-                .setDescription(`:arrows_counterclockwise: *Catching up to livestream*`)
+                .setDescription(`:arrows_counterclockwise: Catching up to livestream`)
                 .setFooter(`Just a moment...`)
 
             catchingUpMessage = await message.channel.send(catchingUp);
             awaitingLivestream = true;
-
-            count = 0;
         } else if (queue[0].getType() == "soundcloud") {
             console.log("Requested SoundCloud song");
             var connectionArray = client.voiceConnections.array();
-            dispatcher = connectionArray[0].playStream(fs.createReadStream(`./soundcloud/${queue[0].getTitle()}`));
+            // dispatcher = connectionArray[0].playStream(fs.createReadStream(`./soundcloud/${queue[0].getTitle()}`));
+            dispatcher = connectionArray[0].playStream(queue[0].getURL());
             sendSCDetails(queue[0], message.channel);
-            count = 0;
         } else {
             message.channel.send("Error assigning dispatcher");
-            count = 0;
         }
+
+        count = 0;
+
+        lastPlayed = queue.shift();
+        if (lastPlayed.getType() == "soundcloud") {
+            var path = `./soundcloud/${lastPlayed.getTitle()}`;
+        } else {
+            var path = " ";
+        }
+
+        if (message.member.voiceChannel) {
+            message.member.voiceChannel.connection.player.streamingData.pausedTime = 0;
+        } else {
+            // Fallback in case the original user left voice channel
+            var connectionArray = client.voiceConnections.array();
+            connectionArray[0].player.streamingData.pausedTime = 0;
+        }
+
+        dispatcher.on("end", function () {
+            if (path != " ") {
+                fs.unlink(path, (err) => {
+                    if (err) {
+                        console.error(`FAILED to delete file at path ${path}`);
+                        console.error(err);
+                        return;
+                    }
+                    console.log(`Removed file at path ${path}`);
+                });
+            }
+            if (queue[0]) {
+                playMusic(message);
+            }
+        });
+
+        dispatcher.on("start", function () {
+            if (awaitingLivestream) {
+                let caughtUp = new Discord.RichEmbed()
+                    .setDescription(`:white_check_mark: Caught up to livestream`);
+
+                catchingUpMessage.edit(caughtUp);
+                awaitingLivestream = false;
+            }
+        });
     }
-
-    lastPlayed = queue.shift();
-    if (lastPlayed.getType() == "soundcloud") {
-        var path = `./soundcloud/${lastPlayed.getTitle()}`;
-    } else {
-        var path = " ";
-    }
-
-    message.member.voiceChannel.connection.player.streamingData.pausedTime = 0;
-
-    loopCounter = 0;
-
-    dispatcher.on("end", function () {
-        if (path != " ") {
-            fs.unlink(path, (err) => {
-                if (err) {
-                    console.error(`FAILED to delete file at path ${path}`);
-                    console.error(err);
-                    return;
-                }
-                console.log(`Removed file at path ${path}`);
-            });
-        }
-        if (queue[0]) {
-            playMusic(message);
-        }
-    });
-
-    dispatcher.on("start", function () {
-        if (awaitingLivestream) {
-            let caughtUp = new Discord.RichEmbed()
-                .setDescription(`:white_check_mark: *Caught up to livestream*`);
-
-            catchingUpMessage.edit(caughtUp);
-            awaitingLivestream = false;
-        }
-    });
 }
 
 // Functions

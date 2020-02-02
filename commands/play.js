@@ -54,7 +54,12 @@ class YTVideo {
 	}
 	getPosition() {
 		let queue = index.getQueue();
-		return queue.indexOf(this) + 1;
+		if(queue.indexOf(this) == -1)
+		{
+			return 1;
+		} else {
+			return queue.indexOf(this) + 1;
+		}
 	}
 	getVideo() {
 		return this.video;

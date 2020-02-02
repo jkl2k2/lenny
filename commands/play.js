@@ -131,6 +131,7 @@ module.exports = {
 
 		var playlistQueued = false;
 		var soundcloudQueued = false;
+		var videoQueued = false;
 
 		var queue = index.getQueue();
 		var client = index.getClient();
@@ -181,6 +182,7 @@ module.exports = {
 		}
 
 		async function handleVideoNoPlaylist(method, message, args) {
+			videoQueued = true;
 			var videoResult = await youtube.getVideo(args.join(" ")).catch(err => {
 				console.log(err);
 				let notFoundEmbed = new Discord.RichEmbed()
@@ -226,8 +228,6 @@ module.exports = {
 				.setTimestamp()
 				.setFooter(`Requested by ${newVideo.getRequesterName()}`)
 			message.channel.send(playEmbed);
-
-			client.emit(`MusicReady`);
 		}
 
 		async function handleSoundCloud() {
@@ -302,12 +302,15 @@ module.exports = {
 							setTimeout(function () {
 								index.callPlayMusic(message);
 							}, 2000);
-						}
-						client.on("MusicReady", function () {
-							if (!connection.speaking) {
+						} else if (videoQueued) {
+							setTimeout(function () {
 								index.callPlayMusic(message);
-							}
-						});
+							}, 200);
+						} else if (soundcloudQueued) {
+							setTimeout(function () {
+								index.callPlayMusic(message);
+							}, 1000);
+						}
 					}
 				})
 				.catch(`${console.log} Timestamp: timestamp`);

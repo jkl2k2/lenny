@@ -145,7 +145,8 @@ module.exports = {
 
 			var listEmbed = new Discord.RichEmbed()
 				.setTitle(` `)
-				.setDescription(`:arrow_up_small: Playlist added to queue (${playlistInfo.length} songs)\n[${playlistInfo.title}](${args[0]})`)
+				.setAuthor(`➕ Queued playlist (${playlistInfo.length} songs)`)
+				.setDescription(`**[${playlistInfo.title}](${args[0]})**`)
 				.setThumbnail(playlistInfo.thumbnails.default.url)
 				.setTimestamp()
 				.setFooter(`Requested by ${message.author.username}`)
@@ -296,7 +297,11 @@ module.exports = {
 			message.member.voiceChannel.join()
 				.then(connection => {
 					if (!connection.speaking) {
-						if (playlistQueued == false && soundcloudQueued == false) {
+						if(playlistQueued == true) {
+							setTimeout(function () {
+								index.callPlayMusic(message);
+							}, 2000);
+						} else if (playlistQueued == false && soundcloudQueued == false) {
 							setTimeout(function () {
 								index.callPlayMusic(message);
 							}, 500);
@@ -307,9 +312,7 @@ module.exports = {
 								}
 							});
 						} else {
-							setTimeout(function () {
-								index.callPlayMusic(message);
-							}, 4000);
+							// Catch
 						}
 					}
 				})

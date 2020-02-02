@@ -15,7 +15,7 @@ class YTVideo {
 	getTitle() {
 		return this.video.title;
 	}
-	getCleanTitle()  {
+	getCleanTitle() {
 		return this.video.title;
 	}
 	getURL() {
@@ -42,7 +42,7 @@ class YTVideo {
 		return `https://www.youtube.com/channel/${this.video.channelId}`;
 	}
 	getLength() {
-		if(!this.video.seconds) {
+		if (!this.video.seconds) {
 			return `unknown`;
 		}
 
@@ -54,8 +54,7 @@ class YTVideo {
 	}
 	getPosition() {
 		let queue = index.getQueue();
-		if(queue.indexOf(this) == -1)
-		{
+		if (queue.indexOf(this) == -1) {
 			return 1;
 		} else {
 			return queue.indexOf(this) + 1;
@@ -107,7 +106,11 @@ class SCSong {
 	}
 	getPosition() {
 		let queue = index.getQueue();
-		return queue.indexOf(this) + 1;
+		if (queue.indexOf(this) == -1) {
+			return 1;
+		} else {
+			return queue.indexOf(this) + 1;
+		}
 	}
 }
 
@@ -119,7 +122,7 @@ module.exports = {
 	cooldown: 3,
 	guildOnly: true,
 	execute(message, args) {
-		
+
 		if (!message.member.voiceChannel) {
 			let vcFailEmbed = new Discord.RichEmbed()
 				.setTitle(` `)
@@ -227,7 +230,7 @@ module.exports = {
 		async function handleSoundCloud() {
 			soundcloudQueued = true;
 
-			const video = youtubedl(args[0]);
+			const video = youtubedl(args[0], [`--simulate`, `--get-url`]);
 
 			var gInfo;
 
@@ -238,16 +241,11 @@ module.exports = {
 			var sent = await message.channel.send(scDownload);
 
 			video.on('info', function (info) {
-				console.log('Download started');
-				console.log('filename: ' + info._filename);
-				console.log('size: ' + info.size);
+				// console.log('Download started');
+				// console.log('filename: ' + info._filename);
+				// console.log('size: ' + info.size);
 				gInfo = info;
 
-				video.pipe(fs.createWriteStream(`./soundcloud/${gInfo._filename}`));
-
-			});
-
-			video.on('end', function () {
 				var newSC = new SCSong(args[0], message.author, gInfo);
 
 				queue.push(newSC);
@@ -257,12 +255,20 @@ module.exports = {
 
 				let scDownloadComplete = new Discord.RichEmbed()
 					.setTitle(` `)
-					.addField(`**:arrow_up_small: Queued**`, `[${newSC.getCleanTitle()}](${newSC.getURL()})`)
+					.setAuthor(`➕ Queued`)
+					.setDescription(`**[${newSC.getCleanTitle()}](${newSC.getURL()})**`)
 					.addField(`Uploader`, `[${newSC.getUploader()}](${newSC.getUploaderUrl()})`, true)
 					.addField(`Length`, newSC.getLength(), true)
 					.addField(`Position`, newSC.getPosition(), true)
 					.setThumbnail(newSC.getThumbnail());
 				sent.edit(scDownloadComplete);
+
+				video.pipe(fs.createWriteStream(`./soundcloud/${gInfo._filename}`));
+
+			});
+
+			video.on('end', function () {
+
 			});
 
 		}

@@ -103,8 +103,8 @@ async function playMusic(message) {
     var catchingUpMessage;
 
     if (queue[0] == undefined) {
-        console.log("playMusic() called, but queue[0] is undefined");
-
+        // console.log("playMusic() called, but queue[0] is undefined");
+        /*
         var retry = setTimeout(function () {
             if (count < 4) {
                 playMusic(message);
@@ -113,6 +113,7 @@ async function playMusic(message) {
                 clearTimeout(retry);
             }
         }, 500);
+        */
     } else {
         if (queue[0].getType() == undefined || queue[0].getType() == false) {
             // If regular video

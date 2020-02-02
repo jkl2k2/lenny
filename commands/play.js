@@ -15,7 +15,7 @@ class YTVideo {
 	getTitle() {
 		return this.video.title;
 	}
-	getCleanTitle()  {
+	getCleanTitle() {
 		return this.video.title;
 	}
 	getURL() {
@@ -42,7 +42,7 @@ class YTVideo {
 		return `https://www.youtube.com/channel/${this.video.channelId}`;
 	}
 	getLength() {
-		if(!this.video.seconds) {
+		if (!this.video.seconds) {
 			return `unknown`;
 		}
 
@@ -54,8 +54,7 @@ class YTVideo {
 	}
 	getPosition() {
 		let queue = index.getQueue();
-		if(queue.indexOf(this) == -1)
-		{
+		if (queue.indexOf(this) == -1) {
 			return 1;
 		} else {
 			return queue.indexOf(this) + 1;
@@ -227,6 +226,8 @@ module.exports = {
 				.setTimestamp()
 				.setFooter(`Requested by ${newVideo.getRequesterName()}`)
 			message.channel.send(playEmbed);
+
+			client.emit(`MusicReady`);
 		}
 
 		async function handleSoundCloud() {
@@ -253,7 +254,7 @@ module.exports = {
 				queue.push(newSC);
 				index.setQueue(queue);
 
-				client.emit("SC ready");
+				client.emit("MusicReady");
 
 				let scDownloadComplete = new Discord.RichEmbed()
 					.setTitle(` `)
@@ -270,7 +271,7 @@ module.exports = {
 			});
 
 			video.on('end', function () {
-				
+
 			});
 
 		}
@@ -297,23 +298,16 @@ module.exports = {
 			message.member.voiceChannel.join()
 				.then(connection => {
 					if (!connection.speaking) {
-						if(playlistQueued == true) {
+						if (playlistQueued) {
 							setTimeout(function () {
 								index.callPlayMusic(message);
 							}, 2000);
-						} else if (playlistQueued == false && soundcloudQueued == false) {
-							setTimeout(function () {
-								index.callPlayMusic(message);
-							}, 500);
-						} else if (soundcloudQueued = true) {
-							client.on("SC ready", function () {
-								if (!connection.speaking) {
-									index.callPlayMusic(message);
-								}
-							});
-						} else {
-							// Catch
 						}
+						client.on("MusicReady", function () {
+							if (!connection.speaking) {
+								index.callPlayMusic(message);
+							}
+						});
 					}
 				})
 				.catch(`${console.log} Timestamp: timestamp`);

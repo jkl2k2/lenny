@@ -115,37 +115,24 @@ async function playMusic(message) {
         }, 500);
     } else {
         if (queue[0].getType() == undefined || queue[0].getType() == false) {
-            // console.log("Requested video is normal, not a livestream");
-            /*
-            let input = await ytdl(queue[0].getURL(), { quality: "highestaudio" }).catch(err => {
-                console.error(err);
-                message.channel.send("Encountered an error attempting to download from YouTube. Probably copyrighted.");
-            });
-            */
+            // If regular video
+
             let input = ytdl(queue[0].getURL(), { quality: "highestaudio", highWaterMark: 1 << 25 });
 
-            // const pcm = input.pipe(new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 }));
             var connectionArray = client.voiceConnections.array();
 
-            // dispatcher = connectionArray[0].playConvertedStream(pcm);
-            // dispatcher = connectionArray[0].playOpusStream(input);
             dispatcher = connectionArray[0].playStream(input);
+
             sendDetails(queue[0], message.channel);
+
         } else if (queue[0].getType() == "live") {
-            // console.log("Requested video is a livestream");
-            /*
-            let input = await ytdl(queue[0].getURL(), { quality: 93 }).catch(err => {
-                console.error(err);
-                message.channel.send("Encountered an error attempting to download from YouTube. Probably copyrighted.");
-            });
-            */
+            // If YouTube livestream
+
             let input = ytdl(queue[0].getURL(), { quality: 93, highWaterMark: 1 << 25 });
 
-            // const pcm = input.pipe(new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 }));
             var connectionArray = client.voiceConnections.array();
-            // dispatcher = connectionArray[0].playConvertedStream(pcm);
-            dispatcher = connectionArray[0].playStream(input);
-            // dispatcher = connectionArray[0].playOpusStream(input);
+
+            dispatcher = connectionArray[0].playStream(input, { highWaterMark: 1 });
 
             sendDetails(queue[0], message.channel);
 
@@ -154,13 +141,17 @@ async function playMusic(message) {
                 .setFooter(`Just a moment...`)
 
             catchingUpMessage = await message.channel.send(catchingUp);
+
             awaitingLivestream = true;
+
         } else if (queue[0].getType() == "soundcloud") {
-            console.log("Requested SoundCloud song");
+            // If SoundCloud
             var connectionArray = client.voiceConnections.array();
-            // dispatcher = connectionArray[0].playStream(fs.createReadStream(`./soundcloud/${queue[0].getTitle()}`));
+
             dispatcher = connectionArray[0].playStream(queue[0].getURL());
+
             sendSCDetails(queue[0], message.channel);
+
         } else {
             message.channel.send("Error assigning dispatcher");
         }
@@ -175,7 +166,9 @@ async function playMusic(message) {
         }
 
         if (message.member.voiceChannel) {
+
             message.member.voiceChannel.connection.player.streamingData.pausedTime = 0;
+            
         } else {
             // Fallback in case the original user left voice channel
             var connectionArray = client.voiceConnections.array();

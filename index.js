@@ -119,9 +119,9 @@ async function playMusic(message) {
 
             let input = ytdl(queue[0].getURL(), { quality: "highestaudio", highWaterMark: 1 << 25 });
 
-            var connectionArray = client.voiceConnections.array();
+            var connections = client.voiceConnections.array();
 
-            dispatcher = connectionArray[0].playStream(input);
+            dispatcher = connections[0].playStream(input);
 
             sendDetails(queue[0], message.channel);
 
@@ -130,9 +130,9 @@ async function playMusic(message) {
 
             let input = ytdl(queue[0].getURL(), { quality: 93, highWaterMark: 1 << 25 });
 
-            var connectionArray = client.voiceConnections.array();
+            var connections = client.voiceConnections.array();
 
-            dispatcher = connectionArray[0].playStream(input, { highWaterMark: 1 });
+            dispatcher = connections[0].playStream(input);
 
             sendDetails(queue[0], message.channel);
 
@@ -146,9 +146,9 @@ async function playMusic(message) {
 
         } else if (queue[0].getType() == "soundcloud") {
             // If SoundCloud
-            var connectionArray = client.voiceConnections.array();
+            var connections = client.voiceConnections.array();
 
-            dispatcher = connectionArray[0].playStream(queue[0].getURL());
+            dispatcher = connections[0].playStream(queue[0].getURL());
 
             sendSCDetails(queue[0], message.channel);
 
@@ -171,8 +171,8 @@ async function playMusic(message) {
             
         } else {
             // Fallback in case the original user left voice channel
-            var connectionArray = client.voiceConnections.array();
-            connectionArray[0].player.streamingData.pausedTime = 0;
+            var connections = client.voiceConnections.array();
+            connections[0].player.streamingData.pausedTime = 0;
         }
 
         dispatcher.on("end", function () {

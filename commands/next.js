@@ -45,8 +45,8 @@ module.exports = {
         } else {
             let nextUndefEmbed = new Discord.RichEmbed()
                 .setTitle(` `)
-                .setDescription(`<:error:643341473772863508> There is no video coming up in the queue`)
-                .setColor(`#FF0000`)
+                .setDescription(`:information_source: There is no video coming up in the queue`)
+                .setColor(`#0083FF`)
             message.channel.send(nextUndefEmbed);
         }
     }

@@ -79,7 +79,7 @@ function sendSCDetails(input, c) {
     var scMusicEmbed = new Discord.RichEmbed()
         .setTitle(` `)
         .setAuthor(`▶️ Now playing`)
-        .setDescription(`[${input.getCleanTitle()}](${input.getURL()})`)
+        .setDescription(`**[${input.getCleanTitle()}](${input.getURL()})**`)
         .addField(`Uploader`, `[${input.getUploader()}](${input.getUploaderUrl()})`, true)
         .addField(`Length`, input.getLength(), true)
         .setThumbnail(input.getThumbnail())

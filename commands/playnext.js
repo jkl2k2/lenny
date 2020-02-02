@@ -87,7 +87,13 @@ class SCSong {
 	getUploader() {
 		return this.info.uploader;
 	}
+	getChannelName() {
+		return this.info.uploader;
+	}
 	getUploaderUrl() {
+		return this.info.uploader_url;
+	}
+	getChannelURL() {
 		return this.info.uploader_url;
 	}
 	getRequesterName() {

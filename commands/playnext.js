@@ -208,7 +208,7 @@ module.exports = {
 				.setTitle(` `)
 				.setAuthor(`➕ Queued`)
 				// .addField(`**:arrow_up_small: Queued**`, `[${newVideo.getTitle()}](${newVideo.getURL()})`)
-				.setDescription(`[${newVideo.getTitle()}](${newVideo.getURL()})`)
+				.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**`)
 				.addField(`Uploader`, `[${await newVideo.getChannelName()}](${newVideo.getChannelURL()})`, true)
 				.addField(`Length`, newVideo.getLength(), true)
 				.addField(`Position`, newVideo.getPosition(), true)

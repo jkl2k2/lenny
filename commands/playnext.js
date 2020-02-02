@@ -236,7 +236,7 @@ module.exports = {
 
 			let scDownload = new Discord.RichEmbed()
 				.setTitle(` `)
-				.addField(`:arrows_counterclockwise: Downloading SoundCloud song`, `[Download in progress...](${args[0]})`)
+				.setDescription(`:arrows_counterclockwise: Downloading SoundCloud song...`)
 				.setColor(`#0083FF`)
 			var sent = await message.channel.send(scDownload);
 
@@ -260,7 +260,9 @@ module.exports = {
 					.addField(`Uploader`, `[${newSC.getUploader()}](${newSC.getUploaderUrl()})`, true)
 					.addField(`Length`, newSC.getLength(), true)
 					.addField(`Position`, newSC.getPosition(), true)
-					.setThumbnail(newSC.getThumbnail());
+					.setThumbnail(newSC.getThumbnail())
+					.setFooter(`Requested by ${newSC.getRequesterName()}`)
+					.setTimestamp();
 				sent.edit(scDownloadComplete);
 
 				video.pipe(fs.createWriteStream(`./soundcloud/${gInfo._filename}`));

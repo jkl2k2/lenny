@@ -5,11 +5,11 @@ const Discord = require(`discord.js`);
 
 function decideWording(input) {
 	if (input == true) {
-		return "raised volume";
+		return "raised volume to";
 	} else if (input == false) {
-		return "lowered volume";
+		return "lowered volume to";
 	} else {
-		return "set volume";
+		return "kept the volume at";
 	}
 }
 
@@ -33,10 +33,6 @@ module.exports = {
 	// cooldown: 5,
 	guildOnly: true,
 	execute(message, args) {
-		// args.unshift();
-		// index.changeVolume(args[0]);
-
-		/*
 		volume = args[0];
 		raisedVolume = compareVolume(volume);
 
@@ -45,7 +41,7 @@ module.exports = {
 			index.setDispatcherVolume(newVolume);
 			let vEmbed = new Discord.RichEmbed()
 				.setTitle(` `)
-				.setDescription(`:loud_sound: ${message.author.username} ${decideWording(raisedVolume)} to ${volume}%`)
+				.setDescription(`:loud_sound: ${message.author.username} ${decideWording(raisedVolume)} ${volume}%`)
 				.setColor(`#44C408`)
 			message.channel.send(vEmbed);
 		} else {
@@ -55,12 +51,5 @@ module.exports = {
 				.setColor(`#FF0000`)
 			message.channel.send(vEmbed);
 		}
-		*/
-
-		let volumeDisabled = new Discord.RichEmbed()
-			.setTitle(` `)
-			.setDescription(`<:error:643341473772863508> Sorry, Opus streams do not support volume control`)
-			.setColor(`#FF0000`)
-		message.channel.send(volumeDisabled);
 	}
 }

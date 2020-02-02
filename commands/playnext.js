@@ -15,7 +15,7 @@ class YTVideo {
 	getTitle() {
 		return this.video.title;
 	}
-	getCleanTitle() {
+	getCleanTitle()  {
 		return this.video.title;
 	}
 	getURL() {
@@ -42,6 +42,10 @@ class YTVideo {
 		return `https://www.youtube.com/channel/${this.video.channelId}`;
 	}
 	getLength() {
+		if(!this.video.seconds) {
+			return `unknown`;
+		}
+
 		if (this.video.seconds < 10) {
 			return `${this.video.minutes}:0${this.video.seconds}`;
 		} else {
@@ -50,7 +54,12 @@ class YTVideo {
 	}
 	getPosition() {
 		let queue = index.getQueue();
-		return queue.indexOf(this) + 1;
+		if(queue.indexOf(this) == -1)
+		{
+			return 1;
+		} else {
+			return queue.indexOf(this) + 1;
+		}
 	}
 	getVideo() {
 		return this.video;

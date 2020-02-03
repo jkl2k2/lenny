@@ -32,7 +32,7 @@ async function sendDetails(input, c) {
 
 module.exports = {
     name: 'next',
-    description: 'Displays which song is up next in queue',
+    description: 'Displays info on which song is up next in queue',
     aliases: ['n'],
     // usage: '[command]',
     // cooldown: 5,

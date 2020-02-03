@@ -3,7 +3,7 @@ const Discord = require('discord.js');
 module.exports = {
 	name: 'ping',
 	description: 'Performs a latency test and shows the results',
-	// aliases: ['aliases'],
+	aliases: ['test'],
 	// usage: '[command]',
 	// cooldown: 5,
 	guildOnly: false,

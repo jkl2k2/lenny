@@ -21,7 +21,11 @@ module.exports = {
 
             // data.push('Here\'s a list of all my commands:');
             // data.push(commands.map(command => command.name).join(', '));
-            generalHelp.addField(`**All commands**`, `${commands.map(command => command.name).join(`\n`)}`);
+            generalHelp.addField(`**Playback control**`, `play\nplaynext\nskip\nskipall\njoin\nleave\npause\nresume\nvolume`, true);
+            generalHelp.addField(`**Queue control**`, `queue\nremove\nmove\nshuffle`, true);
+            generalHelp.addField(`**Music information**`, `playing\nnext\nfindvideo`, true);
+            generalHelp.addField(`**Fun commands**`, `say\nlenny`, true);
+            generalHelp.addField(`**System commands**`, `ping`, true)
 
             // data.push(`\nYou can send \`${prefix}help [command name]\` to get info on a specific command!`);
             generalHelp.setAuthor(`Use ${prefix}help [command name] to get info on a specific command`, `https://cdn.discordapp.com/app-icons/641137495886528513/35676b341ed8ba268e5fff9dcc5c570e.png?size=256`);
@@ -64,7 +68,7 @@ module.exports = {
         commandHelp.setTitle(` `);
 
         // data.push(`**Name:** ${command.name}`);
-        commandHelp.setAuthor(config.get(`Bot.prefix`) + command.name);
+        commandHelp.setAuthor(config.get(`Bot.prefix`) + command.name, `https://cdn.discordapp.com/app-icons/641137495886528513/35676b341ed8ba268e5fff9dcc5c570e.png?size=256`);
 
         // if (command.aliases) data.push(`**Aliases:** ${command.aliases.join(', ')}`);
         if (command.aliases) commandHelp.addField(`**Aliases**`, command.aliases.join(', '));
@@ -74,6 +78,10 @@ module.exports = {
 
         // if (command.usage) data.push(`**Usage:** ${prefix}${command.name} ${command.usage}`);
         if (command.usage) commandHelp.addField(`**Usage**`, `${prefix}${command.name} ${command.usage}`);
+
+        if (command.guildOnly) commandHelp.addField(`**Servers only**`, `Only usable in servers, not DMs`);
+
+        if (!command.guildOnly) commandHelp.addField(`**Servers or DMs**`, `Usable in both servers and bot's DMs`);
 
         // data.push(`**Cooldown:** ${command.cooldown || 3} second(s)`);
         commandHelp.addField(`**Cooldown**`, `${command.cooldown || 3} second(s)`);

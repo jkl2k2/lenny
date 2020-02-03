@@ -1,5 +1,6 @@
 const index = require(`../index.js`);
 const Discord = require(`discord.js`);
+const config = require(`config`);
 
 function queueResolver(arr, index) {
 	if (arr[index]) {
@@ -125,9 +126,9 @@ async function sendDetails(input, c, index) {
 
 module.exports = {
 	name: 'queue',
-	description: 'Displays the music queue. Controllable with reaction buttons (times out after 30 seconds of inactivity).',
+	description: `Displays the music queue. Controllable with reaction buttons. View info on a specific video in queue by typing ${config.get(`Bot.prefix`)}queue [number]`,
 	aliases: ['q'],
-	// usage: '[command]',
+	usage: '[position]',
 	// cooldown: 5,
 	guildOnly: true,
 	async execute(message, args) {

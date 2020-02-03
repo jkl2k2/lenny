@@ -6,7 +6,7 @@ module.exports = {
 	description: 'Attempts to force playback from a stuck queue',
 	// aliases: ['aliases'],
 	// usage: '[command]',
-	// cooldown: 5,
+	cooldown: 5,
 	guildOnly: true,
 	execute(message, args) {
         let forceEmbed = new Discord.RichEmbed()

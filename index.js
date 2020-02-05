@@ -105,7 +105,7 @@ async function playMusic(message) {
 
     if (queue[0] == undefined) {
         console.log("playMusic() called, but queue[0] is undefined");
-        
+
         var retry = setTimeout(function () {
             if (count < 4) {
                 playMusic(message);
@@ -169,7 +169,7 @@ async function playMusic(message) {
         if (message.member.voiceChannel) {
 
             message.member.voiceChannel.connection.player.streamingData.pausedTime = 0;
-            
+
         } else {
             // Fallback in case the original user left voice channel
             var connections = client.voiceConnections.array();
@@ -177,7 +177,7 @@ async function playMusic(message) {
         }
 
         dispatcher.on("end", function () {
-            if(repeat) {
+            if (repeat) {
                 queue.push(lastPlayed);
             }
             if (path != " ") {

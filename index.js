@@ -13,6 +13,7 @@ const cooldowns = new Discord.Collection();
 
 // Global variables
 var queue = [];
+var repeat = false;
 
 const prefix = config.get(`Bot.prefix`);
 const token = config.get(`Bot.token`);
@@ -176,6 +177,9 @@ async function playMusic(message) {
         }
 
         dispatcher.on("end", function () {
+            if(repeat) {
+                queue.push(lastPlayed);
+            }
             if (path != " ") {
                 fs.unlink(path, (err) => {
                     if (err) {
@@ -233,6 +237,9 @@ module.exports = {
     getPlayingVideo: function () {
         return lastPlayed;
     },
+    getRepeat: function () {
+        return repeat;
+    },
     setQueue: function (newQueue) {
         queue = newQueue;
     },
@@ -250,6 +257,9 @@ module.exports = {
     },
     callPlayMusic: function (message) {
         playMusic(message);
+    },
+    setRepeat: function (toSet) {
+        repeat = toSet;
     }
 };
 
@@ -367,7 +377,11 @@ client.on('message', message => {
 
     // If guild-only, no DMs allowed
     if (command.guildOnly && message.channel.type !== 'text') {
-        return message.reply('I can\'t execute that command inside DMs!');
+        let serverOnly = new Discord.RichEmbed()
+            .setTitle(` `)
+            .setDescription(`<:error:643341473772863508> Sorry, that command is only usable in servers`)
+            .setColor(`#FF0000`);
+        return message.channel.send(serverOnly);
     }
 
     // If command needs arguments

@@ -319,34 +319,5 @@ module.exports = {
 		} else {
 			handleVideo("play", message, args);
 		}
-
-		/*
-		if (message.member.voiceChannel) {
-			message.member.voiceChannel.join()
-				.then(connection => {
-					if (!connection.speaking) {
-						if (playlistQueued) {
-							setTimeout(function () {
-								index.callPlayMusic(message);
-							}, 2000);
-						} else if (videoQueued) {
-							setTimeout(function () {
-								index.callPlayMusic(message);
-							}, 200);
-						} else if (soundcloudQueued) {
-							setTimeout(function () {
-								index.callPlayMusic(message);
-							}, 1000);
-						}
-					}
-				})
-				.catch(`${console.log} Timestamp: timestamp`);
-		} else {
-			let vcFailEmbed = new Discord.RichEmbed()
-				.setTitle(`:warning: ${message.author.username}, you are not in a voice channel. Your video has been queued, but I am unable to join you.`)
-				.setColor(`#FF0000`)
-			message.channel.send(vcFailEmbed);
-		}
-		*/
 	}
 }

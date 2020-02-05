@@ -17,7 +17,7 @@ module.exports = {
 			index.resumeMusic();
 			let resumeEmbed = new Discord.RichEmbed()
 				.setTitle(` `)
-				.setDescription(`:fast_forward: ${message.author.username} resumed playback`)
+				.setDescription(`:arrow_forward: ${message.author.username} resumed playback`)
 				.setColor(`#0083FF`)
 			message.channel.send(resumeEmbed);
 		} else {

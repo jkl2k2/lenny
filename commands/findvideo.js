@@ -14,7 +14,8 @@ module.exports = {
     guildOnly: true,
     async execute(message, args) {
         var manualVideoSearch = await youtube.searchVideos(args.join()).catch(function (error) {
-            console.error(`${error}\nTimestamp of error: ${timestamp('MM-DD-YYYY hh:mm:ss')}`);
+            console.error(error);
+            return;
         });
         if (manualVideoSearch[0] != undefined && args.length >= 1) {
             message.channel.send(`**Best match:**\n${manualVideoSearch[0].url}`);

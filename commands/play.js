@@ -169,7 +169,6 @@ module.exports = {
 
 				// DEBUG - CAUSES SPAM
 				// message.channel.send(`EXPECTED OUTCOME:\n\nQueued video with title ${await playlistArray.videos[i].title}\nURL of queued video is: ${await playlistArray.videos[i].url}\n\nRESULT:\n\nQueued video with title ${await videoRequestObject.videoTitle}\nURL of queued video is: ${await videoRequestObject.videoUrl}`);
-
 			}
 
 			index.setQueue(queue);
@@ -179,21 +178,33 @@ module.exports = {
 				.setDescription(`:white_check_mark: *The playlist has finished processing*`)
 			listProcessingMessage.edit(newProcessingEmbed);
 			// message.channel.send(newProcessingEmbed);
+			
+			if (message.member.voiceChannel) {
+				message.member.voiceChannel.join()
+					.then(connection => {
+						if (!connection.speaking) {
+							index.callPlayMusic(message);
+						}
+					})
+					.catch(`${console.log} Timestamp: timestamp`);
+			} else {
+				let vcFailEmbed = new Discord.RichEmbed()
+					.setTitle(`:warning: ${message.author.username}, you are not in a voice channel. Your video has been queued, but I am unable to join you.`)
+					.setColor(`#FF0000`)
+				message.channel.send(vcFailEmbed);
+			}
 		}
 
-		async function handleVideoNoPlaylist(method, message, args) {
-			videoQueued = true;
+		async function handleVideo(method, message, args) {
+
 			var videoResult = await youtube.getVideo(args.join(" ")).catch(err => {
-				console.log(err);
+				console.error(err);
+
 				let notFoundEmbed = new Discord.RichEmbed()
 					.setTitle(` `)
-					.setDescription(`<:error:643341473772863508> *Sorry, YouTube could not find any video with that input*`)
+					.setDescription(`<:error:643341473772863508> Sorry, YouTube could not find any video with that input`)
 					.setColor(`#FF0000`)
 				message.channel.send(notFoundEmbed);
-
-				console.log(`Video search fail\nError is: ${err}`);
-
-				return;
 			});
 
 			// let newVideo = new YTVideo(videoResult.title, videoResult.url, videoResult.liveStatus, message.author);
@@ -228,6 +239,21 @@ module.exports = {
 				.setTimestamp()
 				.setFooter(`Requested by ${newVideo.getRequesterName()}`)
 			message.channel.send(playEmbed);
+
+			if (message.member.voiceChannel) {
+				message.member.voiceChannel.join()
+					.then(connection => {
+						if (!connection.speaking) {
+							index.callPlayMusic(message);
+						}
+					})
+					.catch(`${console.log} Timestamp: timestamp`);
+			} else {
+				let vcFailEmbed = new Discord.RichEmbed()
+					.setTitle(`:warning: ${message.author.username}, you are not in a voice channel. Your video has been queued, but I am unable to join you.`)
+					.setColor(`#FF0000`)
+				message.channel.send(vcFailEmbed);
+			}
 		}
 
 		async function handleSoundCloud() {
@@ -291,9 +317,10 @@ module.exports = {
 		} else if (args[0].includes("soundcloud")) {
 			handleSoundCloud();
 		} else {
-			handleVideoNoPlaylist("play", message, args);
+			handleVideo("play", message, args);
 		}
 
+		/*
 		if (message.member.voiceChannel) {
 			message.member.voiceChannel.join()
 				.then(connection => {
@@ -320,5 +347,6 @@ module.exports = {
 				.setColor(`#FF0000`)
 			message.channel.send(vcFailEmbed);
 		}
+		*/
 	}
 }

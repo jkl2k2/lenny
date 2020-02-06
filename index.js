@@ -149,7 +149,7 @@ async function playMusic(message) {
             // If SoundCloud
             var connections = client.voiceConnections.array();
 
-            dispatcher = connections[0].playStream(queue[0].getURL());
+            dispatcher = connections[0].playStream(fs.createReadStream(`./soundcloud/${queue[0].getTitle()}`));
 
             sendSCDetails(queue[0], message.channel);
 
@@ -178,7 +178,7 @@ async function playMusic(message) {
 
         dispatcher.on("end", function () {
             if (repeat) {
-                queue.push(lastPlayed);
+                queue.unshift(lastPlayed);
             }
             if (path != " ") {
                 fs.unlink(path, (err) => {

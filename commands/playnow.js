@@ -31,7 +31,7 @@ class YTVideo {
 		return this.video.liveStatus;
 	}
 	getThumbnail() {
-		return this.video.thumbnails.default.url;
+		return this.video.thumbnails.standard.url;
 	}
 	async getChannelName() {
 		var id = `${this.video.channelId}`;
@@ -151,7 +151,7 @@ module.exports = {
 				.setTitle(` `)
 				.setAuthor(`➕ Queued playlist (${playlistInfo.length} songs)`)
 				.setDescription(`**[${playlistInfo.title}](${args[0]})**`)
-				.setThumbnail(playlistInfo.thumbnails.default.url)
+				.setThumbnail(playlistInfo.thumbnails.standard.url)
 				.setTimestamp()
 				.setFooter(`Requested by ${message.author.username}`)
 			message.channel.send(listEmbed);

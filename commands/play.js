@@ -31,10 +31,10 @@ class YTVideo {
 		return this.video.liveStatus;
 	}
 	getThumbnail() {
-		if (this.video.thumbnails.standard.url) {
+		if (this.video.thumbnails.standard) {
 			return this.video.thumbnails.standard.url;
 		} else {
-			return this.video.thumbnail.default.url;
+			return this.video.thumbnails.default.url;
 		}
 	}
 	async getChannelName() {

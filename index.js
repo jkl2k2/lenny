@@ -50,7 +50,6 @@ async function sendDetails(input, c) {
     if (input.getLength() == `unknown`) {
         var musicEmbed = new Discord.RichEmbed()
             // .setColor(`#00c292`)
-            .setTitle(` `)
             .setAuthor(`▶️ Now playing`)
             // .addField(`:arrow_forward: **Now playing**`, `[${input.getTitle()}](${input.getURL()})`)
             .setDescription(`**[${input.getTitle()}](${input.getURL()})**`)
@@ -58,11 +57,10 @@ async function sendDetails(input, c) {
             // .addField(`Length`, `${input.getLength()}`, true)
             .setThumbnail(input.getThumbnail())
             .setTimestamp()
-            .setFooter(`Requested by ${input.getRequesterName()}`)
+            .setFooter(`Requested by ${input.getRequesterName()} in ${client.voiceConnections.array()[0].channel.name}`)
     } else {
         var musicEmbed = new Discord.RichEmbed()
             // .setColor(`#00c292`)
-            .setTitle(` `)
             .setAuthor(`▶️ Now playing`)
             // .addField(`:arrow_forward: **Now playing**`, `[${input.getTitle()}](${input.getURL()})`)
             .setDescription(`**[${input.getTitle()}](${input.getURL()})**`)
@@ -78,7 +76,6 @@ async function sendDetails(input, c) {
 
 function sendSCDetails(input, c) {
     var scMusicEmbed = new Discord.RichEmbed()
-        .setTitle(` `)
         .setAuthor(`▶️ Now playing`)
         .setDescription(`**[${input.getCleanTitle()}](${input.getURL()})**`)
         .addField(`Uploader`, `[${input.getUploader()}](${input.getUploaderUrl()})`, true)
@@ -229,7 +226,6 @@ module.exports = {
             return lastDetails;
         } else {
             return new Discord.RichEmbed()
-                .setTitle(` `)
                 .addField(`:information_source: Nothing is playing`, `Nothing is currently playing`)
                 .setColor(`#0083FF`)
         }
@@ -378,7 +374,6 @@ client.on('message', message => {
     // If guild-only, no DMs allowed
     if (command.guildOnly && message.channel.type !== 'text') {
         let serverOnly = new Discord.RichEmbed()
-            .setTitle(` `)
             .setDescription(`<:error:643341473772863508> Sorry, that command is only usable in servers`)
             .setColor(`#FF0000`);
         return message.channel.send(serverOnly);
@@ -412,7 +407,6 @@ client.on('message', message => {
         if (now < expirationTime && message.author.id != ownerID) {
             const timeLeft = (expirationTime - now) / 1000;
             let cooldownEmbed = new Discord.RichEmbed()
-                .setTitle(` `)
                 .addField(`<:error:643341473772863508> Command cooldown`, `Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command`)
                 .setColor(`#FF0000`)
             return message.channel.send(cooldownEmbed);

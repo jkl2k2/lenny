@@ -46,13 +46,13 @@ module.exports = {
                         objectToWrite.list.push(args[1]);
 
                         let addedEmbed = new Discord.RichEmbed()
-                            .setTitle(` `)
+                             
                             .addField(`:white_check_mark: Added to ligma list`, `Added '${args[1]}' to the ligma list`)
                             .setColor(`#44C408`)
                         message.channel.send(addedEmbed);
                     } else {
                         let addFailEmbed = new Discord.RichEmbed()
-                            .setTitle(` `)
+                             
                             .addField(`<:error:643341473772863508> Failed to add`, `'${args[1]}' is already in the list`)
                             .setColor(`#FF0000`)
                         message.channel.send(addFailEmbed);
@@ -90,13 +90,13 @@ module.exports = {
                         objectToWrite.list.splice(objectToWrite.list.indexOf(args[1]), 1);
 
                         let removeEmbed = new Discord.RichEmbed()
-                            .setTitle(` `)
+                             
                             .addField(`:white_check_mark: Removed from ligma list`, `Removed '${args[1]}' from ligma list`)
                             .setColor(`#44C408`)
                         message.channel.send(removeEmbed);
                     } else {
                         let removeFailEmbed = new Discord.RichEmbed()
-                            .setTitle(` `)
+                             
                             .addField(`<:error:643341473772863508> Failed to remove`, `'${args[1]}' is not in the list`)
                             .setColor(`#FF0000`)
                         message.channel.send(removeFailEmbed);

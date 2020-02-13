@@ -26,7 +26,7 @@ module.exports = {
             message.channel.send(noArgsSearchEmbed);
         } else {
             let searchFailEmbed = new Discord.RichEmbed()
-                .setTitle(` `)
+                 
                 .addField(`:no_entry: **Sorry, ${message.author.username}, I couldn't find any videos with those search terms**`, `Please try again with different search terms`)
                 .setTimestamp()
                 .setFooter(`Requested by ${message.author.username}`)

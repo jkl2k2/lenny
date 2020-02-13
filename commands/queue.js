@@ -22,7 +22,7 @@ async function sendEmbed(page, message) {
 	var queue = index.getQueue();
 
 	let queueEmbed = new Discord.RichEmbed()
-		.setTitle(` `)
+		 
 		// .setDescription(`${queueResolver(parsedQueue, 0)}\n\n${queueResolver(parsedQueue, 1)}\n\n${queueResolver(parsedQueue, 2)}\n\n${queueResolver(parsedQueue, 3)}\n\n${queueResolver(parsedQueue, 4)}\n\n${queueOverflowResolver(parsedQueue)}`)
 		.setDescription(`${queueResolver(queue, 0 + page * 5)}\n\n${queueResolver(queue, 1 + page * 5)}\n\n${queueResolver(queue, 2 + page * 5)}\n\n${queueResolver(queue, 3 + page * 5)}\n\n${queueResolver(queue, 4 + page * 5)}\n\n${queueOverflowResolver(queue)}`)
 		.setAuthor(`➡️ Current queue - Page ${page + 1}`)
@@ -84,7 +84,7 @@ async function reactionHandler(sent, message, page) {
 		.catch(collected => {
 			// message.reply('Reaction timeout');
 			let noControlQueue = new Discord.RichEmbed()
-				.setTitle(` `)
+				 
 				// .setDescription(`${queueResolver(parsedQueue, 0)}\n\n${queueResolver(parsedQueue, 1)}\n\n${queueResolver(parsedQueue, 2)}\n\n${queueResolver(parsedQueue, 3)}\n\n${queueResolver(parsedQueue, 4)}\n\n${queueOverflowResolver(parsedQueue)}`)
 				.setDescription(`${queueResolver(queue, 0 + page * 5)}\n\n${queueResolver(queue, 1 + page * 5)}\n\n${queueResolver(queue, 2 + page * 5)}\n\n${queueResolver(queue, 3 + page * 5)}\n\n${queueResolver(queue, 4 + page * 5)}\n\n${queueOverflowResolver(queue)}`)
 				.setAuthor(`➡️ Current queue - Page ${page + 1}`)
@@ -99,7 +99,7 @@ async function sendDetails(input, c, index) {
 	if (input.getLength() == `unknown`) {
 		var musicEmbed = new Discord.RichEmbed()
 			// .setColor(`#00c292`)
-			.setTitle(` `)
+			 
 			.setAuthor(`➡️ In queue: Video #${index}`)
 			// .addField(`:arrow_forward: **Now playing**`, `[${input.getTitle()}](${input.getURL()})`)
 			.setDescription(`**[${input.getCleanTitle()}](${input.getURL()})**`)
@@ -111,7 +111,7 @@ async function sendDetails(input, c, index) {
 	} else {
 		var musicEmbed = new Discord.RichEmbed()
 			// .setColor(`#00c292`)
-			.setTitle(` `)
+			 
 			.setAuthor(`➡️ In queue: Video #${index}`)
 			// .addField(`:arrow_forward: **Now playing**`, `[${input.getTitle()}](${input.getURL()})`)
 			.setDescription(`**[${input.getCleanTitle()}](${input.getURL()})**`)
@@ -145,7 +145,7 @@ module.exports = {
 
 		if (queue.length == 0) {
 			let emptyQueueEmbed = new Discord.RichEmbed()
-				.setTitle(` `)
+				 
 				.setDescription(`:information_source: The queue is currently empty`)
 				.setColor(`#0083FF`)
 			message.channel.send(emptyQueueEmbed);
@@ -154,7 +154,7 @@ module.exports = {
 				sendDetails(queue[reqIndex], message.channel, args[0]);
 			} else if (args[0] && !queue[reqIndex]) {
 				let invalidQueuePos = new Discord.RichEmbed()
-					.setTitle(` `)
+					 
 					.setDescription(`<:error:643341473772863508> There is not a video at that spot in the queue`)
 					.setColor(`#FF0000`)
 				message.channel.send(invalidQueuePos);

@@ -16,13 +16,13 @@ module.exports = {
 		if (dispatcher != undefined && dispatcher.paused == true) {
 			index.resumeMusic();
 			let resumeEmbed = new Discord.RichEmbed()
-				.setTitle(` `)
+				 
 				.setDescription(`:arrow_forward: ${message.author.username} resumed playback`)
 				.setColor(`#0083FF`)
 			message.channel.send(resumeEmbed);
 		} else {
 			let resumeFailEmbed = new Discord.RichEmbed()
-				.setTitle(` `)
+				 
 				.setDescription(`<:error:643341473772863508> ${message.author.username}, the music is already playing`)
 				.setColor(`#FF0000`)
 			message.channel.send(resumeFailEmbed);

@@ -17,7 +17,6 @@ module.exports = {
 
         if (!args.length) {
             var generalHelp = new Discord.RichEmbed();
-            generalHelp.setTitle(` `);
 
             // data.push('Here\'s a list of all my commands:');
             // data.push(commands.map(command => command.name).join(', '));
@@ -65,7 +64,7 @@ module.exports = {
         }
 
         var commandHelp = new Discord.RichEmbed();
-        commandHelp.setTitle(` `);
+        commandHelp ;
 
         // data.push(`**Name:** ${command.name}`);
         commandHelp.setAuthor(config.get(`Bot.prefix`) + command.name, `https://cdn.discordapp.com/app-icons/641137495886528513/35676b341ed8ba268e5fff9dcc5c570e.png?size=256`);

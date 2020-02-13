@@ -13,12 +13,12 @@ module.exports = {
         }
 
         let noArgs = new Discord.RichEmbed()
-            .setTitle(` `)
+             
             .setDescription(`<:error:643341473772863508> No command passed in arguments`)
             .setColor(`#FF0000`)
         
         let notFound = new Discord.RichEmbed()
-            .setTitle(` `)
+             
             .setDescription(`<:error:643341473772863508> Command not found`)
             .setColor(`#FF0000`)
 
@@ -37,14 +37,14 @@ module.exports = {
         } catch (error) {
             console.log(error);
             let commandReloadError = new Discord.RichEmbed()
-                .setTitle(` `)
+                 
                 .setDescription(`Error while recaching command\n\n${error.message}`)
                 .setColor(`#FF0000`)
             message.channel.send(commandReloadError);
         }
 
         let commandReloaded = new Discord.RichEmbed()
-            .setTitle(` `)
+             
             .setDescription(`:arrows_counterclockwise: Successfully recached command "${commandName}"`)
             .setColor(`#0083FF`)
         message.channel.send(commandReloaded);

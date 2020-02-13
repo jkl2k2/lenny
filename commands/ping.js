@@ -9,7 +9,7 @@ module.exports = {
 	guildOnly: false,
 	async execute(message, args) {
 		let pingEmbed = new Discord.RichEmbed()
-			.setTitle(` `)
+			 
 			.setDescription(`:arrows_counterclockwise: Testing latency...`)
 			.addField(`Frontend Latency`, `Testing...`, true)
 			.addField(`Frontend Status`, `:arrows_counterclockwise: Testing...`, true)
@@ -21,7 +21,7 @@ module.exports = {
 		const m = await message.channel.send(pingEmbed);
 
 		let newPingEmbed = new Discord.RichEmbed()
-			.setTitle(` `)
+			 
 			.setDescription(`:information_source: Latency Test Completed`)
 			.setColor(`#0083FF`);
 		

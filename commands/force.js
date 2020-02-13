@@ -10,7 +10,7 @@ module.exports = {
 	guildOnly: true,
 	execute(message, args) {
         let forceEmbed = new Discord.RichEmbed()
-            .setTitle(" ")
+             
             .addField(":information_source: Forcing playback", "Attemping to unstick queue...")
             .setColor("#0083FF")
 		message.channel.send(forceEmbed);

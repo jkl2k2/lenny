@@ -14,7 +14,7 @@ module.exports = {
 
 		if (dispatcher == undefined || dispatcher.speaking == false) {
 			let skipFailEmbed = new Discord.RichEmbed()
-				.setTitle(` `)
+				 
 				.setDescription(`<:error:643341473772863508> There is nothing to skip`)
 				.setColor(`#FF0000`)
 			message.channel.send(skipFailEmbed);
@@ -26,7 +26,7 @@ module.exports = {
 		index.endDispatcher();
 
 		let endDispatcherEmbed = new Discord.RichEmbed()
-			.setTitle(` `)
+			 
 			.setDescription(`:fast_forward: ${message.author.username} skipped all songs`)
 			.setColor(`#0083FF`)
 		message.channel.send(endDispatcherEmbed);

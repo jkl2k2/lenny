@@ -7,7 +7,7 @@ function executeSkip(message) {
 
 	if (dispatcher == undefined || dispatcher.speaking == false) {
 		let skipFailEmbed = new Discord.RichEmbed()
-			.setTitle(` `)
+			 
 			.setDescription(`<:error:643341473772863508> There is nothing to skip`)
 			.setColor(`#FF0000`)
 		message.channel.send(skipFailEmbed);
@@ -18,7 +18,7 @@ function executeSkip(message) {
 	index.endDispatcher();
 
 	let endDispatcherEmbed = new Discord.RichEmbed()
-		.setTitle(` `)
+		 
 		.setDescription(`:fast_forward: ${message.author.username} skipped the current song`)
 		.setColor(`#0083FF`)
 	message.channel.send(endDispatcherEmbed);
@@ -52,7 +52,7 @@ module.exports = {
 
 				if (objectToWrite.list.indexOf(message.author.id) != -1) {
 					let ligmaEmbed = new Discord.RichEmbed()
-						.setTitle(` `)
+						 
 						.addField(`:warning: LIGMA DETECTED :warning:`, `Sorry, ${message.author.username}, but you cannot use the skip command because you have ligma`)
 						.setColor(`#FF0000`)
 					message.channel.send(ligmaEmbed);

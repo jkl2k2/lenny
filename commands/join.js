@@ -14,14 +14,13 @@ module.exports = {
 			message.member.voiceChannel.join()
 				.then(connection => {
 					let joinEmbed = new Discord.RichEmbed()
-						.setTitle(` `)
 						.setDescription(`:arrow_right: Connected to "${connection.channel.name}"`)
 						.setColor(`#0083FF`)
 					message.channel.send(joinEmbed);
 				})
 		} else {
 			let joinFailEmbed = new Discord.RichEmbed()
-				.setTitle(` `)
+				 
 				.setDescription(`<:error:643341473772863508> You are not in a voice channel`)
 				.setColor(`#FF0000`)
 			message.channel.send(joinFailEmbed);

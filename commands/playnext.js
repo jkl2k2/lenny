@@ -125,7 +125,7 @@ module.exports = {
 
 		if (!message.member.voiceChannel) {
 			let vcFailEmbed = new Discord.RichEmbed()
-				.setTitle(` `)
+				 
 				.setDescription(`<:error:643341473772863508> ${message.author.username}, you are not in a voice channel`)
 				.setColor(`#FF0000`)
 			message.channel.send(vcFailEmbed);
@@ -148,7 +148,7 @@ module.exports = {
 
 			var listEmbed = new Discord.RichEmbed()
 				.setColor(`#00c292`)
-				.setTitle(` `)
+				 
 				.addField(`:arrow_up_small: **Playlist added to queue (${playlistInfo.length} songs)**`, `[${playlistInfo.title}](${args[0]})`)
 				.setThumbnail(playlistInfo.thumbnails.standard.url)
 				.setTimestamp()
@@ -156,7 +156,7 @@ module.exports = {
 			message.channel.send(listEmbed);
 
 			var listProcessingEmbed = new Discord.RichEmbed()
-				.setTitle(` `)
+				 
 				.setDescription(`:arrows_counterclockwise: *Processing playlist...*`)
 
 			var listProcessingMessage = await message.channel.send(listProcessingEmbed);
@@ -178,7 +178,7 @@ module.exports = {
 			index.setQueue(queue);
 
 			let newProcessingEmbed = new Discord.RichEmbed()
-				.setTitle(` `)
+				 
 				.setDescription(`:white_check_mark: *The playlist has finished processing*`)
 			listProcessingMessage.edit(newProcessingEmbed);
 			// message.channel.send(newProcessingEmbed);
@@ -188,7 +188,7 @@ module.exports = {
 			var videoResult = await youtube.getVideo(args.join(" ")).catch(err => {
 				console.log(err);
 				let notFoundEmbed = new Discord.RichEmbed()
-					.setTitle(` `)
+					 
 					.addField(`<:error:643341473772863508> Video not found`, `Sorry, no video could be found with your input`)
 					.setColor(`#FF0000`)
 				message.channel.send(notFoundEmbed);
@@ -214,7 +214,7 @@ module.exports = {
 
 			var playEmbed = new Discord.RichEmbed()
 				// .setColor(`#00c292`)
-				.setTitle(` `)
+				 
 				.setAuthor(`➕ Queued`)
 				// .addField(`**:arrow_up_small: Queued**`, `[${newVideo.getTitle()}](${newVideo.getURL()})`)
 				.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**`)
@@ -235,7 +235,7 @@ module.exports = {
 			var gInfo;
 
 			let scDownload = new Discord.RichEmbed()
-				.setTitle(` `)
+				 
 				.setDescription(`:arrows_counterclockwise: Downloading SoundCloud song...`)
 				.setColor(`#0083FF`)
 			var sent = await message.channel.send(scDownload);
@@ -254,7 +254,7 @@ module.exports = {
 				client.emit("SC ready");
 
 				let scDownloadComplete = new Discord.RichEmbed()
-					.setTitle(` `)
+					 
 					.setAuthor(`➕ Queued`)
 					.setDescription(`**[${newSC.getCleanTitle()}](${newSC.getURL()})**`)
 					.addField(`Uploader`, `[${newSC.getUploader()}](${newSC.getUploaderUrl()})`, true)
@@ -277,7 +277,7 @@ module.exports = {
 
 		if (args[0] == undefined) {
 			let undefArgsEmbed = new Discord.RichEmbed()
-				.setTitle(` `)
+				 
 				.setDescription(`<:error:643341473772863508> *Please include at least one search term or URL*`)
 				.setColor(`#FF0000`)
 			message.channel.send(undefArgsEmbed);

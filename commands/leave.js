@@ -17,14 +17,14 @@ module.exports = {
 			connections[0].disconnect();
 
 			let leaveEmbed = new Discord.RichEmbed()
-				.setTitle(` `)
+				 
 				.setDescription(`:arrow_left: Disconnected from "${connections[0].channel.name}"`)
 				.setColor(`#0083FF`)
 
 			message.channel.send(leaveEmbed);
 		} else {
 			let leaveFailEmbed = new Discord.RichEmbed()
-				.setTitle(` `)
+				 
 				.setDescription(`<:error:643341473772863508> I'm not in a voice channel`)
 				.setColor(`#FF0000`)
 

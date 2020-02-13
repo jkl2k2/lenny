@@ -5,7 +5,7 @@ async function sendDetails(input, c) {
     if (input.getLength() == `unknown`) {
         var musicEmbed = new Discord.RichEmbed()
             // .setColor(`#00c292`)
-            .setTitle(` `)
+             
             .setAuthor(`➡️ Coming up next`)
             // .addField(`:arrow_forward: Now playing`, `[${input.getTitle()}](${input.getURL()})`)
             .setDescription(`[${input.getTitle()}](${input.getURL()})`)
@@ -17,7 +17,7 @@ async function sendDetails(input, c) {
     } else {
         var musicEmbed = new Discord.RichEmbed()
             // .setColor(`#00c292`)
-            .setTitle(` `)
+             
             .setAuthor(`➡️ Coming up next`)
             // .addField(`:arrow_forward: Now playing`, `[${input.getTitle()}](${input.getURL()})`)
             .setDescription(`[${input.getTitle()}](${input.getURL()})`)
@@ -44,7 +44,7 @@ module.exports = {
             sendDetails(nextVideo, message.channel);
         } else {
             let nextUndefEmbed = new Discord.RichEmbed()
-                .setTitle(` `)
+                 
                 .setDescription(`:information_source: There is no video coming up in the queue`)
                 .setColor(`#0083FF`)
             message.channel.send(nextUndefEmbed);

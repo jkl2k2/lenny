@@ -35,13 +35,13 @@ module.exports = {
 			index.setQueue(shuffled);
 
             let shuffleCompleteEmbed = new Discord.RichEmbed()
-				.setTitle(` `)
+				 
 				.setDescription(`:twisted_rightwards_arrows: ${message.author.username} shuffled ${queue.length} songs in queue`)
                 .setColor(`#0083FF`)
             message.channel.send(shuffleCompleteEmbed);
         } else {
             let shuffleFailEmbed = new Discord.RichEmbed()
-				.setTitle(` `)
+				 
 				.setDescription(`<:error:643341473772863508> Cannot shuffle an empty queue`)
                 .setColor(`#FF0000`)
             message.channel.send(shuffleFailEmbed);

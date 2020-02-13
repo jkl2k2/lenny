@@ -11,12 +11,14 @@ module.exports = {
 	execute(message, args) {
 		// index.callJoinVC(message);
 		if (message.member.voiceChannel) {
-			message.member.voiceChannel.join();
-			let joinEmbed = new Discord.RichEmbed()
-				.setTitle(` `)
-				.setDescription(`:arrow_right: I joined your channel, ${message.author.username}`)
-				.setColor(`#0083FF`)
-			message.channel.send(joinEmbed);
+			message.member.voiceChannel.join()
+				.then(connection => {
+					let joinEmbed = new Discord.RichEmbed()
+						.setTitle(` `)
+						.setDescription(`:arrow_right: Connected to "${connection.channel.name}"`)
+						.setColor(`#0083FF`)
+					message.channel.send(joinEmbed);
+				})
 		} else {
 			let joinFailEmbed = new Discord.RichEmbed()
 				.setTitle(` `)

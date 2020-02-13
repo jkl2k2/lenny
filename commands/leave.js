@@ -11,14 +11,14 @@ module.exports = {
 	guildOnly: true,
 	execute(message, args) {
 
-		var connectionArray = client.voiceConnections.array();
+		var connections = client.voiceConnections.array();
 
-		if (connectionArray[0] != undefined) {
-			connectionArray[0].disconnect();
+		if (connections[0] != undefined) {
+			connections[0].disconnect();
 
 			let leaveEmbed = new Discord.RichEmbed()
 				.setTitle(` `)
-				.setDescription(`:eject: I left the voice channel`)
+				.setDescription(`:arrow_left: Disconnected from "${connections[0].channel.name}"`)
 				.setColor(`#0083FF`)
 
 			message.channel.send(leaveEmbed);

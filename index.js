@@ -57,7 +57,7 @@ async function sendDetails(input, c) {
             // .addField(`Length`, `${input.getLength()}`, true)
             .setThumbnail(input.getThumbnail())
             .setTimestamp()
-            .setFooter(`Requested by ${input.getRequesterName()} in ${client.voiceConnections.array()[0].channel.name}`)
+            .setFooter(`Requested by ${input.getRequesterName()}`)
     } else {
         var musicEmbed = new Discord.RichEmbed()
             // .setColor(`#00c292`)
@@ -270,14 +270,27 @@ for (const file of commandFiles) {
 }
 
 // On ready
-client.once('ready', () => {
+client.on('ready', () => {
     // Randomly select status
     setInterval(() => {
         const index = Math.floor(Math.random() * (activities.length - 1) + 1);
         client.user.setActivity(activities[index].getText(), { type: activities[index].getFormat() });
+        client.user.setStatus("online");
     }, 15000);
 
     console.log("// Bot initialized //");
+});
+
+client.on('error', () => {
+    // On connection error
+    client.user.setActivity("lost connection...", { type: "PLAYING" });
+    client.user.setStatus("dnd");
+});
+
+client.on('reconnecting', () => {
+    // On reconnecting to Discord
+    client.user.setActivity("reconnecting...", { type: "PLAYING" });
+    client.user.setStatus("dnd");
 });
 
 // On message

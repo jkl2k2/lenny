@@ -29,6 +29,7 @@
     "node-opus": "^0.3.3",
     "parse-time": "^0.1.4",
     "prism-media": "^1.1.0",
+    "simple-youtube-api": "^5.2.1",
     "soundcloud-v2-api": "0.0.6",
     "youtube-dl": "^2.2.0",
     "ytdl-core": "^1.0.7",

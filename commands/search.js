@@ -200,23 +200,23 @@ module.exports = {
                         .setAuthor(`Top 5 Playlists For: "${args.join(" ").substring(9)}"`)
                         .setDescription(`1. **[${results[0].title}](${results[0].url})**
                                          Length: **${res1} videos**
-                                         Author: **${results[0].channelTitle}**
+                                         Uploader: **${results[0].channelTitle}**
 
                                          2. **[${results[1].title}](${results[1].url})**
                                          Length: **${res2} videos**
-                                         Author: **${results[1].channelTitle}**
+                                         Uploader: **${results[1].channelTitle}**
 
                                          3. **[${results[2].title}](${results[2].url})**
                                          Length: **${res3} videos**
-                                         Author: **${results[2].channelTitle}**
+                                         Uploader: **${results[2].channelTitle}**
 
                                          4. **[${results[3].title}](${results[3].url})**
                                          Length: **${res4} videos**
-                                         Author: **${results[3].channelTitle}**
+                                         Uploader: **${results[3].channelTitle}**
 
                                          5. **[${results[4].title}](${results[4].url})**
                                          Length: **${res5} videos**
-                                         Author: **${results[4].channelTitle}**`)
+                                         Uploader: **${results[4].channelTitle}**`)
                         .setTimestamp()
                         .setFooter(`Requested by ${message.author.username} - Type the number to select - Type cancel to stop`)
                     searchingMessage.edit(resultsEmbed);
@@ -337,23 +337,23 @@ module.exports = {
                         .setAuthor(`Top 5 Results For: "${args.join(" ")}"`)
                         .setDescription(`1. **[${results[0].title}](${results[0].url})**
                                              Length: **${res1.getLength()}**
-                                             Author: **${res1.getChannelName()}**
+                                             Uploader: **${res1.getChannelName()}**
 
                                              2. **[${results[1].title}](${results[1].url})**
                                              Length: **${res2.getLength()}**
-                                             Author: **${res2.getChannelName()}**
+                                             Uploader: **${res2.getChannelName()}**
 
                                              3. **[${results[2].title}](${results[2].url})**
                                              Length: **${res3.getLength()}**
-                                             Author: **${res3.getChannelName()}**
+                                             Uploader: **${res3.getChannelName()}**
 
                                              4. **[${results[3].title}](${results[3].url})**
                                              Length: **${res4.getLength()}**
-                                             Author: **${res4.getChannelName()}**
+                                             Uploader: **${res4.getChannelName()}**
 
                                              5. **[${results[4].title}](${results[4].url})**
                                              Length: **${res5.getLength()}**
-                                             Author: **${res5.getChannelName()}**`)
+                                             Uploader: **${res5.getChannelName()}**`)
                         .setTimestamp()
                         .setFooter(`Requested by ${message.author.username} - Type the number to select - Type cancel to stop`)
                     searchingMessage.edit(resultsEmbed);

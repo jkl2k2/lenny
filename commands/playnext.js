@@ -1,11 +1,11 @@
 const index = require(`../index.js`);
 const config = require('config');
-const api = config.get(`Bot.api`);
-const Discord = require(`discord.js`);
-const { YouTube } = require('better-youtube-api');
-const youtube = new YouTube(api);
+var fs = require('fs');
 const youtubedl = require('youtube-dl');
-const fs = require('fs');
+const api = config.get(`Bot.api2`);
+const Discord = require(`discord.js`);
+const YouTube = require(`simple-youtube-api`);
+const youtube = new YouTube(api);
 
 class YTVideo {
 	constructor(video, requester) {
@@ -28,28 +28,32 @@ class YTVideo {
 		return this.requester.username;
 	}
 	getType() {
-		return this.video.liveStatus;
+		return "youtube";
 	}
 	getThumbnail() {
-		return this.video.thumbnails.standard.url;
+		if (this.video.thumbnails.standard) {
+			return this.video.thumbnails.standard.url;
+		} else {
+			return ``;
+		}
 	}
-	async getChannelName() {
-		var id = `${this.video.channelId}`;
-		var resolved = await youtube.getChannel(id);
-		return resolved.name;
+	getChannelName() {
+		return this.video.channel.title;
 	}
 	getChannelURL() {
-		return `https://www.youtube.com/channel/${this.video.channelId}`;
+		return this.video.channel.url;
 	}
 	getLength() {
-		if (!this.video.seconds) {
+		if ((!this.video.duration) || this.video.duration.hours == 0 && this.video.duration.minutes == 0 && this.video.duration.seconds == 0) {
 			return `unknown`;
 		}
 
-		if (this.video.seconds < 10) {
-			return `${this.video.minutes}:0${this.video.seconds}`;
-		} else {
-			return `${this.video.minutes}:${this.video.seconds}`;
+		if (this.video.duration.hours == 0) {
+			if (this.video.duration.seconds < 10) {
+				return `${this.video.duration.minutes}:0${this.video.duration.seconds}`
+			} else {
+				return `${this.video.duration.minutes}:${this.video.duration.seconds}`;
+			}
 		}
 	}
 	getPosition() {
@@ -106,11 +110,7 @@ class SCSong {
 	}
 	getPosition() {
 		let queue = index.getQueue();
-		if (queue.indexOf(this) == -1) {
-			return 1;
-		} else {
-			return queue.indexOf(this) + 1;
-		}
+		return queue.indexOf(this) + 1;
 	}
 }
 
@@ -124,8 +124,9 @@ module.exports = {
 	execute(message, args) {
 
 		if (!message.member.voiceChannel) {
+			// If member not in VC
 			let vcFailEmbed = new Discord.RichEmbed()
-				 
+				.setTitle(` `)
 				.setDescription(`<:error:643341473772863508> ${message.author.username}, you are not in a voice channel`)
 				.setColor(`#FF0000`)
 			message.channel.send(vcFailEmbed);
@@ -133,98 +134,126 @@ module.exports = {
 			return;
 		}
 
-		var playlistQueued = false;
-		var soundcloudQueued = false;
+		if (args[0] == undefined) {
+			// If no arguments
+			let undefArgsEmbed = new Discord.RichEmbed()
+				.setTitle(` `)
+				.setDescription(`:no_entry: Please include at least one search term or URL`)
+				.setColor(`#FF0000`)
+			message.channel.send(undefArgsEmbed);
 
-		var queue = index.getQueue();
-		var client = index.getClient();
-
-		async function handlePlaylist(method, message, args) {
-			playlistQueued = true;
-			var playlistInfo = await youtube.getPlaylist(args[0]);
-			var playlistArray = await youtube.getPlaylistItems(args[0]).catch(function (error) {
-				console.error(`${error}`);
-			});
-
-			var listEmbed = new Discord.RichEmbed()
-				.setColor(`#00c292`)
-				 
-				.addField(`:arrow_up_small: **Playlist added to queue (${playlistInfo.length} songs)**`, `[${playlistInfo.title}](${args[0]})`)
-				.setThumbnail(playlistInfo.thumbnails.standard.url)
-				.setTimestamp()
-				.setFooter(`Requested by ${message.author.username}`)
-			message.channel.send(listEmbed);
-
-			var listProcessingEmbed = new Discord.RichEmbed()
-				 
-				.setDescription(`:arrows_counterclockwise: *Processing playlist...*`)
-
-			var listProcessingMessage = await message.channel.send(listProcessingEmbed);
-
-			for (var i = 0; i < playlistArray.length; i++) {
-				// let playlistVideo = new YTVideo(await playlistArray[i].title, await playlistArray[i].url, playlistArray[i].liveStatus, message.author);
-				let playlistVideo = new YTVideo(playlistArray[i], message.author);
-				if (method == "playnext") {
-					queue.unshift(playlistVideo);
-				} else {
-					queue.push(playlistVideo);
-				}
-
-				// DEBUG - CAUSES SPAM
-				// message.channel.send(`EXPECTED OUTCOME:\n\nQueued video with title ${await playlistArray.videos[i].title}\nURL of queued video is: ${await playlistArray.videos[i].url}\n\nRESULT:\n\nQueued video with title ${await videoRequestObject.videoTitle}\nURL of queued video is: ${await videoRequestObject.videoUrl}`);
-
-			}
-
-			index.setQueue(queue);
-
-			let newProcessingEmbed = new Discord.RichEmbed()
-				 
-				.setDescription(`:white_check_mark: *The playlist has finished processing*`)
-			listProcessingMessage.edit(newProcessingEmbed);
-			// message.channel.send(newProcessingEmbed);
+			return;
 		}
 
-		async function handleVideoNoPlaylist(method, message, args) {
-			var videoResult = await youtube.getVideo(args.join(" ")).catch(err => {
-				console.log(err);
-				let notFoundEmbed = new Discord.RichEmbed()
-					 
-					.addField(`<:error:643341473772863508> Video not found`, `Sorry, no video could be found with your input`)
-					.setColor(`#FF0000`)
-				message.channel.send(notFoundEmbed);
+		var queue = index.getQueue();
 
-				console.log(`Video search fail\nError is: ${err}`);
+		async function process(input) {
+			var videoResult = input;
 
-				return;
-			});
+			console.log(input.title);
 
-			// let newVideo = new YTVideo(videoResult.title, videoResult.url, videoResult.liveStatus, message.author);
 			let newVideo = new YTVideo(videoResult, message.author);
-			if (method === "playnow") {
-				queue.unshift(newVideo);
-				index.setQueue(queue);
-				endDispatcher(message.channel, message.author.username, "playnow");
-			} else if (method === "playnext") {
-				queue.unshift(newVideo);
-				index.setQueue(queue);
+
+			queue.unshift(newVideo);
+			index.setQueue(queue);
+
+			if (newVideo.getLength() == "unknown") {
+				var playEmbed = new Discord.RichEmbed()
+					.setTitle(` `)
+					.setAuthor(`➕ Queued`)
+					.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**`)
+					.addField(`Uploader`, `[${newVideo.getChannelName()}](${newVideo.getChannelURL()})`, true)
+					.addField(`Position`, newVideo.getPosition(), true)
+					.setThumbnail(newVideo.getThumbnail())
+					.setTimestamp()
+					.setFooter(`Requested by ${newVideo.getRequesterName()}`)
+				message.channel.send(playEmbed);
 			} else {
-				queue.push(newVideo);
-				index.setQueue(queue);
+				var playEmbed = new Discord.RichEmbed()
+					.setTitle(` `)
+					.setAuthor(`➕ Queued`)
+					.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**`)
+					.addField(`Uploader`, `[${newVideo.getChannelName()}](${newVideo.getChannelURL()})`, true)
+					.addField(`Length`, newVideo.getLength(), true)
+					.addField(`Position`, newVideo.getPosition(), true)
+					.setThumbnail(newVideo.getThumbnail())
+					.setTimestamp()
+					.setFooter(`Requested by ${newVideo.getRequesterName()}`)
+				message.channel.send(playEmbed);
 			}
 
-			var playEmbed = new Discord.RichEmbed()
-				// .setColor(`#00c292`)
-				 
-				.setAuthor(`➕ Queued`)
-				// .addField(`**:arrow_up_small: Queued**`, `[${newVideo.getTitle()}](${newVideo.getURL()})`)
-				.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**`)
-				.addField(`Uploader`, `[${await newVideo.getChannelName()}](${newVideo.getChannelURL()})`, true)
-				.addField(`Length`, newVideo.getLength(), true)
-				.addField(`Position`, newVideo.getPosition(), true)
-				.setThumbnail(newVideo.getThumbnail())
-				.setTimestamp()
-				.setFooter(`Requested by ${newVideo.getRequesterName()}`)
-			message.channel.send(playEmbed);
+			if (message.member.voiceChannel) {
+				message.member.voiceChannel.join()
+					.then(connection => {
+						if (!connection.speaking) {
+							index.callPlayMusic(message);
+						}
+					})
+					.catch(`${console.log}`);
+			} else {
+				console.log("Failed to join voice channel");
+			}
+		}
+
+		async function handlePlaylist() {
+			await youtube.getPlaylist(args[0])
+				.then(async function (playlist) {
+					if (playlist) {
+						var videos = await playlist.getVideos();
+
+						var listEmbed = new Discord.RichEmbed()
+							.setAuthor(`🔄 Processing playlist`)
+							.setDescription(`**[${playlist.title}](${playlist.url})**`)
+							.addField(`Uploader`, `[${playlist.channel.title}](${playlist.channel.url})`, true)
+							.addField(`Length`, `${videos.length} videos`, true)
+							.setThumbnail(playlist.thumbnails.standard.url)
+							.setTimestamp()
+							.setFooter(`Requested by ${message.author.username}`)
+						var processing = await message.channel.send(listEmbed);
+
+						for (var i = 0; i < videos.length; i++) {
+							var newVideo = new YTVideo(videos[i], message.author);
+							queue.unshift(newVideo);
+						}
+
+						var finishedEmbed = new Discord.RichEmbed()
+							.setAuthor(`➕ Queued playlist`)
+							.setDescription(`**[${playlist.title}](${playlist.url})**`)
+							.addField(`Uploader`, `[${playlist.channel.title}](${playlist.channel.url})`, true)
+							.addField(`Length`, `${videos.length} videos`, true)
+							.setThumbnail(playlist.thumbnails.standard.url)
+							.setTimestamp()
+							.setFooter(`Requested by ${message.author.username}`)
+						processing.edit(finishedEmbed);
+
+						if (message.member.voiceChannel) {
+							message.member.voiceChannel.join()
+								.then(connection => {
+									if (!connection.speaking) {
+										index.callPlayMusic(message);
+									}
+								})
+								.catch(`${console.log} Timestamp: timestamp`);
+						} else {
+							console.log(`User not in voice channel after playlist processing`)
+						}
+					} else {
+						console.log(`Playlist not found`);
+					}
+				})
+		}
+
+		async function handleVideo() {
+			if (args[0].includes("watch?v=") || args[0].includes('youtu.be')) {
+				var input = await youtube.getVideo(args[0]);
+				process(input);
+			} else {
+				await youtube.searchVideos(args.join(" "), 1)
+					.then(async function (results) {
+						var input = await youtube.getVideo(results[0].url);
+						process(input);
+					});
+			}
 		}
 
 		async function handleSoundCloud() {
@@ -235,8 +264,8 @@ module.exports = {
 			var gInfo;
 
 			let scDownload = new Discord.RichEmbed()
-				 
-				.setDescription(`:arrows_counterclockwise: Downloading SoundCloud song...`)
+				.setTitle(` `)
+				.addField(`:arrows_counterclockwise: Downloading SoundCloud song`, `[Download in progress...](${args[0]})`)
 				.setColor(`#0083FF`)
 			var sent = await message.channel.send(scDownload);
 
@@ -248,21 +277,17 @@ module.exports = {
 
 				var newSC = new SCSong(args[0], message.author, gInfo);
 
-				queue.push(newSC);
+				queue.unshift(newSC);
 				index.setQueue(queue);
 
-				client.emit("SC ready");
-
 				let scDownloadComplete = new Discord.RichEmbed()
-					 
+					.setTitle(` `)
 					.setAuthor(`➕ Queued`)
 					.setDescription(`**[${newSC.getCleanTitle()}](${newSC.getURL()})**`)
 					.addField(`Uploader`, `[${newSC.getUploader()}](${newSC.getUploaderUrl()})`, true)
 					.addField(`Length`, newSC.getLength(), true)
 					.addField(`Position`, newSC.getPosition(), true)
-					.setThumbnail(newSC.getThumbnail())
-					.setFooter(`Requested by ${newSC.getRequesterName()}`)
-					.setTimestamp();
+					.setThumbnail(newSC.getThumbnail());
 				sent.edit(scDownloadComplete);
 
 				video.pipe(fs.createWriteStream(`./soundcloud/${gInfo._filename}`));
@@ -270,56 +295,30 @@ module.exports = {
 			});
 
 			video.on('end', function () {
-
+				if (message.member.voiceChannel) {
+					message.member.voiceChannel.join()
+						.then(connection => {
+							if (!connection.speaking) {
+								index.callPlayMusic(message);
+							}
+						})
+						.catch(`${console.log} Timestamp: timestamp`);
+				} else {
+					let vcFailEmbed = new Discord.RichEmbed()
+						.setTitle(`:warning: ${message.author.username}, you are not in a voice channel. Your video has been queued, but I am unable to join you.`)
+						.setColor(`#FF0000`)
+					message.channel.send(vcFailEmbed);
+				}
 			});
 
 		}
 
-		if (args[0] == undefined) {
-			let undefArgsEmbed = new Discord.RichEmbed()
-				 
-				.setDescription(`<:error:643341473772863508> *Please include at least one search term or URL*`)
-				.setColor(`#FF0000`)
-			message.channel.send(undefArgsEmbed);
-
-			return;
-		}
-
 		if (args[0].includes("playlist?list=")) {
-			handlePlaylist("playnext", message, args);
+			handlePlaylist();
 		} else if (args[0].includes("soundcloud")) {
 			handleSoundCloud();
 		} else {
-			handleVideoNoPlaylist("playnext", message, args);
-		}
-
-		if (message.member.voiceChannel) {
-			message.member.voiceChannel.join()
-				.then(connection => {
-					if (!connection.speaking) {
-						if (playlistQueued == false && soundcloudQueued == false) {
-							setTimeout(function () {
-								index.callPlayMusic(message);
-							}, 500);
-						} else if (soundcloudQueued = true) {
-							client.on("SC ready", function () {
-								if (!connection.speaking) {
-									index.callPlayMusic(message);
-								}
-							});
-						} else {
-							setTimeout(function () {
-								index.callPlayMusic(message);
-							}, 4000);
-						}
-					}
-				})
-				.catch(`${console.log} Timestamp: timestamp`);
-		} else {
-			let vcFailEmbed = new Discord.RichEmbed()
-				.setTitle(`:warning: ${message.author.username}, you are not in a voice channel. Your video has been queued, but I am unable to join you.`)
-				.setColor(`#FF0000`)
-			message.channel.send(vcFailEmbed);
+			handleVideo();
 		}
 	}
 }

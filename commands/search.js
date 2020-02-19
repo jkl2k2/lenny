@@ -153,6 +153,14 @@ module.exports = {
         async function handlePlaylist() {
             youtube.searchPlaylists(args.join(" ").substring(9), 5)
                 .then(async results => {
+                    if (!results[0] && !results[1] && !results[2] && !results[3] && !results[4]) {
+                        var noPlaylistFound = new Discord.RichEmbed()
+                            .setDescription(`:information_source: Sorry, no playlist could be found with that input`)
+                            .setColor(`#0083FF`)
+                        message.channel.send(noPlaylistFound);
+                        return;
+                    }
+
                     var res1 = (await results[0].getVideos()).length;
                     var searching1 = new Discord.RichEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for playlists with "${args.join(" ").substring(9)}"
@@ -282,6 +290,14 @@ module.exports = {
         async function handleVideo() {
             youtube.searchVideos(args.join(" "), 5)
                 .then(async results => {
+                    if (!results[0] && !results[1] && !results[2] && !results[3] && !results[4]) {
+                        var noVideoFound = new Discord.RichEmbed()
+                            .setDescription(`:information_source: Sorry, no video could be found with that input`)
+                            .setColor(`#0083FF`)
+                        message.channel.send(noVideoFound);
+                        return;
+                    }
+
                     var res1 = new YTVideo(await results[0].fetch(), message.author);
                     var searching1 = new Discord.RichEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"

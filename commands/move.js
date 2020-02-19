@@ -49,12 +49,20 @@ module.exports = {
                 index.setQueue(queue);
                 if (targetPos == 0) {
                     let moveSuccess = new Discord.RichEmbed()
-                        .setDescription(`:white_check_mark: Moved video [${queue[targetPos].getCleanTitle()}](${queue[targetPos].getURL()}) from position #${startPos + 1} to #${targetPos + 1}\n\n[${queue[targetPos].getCleanTitle()}](${queue[targetPos].getURL()})\nwill now play after\n[${index.getPlayingVideo().getCleanTitle()}](${index.getPlayingVideo().getURL()})`)
+                        .setDescription(`:white_check_mark: Moved video [${queue[targetPos].getCleanTitle()}](${queue[targetPos].getURL()}) from position #${startPos + 1} to #${targetPos + 1}
+                        
+                                         [${queue[targetPos].getCleanTitle()}](${queue[targetPos].getURL()})
+                                         will now play after
+                                         [${index.getPlayingVideo().getCleanTitle()}](${index.getPlayingVideo().getURL()})`)
                         .setColor(`#44C408`)
                     message.channel.send(moveSuccess);
                 } else {
                     let moveSuccess = new Discord.RichEmbed()
-                        .setDescription(`:white_check_mark: Moved video [${queue[targetPos].getCleanTitle()}](${queue[targetPos].getURL()}) from position #${startPos + 1} to #${targetPos + 1}\n\n[${queue[targetPos].getCleanTitle()}](${queue[targetPos].getURL()})\nwill now play after\n[${queue[targetPos - 1].getCleanTitle()}](${queue[targetPos - 1].getURL()})`)
+                        .setDescription(`:white_check_mark: Moved video [${queue[targetPos].getCleanTitle()}](${queue[targetPos].getURL()}) from position #${startPos + 1} to #${targetPos + 1}
+                        
+                                         [${queue[targetPos].getCleanTitle()}](${queue[targetPos].getURL()})
+                                         will now play after
+                                         [${queue[targetPos - 1].getCleanTitle()}](${queue[targetPos - 1].getURL()})`)
                         .setColor(`#44C408`)
                     message.channel.send(moveSuccess);
                 }

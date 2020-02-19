@@ -185,7 +185,7 @@ module.exports = {
 			if (message.member.voiceChannel) {
 				message.member.voiceChannel.join()
 					.then(connection => {
-						if (!connection.speaking) {
+						if (index.getDispatcher() == undefined || (!connection.speaking && !index.getDispatcher().paused)) {
 							index.callPlayMusic(message);
 						}
 					})
@@ -235,7 +235,7 @@ module.exports = {
 						if (message.member.voiceChannel) {
 							message.member.voiceChannel.join()
 								.then(connection => {
-									if (!connection.speaking) {
+									if (index.getDispatcher() == undefined || (!connection.speaking && !index.getDispatcher().paused)) {
 										index.callPlayMusic(message);
 									}
 								})
@@ -304,7 +304,7 @@ module.exports = {
 				if (message.member.voiceChannel) {
 					message.member.voiceChannel.join()
 						.then(connection => {
-							if (!connection.speaking) {
+							if (index.getDispatcher() == undefined || (!connection.speaking && !index.getDispatcher().paused)) {
 								index.callPlayMusic(message);
 							}
 						})

@@ -227,7 +227,7 @@ module.exports = {
                         }
 
                         await youtube.getPlaylist(results[parseInt(m.content) - 1].url)
-                            .then(async function (playlist) {
+                            .then(async playlist => {
                                 if (playlist) {
                                     var videos = await playlist.getVideos();
 

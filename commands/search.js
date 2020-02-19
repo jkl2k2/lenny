@@ -71,7 +71,7 @@ class YTVideo {
 
 module.exports = {
     name: 'search',
-    description: 'Plays videos from YouTube by selecting from 5 videos',
+    description: 'Plays videos from YouTube by letting you select from 5 videos',
     aliases: ['psearch', 'ps', 'sp'],
     usage: '[playlist (optional)] [search term(s)]',
     cooldown: 3,

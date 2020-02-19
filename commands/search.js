@@ -151,7 +151,7 @@ module.exports = {
         }
 
         async function handlePlaylist() {
-            await youtube.searchPlaylists(args.join(" ").substring(9), 5)
+            youtube.searchPlaylists(args.join(" ").substring(9), 5)
                 .then(async results => {
                     var res1 = (await results[0].getVideos()).length;
                     var searching1 = new Discord.RichEmbed()
@@ -236,7 +236,7 @@ module.exports = {
                                         .setDescription(`**[${playlist.title}](${playlist.url})**`)
                                         .addField(`Uploader`, `[${playlist.channel.title}](${playlist.channel.url})`, true)
                                         .addField(`Length`, `${videos.length} videos`, true)
-                                        .setThumbnail(playlist.thumbnails.standard.url)
+                                        .setThumbnail(playlist.thumbnails.default.url)
                                         .setTimestamp()
                                         .setFooter(`Requested by ${message.author.username}`)
                                     var processing = await message.channel.send(listEmbed);
@@ -251,7 +251,7 @@ module.exports = {
                                         .setDescription(`**[${playlist.title}](${playlist.url})**`)
                                         .addField(`Uploader`, `[${playlist.channel.title}](${playlist.channel.url})`, true)
                                         .addField(`Length`, `${videos.length} videos`, true)
-                                        .setThumbnail(playlist.thumbnails.standard.url)
+                                        .setThumbnail(playlist.thumbnails.default.url)
                                         .setTimestamp()
                                         .setFooter(`Requested by ${message.author.username}`)
                                     processing.edit(finishedEmbed);
@@ -280,7 +280,7 @@ module.exports = {
         }
 
         async function handleVideo() {
-            await youtube.searchVideos(args.join(" "), 5)
+            youtube.searchVideos(args.join(" "), 5)
                 .then(async results => {
                     var res1 = new YTVideo(await results[0].fetch(), message.author);
                     var searching1 = new Discord.RichEmbed()

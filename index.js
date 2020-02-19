@@ -88,31 +88,17 @@ function sendSCDetails(input, c) {
 }
 
 async function playMusic(message) {
-    // console.log(message);
-    // console.log(lastMusicMessage);
 
     if (queue == undefined) {
         console.log("playMusic() called, but queue undefined");
         return;
     }
 
-    var count = 0;
-    var awaitingLivestream = false;
-    var catchingUpMessage;
-
     if (queue[0] == undefined) {
         console.log("playMusic() called, but queue[0] is undefined");
-
-        var retry = setTimeout(function () {
-            if (count < 4) {
-                playMusic(message);
-                count++;
-            } else {
-                clearTimeout(retry);
-            }
-        }, 500);
+        return;
     } else {
-        if (queue[0].getType() == undefined || queue[0].getType() == false) {
+        if (queue[0].getType() == "youtube") {
             // If regular video
 
             let input = ytdl(queue[0].getURL(), { quality: "highestaudio", highWaterMark: 1 << 25 });
@@ -122,26 +108,6 @@ async function playMusic(message) {
             dispatcher = connections[0].playStream(input);
 
             sendDetails(queue[0], message.channel);
-
-        } else if (queue[0].getType() == "live") {
-            // If YouTube livestream
-
-            let input = ytdl(queue[0].getURL(), { quality: 93, highWaterMark: 1 << 25 });
-
-            var connections = client.voiceConnections.array();
-
-            dispatcher = connections[0].playStream(input);
-
-            sendDetails(queue[0], message.channel);
-
-            let catchingUp = new Discord.RichEmbed()
-                .setDescription(`:arrows_counterclockwise: Catching up to livestream`)
-                .setFooter(`Just a moment...`)
-
-            catchingUpMessage = await message.channel.send(catchingUp);
-
-            awaitingLivestream = true;
-
         } else if (queue[0].getType() == "soundcloud") {
             // If SoundCloud
             var connections = client.voiceConnections.array();
@@ -151,10 +117,8 @@ async function playMusic(message) {
             sendSCDetails(queue[0], message.channel);
 
         } else {
-            message.channel.send("Error assigning dispatcher");
+            message.channel.send("Error assigning dispatcher, object at index 0 not of recognized type");
         }
-
-        count = 0;
 
         lastPlayed = queue.shift();
         if (lastPlayed && lastPlayed.getType() == "soundcloud") {
@@ -164,7 +128,7 @@ async function playMusic(message) {
         }
 
         if (message.member.voiceChannel) {
-
+            // Reset dispatcher stream delay
             message.member.voiceChannel.connection.player.streamingData.pausedTime = 0;
 
         } else {
@@ -189,16 +153,6 @@ async function playMusic(message) {
             }
             if (queue[0]) {
                 playMusic(message);
-            }
-        });
-
-        dispatcher.on("start", function () {
-            if (awaitingLivestream) {
-                let caughtUp = new Discord.RichEmbed()
-                    .setDescription(`:white_check_mark: Caught up to livestream`);
-
-                catchingUpMessage.edit(caughtUp);
-                awaitingLivestream = false;
             }
         });
     }

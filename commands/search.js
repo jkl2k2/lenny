@@ -151,22 +151,37 @@ module.exports = {
         }
 
         async function handlePlaylist() {
-            await youtube.searchPlaylists(args.join(" "), 5)
-                .then(async function (results) {
+            var searchingPlaylistsEmbed = new Discord.RichEmbed()
+                .setDescription(`:arrows_counterclockwise: Searching for playlists with "${args.join(" ").substring(9)}"`)
+                .setColor(`#0083F`)
+            var searchingMessage = await message.channel.send(searchingPlaylistsEmbed);
+
+            await youtube.searchPlaylists(args.join(" ").substring(9), 5)
+                .then(async results => {
                     var resultsEmbed = new Discord.RichEmbed()
-                        .setAuthor(`Top 5 Playlists For: "${args.join(" ")}"`)
+                        .setAuthor(`Top 5 Playlists For: "${args.join(" ").substring(9)}"`)
                         .setDescription(`1. **[${results[0].title}](${results[0].url})**
+                                         Length: **${(await results[0].getVideos()).length} videos**
+                                         Author: **${results[0].channelTitle}**
 
                                          2. **[${results[1].title}](${results[1].url})**
+                                         Length: **${(await results[1].getVideos()).length} videos**
+                                         Author: **${results[1].channelTitle}**
 
                                          3. **[${results[2].title}](${results[2].url})**
+                                         Length: **${(await results[2].getVideos()).length} videos**
+                                         Author: **${results[2].channelTitle}**
 
                                          4. **[${results[3].title}](${results[3].url})**
+                                         Length: **${(await results[3].getVideos()).length} videos**
+                                         Author: **${results[3].channelTitle}**
 
-                                         5. **[${results[4].title}](${results[4].url})**`)
+                                         5. **[${results[4].title}](${results[4].url})**
+                                         Length: **${(await results[4].getVideos()).length} videos**
+                                         Author: **${results[4].channelTitle}**`)
                         .setTimestamp()
                         .setFooter(`Requested by ${message.author.username} - Type the number to select - Type cancel to stop`)
-                    message.channel.send(resultsEmbed);
+                    searchingMessage.edit(resultsEmbed);
 
                     const filter = m => (m.author.id == message.author.id || m.author.id == ownerID || m.author.id == jahyID) && m.content == "1" || m.content == "2" || m.content == "3" || m.content == "4" || m.content == "5" || m.content.toLowerCase() == "cancel";
 
@@ -239,26 +254,46 @@ module.exports = {
                 var input = await youtube.getVideo(args[0]);
                 process(input);
             } else {
+                var searchingVideosEmbed = new Discord.RichEmbed()
+                    .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"`)
+                    .setColor(`#0083FF`)
+                var searchingVideosMessage = await message.channel.send(searchingVideosEmbed);
+
                 await youtube.searchVideos(args.join(" "), 5)
-                    .then(async function (results) {
+                    .then(async results => {
+                        var res1 = new YTVideo(await results[0].fetch(), message.author);
+                        var res2 = new YTVideo(await results[1].fetch(), message.author);
+                        var res3 = new YTVideo(await results[2].fetch(), message.author);
+                        var res4 = new YTVideo(await results[3].fetch(), message.author);
+                        var res5 = new YTVideo(await results[4].fetch(), message.author);
                         var resultsEmbed = new Discord.RichEmbed()
                             .setAuthor(`Top 5 Results For: "${args.join(" ")}"`)
                             .setDescription(`1. **[${results[0].title}](${results[0].url})**
+                                             Length: **${res1.getLength()}**
+                                             Author: **${res1.getChannelName()}**
 
                                              2. **[${results[1].title}](${results[1].url})**
+                                             Length: **${res2.getLength()}**
+                                             Author: **${res2.getChannelName()}**
 
                                              3. **[${results[2].title}](${results[2].url})**
+                                             Length: **${res3.getLength()}**
+                                             Author: **${res3.getChannelName()}**
 
                                              4. **[${results[3].title}](${results[3].url})**
+                                             Length: **${res4.getLength()}**
+                                             Author: **${res4.getChannelName()}**
 
-                                             5. **[${results[4].title}](${results[4].url})**`)
+                                             5. **[${results[4].title}](${results[4].url})**
+                                             Length: **${res5.getLength()}**
+                                             Author: **${res5.getChannelName()}**`)
                             .setTimestamp()
                             .setFooter(`Requested by ${message.author.username} - Type the number to select - Type cancel to stop`)
-                        message.channel.send(resultsEmbed);
+                        searchingVideosMessage.edit(resultsEmbed);
 
                         const filter = m => (m.author.id == message.author.id || m.author.id == ownerID || m.author.id == jahyID) && m.content == "1" || m.content == "2" || m.content == "3" || m.content == "4" || m.content == "5" || m.content.toLowerCase() == "cancel";
 
-                        const collector = message.channel.createMessageCollector(filter, { time: 15000, max: 1 });
+                        const collector = message.channel.createMessageCollector(filter, { time: 30000, max: 1 });
 
                         collector.on('collect', async m => {
                             if (m.content.toLowerCase() == "cancel") {
@@ -268,8 +303,8 @@ module.exports = {
                                 message.channel.send(cancelEmbed);
                                 return;
                             }
-                            var input = await youtube.getVideo(results[parseInt(m.content) - 1].url);
-                            process(input);
+
+                            process(await youtube.getVideo(results[parseInt(m.content) - 1].url));
                         });
 
                         collector.on('end', collected => {

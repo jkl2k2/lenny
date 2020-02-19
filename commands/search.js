@@ -151,13 +151,6 @@ module.exports = {
         }
 
         async function handlePlaylist() {
-            /*
-            var searchingPlaylistsEmbed = new Discord.RichEmbed()
-                .setDescription(`:arrows_counterclockwise: Searching for playlists with "${args.join(" ").substring(9)}"`)
-                .setColor(`#0083F`)
-            var searchingMessage = await message.channel.send(searchingPlaylistsEmbed);
-            */
-
             await youtube.searchPlaylists(args.join(" ").substring(9), 5)
                 .then(async results => {
                     var res1 = (await results[0].getVideos()).length;
@@ -232,7 +225,7 @@ module.exports = {
                             message.channel.send(cancelEmbed);
                             return;
                         }
-                        
+
                         await youtube.getPlaylist(results[parseInt(m.content) - 1].url)
                             .then(async function (playlist) {
                                 if (playlist) {
@@ -287,58 +280,46 @@ module.exports = {
         }
 
         async function handleVideo() {
-            if (args[0].includes("watch?v=") || args[0].includes('youtu.be')) {
-                var input = await youtube.getVideo(args[0]);
-                process(input);
-            } else {
-                /*
-                var searchingVideosEmbed = new Discord.RichEmbed()
-                    .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
-                                     Videos found: (0/5)`)
-                    .setColor(`#0083FF`)
-                var searchingMessage = await message.channel.send(searchingVideosEmbed);
-                */
-
-                await youtube.searchVideos(args.join(" "), 5)
-                    .then(async results => {
-                        var res1 = new YTVideo(await results[0].fetch(), message.author);
-                        var searching1 = new Discord.RichEmbed()
-                            .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
+            await youtube.searchVideos(args.join(" "), 5)
+                .then(async results => {
+                    var res1 = new YTVideo(await results[0].fetch(), message.author);
+                    var searching1 = new Discord.RichEmbed()
+                        .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<##-------->\``)
-                            .setColor(`#0083FF`)
-                        var searchingMessage = await message.channel.send(searching1);
-                        
-                        var res2 = new YTVideo(await results[1].fetch(), message.author);
-                        var searching2 = new Discord.RichEmbed()
-                            .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
+                        .setColor(`#0083FF`)
+                    var searchingMessage = await message.channel.send(searching1);
+
+                    var res2 = new YTVideo(await results[1].fetch(), message.author);
+                    var searching2 = new Discord.RichEmbed()
+                        .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<####------>\``)
-                            .setColor(`#0083FF`)
-                        searchingMessage.edit(searching2);
+                        .setColor(`#0083FF`)
+                    searchingMessage.edit(searching2);
 
-                        var res3 = new YTVideo(await results[2].fetch(), message.author);
-                        var searching3 = new Discord.RichEmbed()
-                            .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
+                    var res3 = new YTVideo(await results[2].fetch(), message.author);
+                    var searching3 = new Discord.RichEmbed()
+                        .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<######---->\``)
-                            .setColor(`#0083FF`)
-                        searchingMessage.edit(searching3);
+                        .setColor(`#0083FF`)
+                    searchingMessage.edit(searching3);
 
-                        var res4 = new YTVideo(await results[3].fetch(), message.author);
-                        var searching4 = new Discord.RichEmbed()
-                            .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
+                    var res4 = new YTVideo(await results[3].fetch(), message.author);
+                    var searching4 = new Discord.RichEmbed()
+                        .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<########-->\``)
-                            .setColor(`#0083FF`)
-                        searchingMessage.edit(searching4);
+                        .setColor(`#0083FF`)
+                    searchingMessage.edit(searching4);
 
-                        var res5 = new YTVideo(await results[4].fetch(), message.author);
-                        var searching5 = new Discord.RichEmbed()
-                            .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
+                    var res5 = new YTVideo(await results[4].fetch(), message.author);
+                    var searching5 = new Discord.RichEmbed()
+                        .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<##########>\``)
-                            .setColor(`#0083FF`)
-                        searchingMessage.edit(searching5);
+                        .setColor(`#0083FF`)
+                    searchingMessage.edit(searching5);
 
-                        var resultsEmbed = new Discord.RichEmbed()
-                            .setAuthor(`Top 5 Results For: "${args.join(" ")}"`)
-                            .setDescription(`1. **[${results[0].title}](${results[0].url})**
+                    var resultsEmbed = new Discord.RichEmbed()
+                        .setAuthor(`Top 5 Results For: "${args.join(" ")}"`)
+                        .setDescription(`1. **[${results[0].title}](${results[0].url})**
                                              Length: **${res1.getLength()}**
                                              Author: **${res1.getChannelName()}**
 
@@ -357,31 +338,30 @@ module.exports = {
                                              5. **[${results[4].title}](${results[4].url})**
                                              Length: **${res5.getLength()}**
                                              Author: **${res5.getChannelName()}**`)
-                            .setTimestamp()
-                            .setFooter(`Requested by ${message.author.username} - Type the number to select - Type cancel to stop`)
-                        searchingMessage.edit(resultsEmbed);
+                        .setTimestamp()
+                        .setFooter(`Requested by ${message.author.username} - Type the number to select - Type cancel to stop`)
+                    searchingMessage.edit(resultsEmbed);
 
-                        const filter = m => (m.author.id == message.author.id || m.author.id == ownerID || m.author.id == jahyID) && m.content == "1" || m.content == "2" || m.content == "3" || m.content == "4" || m.content == "5" || m.content.toLowerCase() == "cancel";
+                    const filter = m => (m.author.id == message.author.id || m.author.id == ownerID || m.author.id == jahyID) && m.content == "1" || m.content == "2" || m.content == "3" || m.content == "4" || m.content == "5" || m.content.toLowerCase() == "cancel";
 
-                        const collector = message.channel.createMessageCollector(filter, { time: 30000, max: 1 });
+                    const collector = message.channel.createMessageCollector(filter, { time: 30000, max: 1 });
 
-                        collector.on('collect', async m => {
-                            if (m.content.toLowerCase() == "cancel") {
-                                let cancelEmbed = new Discord.RichEmbed()
-                                    .setDescription(`:stop_button: Canceled playing from search`)
-                                    .setColor(`#0083FF`)
-                                message.channel.send(cancelEmbed);
-                                return;
-                            }
+                    collector.on('collect', async m => {
+                        if (m.content.toLowerCase() == "cancel") {
+                            let cancelEmbed = new Discord.RichEmbed()
+                                .setDescription(`:stop_button: Canceled playing from search`)
+                                .setColor(`#0083FF`)
+                            message.channel.send(cancelEmbed);
+                            return;
+                        }
 
-                            process(await youtube.getVideo(results[parseInt(m.content) - 1].url));
-                        });
-
-                        collector.on('end', collected => {
-                            // console.log(`Collected ${collected.size} items`);
-                        });
+                        process(await youtube.getVideo(results[parseInt(m.content) - 1].url));
                     });
-            }
+
+                    collector.on('end', collected => {
+                        // console.log(`Collected ${collected.size} items`);
+                    });
+                });
         }
 
         if (args.join(" ").includes("playlist")) {

@@ -44,7 +44,6 @@ module.exports = {
             sendDetails(nextVideo, message.channel);
         } else {
             let nextUndefEmbed = new Discord.RichEmbed()
-                 
                 .setDescription(`:information_source: There is no video coming up in the queue`)
                 .setColor(`#0083FF`)
             message.channel.send(nextUndefEmbed);

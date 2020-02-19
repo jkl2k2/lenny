@@ -73,7 +73,7 @@ module.exports = {
     name: 'search',
     description: 'Plays videos from YouTube by selecting from 5 videos',
     aliases: ['psearch', 'ps', 'sp'],
-    usage: '[search term(s)]',
+    usage: '[playlist (optional)] [search term(s)]',
     cooldown: 3,
     guildOnly: true,
     execute(message, args) {

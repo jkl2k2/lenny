@@ -206,7 +206,7 @@ module.exports = {
 							.setDescription(`**[${playlist.title}](${playlist.url})**`)
 							.addField(`Uploader`, `[${playlist.channel.title}](${playlist.channel.url})`, true)
 							.addField(`Length`, `${videos.length} videos`, true)
-							.setThumbnail(playlist.thumbnails.standard.url)
+							.setThumbnail(playlist.thumbnails.default.url)
 							.setTimestamp()
 							.setFooter(`Requested by ${message.author.username}`)
 						var processing = await message.channel.send(listEmbed);
@@ -221,7 +221,7 @@ module.exports = {
 							.setDescription(`**[${playlist.title}](${playlist.url})**`)
 							.addField(`Uploader`, `[${playlist.channel.title}](${playlist.channel.url})`, true)
 							.addField(`Length`, `${videos.length} videos`, true)
-							.setThumbnail(playlist.thumbnails.standard.url)
+							.setThumbnail(playlist.thumbnails.default.url)
 							.setTimestamp()
 							.setFooter(`Requested by ${message.author.username}`)
 						processing.edit(finishedEmbed);

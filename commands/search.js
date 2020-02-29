@@ -6,6 +6,7 @@ const jahyID = config.get(`Users.jahyID`);
 const Discord = require(`discord.js`);
 const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
+const logger = index.getLogger();
 
 class YTVideo {
     constructor(video, requester) {
@@ -80,11 +81,11 @@ module.exports = {
 
         if (!message.member.voiceChannel) {
             // If member not in VC
-            let vcFailEmbed = new Discord.RichEmbed()
-                .setTitle(` `)
-                .setDescription(`<:error:643341473772863508> ${message.author.username}, you are not in a voice channel`)
-                .setColor(`#FF0000`)
-            message.channel.send(vcFailEmbed);
+            if (args.join(" ").includes("playlist")) {
+                handlePlaylist(false);
+            } else {
+                handleVideo(false);
+            }
 
             return;
         }
@@ -105,12 +106,11 @@ module.exports = {
         async function process(input) {
             var videoResult = input;
 
-            console.log(input.title);
+            logger.debug(input.title);
 
             let newVideo = new YTVideo(videoResult, message.author);
 
             queue.push(newVideo);
-            index.setQueue(queue);
 
             if (newVideo.getLength() == "unknown") {
                 var playEmbed = new Discord.RichEmbed()
@@ -140,17 +140,17 @@ module.exports = {
             if (message.member.voiceChannel) {
                 message.member.voiceChannel.join()
                     .then(connection => {
-                        if (!connection.speaking && !index.getDispatcher().paused) {
+                        if (index.getDispatcher() == undefined || (!connection.speaking && !index.getDispatcher().paused)) {
                             index.callPlayMusic(message);
                         }
                     })
-                    .catch(`${console.log}`);
+                    .catch(logger.error);
             } else {
-                console.log("Failed to join voice channel");
+                logger.error("Failed to join voice channel");
             }
         }
 
-        async function handlePlaylist() {
+        async function handlePlaylist(play) {
             youtube.searchPlaylists(args.join(" ").substring(9), 5)
                 .then(async results => {
                     if (!results[0] && !results[1] && !results[2] && !results[3] && !results[4]) {
@@ -234,60 +234,65 @@ module.exports = {
                             return;
                         }
 
-                        await youtube.getPlaylist(results[parseInt(m.content) - 1].url)
-                            .then(async playlist => {
-                                if (playlist) {
-                                    var videos = await playlist.getVideos();
+                        if (play) {
+                            await youtube.getPlaylist(results[parseInt(m.content) - 1].url)
+                                .then(async playlist => {
+                                    if (playlist) {
+                                        var videos = await playlist.getVideos();
 
-                                    var listEmbed = new Discord.RichEmbed()
-                                        .setAuthor(`🔄 Processing playlist`)
-                                        .setDescription(`**[${playlist.title}](${playlist.url})**`)
-                                        .addField(`Uploader`, `[${playlist.channel.title}](${playlist.channel.url})`, true)
-                                        .addField(`Length`, `${videos.length} videos`, true)
-                                        .setThumbnail(playlist.thumbnails.default.url)
-                                        .setTimestamp()
-                                        .setFooter(`Requested by ${message.author.username}`)
-                                    var processing = await message.channel.send(listEmbed);
+                                        var listEmbed = new Discord.RichEmbed()
+                                            .setAuthor(`🔄 Processing playlist`)
+                                            .setDescription(`**[${playlist.title}](${playlist.url})**`)
+                                            .addField(`Uploader`, `[${playlist.channel.title}](${playlist.channel.url})`, true)
+                                            .addField(`Length`, `${videos.length} videos`, true)
+                                            .setThumbnail(playlist.thumbnails.default.url)
+                                            .setTimestamp()
+                                            .setFooter(`Requested by ${message.author.username}`)
+                                        var processing = await message.channel.send(listEmbed);
 
-                                    for (var i = 0; i < videos.length; i++) {
-                                        var newVideo = new YTVideo(videos[i], message.author);
-                                        queue.push(newVideo);
-                                    }
+                                        for (var i = 0; i < videos.length; i++) {
+                                            var newVideo = new YTVideo(videos[i], message.author);
+                                            queue.push(newVideo);
+                                        }
 
-                                    var finishedEmbed = new Discord.RichEmbed()
-                                        .setAuthor(`➕ Queued playlist`)
-                                        .setDescription(`**[${playlist.title}](${playlist.url})**`)
-                                        .addField(`Uploader`, `[${playlist.channel.title}](${playlist.channel.url})`, true)
-                                        .addField(`Length`, `${videos.length} videos`, true)
-                                        .setThumbnail(playlist.thumbnails.default.url)
-                                        .setTimestamp()
-                                        .setFooter(`Requested by ${message.author.username}`)
-                                    processing.edit(finishedEmbed);
+                                        var finishedEmbed = new Discord.RichEmbed()
+                                            .setAuthor(`➕ Queued playlist`)
+                                            .setDescription(`**[${playlist.title}](${playlist.url})**`)
+                                            .addField(`Uploader`, `[${playlist.channel.title}](${playlist.channel.url})`, true)
+                                            .addField(`Length`, `${videos.length} videos`, true)
+                                            .setThumbnail(playlist.thumbnails.default.url)
+                                            .setTimestamp()
+                                            .setFooter(`Requested by ${message.author.username}`)
+                                        processing.edit(finishedEmbed);
 
-                                    if (message.member.voiceChannel) {
-                                        message.member.voiceChannel.join()
-                                            .then(connection => {
-                                                if (!connection.speaking && !index.getDispatcher().paused) {
-                                                    index.callPlayMusic(message);
-                                                }
-                                            })
-                                            .catch(`${console.log} Timestamp: timestamp`);
+                                        if (message.member.voiceChannel) {
+                                            message.member.voiceChannel.join()
+                                                .then(connection => {
+                                                    if (index.getDispatcher() == undefined || (!connection.speaking && !index.getDispatcher().paused)) {
+                                                        index.callPlayMusic(message);
+                                                    }
+                                                })
+                                                .catch(logger.error);
+                                        } else {
+                                            logger.error(`User not in voice channel after playlist processing`)
+                                        }
                                     } else {
-                                        console.log(`User not in voice channel after playlist processing`)
+                                        logger.warn(`Playlist not found`);
                                     }
-                                } else {
-                                    console.log(`Playlist not found`);
-                                }
-                            })
+                                })
+                        } else {
+                            message.channel.send(results[parseInt(m.content) - 1].url);
+                        }
+                        
                     });
 
                     collector.on('end', collected => {
-                        // console.log(`Collected ${collected.size} items`);
+                        // When collector expires
                     });
                 })
         }
 
-        async function handleVideo() {
+        async function handleVideo(play) {
             youtube.searchVideos(args.join(" "), 5)
                 .then(async results => {
                     if (!results[0] && !results[1] && !results[2] && !results[3] && !results[4]) {
@@ -371,19 +376,23 @@ module.exports = {
                             return;
                         }
 
-                        process(await youtube.getVideo(results[parseInt(m.content) - 1].url));
+                        if (play) {
+                            process(await youtube.getVideo(results[parseInt(m.content) - 1].url));   
+                        } else {
+                            message.channel.send(results[parseInt(m.content) - 1].url);
+                        }
                     });
 
                     collector.on('end', collected => {
-                        // console.log(`Collected ${collected.size} items`);
+                        // When collector expires
                     });
                 });
         }
 
         if (args.join(" ").includes("playlist")) {
-            handlePlaylist();
+            handlePlaylist(true);
         } else {
-            handleVideo();
+            handleVideo(true);
         }
     }
 }

@@ -32,7 +32,6 @@ module.exports = {
 
         if (queue.length > 0) {
 			var shuffled = shuffle(queue);
-			index.setQueue(shuffled);
 
             let shuffleCompleteEmbed = new Discord.RichEmbed()
 				 

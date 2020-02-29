@@ -1,5 +1,6 @@
 const index = require(`../index.js`);
 const Discord = require(`discord.js`);
+const logger = index.getLogger();
 
 module.exports = {
 	name: 'remove',
@@ -18,7 +19,7 @@ module.exports = {
 
 		var splitArgs = args[0].split('-');
 
-		console.log(splitArgs);
+		logger.debug(splitArgs);
 
         if (queue[target - 1] == undefined) {
             let indexDNEEmbed = new Discord.RichEmbed()
@@ -43,7 +44,6 @@ module.exports = {
                     .setColor(`#0083FF`)
                 message.channel.send(removeRangeEmbed);
 				queue.splice(index1, (index2 - index1) + 1);
-                index.setQueue(queue);
                 
                 return;
 			} else {
@@ -74,7 +74,5 @@ module.exports = {
             message.channel.send(queueRemoveEmbed);
             // message.reply(`:thinking: I don't understand.`);
         }
-
-		index.setQueue(queue);
 	}
 }

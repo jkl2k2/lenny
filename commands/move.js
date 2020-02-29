@@ -46,7 +46,6 @@ module.exports = {
             // If target position is valid
             if (targetPos >= 0 && targetPos < queue.length) {
                 queue.splice(targetPos, 0, queue.splice(startPos, 1)[0]);
-                index.setQueue(queue);
                 if (targetPos == 0) {
                     let moveSuccess = new Discord.RichEmbed()
                         .setDescription(`:white_check_mark: Moved video [${queue[targetPos].getCleanTitle()}](${queue[targetPos].getURL()}) from position #${startPos + 1} to #${targetPos + 1}

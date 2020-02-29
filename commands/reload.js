@@ -1,6 +1,8 @@
+const index = require(`../index.js`);
 const config = require(`config`);
 const ownerID = config.get(`Users.ownerID`);
 const Discord = require(`discord.js`);
+const logger = index.getLogger();
 
 module.exports = {
     name: 'reload',
@@ -35,7 +37,7 @@ module.exports = {
             const newCommand = require(`./${commandName}.js`);
             message.client.commands.set(newCommand.name, newCommand);
         } catch (error) {
-            console.log(error);
+            logger.error(error);
             let commandReloadError = new Discord.RichEmbed()
                  
                 .setDescription(`Error while recaching command\n\n${error.message}`)

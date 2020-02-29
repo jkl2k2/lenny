@@ -3,6 +3,7 @@ var fs = require('fs');
 const youtubedl = require('youtube-dl');
 const config = require("config");
 const ownerID = config.get("Users.ownerID");
+const logger = index.getLogger();
 
 module.exports = {
     name: 'download',
@@ -25,9 +26,9 @@ module.exports = {
         }
 
         video.on('info', function (info) {
-            console.log('Download started');
-            console.log('filename: ' + info._filename);
-            console.log('size: ' + info.size);
+            logger.info('Download started');
+            logger.info('filename: ' + info._filename);
+            logger.info('size: ' + info.size);
 
             video.pipe(fs.createWriteStream(`./downloads/${info._filename}`));
         });

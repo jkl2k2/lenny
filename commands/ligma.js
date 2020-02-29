@@ -1,6 +1,7 @@
 const index = require(`../index.js`);
 const Discord = require(`discord.js`);
 const fs = require('fs');
+const logger = index.getLogger();
 
 function check(arr, index) {
     if(arr[index]) {
@@ -70,7 +71,7 @@ module.exports = {
                         console.error(err);
                         return;
                     };
-                    console.log("File has been created");
+                    logger.info("File has been created");
                 });
             }, 500);
         } else if (args[0] == "remove") {
@@ -114,7 +115,7 @@ module.exports = {
                         console.error(err);
                         return;
                     };
-                    console.log("File has been created");
+                    logger.info("File has been created");
                 });
             }, 500);
         }

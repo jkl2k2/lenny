@@ -3,8 +3,9 @@ const fs = require('fs');
 const Discord = require('discord.js');
 const config = require('config');
 // const ytdl = require("ytdl-core-discord");
-const ytdl = require("ytdl-core");
-const prism = require('prism-media');
+const ytdl = require('ytdl-core');
+const chalk = require('chalk');
+const winston = require('winston');
 
 // Initialize client
 const client = new Discord.Client();
@@ -18,6 +19,25 @@ var repeat = false;
 const prefix = config.get(`Bot.prefix`);
 const token = config.get(`Bot.token`);
 const ownerID = config.get(`Users.ownerID`);
+
+winston.addColors({
+    error: 'red',
+    warn: 'yellow',
+    info: 'cyan',
+    debug: 'green',
+});
+
+const logger = winston.createLogger({
+    // level: `debug`,
+    format: winston.format.combine(
+        winston.format.colorize(),
+        // winston.format.printf(log => `[${log.level.toUpperCase()}] - ${log.message}`),
+        winston.format.simple()
+    ),
+    transports: [
+        new winston.transports.Console(),
+    ],
+});
 
 class Activity {
     constructor(text, format) {
@@ -90,12 +110,12 @@ function sendSCDetails(input, c) {
 async function playMusic(message) {
 
     if (queue == undefined) {
-        console.log("playMusic() called, but queue undefined");
+        logger.warn("playMusic() called, but queue undefined");
         return;
     }
 
     if (queue[0] == undefined) {
-        console.log("playMusic() called, but queue[0] is undefined");
+        logger.warn("playMusic() called, but queue[0] is undefined");
         return;
     } else {
         if (queue[0].getType() == "youtube") {
@@ -144,11 +164,11 @@ async function playMusic(message) {
             if (path != " ") {
                 fs.unlink(path, (err) => {
                     if (err) {
-                        console.error(`FAILED to delete file at path ${path}`);
-                        console.error(err);
+                        logger.error(`FAILED to delete file at path ${path}`);
+                        logger.error(err);
                         return;
                     }
-                    console.log(`Removed file at path ${path}`);
+                    logger.info(`Removed file at path ${path}`);
                 });
             }
             if (queue[0]) {
@@ -160,6 +180,9 @@ async function playMusic(message) {
 
 // Functions
 module.exports = {
+    getLogger: function () {
+        return logger;
+    },
     getVolume: function () {
         return dispatcher.volume;
     },
@@ -225,6 +248,8 @@ for (const file of commandFiles) {
 
 // On ready
 client.on('ready', () => {
+    let date = new Date();
+
     // Randomly select status
     setInterval(() => {
         const index = Math.floor(Math.random() * (activities.length - 1) + 1);
@@ -232,7 +257,9 @@ client.on('ready', () => {
         client.user.setStatus("online");
     }, 15000);
 
-    console.log("// Bot initialized //");
+    logger.info(chalk.white.bgCyan(`BOT INTIALIZED`));
+    logger.info(chalk.white.bgCyan(`TIMESTAMP ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} - ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`));
+    logger.info(chalk.white.bgGreenBright.bold(`// READY //`));
 });
 
 client.on('error', () => {
@@ -280,7 +307,7 @@ client.on('message', message => {
 
             // If reaction is a star
             if (reaction.emoji.name === '⭐') {
-                console.log(`User ${message.author.username} reacted with a star`);
+                logger.info(`Message by ${message.author.username} has been starred`);
             }
 
             // If starboard channel exists
@@ -299,7 +326,7 @@ client.on('message', message => {
                         .setTimestamp()
 
                     starChannel.send(starEmbed);
-                    console.log(`Sent embed with image to starboard`);
+                    logger.info(`Sent embed with image to starboard`);
                 } else {
                     // If image NOT attached to image
                     let starEmbed = new Discord.RichEmbed()
@@ -311,13 +338,12 @@ client.on('message', message => {
                         .setTimestamp()
 
                     starChannel.send(starEmbed);
-                    console.log(`Sent embed WITHOUT image to starboard`);
+                    logger.info(`Sent embed WITHOUT image to starboard`);
                 }
             }
         })
         .catch(collected => {
-            // message.channel.send(`No star detected`);
-            // console.log(`No star detected on a message after 48 hours or message failed to send`);
+            // When collector expires
         });
 
     // Return if no prefix
@@ -325,8 +351,10 @@ client.on('message', message => {
 
     // Put args into array
     const args = message.content.slice(prefix.length).split(/ +/);
+    const argsShifted = [...args];
+    argsShifted.shift();
 
-    console.log(args);
+    logger.info(`${chalk.black.bgWhiteBright(`!${args[0]}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}`);
 
     // Extract command name
     const commandName = args.shift().toLowerCase();
@@ -387,12 +415,12 @@ client.on('message', message => {
     try {
         command.execute(message, args);
     } catch (error) {
-        console.error(error);
+        logger.error(error);
         message.reply('there was an error trying to execute that command!');
     }
 });
 
 // Handle uncaught promise rejections
-process.on('unhandledRejection', error => console.error('Uncaught Promise Rejection', error));
+process.on('unhandledRejection', error => logger.error(`${chalk.whiteBright.bgRedBright(`UNCAUGHT PROMISE REJECTION`)}\n${error}`));
 
 client.login(token);

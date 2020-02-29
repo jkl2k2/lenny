@@ -6,6 +6,8 @@ const api = config.get(`Bot.api2`);
 const Discord = require(`discord.js`);
 const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
+const chalk = require('chalk');
+const logger = index.getLogger();
 
 class YTVideo {
 	constructor(video, requester) {
@@ -150,12 +152,11 @@ module.exports = {
 		async function process(input) {
 			var videoResult = input;
 
-			console.log(input.title);
+			logger.debug(input.title);
 
 			let newVideo = new YTVideo(videoResult, message.author);
 
 			queue.push(newVideo);
-			index.setQueue(queue);
 
 			if (newVideo.getLength() == "unknown") {
 				var playEmbed = new Discord.RichEmbed()
@@ -189,9 +190,9 @@ module.exports = {
 							index.callPlayMusic(message);
 						}
 					})
-					.catch(`${console.log}`);
+					.catch(`${logger.error}`);
 			} else {
-				console.log("Failed to join voice channel");
+				logger.error("Failed to join voice channel");
 			}
 		}
 
@@ -239,12 +240,12 @@ module.exports = {
 										index.callPlayMusic(message);
 									}
 								})
-								.catch(`${console.log} Timestamp: timestamp`);
+								.catch(logger.error);
 						} else {
-							console.log(`User not in voice channel after playlist processing`)
+							logger.warn(`User not in voice channel after playlist processing`);
 						}
 					} else {
-						console.log(`Playlist not found`);
+						logger.error(`Playlist not found`);
 					}
 				})
 		}
@@ -284,7 +285,6 @@ module.exports = {
 				var newSC = new SCSong(args[0], message.author, gInfo);
 
 				queue.push(newSC);
-				index.setQueue(queue);
 
 				let scDownloadComplete = new Discord.RichEmbed()
 					.setTitle(` `)
@@ -308,7 +308,7 @@ module.exports = {
 								index.callPlayMusic(message);
 							}
 						})
-						.catch(`${console.log} Timestamp: timestamp`);
+						.catch(logger.error);
 				} else {
 					let vcFailEmbed = new Discord.RichEmbed()
 						.setTitle(`:warning: ${message.author.username}, you are not in a voice channel. Your video has been queued, but I am unable to join you.`)

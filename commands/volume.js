@@ -42,7 +42,7 @@ module.exports = {
 			let vEmbed = new Discord.RichEmbed()
 				 
 				.setDescription(`:loud_sound: ${message.author.username} ${decideWording(raisedVolume)} ${volume}%`)
-				.setColor(`#44C408`)
+				.setColor(`#0083FF`)
 			message.channel.send(vEmbed);
 		} else {
 			let vEmbed = new Discord.RichEmbed()

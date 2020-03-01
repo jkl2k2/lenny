@@ -5,7 +5,7 @@ const fs = require('fs');
 const youtubedl = require('youtube-dl');
 const api = config.get(`Bot.api`);
 const Discord = require(`discord.js`);
-const { YouTube } = require('better-youtube-api');
+const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
 
 class YTVideo {

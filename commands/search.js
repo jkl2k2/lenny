@@ -7,6 +7,7 @@ const Discord = require(`discord.js`);
 const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
 const logger = index.getLogger();
+const prefix = config.get(`Bot.prefix`);
 
 class YTVideo {
     constructor(video, requester) {
@@ -72,7 +73,7 @@ class YTVideo {
 
 module.exports = {
     name: 'search',
-    description: 'Plays videos from YouTube by letting you select from 5 videos',
+    description: `Plays videos from YouTube by letting you select from 5 videos.\nAlternatively, if you are not in a VC it will instead just send the link, just like ${prefix}findsearch.`,
     aliases: ['psearch', 'ps', 'sp'],
     usage: '[playlist (optional)] [search term(s)]',
     cooldown: 3,

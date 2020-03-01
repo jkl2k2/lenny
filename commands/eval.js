@@ -29,28 +29,32 @@ class YTVideo {
 		return this.requester.username;
 	}
 	getType() {
-		return this.video.liveStatus;
+		return "youtube";
 	}
 	getThumbnail() {
-		return this.video.thumbnails.default.url;
+		if (this.video.maxRes) {
+			return this.video.maxRes.url;
+		} else {
+			return ``;
+		}
 	}
-	async getChannelName() {
-		var id = `${this.video.channelId}`;
-		var resolved = await youtube.getChannel(id);
-		return resolved.name;
+	getChannelName() {
+		return this.video.channel.title;
 	}
 	getChannelURL() {
-		return `https://www.youtube.com/channel/${this.video.channelId}`;
+		return this.video.channel.url;
 	}
 	getLength() {
-		if (!this.video.seconds) {
+		if ((!this.video.duration) || this.video.duration.hours == 0 && this.video.duration.minutes == 0 && this.video.duration.seconds == 0) {
 			return `unknown`;
 		}
 
-		if (this.video.seconds < 10) {
-			return `${this.video.minutes}:0${this.video.seconds}`;
-		} else {
-			return `${this.video.minutes}:${this.video.seconds}`;
+		if (this.video.duration.hours == 0) {
+			if (this.video.duration.seconds < 10) {
+				return `${this.video.duration.minutes}:0${this.video.duration.seconds}`
+			} else {
+				return `${this.video.duration.minutes}:${this.video.duration.seconds}`;
+			}
 		}
 	}
 	getPosition() {

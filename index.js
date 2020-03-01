@@ -441,11 +441,14 @@ client.on('message', message => {
         command.execute(message, args);
     } catch (error) {
         logger.error(error);
-        message.reply('there was an error trying to execute that command!');
+        let errorEmbed = new Discord.RichEmbed()
+            .setDescription(`<:error:643341473772863508> Error executing command\n\n\`\`\`${error}\`\`\``)
+            .setColor(`#FF0000`)
+        message.channel.send(errorEmbed);
     }
 });
 
 // Handle uncaught promise rejections
-process.on('unhandledRejection', error => logger.error(`${chalk.whiteBright.bgRedBright(`UNCAUGHT PROMISE REJECTION`)}\n${error}`));
+process.on('unhandledRejection', error => logger.error(chalk.whiteBright.bgRedBright(`UNCAUGHT PROMISE REJECTION\n${error}`)));
 
 client.login(token);

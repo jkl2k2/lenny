@@ -20,9 +20,10 @@ module.exports = {
 
             // data.push('Here\'s a list of all my commands:');
             // data.push(commands.map(command => command.name).join(', '));
-            generalHelp.addField(`**Playback control**`, `play\nplaynext\nsearch\nskip\nskipall\njoin\nleave\npause\nresume\nvolume`, true);
+            generalHelp.addField(`**Playback control**`, `play\nplaynext\nplaynow\nsearch\nskip\nskipall\njoin\nleave\npause\nresume`, true);
+            generalHelp.addField(`**Volume control**`, `volume\nmute\nunmute`, true)
             generalHelp.addField(`**Queue control**`, `queue\nremove\nmove\nshuffle`, true);
-            generalHelp.addField(`**Music information**`, `playing\nnext\nfindvideo`, true);
+            generalHelp.addField(`**Music information**`, `playing\nnext\nfindvideo\nfindsearch/search`, true);
             generalHelp.addField(`**Fun commands**`, `say\nlenny`, true);
             generalHelp.addField(`**System commands**`, `ping`, true)
 

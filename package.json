@@ -23,7 +23,6 @@
   "homepage": "https://github.com/jkl2k2/L-Bot-Rewrite#readme",
   "dependencies": {
     "@discordjs/uws": "file:node_modules/@discordjs/uws",
-    "better-youtube-api": "^2.1.3",
     "chalk": "^3.0.0",
     "config": "^3.2.4",
     "discord.js": "^11.5.1",

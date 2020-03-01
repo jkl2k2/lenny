@@ -29,14 +29,39 @@ winston.addColors({
 
 const logger = winston.createLogger({
     // level: `debug`,
-    format: winston.format.combine(
-        winston.format.colorize(),
-        // winston.format.printf(log => `[${log.level.toUpperCase()}] - ${log.message}`),
-        winston.format.simple()
-    ),
     transports: [
-        new winston.transports.Console(),
-    ],
+        new winston.transports.File({
+            format: winston.format.combine(
+                winston.format.printf(log => `[${log.level.toUpperCase()}] - ${log.message}`),
+                winston.format.uncolorize()
+            ),
+            filename: `combined.log`,
+            level: `info`
+        }),
+        new winston.transports.File({
+            format: winston.format.combine(
+                winston.format.printf(log => `[${log.level.toUpperCase()}] - ${log.message}`),
+                winston.format.uncolorize()
+            ),
+            filename: `errors.log`,
+            level: `warn`
+        }),
+        new winston.transports.File({
+            format: winston.format.combine(
+                winston.format.printf(log => `[${log.level.toUpperCase()}] - ${log.message}`),
+                winston.format.uncolorize()
+            ),
+            filename: `debug.log`,
+            level: `debug`
+        }),
+        new winston.transports.Console({
+            format: winston.format.combine(
+                winston.format.colorize(),
+                // winston.format.printf(log => `[${log.level.toUpperCase()}] - ${log.message}`),
+                winston.format.simple()
+            )
+        })
+    ]
 });
 
 class Activity {
@@ -257,9 +282,9 @@ client.on('ready', () => {
         client.user.setStatus("online");
     }, 15000);
 
-    logger.info(chalk.white.bgCyan(`BOT INTIALIZED`));
-    logger.info(chalk.white.bgCyan(`TIMESTAMP ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} - ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`));
-    logger.info(chalk.white.bgGreenBright.bold(`// READY //`));
+    logger.info(chalk.white.bgCyan(`--------Bot Initialized--------`));
+    logger.info(chalk.white.bgCyan(`Timestamp: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} - ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`));
+    logger.info(chalk.white.bgCyan.bold(`-------Awaiting Commands-------`));
 });
 
 client.on('error', () => {
@@ -354,7 +379,7 @@ client.on('message', message => {
     const argsShifted = [...args];
     argsShifted.shift();
 
-    logger.info(`${chalk.black.bgWhiteBright(`!${args[0]}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}`);
+    logger.info(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`!${args[0]}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}`);
 
     // Extract command name
     const commandName = args.shift().toLowerCase();

@@ -151,6 +151,7 @@ async function playMusic(message) {
             var connections = client.voiceConnections.array();
 
             dispatcher = connections[0].playStream(input);
+            //dispatcher.setBitrate(192);
 
             sendDetails(queue[0], message.channel);
         } else if (queue[0].getType() == "soundcloud") {
@@ -240,6 +241,9 @@ module.exports = {
     },
     setQueue: function (newQueue) {
         queue = newQueue;
+    },
+    setDispatcher: function (newDispatcher) {
+        dispatcher = newDispatcher;
     },
     setDispatcherVolume: function (newVolume) {
         dispatcher.setVolume(newVolume);

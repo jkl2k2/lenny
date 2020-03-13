@@ -23,6 +23,7 @@
   "homepage": "https://github.com/jkl2k2/L-Bot-Rewrite#readme",
   "dependencies": {
     "@discordjs/uws": "file:node_modules/@discordjs/uws",
+    "canvas": "^2.6.1",
     "chalk": "^3.0.0",
     "config": "^3.2.4",
     "discord.js": "^11.5.1",

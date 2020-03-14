@@ -63,7 +63,7 @@ module.exports = {
         if (elementToRemove != queue[target]) {
             let queueRemoveEmbed = new Discord.RichEmbed()
                  
-                .setDescription(`:eject: ${message.author.username} removed [${elementToRemove.getTitle()}](${elementToRemove.getURL()}) from queue`)
+                .setDescription(`:eject: ${message.author.username} removed\n**[${elementToRemove.getTitle()}](${elementToRemove.getURL()})**\nfrom queue`)
                 .setColor(`#0083FF`)
             message.channel.send(queueRemoveEmbed);
             // message.reply(`successfully removed "${elementToRemove.videoTitle}" from queue!`);

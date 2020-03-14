@@ -8,6 +8,7 @@ const youtube = new YouTube(api);
 module.exports = {
     name: 'findvideo',
     description: 'Searches YouTube with the provided search terms, then returns the best match',
+    args: true,
     aliases: ['find'],
     usage: '[search term(s)]',
     // cooldown: 5,

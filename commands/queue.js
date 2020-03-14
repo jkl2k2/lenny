@@ -96,27 +96,17 @@ async function reactionHandler(sent, message, page) {
 }
 
 async function sendDetails(input, c, index) {
-	if (input.getLength() == `unknown`) {
+	if (await input.getLength() == `unknown`) {
 		var musicEmbed = new Discord.RichEmbed()
-			// .setColor(`#00c292`)
-			 
 			.setAuthor(`➡️ In queue: Video #${index}`)
-			// .addField(`:arrow_forward: **Now playing**`, `[${input.getTitle()}](${input.getURL()})`)
-			.setDescription(`**[${input.getCleanTitle()}](${input.getURL()})**`)
-			.addField(`Uploader`, `[${await input.getChannelName()}](${input.getChannelURL()})`, true)
-			// .addField(`Length`, `${input.getLength()}`, true)
+			.setDescription(`**[${input.getTitle()}](${input.getURL()})**\nBy: [${await input.getChannelName()}](${input.getChannelURL()})\n\n\`Length not provided by YouTube\``)
 			.setThumbnail(input.getThumbnail())
 			.setTimestamp()
 			.setFooter(`Requested by ${input.getRequesterName()}`)
 	} else {
 		var musicEmbed = new Discord.RichEmbed()
-			// .setColor(`#00c292`)
-			 
 			.setAuthor(`➡️ In queue: Video #${index}`)
-			// .addField(`:arrow_forward: **Now playing**`, `[${input.getTitle()}](${input.getURL()})`)
-			.setDescription(`**[${input.getCleanTitle()}](${input.getURL()})**`)
-			.addField(`Uploader`, `[${await input.getChannelName()}](${input.getChannelURL()})`, true)
-			.addField(`Length`, `${input.getLength()}`, true)
+			.setDescription(`**[${input.getTitle()}](${input.getURL()})**\nBy: [${await input.getChannelName()}](${input.getChannelURL()})\n\n\`<⚫——————————> (0:00/${input.getLength()})\``)
 			.setThumbnail(input.getThumbnail())
 			.setTimestamp()
 			.setFooter(`Requested by ${input.getRequesterName()}`)

@@ -4,25 +4,15 @@ const Discord = require(`discord.js`);
 async function sendDetails(input, c) {
     if (input.getLength() == `unknown`) {
         var musicEmbed = new Discord.RichEmbed()
-            // .setColor(`#00c292`)
-             
             .setAuthor(`➡️ Coming up next`)
-            // .addField(`:arrow_forward: Now playing`, `[${input.getTitle()}](${input.getURL()})`)
-            .setDescription(`[${input.getTitle()}](${input.getURL()})`)
-            .addField(`Uploader`, `[${await input.getChannelName()}](${input.getChannelURL()})`, true)
-            // .addField(`Length`, `${input.getLength()}`, true)
+            .setDescription(`**[${input.getTitle()}](${input.getURL()})**\nBy: [${await input.getChannelName()}](${input.getChannelURL()})`)
             .setThumbnail(input.getThumbnail())
             .setTimestamp()
             .setFooter(`Requested by ${input.getRequesterName()}`)
     } else {
         var musicEmbed = new Discord.RichEmbed()
-            // .setColor(`#00c292`)
-             
             .setAuthor(`➡️ Coming up next`)
-            // .addField(`:arrow_forward: Now playing`, `[${input.getTitle()}](${input.getURL()})`)
-            .setDescription(`[${input.getTitle()}](${input.getURL()})`)
-            .addField(`Uploader`, `[${await input.getChannelName()}](${input.getChannelURL()})`, true)
-            .addField(`Length`, `${await input.getLength()}`, true)
+            .setDescription(`**[${input.getTitle()}](${input.getURL()})**\nBy: [${await input.getChannelName()}](${input.getChannelURL()})\n\n\`<⚫——————————> (0:00/${await input.getLength()})\``)
             .setThumbnail(input.getThumbnail())
             .setTimestamp()
             .setFooter(`Requested by ${input.getRequesterName()}`)

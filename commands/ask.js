@@ -5,6 +5,7 @@ module.exports = {
     name: 'ask',
     description: 'Ask a question and get a response',
     // aliases: ['aliases'],
+    args: true,
     usage: '[question]',
     // cooldown: 5,
     // guildOnly: true,

@@ -4,6 +4,7 @@ const Discord = require(`discord.js`);
 module.exports = {
     name: 'move',
     description: 'Moves videos in queue to different positions',
+    args: true,
     aliases: ['m'],
     usage: '[1st video\'s position] [position to move to]',
     // cooldown: 5,

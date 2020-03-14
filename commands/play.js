@@ -45,9 +45,16 @@ class YTVideo {
 	getChannelURL() {
 		return this.video.channel.url;
 	}
-	getLength() {
+	async getLength() {
 		if ((!this.video.duration) || this.video.duration.hours == 0 && this.video.duration.minutes == 0 && this.video.duration.seconds == 0) {
-			return `unknown`;
+			var fullVideo = await youtube.getVideo(this.video.url);
+			if (fullVideo.duration.hours == 0) {
+				if (fullVideo.duration.seconds < 10) {
+					return `${fullVideo.duration.minutes}:0${fullVideo.duration.seconds}`
+				} else {
+					return `${fullVideo.duration.minutes}:${fullVideo.duration.seconds}`;
+				}
+			}
 		}
 
 		if (this.video.duration.hours == 0) {
@@ -68,6 +75,9 @@ class YTVideo {
 	}
 	getVideo() {
 		return this.video;
+	}
+	async getFullVideo() {
+		return await youtube.getVideo(this.video.url);
 	}
 }
 
@@ -120,6 +130,7 @@ module.exports = {
 	name: 'play',
 	description: 'Plays videos from YouTube, either by search or URL',
 	aliases: ['p'],
+	args: true,
 	usage: '[search term(s) or URL]',
 	cooldown: 3,
 	guildOnly: true,
@@ -158,25 +169,18 @@ module.exports = {
 
 			queue.push(newVideo);
 
-			if (newVideo.getLength() == "unknown") {
+			if (await newVideo.getLength() == "unknown") {
 				var playEmbed = new Discord.RichEmbed()
-					.setTitle(` `)
 					.setAuthor(`➕ Queued`)
-					.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**`)
-					.addField(`Uploader`, `[${newVideo.getChannelName()}](${newVideo.getChannelURL()})`, true)
-					.addField(`Position`, newVideo.getPosition(), true)
+					.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\nBy: [${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\n\`Position in queue: #${newVideo.getPosition()}\``)
 					.setThumbnail(newVideo.getThumbnail())
 					.setTimestamp()
 					.setFooter(`Requested by ${newVideo.getRequesterName()}`)
 				message.channel.send(playEmbed);
 			} else {
 				var playEmbed = new Discord.RichEmbed()
-					.setTitle(` `)
 					.setAuthor(`➕ Queued`)
-					.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**`)
-					.addField(`Uploader`, `[${newVideo.getChannelName()}](${newVideo.getChannelURL()})`, true)
-					.addField(`Length`, newVideo.getLength(), true)
-					.addField(`Position`, newVideo.getPosition(), true)
+					.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\nBy: [${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\n\`Position in queue: #${newVideo.getPosition()}\``)
 					.setThumbnail(newVideo.getThumbnail())
 					.setTimestamp()
 					.setFooter(`Requested by ${newVideo.getRequesterName()}`)
@@ -204,9 +208,7 @@ module.exports = {
 
 						var listEmbed = new Discord.RichEmbed()
 							.setAuthor(`🔄 Processing playlist`)
-							.setDescription(`**[${playlist.title}](${playlist.url})**`)
-							.addField(`Uploader`, `[${playlist.channel.title}](${playlist.channel.url})`, true)
-							.addField(`Length`, `${videos.length} videos`, true)
+							.setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
 							.setThumbnail(playlist.thumbnails.default.url)
 							.setTimestamp()
 							.setFooter(`Requested by ${message.author.username}`)
@@ -225,9 +227,7 @@ module.exports = {
 
 						var finishedEmbed = new Discord.RichEmbed()
 							.setAuthor(`➕ Queued playlist`)
-							.setDescription(`**[${playlist.title}](${playlist.url})**`)
-							.addField(`Uploader`, `[${playlist.channel.title}](${playlist.channel.url})`, true)
-							.addField(`Length`, `${videos.length} videos`, true)
+							.setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
 							.setThumbnail(playlist.thumbnails.default.url)
 							.setTimestamp()
 							.setFooter(`Requested by ${message.author.username}`)

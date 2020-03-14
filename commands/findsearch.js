@@ -73,6 +73,7 @@ class YTVideo {
 module.exports = {
     name: 'findsearch',
     description: 'Searches YouTube for 5 videos or playlists and sends the link to it',
+    args: true,
     aliases: ['searchfind', `searchvideo`, `searchf`],
     usage: '[playlist (optional)] [search term(s)]',
     cooldown: 3,
@@ -237,23 +238,23 @@ module.exports = {
                     var resultsEmbed = new Discord.RichEmbed()
                         .setAuthor(`Top 5 Results For: "${args.join(" ")}"`)
                         .setDescription(`1. **[${results[0].title}](${results[0].url})**
-                                             Length: **${res1.getLength()}**
+                                             Length: **${await res1.getLength()}**
                                              Uploader: **${res1.getChannelName()}**
 
                                              2. **[${results[1].title}](${results[1].url})**
-                                             Length: **${res2.getLength()}**
+                                             Length: **${await res2.getLength()}**
                                              Uploader: **${res2.getChannelName()}**
 
                                              3. **[${results[2].title}](${results[2].url})**
-                                             Length: **${res3.getLength()}**
+                                             Length: **${await res3.getLength()}**
                                              Uploader: **${res3.getChannelName()}**
 
                                              4. **[${results[3].title}](${results[3].url})**
-                                             Length: **${res4.getLength()}**
+                                             Length: **${await res4.getLength()}**
                                              Uploader: **${res4.getChannelName()}**
 
                                              5. **[${results[4].title}](${results[4].url})**
-                                             Length: **${res5.getLength()}**
+                                             Length: **${await res5.getLength()}**
                                              Uploader: **${res5.getChannelName()}**`)
                         .setTimestamp()
                         .setFooter(`Requested by ${message.author.username} - Type the number to select - Type cancel to stop`)

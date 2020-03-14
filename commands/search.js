@@ -45,9 +45,16 @@ class YTVideo {
     getChannelURL() {
         return this.video.channel.url;
     }
-    getLength() {
+    async getLength() {
         if ((!this.video.duration) || this.video.duration.hours == 0 && this.video.duration.minutes == 0 && this.video.duration.seconds == 0) {
-            return `unknown`;
+            var fullVideo = await youtube.getVideo(this.video.url);
+            if (fullVideo.duration.hours == 0) {
+                if (fullVideo.duration.seconds < 10) {
+                    return `${fullVideo.duration.minutes}:0${fullVideo.duration.seconds}`
+                } else {
+                    return `${fullVideo.duration.minutes}:${fullVideo.duration.seconds}`;
+                }
+            }
         }
 
         if (this.video.duration.hours == 0) {
@@ -69,13 +76,17 @@ class YTVideo {
     getVideo() {
         return this.video;
     }
+    async getFullVideo() {
+        return await youtube.getVideo(this.video.url);
+    }
 }
 
 module.exports = {
     name: 'search',
     description: `Plays videos from YouTube by letting you select from 5 videos.\nAlternatively, if you are not in a VC it will instead just send the link, just like ${prefix}findsearch.`,
     aliases: ['psearch', 'ps', 'sp'],
-    usage: '[playlist (optional)] [search term(s)]',
+    args: true,
+    usage: '[(opt.) "playlist"] [search term(s)]',
     cooldown: 3,
     guildOnly: true,
     execute(message, args) {
@@ -113,7 +124,7 @@ module.exports = {
 
             queue.push(newVideo);
 
-            if (newVideo.getLength() == "unknown") {
+            if (await newVideo.getLength() == "unknown") {
                 var playEmbed = new Discord.RichEmbed()
                     .setTitle(` `)
                     .setAuthor(`➕ Queued`)
@@ -130,7 +141,7 @@ module.exports = {
                     .setAuthor(`➕ Queued`)
                     .setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**`)
                     .addField(`Uploader`, `[${newVideo.getChannelName()}](${newVideo.getChannelURL()})`, true)
-                    .addField(`Length`, newVideo.getLength(), true)
+                    .addField(`Length`, await newVideo.getLength(), true)
                     .addField(`Position`, newVideo.getPosition(), true)
                     .setThumbnail(newVideo.getThumbnail())
                     .setTimestamp()
@@ -253,6 +264,12 @@ module.exports = {
 
                                         for (var i = 0; i < videos.length; i++) {
                                             var newVideo = new YTVideo(videos[i], message.author);
+                                            if (newVideo.getTitle() == "Private video") {
+                                                var privateVideoEmbed = new Discord.RichEmbed()
+                                                    .setDescription(":information_source: At least 1 video from the playlist could not be added as it is private")
+                                                    .setColor(`#0083FF`)
+                                                message.channel.send(privateVideoEmbed);
+                                            }
                                             queue.push(newVideo);
                                         }
 
@@ -342,23 +359,23 @@ module.exports = {
                     var resultsEmbed = new Discord.RichEmbed()
                         .setAuthor(`Top 5 Results For: "${args.join(" ")}"`)
                         .setDescription(`1. **[${results[0].title}](${results[0].url})**
-                                             Length: **${res1.getLength()}**
+                                             Length: **${await res1.getLength()}**
                                              Uploader: **${res1.getChannelName()}**
 
                                              2. **[${results[1].title}](${results[1].url})**
-                                             Length: **${res2.getLength()}**
+                                             Length: **${await res2.getLength()}**
                                              Uploader: **${res2.getChannelName()}**
 
                                              3. **[${results[2].title}](${results[2].url})**
-                                             Length: **${res3.getLength()}**
+                                             Length: **${await res3.getLength()}**
                                              Uploader: **${res3.getChannelName()}**
 
                                              4. **[${results[3].title}](${results[3].url})**
-                                             Length: **${res4.getLength()}**
+                                             Length: **${await res4.getLength()}**
                                              Uploader: **${res4.getChannelName()}**
 
                                              5. **[${results[4].title}](${results[4].url})**
-                                             Length: **${res5.getLength()}**
+                                             Length: **${await res5.getLength()}**
                                              Uploader: **${res5.getChannelName()}**`)
                         .setTimestamp()
                         .setFooter(`Requested by ${message.author.username} - Type the number to select - Type cancel to stop`)

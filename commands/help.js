@@ -23,7 +23,7 @@ module.exports = {
             generalHelp.addField(`**Playback control**`, `play\nplaynext\nplaynow\nsearch\nskip\nskipall\njoin\nleave\npause\nresume`, true);
             generalHelp.addField(`**Volume control**`, `volume\nmute\nunmute`, true)
             generalHelp.addField(`**Queue control**`, `queue\nremove\nmove\nshuffle`, true);
-            generalHelp.addField(`**Music information**`, `playing\nnext\nfindvideo\nfindsearch/search`, true);
+            generalHelp.addField(`**Music information**`, `playing\nnext\nfindvideo\nsearchf/search`, true);
             generalHelp.addField(`**Fun commands**`, `say\nlenny`, true);
             generalHelp.addField(`**System commands**`, `ping`, true)
 
@@ -77,11 +77,13 @@ module.exports = {
         if (command.description) commandHelp.addField(`**Description**`, command.description);
 
         // if (command.usage) data.push(`**Usage:** ${prefix}${command.name} ${command.usage}`);
-        if (command.usage) commandHelp.addField(`**Usage**`, `${prefix}${command.name} ${command.usage}`);
+        if (command.usage) commandHelp.addField(`**Usage**`, `\`${prefix}${command.name} ${command.usage}\``);
 
         if (command.guildOnly) commandHelp.addField(`**Servers only**`, `Only usable in servers, not DMs`);
 
         if (!command.guildOnly) commandHelp.addField(`**Servers or DMs**`, `Usable in both servers and bot's DMs`);
+
+        if (command.args) commandHelp.addField(`**Arguments required**`, `Following the command usage is required`);
 
         // data.push(`**Cooldown:** ${command.cooldown || 3} second(s)`);
         commandHelp.addField(`**Cooldown**`, `${command.cooldown || 3} second(s)`);

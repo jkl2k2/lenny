@@ -22,7 +22,7 @@ async function sendDetails(input, c) {
             // .addField(`:arrow_forward: Now playing`, `[${input.getTitle()}](${input.getURL()})`)
             .setDescription(`[${input.getTitle()}](${input.getURL()})`)
             .addField(`Uploader`, `[${await input.getChannelName()}](${input.getChannelURL()})`, true)
-            .addField(`Length`, `${input.getLength()}`, true)
+            .addField(`Length`, `${await input.getLength()}`, true)
             .setThumbnail(input.getThumbnail())
             .setTimestamp()
             .setFooter(`Requested by ${input.getRequesterName()}`)

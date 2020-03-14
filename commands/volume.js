@@ -33,6 +33,22 @@ module.exports = {
 	// cooldown: 5,
 	guildOnly: true,
 	execute(message, args) {
+		if (!args.length) {
+			if (index.getDispatcher() == undefined) {
+				let currentVol = new Discord.RichEmbed()
+					.setDescription(`:loud_sound: Current volume: 100%`)
+					.setColor(`#0083FF`)
+				
+				return message.channel.send(currentVol);
+			} else {
+				let currentVol = new Discord.RichEmbed()
+					.setDescription(`:loud_sound: Current volume: ${(index.getVolume()) * 100}%`)
+					.setColor(`#0083FF`)
+				
+				return message.channel.send(currentVol);
+			}
+		}
+
 		volume = args[0];
 		raisedVolume = compareVolume(volume);
 

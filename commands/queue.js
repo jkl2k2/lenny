@@ -106,7 +106,7 @@ async function sendDetails(input, c, index) {
 	} else {
 		var musicEmbed = new Discord.RichEmbed()
 			.setAuthor(`➡️ In queue: Video #${index}`)
-			.setDescription(`**[${input.getTitle()}](${input.getURL()})**\nBy: [${await input.getChannelName()}](${input.getChannelURL()})\n\n\`<⚫——————————> (0:00/${input.getLength()})\``)
+			.setDescription(`**[${input.getTitle()}](${input.getURL()})**\nBy: [${await input.getChannelName()}](${input.getChannelURL()})\n\n\`<⚫——————————> (0:00/${await input.getLength()})\``)
 			.setThumbnail(input.getThumbnail())
 			.setTimestamp()
 			.setFooter(`Requested by ${input.getRequesterName()}`)

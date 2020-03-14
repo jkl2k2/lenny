@@ -6,6 +6,7 @@ const config = require('config');
 const ytdl = require('ytdl-core');
 const chalk = require('chalk');
 const winston = require('winston');
+const Canvas = require('canvas');
 
 // Initialize client
 const client = new Discord.Client();
@@ -15,6 +16,17 @@ const cooldowns = new Discord.Collection();
 // Global variables
 var queue = [];
 var repeat = false;
+
+const applyText = (canvas, text) => {
+    const ctx = canvas.getContext('2d');
+    let fontSize = 70;
+
+    do {
+        ctx.font = `${fontSize -= 10}px sans-serif`;
+    } while (ctx.measureText(text).width > canvas.width - 300);
+
+    return ctx.font;
+};
 
 const prefix = config.get(`Bot.prefix`);
 const token = config.get(`Bot.token`);
@@ -92,25 +104,17 @@ var lastPlayed;
 // var lastMusicMessage;
 
 async function sendDetails(input, c) {
-    if (input.getLength() == `unknown`) {
+    if (await input.getLength() == `unknown`) {
         var musicEmbed = new Discord.RichEmbed()
-            // .setColor(`#00c292`)
             .setAuthor(`▶️ Now playing`)
-            // .addField(`:arrow_forward: **Now playing**`, `[${input.getTitle()}](${input.getURL()})`)
-            .setDescription(`**[${input.getTitle()}](${input.getURL()})**`)
-            .addField(`Uploader`, `[${await input.getChannelName()}](${input.getChannelURL()})`, true)
-            // .addField(`Length`, `${input.getLength()}`, true)
+            .setDescription(`**[${input.getTitle()}](${input.getURL()})**\nBy: [${await input.getChannelName()}](${input.getChannelURL()})\n\n\`<⚫——————————> (0:00/${await input.getLength()})\``)
             .setThumbnail(input.getThumbnail())
             .setTimestamp()
             .setFooter(`Requested by ${input.getRequesterName()}`)
     } else {
         var musicEmbed = new Discord.RichEmbed()
-            // .setColor(`#00c292`)
             .setAuthor(`▶️ Now playing`)
-            // .addField(`:arrow_forward: **Now playing**`, `[${input.getTitle()}](${input.getURL()})`)
-            .setDescription(`**[${input.getTitle()}](${input.getURL()})**`)
-            .addField(`Uploader`, `[${await input.getChannelName()}](${input.getChannelURL()})`, true)
-            .addField(`Length`, `${input.getLength()}`, true)
+            .setDescription(`**[${input.getTitle()}](${input.getURL()})**\nBy: [${await input.getChannelName()}](${input.getChannelURL()})\n\n\`<⚫——————————> (0:00/${await input.getLength()})\``)
             .setThumbnail(input.getThumbnail())
             .setTimestamp()
             .setFooter(`Requested by ${input.getRequesterName()}`)
@@ -150,7 +154,7 @@ async function playMusic(message) {
 
             var connections = client.voiceConnections.array();
 
-            dispatcher = connections[0].playStream(input);
+            dispatcher = connections[0].playStream(input, { bitrate: 192000 });
             //dispatcher.setBitrate(192);
 
             sendDetails(queue[0], message.channel);
@@ -229,7 +233,7 @@ module.exports = {
             return lastDetails;
         } else {
             return new Discord.RichEmbed()
-                .addField(`:information_source: Nothing is playing`, `Nothing is currently playing`)
+                .setDescription(`:information_source: Nothing is currently playing`)
                 .setColor(`#0083FF`)
         }
     },
@@ -289,6 +293,74 @@ client.on('ready', () => {
     logger.info(chalk.white.bgCyan(`--------Bot Initialized--------`));
     logger.info(chalk.white.bgCyan(`Timestamp: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} - ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`));
     logger.info(chalk.white.bgCyan.bold(`-------Awaiting Commands-------`));
+});
+
+client.on('guildMemberAdd', async member => {
+    const channel = member.guild.channels.find(ch => ch.name === 'member-log');
+    if (!channel) return;
+
+    const canvas = Canvas.createCanvas(700, 250);
+    const ctx = canvas.getContext('2d');
+
+    const background = await Canvas.loadImage('./assets/wallpaper.jpg');
+    ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+
+    ctx.strokeStyle = '#74037b';
+    ctx.strokeRect(0, 0, canvas.width, canvas.height);
+
+    ctx.font = '28px sans-serif';
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText('Welcome to the server,', canvas.width / 2.5, canvas.height / 3.5);
+
+    ctx.font = applyText(canvas, `${member.displayName}`);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(`${member.displayName}`, canvas.width / 2.5, canvas.height / 1.8);
+
+    ctx.beginPath();
+    ctx.arc(125, 125, 100, 0, Math.PI * 2, true);
+    ctx.closePath();
+    ctx.clip();
+
+    const avatar = await Canvas.loadImage(member.user.displayAvatarURL);
+    ctx.drawImage(avatar, 25, 25, 200, 200);
+
+    const attachment = new Discord.Attachment(canvas.toBuffer(), 'welcome-image.png');
+
+    channel.send(`Welcome to the server, ${member}`, attachment);
+});
+
+client.on('guildMemberRemove', async member => {
+    const channel = member.guild.channels.find(ch => ch.name === 'member-log');
+    if (!channel) return;
+
+    const canvas = Canvas.createCanvas(700, 250);
+    const ctx = canvas.getContext('2d');
+
+    const background = await Canvas.loadImage('./assets/wallpaper.jpg');
+    ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+
+    ctx.strokeStyle = '#74037b';
+    ctx.strokeRect(0, 0, canvas.width, canvas.height);
+
+    ctx.font = '28px sans-serif';
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText('Sorry to see you leaving,', canvas.width / 2.5, canvas.height / 3.5);
+
+    ctx.font = applyText(canvas, `${member.displayName}`);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(`${member.displayName}`, canvas.width / 2.5, canvas.height / 1.8);
+
+    ctx.beginPath();
+    ctx.arc(125, 125, 100, 0, Math.PI * 2, true);
+    ctx.closePath();
+    ctx.clip();
+
+    const avatar = await Canvas.loadImage(member.user.displayAvatarURL);
+    ctx.drawImage(avatar, 25, 25, 200, 200);
+
+    const attachment = new Discord.Attachment(canvas.toBuffer(), 'welcome-image.png');
+
+    channel.send(`We're sorry to see you leaving, ${member.displayName}`, attachment);
 });
 
 client.on('error', () => {
@@ -405,13 +477,17 @@ client.on('message', message => {
 
     // If command needs arguments
     if (command.args && !args.length) {
-        let reply = `You didn't provide any arguments, ${message.author}!`;
+        let noArgs = new Discord.RichEmbed();
+        let msg = `You didn't provide the required arguments, ${message.author.username}`;
 
         if (command.usage) {
-            reply += `\nThe proper usage would be: \`${prefix}${command.name} ${command.usage}\``;
+            msg += `\n\nThe proper usage would be:\n\`${prefix}${command.name} ${command.usage}\``;
         }
 
-        return message.channel.send(reply);
+        noArgs.setDescription(msg);
+        noArgs.setAuthor(`Improper usage`, client.user.avatarURL);
+
+        return message.channel.send(noArgs);
     }
 
     // If command has cooldowns

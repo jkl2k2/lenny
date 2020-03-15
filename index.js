@@ -173,10 +173,11 @@ async function playMusic(message) {
         }
 
         lastPlayed = queue.shift();
+        var path;
         if (lastPlayed && lastPlayed.getType() == "soundcloud") {
-            let path = `./soundcloud/${lastPlayed.getTitle()}`;
+            path = `./soundcloud/${lastPlayed.getTitle()}`;
         } else {
-            let path = " ";
+            path = " ";
         }
 
         if (message.member.voiceChannel) {

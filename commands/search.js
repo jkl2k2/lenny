@@ -30,7 +30,11 @@ class YTVideo {
         return this.requester.username;
     }
     getType() {
-        return "youtube";
+        if ((!this.video.duration) || this.video.duration.hours == 0 && this.video.duration.minutes == 0 && this.video.duration.seconds == 0) {
+            return "livestream";
+        } else {
+            return "video";
+        }
     }
     getThumbnail() {
         if (this.video.maxRes) {
@@ -116,38 +120,18 @@ module.exports = {
         var queue = index.getQueue();
 
         async function process(input) {
-            var videoResult = input;
-
             logger.debug(input.title);
 
-            let newVideo = new YTVideo(videoResult, message.author);
+            let newVideo = new YTVideo(input, message.author);
 
             queue.push(newVideo);
 
-            if (await newVideo.getLength() == "unknown") {
-                let playEmbed = new Discord.RichEmbed()
-                    .setTitle(` `)
-                    .setAuthor(`➕ Queued`)
-                    .setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**`)
-                    .addField(`Uploader`, `[${newVideo.getChannelName()}](${newVideo.getChannelURL()})`, true)
-                    .addField(`Position`, newVideo.getPosition(), true)
-                    .setThumbnail(newVideo.getThumbnail())
-                    .setTimestamp()
-                    .setFooter(`Requested by ${newVideo.getRequesterName()}`);
-                message.channel.send(playEmbed);
-            } else {
-                let playEmbed = new Discord.RichEmbed()
-                    .setTitle(` `)
-                    .setAuthor(`➕ Queued`)
-                    .setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**`)
-                    .addField(`Uploader`, `[${newVideo.getChannelName()}](${newVideo.getChannelURL()})`, true)
-                    .addField(`Length`, await newVideo.getLength(), true)
-                    .addField(`Position`, newVideo.getPosition(), true)
-                    .setThumbnail(newVideo.getThumbnail())
-                    .setTimestamp()
-                    .setFooter(`Requested by ${newVideo.getRequesterName()}`);
-                message.channel.send(playEmbed);
-            }
+            message.channel.send(new Discord.RichEmbed()
+                .setAuthor(`➕ Queued`)
+                .setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\nBy: [${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\n\`Position in queue: #${newVideo.getPosition()}\``)
+                .setThumbnail(newVideo.getThumbnail())
+                .setTimestamp()
+                .setFooter(`Requested by ${newVideo.getRequesterName()}`));
 
             if (message.member.voiceChannel) {
                 message.member.voiceChannel.join()
@@ -156,7 +140,7 @@ module.exports = {
                             index.callPlayMusic(message);
                         }
                     })
-                    .catch(logger.error);
+                    .catch(`${logger.error}`);
             } else {
                 logger.error("Failed to join voice channel");
             }
@@ -252,36 +236,30 @@ module.exports = {
                                     if (playlist) {
                                         var videos = await playlist.getVideos();
 
-                                        var listEmbed = new Discord.RichEmbed()
+                                        var processing = await message.channel.send(new Discord.RichEmbed()
                                             .setAuthor(`🔄 Processing playlist`)
-                                            .setDescription(`**[${playlist.title}](${playlist.url})**`)
-                                            .addField(`Uploader`, `[${playlist.channel.title}](${playlist.channel.url})`, true)
-                                            .addField(`Length`, `${videos.length} videos`, true)
+                                            .setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
                                             .setThumbnail(playlist.thumbnails.default.url)
                                             .setTimestamp()
-                                            .setFooter(`Requested by ${message.author.username}`);
-                                        var processing = await message.channel.send(listEmbed);
+                                            .setFooter(`Requested by ${message.author.username}`));
 
                                         for (var i = 0; i < videos.length; i++) {
                                             var newVideo = new YTVideo(videos[i], message.author);
                                             if (newVideo.getTitle() == "Private video") {
-                                                var privateVideoEmbed = new Discord.RichEmbed()
+                                                message.channel.send(new Discord.RichEmbed()
                                                     .setDescription(":information_source: At least 1 video from the playlist could not be added as it is private")
-                                                    .setColor(`#0083FF`);
-                                                message.channel.send(privateVideoEmbed);
+                                                    .setColor(`#0083FF`));
+                                            } else {
+                                                queue.push(newVideo);
                                             }
-                                            queue.push(newVideo);
                                         }
 
-                                        var finishedEmbed = new Discord.RichEmbed()
+                                        processing.edit(new Discord.RichEmbed()
                                             .setAuthor(`➕ Queued playlist`)
-                                            .setDescription(`**[${playlist.title}](${playlist.url})**`)
-                                            .addField(`Uploader`, `[${playlist.channel.title}](${playlist.channel.url})`, true)
-                                            .addField(`Length`, `${videos.length} videos`, true)
+                                            .setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
                                             .setThumbnail(playlist.thumbnails.default.url)
                                             .setTimestamp()
-                                            .setFooter(`Requested by ${message.author.username}`);
-                                        processing.edit(finishedEmbed);
+                                            .setFooter(`Requested by ${message.author.username}`));
 
                                         if (message.member.voiceChannel) {
                                             message.member.voiceChannel.join()
@@ -292,10 +270,10 @@ module.exports = {
                                                 })
                                                 .catch(logger.error);
                                         } else {
-                                            logger.error(`User not in voice channel after playlist processing`);
+                                            logger.warn(`User not in voice channel after playlist processing`);
                                         }
                                     } else {
-                                        logger.warn(`Playlist not found`);
+                                        logger.error(`Playlist not found`);
                                     }
                                 });
                         } else {

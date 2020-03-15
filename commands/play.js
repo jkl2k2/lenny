@@ -142,54 +142,35 @@ module.exports = {
 
 		if (!message.member.voiceChannel) {
 			// If member not in VC
-			let vcFailEmbed = new Discord.RichEmbed()
+			return message.channel.send(new Discord.RichEmbed()
 				.setTitle(` `)
 				.setDescription(`<:error:643341473772863508> ${message.author.username}, you are not in a voice channel`)
-				.setColor(`#FF0000`);
-			message.channel.send(vcFailEmbed);
-
-			return;
+				.setColor(`#FF0000`));
 		}
 
 		if (args[0] == undefined) {
 			// If no arguments
-			let undefArgsEmbed = new Discord.RichEmbed()
+			return message.channel.send(new Discord.RichEmbed()
 				.setTitle(` `)
 				.setDescription(`:no_entry: Please include at least one search term or URL`)
-				.setColor(`#FF0000`);
-			message.channel.send(undefArgsEmbed);
-
-			return;
+				.setColor(`#FF0000`));
 		}
 
 		var queue = index.getQueue();
 
 		async function process(input) {
-			var videoResult = input;
-
 			logger.debug(input.title);
 
-			let newVideo = new YTVideo(videoResult, message.author);
+			let newVideo = new YTVideo(input, message.author);
 
 			queue.push(newVideo);
 
-			if (await newVideo.getLength() == "unknown") {
-				let playEmbed = new Discord.RichEmbed()
-					.setAuthor(`➕ Queued`)
-					.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\nBy: [${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\n\`Position in queue: #${newVideo.getPosition()}\``)
-					.setThumbnail(newVideo.getThumbnail())
-					.setTimestamp()
-					.setFooter(`Requested by ${newVideo.getRequesterName()}`);
-				message.channel.send(playEmbed);
-			} else {
-				let playEmbed = new Discord.RichEmbed()
-					.setAuthor(`➕ Queued`)
-					.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\nBy: [${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\n\`Position in queue: #${newVideo.getPosition()}\``)
-					.setThumbnail(newVideo.getThumbnail())
-					.setTimestamp()
-					.setFooter(`Requested by ${newVideo.getRequesterName()}`);
-				message.channel.send(playEmbed);
-			}
+			message.channel.send(new Discord.RichEmbed()
+				.setAuthor(`➕ Queued`)
+				.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\nBy: [${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\n\`Position in queue: #${newVideo.getPosition()}\``)
+				.setThumbnail(newVideo.getThumbnail())
+				.setTimestamp()
+				.setFooter(`Requested by ${newVideo.getRequesterName()}`));
 
 			if (message.member.voiceChannel) {
 				message.member.voiceChannel.join()
@@ -210,32 +191,30 @@ module.exports = {
 					if (playlist) {
 						var videos = await playlist.getVideos();
 
-						var listEmbed = new Discord.RichEmbed()
+						var processing = await message.channel.send(new Discord.RichEmbed()
 							.setAuthor(`🔄 Processing playlist`)
 							.setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
 							.setThumbnail(playlist.thumbnails.default.url)
 							.setTimestamp()
-							.setFooter(`Requested by ${message.author.username}`);
-						var processing = await message.channel.send(listEmbed);
+							.setFooter(`Requested by ${message.author.username}`));
 
 						for (var i = 0; i < videos.length; i++) {
 							var newVideo = new YTVideo(videos[i], message.author);
 							if (newVideo.getTitle() == "Private video") {
-								var privateVideoEmbed = new Discord.RichEmbed()
+								message.channel.send(new Discord.RichEmbed()
 									.setDescription(":information_source: At least 1 video from the playlist could not be added as it is private")
-									.setColor(`#0083FF`);
-								message.channel.send(privateVideoEmbed);
+									.setColor(`#0083FF`));
+							} else {
+								queue.push(newVideo);
 							}
-							queue.push(newVideo);
 						}
 
-						var finishedEmbed = new Discord.RichEmbed()
+						processing.edit(new Discord.RichEmbed()
 							.setAuthor(`➕ Queued playlist`)
 							.setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
 							.setThumbnail(playlist.thumbnails.default.url)
 							.setTimestamp()
-							.setFooter(`Requested by ${message.author.username}`);
-						processing.edit(finishedEmbed);
+							.setFooter(`Requested by ${message.author.username}`));
 
 						if (message.member.voiceChannel) {
 							message.member.voiceChannel.join()
@@ -256,13 +235,11 @@ module.exports = {
 
 		async function handleVideo() {
 			if (args[0].includes("watch?v=") || args[0].includes('youtu.be')) {
-				var input = await youtube.getVideo(args[0]);
-				process(input);
+				process(await youtube.getVideo(args[0]));
 			} else {
 				await youtube.searchVideos(args.join(" "), 1)
-					.then(async function (results) {
-						var input = await youtube.getVideo(results[0].url);
-						process(input);
+					.then(async results => {
+						process(await youtube.getVideo(results[0].url));
 					});
 			}
 		}

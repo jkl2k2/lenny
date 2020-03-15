@@ -157,11 +157,11 @@ async function playMusic(message) {
             let connections = client.voiceConnections.array();
 
             dispatcher = connections[0].playStream(input, { bitrate: 192000 });
-            //dispatcher.setBitrate(192);
 
             sendDetails(queue[0], message.channel);
         } else if (queue[0].getType() == "soundcloud") {
             // If SoundCloud
+
             let connections = client.voiceConnections.array();
 
             dispatcher = connections[0].playStream(fs.createReadStream(`./soundcloud/${queue[0].getTitle()}`));

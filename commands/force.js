@@ -9,12 +9,12 @@ module.exports = {
 	cooldown: 5,
 	guildOnly: true,
 	execute(message, args) {
-        let forceEmbed = new Discord.RichEmbed()
-             
-            .addField(":information_source: Forcing playback", "Attemping to unstick queue...")
-            .setColor("#0083FF")
+		let forceEmbed = new Discord.RichEmbed()
+
+			.addField(":information_source: Forcing playback", "Attemping to unstick queue...")
+			.setColor("#0083FF");
 		message.channel.send(forceEmbed);
-		
+
 		index.callPlayMusic();
 	}
-}
+};

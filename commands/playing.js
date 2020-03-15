@@ -14,7 +14,7 @@ module.exports = {
 		if (dispatcher == undefined || !dispatcher.speaking) {
 			var nothingPlaying = new Discord.RichEmbed()
 				.setDescription(`:information_source: Nothing is currently playing`)
-				.setColor(`#0083FF`)
+				.setColor(`#0083FF`);
 			return message.channel.send(nothingPlaying);
 		}
 		var playing = await index.getPlayingVideo().getFullVideo();
@@ -65,7 +65,7 @@ module.exports = {
 		} else if (frac >= 0.3) {
 			progressBar = (`\`<———⚫———————> (${formattedPlaying}/${formattedTotal})\``);
 		} else if (frac >= 0.2) {
-			progressBar = (`\`<——⚫————————> (${formattedPlaying}/${formattedTotal})\``)
+			progressBar = (`\`<——⚫————————> (${formattedPlaying}/${formattedTotal})\``);
 		} else if (frac >= 0.1) {
 			progressBar = (`\`<—⚫—————————> (${formattedPlaying}/${formattedTotal})\``);
 		} else if (frac >= 0) {
@@ -82,4 +82,4 @@ module.exports = {
 
 		message.channel.send(embed);
 	}
-}
+};

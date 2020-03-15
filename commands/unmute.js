@@ -15,7 +15,7 @@ module.exports = {
         if (dispatcher == undefined || dispatcher.speaking == false) {
             let notPlaying = new Discord.RichEmbed()
                 .setDescription(`:information_source: Cannot mute playback when nothing is playing`)
-                .setColor(`#0083FF`)
+                .setColor(`#0083FF`);
             message.channel.send(notPlaying);
 
             return;
@@ -26,15 +26,15 @@ module.exports = {
 
             let unmuted = new Discord.RichEmbed()
                 .setDescription(`:loud_sound: Volume unmuted and set to ${oldVolume * 100}%`)
-                .setColor(`#0083FF`)
+                .setColor(`#0083FF`);
             message.channel.send(unmuted);
 
         } else {
             let alreadyUnmuted = new Discord.RichEmbed()
                 .setDescription(`:information_source: The volume is already unmuted`)
-                .setColor(`#0083FF`)
+                .setColor(`#0083FF`);
             message.channel.send(alreadyUnmuted);
 
         }
     }
-}
+};

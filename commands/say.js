@@ -11,4 +11,4 @@ module.exports = {
 	execute(message, args) {
 		message.channel.send(args.join(" "), { tts: true });
 	}
-}
+};

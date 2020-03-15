@@ -3,21 +3,22 @@ const Discord = require(`discord.js`);
 
 async function sendDetails(input, c) {
     if (input.getLength() == `unknown`) {
-        var musicEmbed = new Discord.RichEmbed()
+        let musicEmbed = new Discord.RichEmbed()
             .setAuthor(`➡️ Coming up next`)
             .setDescription(`**[${input.getTitle()}](${input.getURL()})**\nBy: [${await input.getChannelName()}](${input.getChannelURL()})`)
             .setThumbnail(input.getThumbnail())
             .setTimestamp()
-            .setFooter(`Requested by ${input.getRequesterName()}`)
+            .setFooter(`Requested by ${input.getRequesterName()}`);
+        c.send(musicEmbed);
     } else {
-        var musicEmbed = new Discord.RichEmbed()
+        let musicEmbed = new Discord.RichEmbed()
             .setAuthor(`➡️ Coming up next`)
             .setDescription(`**[${input.getTitle()}](${input.getURL()})**\nBy: [${await input.getChannelName()}](${input.getChannelURL()})\n\n\`<⚫——————————> (0:00/${await input.getLength()})\``)
             .setThumbnail(input.getThumbnail())
             .setTimestamp()
-            .setFooter(`Requested by ${input.getRequesterName()}`)
+            .setFooter(`Requested by ${input.getRequesterName()}`);
+        c.send(musicEmbed);
     }
-    c.send(musicEmbed);
 }
 
 module.exports = {
@@ -35,8 +36,8 @@ module.exports = {
         } else {
             let nextUndefEmbed = new Discord.RichEmbed()
                 .setDescription(`:information_source: There is no video coming up in the queue`)
-                .setColor(`#0083FF`)
+                .setColor(`#0083FF`);
             message.channel.send(nextUndefEmbed);
         }
     }
-}
+};

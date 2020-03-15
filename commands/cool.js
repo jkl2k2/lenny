@@ -23,7 +23,7 @@ I'm scared to know how badass you are in real life. You can probably bench 8 ele
 Are your accomplishments always as **badass** as that one? Are you seriously **THAT** amazing, ${args[0]}???
 
 Keep going ${args[0]}. You've got a bright future ahead of you.
-                              `)
+                              `);
         } else {
             message.channel.send(`Woah bro...**for real???**
 
@@ -38,7 +38,7 @@ I'm scared to know how badass you are in real life. You can probably bench 8 ele
 Are your accomplishments always as **badass** as that one? Are you seriously **THAT** amazing???
 
 Keep going kid. You've got a bright future ahead of you.
-                              `)
+                              `);
         }
     }
-}
+};

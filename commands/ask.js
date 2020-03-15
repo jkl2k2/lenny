@@ -16,4 +16,4 @@ module.exports = {
 
         message.channel.send(responses[index]);
     }
-}
+};

@@ -21,11 +21,11 @@ module.exports = {
             // data.push('Here\'s a list of all my commands:');
             // data.push(commands.map(command => command.name).join(', '));
             generalHelp.addField(`**Playback control**`, `play\nplaynext\nplaynow\nsearch\nskip\nskipall\njoin\nleave\npause\nresume`, true);
-            generalHelp.addField(`**Volume control**`, `volume\nmute\nunmute`, true)
+            generalHelp.addField(`**Volume control**`, `volume\nmute\nunmute`, true);
             generalHelp.addField(`**Queue control**`, `queue\nremove\nmove\nshuffle`, true);
             generalHelp.addField(`**Music information**`, `playing\nnext\nfindvideo\nsearchf/search`, true);
             generalHelp.addField(`**Fun commands**`, `say\nlenny`, true);
-            generalHelp.addField(`**System commands**`, `ping`, true)
+            generalHelp.addField(`**System commands**`, `ping`, true);
 
             // data.push(`\nYou can send \`${prefix}help [command name]\` to get info on a specific command!`);
             generalHelp.setAuthor(`Use ${prefix}help [command name] to get info on a specific command`, `https://cdn.discordapp.com/app-icons/641137495886528513/35676b341ed8ba268e5fff9dcc5c570e.png?size=256`);
@@ -65,7 +65,6 @@ module.exports = {
         }
 
         var commandHelp = new Discord.RichEmbed();
-        commandHelp ;
 
         // data.push(`**Name:** ${command.name}`);
         commandHelp.setAuthor(config.get(`Bot.prefix`) + command.name, `https://cdn.discordapp.com/app-icons/641137495886528513/35676b341ed8ba268e5fff9dcc5c570e.png?size=256`);

@@ -29,7 +29,7 @@ module.exports = {
 
         var progressEmbed = new Discord.RichEmbed()
             .setDescription(`:arrows_counterclockwise: Downloading audio`)
-            .setColor(`#0083FF`)
+            .setColor(`#0083FF`);
         var progressMsg = await message.channel.send(progressEmbed);
 
         const onProgress = (chunkLength, downloaded, total) => {
@@ -41,7 +41,7 @@ module.exports = {
                 // When 100% downloaded
                 let progressEmbed = new Discord.RichEmbed()
                     .setDescription(`:arrow_double_up: Uploading file...`)
-                    .setColor(`#0083FF`)
+                    .setColor(`#0083FF`);
                 progressMsg.edit(progressEmbed);
                 setTimeout(() => {
                     message.channel.send(`File:`, { files: [`./downloads/audio.mp4`] });
@@ -59,7 +59,7 @@ module.exports = {
                 highWaterMark: 1 << 25
             }).on('error', logger.error)
                 .on('progress', onProgress)
-                .pipe(fs.createWriteStream(secondaryAudioOutput))
+                .pipe(fs.createWriteStream(secondaryAudioOutput));
         } else if (args[0] == "video") {
             logger.debug('Downloading audio track');
 
@@ -102,4 +102,4 @@ module.exports = {
         });
         */
     }
-}
+};

@@ -12,4 +12,4 @@ module.exports = {
 	execute(message, args) {
 		// Start here
 	}
-}
+};

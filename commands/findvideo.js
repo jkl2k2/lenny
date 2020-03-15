@@ -1,5 +1,5 @@
 const index = require(`../index.js`);
-const Discord = require(`discord.js`)
+const Discord = require(`discord.js`);
 const config = require('config');
 const api = config.get(`Bot.api`);
 const YouTube = require('simple-youtube-api');
@@ -21,7 +21,7 @@ module.exports = {
                 } else if (args.length == 0) {
                     let noArgsSearchEmbed = new Discord.RichEmbed()
                         .setTitle(`:no_entry: **${message.author.username}, you need to provide search terms**`)
-                        .setColor(`#FF0000`)
+                        .setColor(`#FF0000`);
                     message.channel.send(noArgsSearchEmbed);
                 } else {
                     let searchFailEmbed = new Discord.RichEmbed()
@@ -29,9 +29,9 @@ module.exports = {
                         .addField(`:no_entry: **Sorry, ${message.author.username}, I couldn't find any videos with those search terms**`, `Please try again with different search terms`)
                         .setTimestamp()
                         .setFooter(`Requested by ${message.author.username}`)
-                        .setColor(`#FF0000`)
+                        .setColor(`#FF0000`);
                     message.channel.send(searchFailEmbed);
-                } 
-                });
+                }
+            });
     }
-}
+};

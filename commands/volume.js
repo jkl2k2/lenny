@@ -37,14 +37,14 @@ module.exports = {
 			if (index.getDispatcher() == undefined) {
 				let currentVol = new Discord.RichEmbed()
 					.setDescription(`:loud_sound: Current volume: 100%`)
-					.setColor(`#0083FF`)
-				
+					.setColor(`#0083FF`);
+
 				return message.channel.send(currentVol);
 			} else {
 				let currentVol = new Discord.RichEmbed()
 					.setDescription(`:loud_sound: Current volume: ${(index.getVolume()) * 100}%`)
-					.setColor(`#0083FF`)
-				
+					.setColor(`#0083FF`);
+
 				return message.channel.send(currentVol);
 			}
 		}
@@ -56,16 +56,16 @@ module.exports = {
 		if ((volume >= 0 && volume <= 500) || message.author.id == jahyID) {
 			index.setDispatcherVolume(newVolume);
 			let vEmbed = new Discord.RichEmbed()
-				 
+
 				.setDescription(`:loud_sound: ${message.author.username} ${decideWording(raisedVolume)} ${volume}%`)
-				.setColor(`#0083FF`)
+				.setColor(`#0083FF`);
 			message.channel.send(vEmbed);
 		} else {
 			let vEmbed = new Discord.RichEmbed()
-				 
+
 				.addField(`<:error:643341473772863508> Failed to change volume`, `You can't set the volume to that number`)
-				.setColor(`#FF0000`)
+				.setColor(`#FF0000`);
 			message.channel.send(vEmbed);
 		}
 	}
-}
+};

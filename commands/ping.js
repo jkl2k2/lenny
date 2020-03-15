@@ -9,23 +9,23 @@ module.exports = {
 	guildOnly: false,
 	async execute(message, args) {
 		let pingEmbed = new Discord.RichEmbed()
-			 
+
 			.setDescription(`:arrows_counterclockwise: Testing latency...`)
 			.addField(`Frontend Latency`, `Testing...`, true)
 			.addField(`Frontend Status`, `:arrows_counterclockwise: Testing...`, true)
 			.addBlankField()
 			.addField(`Discord API Latency`, `Testing...`, true)
 			.addField(`Discord API Status`, `:arrows_counterclockwise: Testing...`, true)
-			.setColor(`#0083FF`)
+			.setColor(`#0083FF`);
 
 		const m = await message.channel.send(pingEmbed);
 
 		let newPingEmbed = new Discord.RichEmbed()
-			 
+
 			.setDescription(`:information_source: Latency Test Completed`)
 			.setColor(`#0083FF`);
-		
-		newPingEmbed.addField(`Frontend Latency`, `${m.createdTimestamp - message.createdTimestamp}ms`, true)
+
+		newPingEmbed.addField(`Frontend Latency`, `${m.createdTimestamp - message.createdTimestamp}ms`, true);
 		if ((m.createdTimestamp - message.createdTimestamp) < 300) newPingEmbed.addField(`Frontend Status`, `:white_check_mark: Appears normal`, true);
 		if ((m.createdTimestamp - message.createdTimestamp) >= 300) newPingEmbed.addField(`Frontend Status`, `:warning: Frontend is lagging`, true);
 		newPingEmbed.addBlankField();

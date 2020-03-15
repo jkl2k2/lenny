@@ -17,7 +17,7 @@ module.exports = {
         var total = playing.duration.seconds + minsToSec;
 
         var formattedTotal = index.getPlayingVideo().getLength();
-        
+
         var minsPlaying = Math.trunc((dispatcher.time / 1000) / 60);
         var secondsPlaying = Math.trunc((dispatcher.time / 1000) - (minsPlaying * 60));
 
@@ -58,7 +58,7 @@ module.exports = {
         } else if (frac >= 0.3) {
             progressBar = (`\`<---🔘-------> (${formattedPlaying}/${formattedTotal})\``);
         } else if (frac >= 0.2) {
-            progressBar = (`\`<--🔘--------> (${formattedPlaying}/${formattedTotal})\``)
+            progressBar = (`\`<--🔘--------> (${formattedPlaying}/${formattedTotal})\``);
         } else if (frac >= 0.1) {
             progressBar = (`\`<-🔘---------> (${formattedPlaying}/${formattedTotal})\``);
         } else if (frac >= 0) {
@@ -71,4 +71,4 @@ module.exports = {
 
         message.channel.send(embed);
     }
-}
+};

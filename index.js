@@ -105,23 +105,23 @@ var lastPlayed;
 
 async function sendDetails(input, c) {
     if (input.getType() == "livestream") {
-        var musicEmbed = new Discord.RichEmbed()
+        let musicEmbed = new Discord.RichEmbed()
             .setAuthor(`▶️ Now playing`)
             .setDescription(`**[${input.getTitle()}](${input.getURL()})**\nBy: [${await input.getChannelName()}](${input.getChannelURL()})\n\n\`YouTube Livestream\``)
             .setThumbnail(input.getThumbnail())
             .setTimestamp()
-            .setFooter(`Requested by ${input.getRequesterName()}`)
+            .setFooter(`Requested by ${input.getRequesterName()}`);
         c.send(musicEmbed);
-        lastDetails = musicEmbed;   
+        lastDetails = musicEmbed;
     } else {
-        var musicEmbed = new Discord.RichEmbed()
+        let musicEmbed = new Discord.RichEmbed()
             .setAuthor(`▶️ Now playing`)
             .setDescription(`**[${input.getTitle()}](${input.getURL()})**\nBy: [${await input.getChannelName()}](${input.getChannelURL()})\n\n\`<⚫——————————> (0:00/${await input.getLength()})\``)
             .setThumbnail(input.getThumbnail())
             .setTimestamp()
-            .setFooter(`Requested by ${input.getRequesterName()}`)
+            .setFooter(`Requested by ${input.getRequesterName()}`);
         c.send(musicEmbed);
-        lastDetails = musicEmbed;   
+        lastDetails = musicEmbed;
     }
 }
 
@@ -133,7 +133,7 @@ function sendSCDetails(input, c) {
         .addField(`Length`, input.getLength(), true)
         .setThumbnail(input.getThumbnail())
         .setTimestamp()
-        .setFooter(`Requested by ${input.getRequesterName()}`)
+        .setFooter(`Requested by ${input.getRequesterName()}`);
     c.send(scMusicEmbed);
     lastDetails = scMusicEmbed;
 }
@@ -154,7 +154,7 @@ async function playMusic(message) {
 
             let input = ytdl(queue[0].getURL(), { quality: "highestaudio", highWaterMark: 1 << 25 });
 
-            var connections = client.voiceConnections.array();
+            let connections = client.voiceConnections.array();
 
             dispatcher = connections[0].playStream(input, { bitrate: 192000 });
             //dispatcher.setBitrate(192);
@@ -162,7 +162,7 @@ async function playMusic(message) {
             sendDetails(queue[0], message.channel);
         } else if (queue[0].getType() == "soundcloud") {
             // If SoundCloud
-            var connections = client.voiceConnections.array();
+            let connections = client.voiceConnections.array();
 
             dispatcher = connections[0].playStream(fs.createReadStream(`./soundcloud/${queue[0].getTitle()}`));
 
@@ -174,9 +174,9 @@ async function playMusic(message) {
 
         lastPlayed = queue.shift();
         if (lastPlayed && lastPlayed.getType() == "soundcloud") {
-            var path = `./soundcloud/${lastPlayed.getTitle()}`;
+            let path = `./soundcloud/${lastPlayed.getTitle()}`;
         } else {
-            var path = " ";
+            let path = " ";
         }
 
         if (message.member.voiceChannel) {
@@ -224,9 +224,6 @@ module.exports = {
     getDispatcher: function () {
         return dispatcher;
     },
-    getQueue: function () {
-        return queue;
-    },
     getClient: function () {
         return client;
     },
@@ -236,7 +233,7 @@ module.exports = {
         } else {
             return new Discord.RichEmbed()
                 .setDescription(`:information_source: Nothing is currently playing`)
-                .setColor(`#0083FF`)
+                .setColor(`#0083FF`);
         }
     },
     getPlayingVideo: function () {
@@ -426,7 +423,7 @@ client.on('message', message => {
                         .setThumbnail(message.author.avatarURL)
                         .setImage(attachmentsArray[0].url)
                         .setColor(`#FCF403`)
-                        .setTimestamp()
+                        .setTimestamp();
 
                     starChannel.send(starEmbed);
                     logger.info(`Sent embed with image to starboard`);
@@ -438,7 +435,7 @@ client.on('message', message => {
                         .addField(`Message`, checkContent(message))
                         .setThumbnail(message.author.avatarURL)
                         .setColor(`#FCF403`)
-                        .setTimestamp()
+                        .setTimestamp();
 
                     starChannel.send(starEmbed);
                     logger.info(`Sent embed WITHOUT image to starboard`);
@@ -463,8 +460,7 @@ client.on('message', message => {
     const commandName = args.shift().toLowerCase();
 
     // Check if valid command or alias
-    const command = client.commands.get(commandName)
-        || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
+    const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
     // Return if not valid command
     if (!command) return;
@@ -510,7 +506,7 @@ client.on('message', message => {
             const timeLeft = (expirationTime - now) / 1000;
             let cooldownEmbed = new Discord.RichEmbed()
                 .addField(`<:error:643341473772863508> Command cooldown`, `Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command`)
-                .setColor(`#FF0000`)
+                .setColor(`#FF0000`);
             return message.channel.send(cooldownEmbed);
         }
     }
@@ -525,7 +521,7 @@ client.on('message', message => {
         logger.error(error);
         let errorEmbed = new Discord.RichEmbed()
             .setDescription(`<:error:643341473772863508> Error executing command\n\n\`\`\`${error}\`\`\``)
-            .setColor(`#FF0000`)
+            .setColor(`#FF0000`);
         message.channel.send(errorEmbed);
     }
 });

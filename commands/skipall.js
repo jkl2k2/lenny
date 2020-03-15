@@ -9,14 +9,14 @@ module.exports = {
 	// cooldown: 5,
 	guildOnly: true,
 	execute(message, args) {
-		
+
 		var dispatcher = index.getDispatcher();
 
 		if (dispatcher == undefined || dispatcher.speaking == false) {
 			let skipFailEmbed = new Discord.RichEmbed()
-				 
+
 				.setDescription(`<:error:643341473772863508> There is nothing to skip`)
-				.setColor(`#FF0000`)
+				.setColor(`#FF0000`);
 			message.channel.send(skipFailEmbed);
 
 			return;
@@ -26,10 +26,10 @@ module.exports = {
 		index.endDispatcher();
 
 		let endDispatcherEmbed = new Discord.RichEmbed()
-			 
+
 			.setDescription(`:fast_forward: ${message.author.username} skipped all songs`)
-			.setColor(`#0083FF`)
+			.setColor(`#0083FF`);
 		message.channel.send(endDispatcherEmbed);
 
 	}
-}
+};

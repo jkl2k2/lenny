@@ -139,7 +139,6 @@ module.exports = {
 	cooldown: 3,
 	guildOnly: true,
 	execute(message, args) {
-
 		if (!message.member.voiceChannel) {
 			// If member not in VC
 			return message.channel.send(new Discord.RichEmbed()
@@ -251,11 +250,10 @@ module.exports = {
 
 			var gInfo;
 
-			let scDownload = new Discord.RichEmbed()
+			var sent = await message.channel.send(new Discord.RichEmbed()
 				.setTitle(` `)
 				.addField(`:arrows_counterclockwise: Downloading SoundCloud song`, `[Download in progress...](${args[0]})`)
-				.setColor(`#0083FF`);
-			var sent = await message.channel.send(scDownload);
+				.setColor(`#0083FF`));
 
 			video.on('info', function (info) {
 				// console.log('Download started');
@@ -267,15 +265,14 @@ module.exports = {
 
 				queue.push(newSC);
 
-				let scDownloadComplete = new Discord.RichEmbed()
+				sent.edit(new Discord.RichEmbed()
 					.setTitle(` `)
 					.setAuthor(`➕ Queued`)
 					.setDescription(`**[${newSC.getCleanTitle()}](${newSC.getURL()})**`)
 					.addField(`Uploader`, `[${newSC.getUploader()}](${newSC.getUploaderUrl()})`, true)
 					.addField(`Length`, newSC.getLength(), true)
 					.addField(`Position`, newSC.getPosition(), true)
-					.setThumbnail(newSC.getThumbnail());
-				sent.edit(scDownloadComplete);
+					.setThumbnail(newSC.getThumbnail()));
 
 				video.pipe(fs.createWriteStream(`./soundcloud/${gInfo._filename}`));
 

@@ -30,7 +30,11 @@ class YTVideo {
 		return this.requester.username;
 	}
 	getType() {
-		return "youtube";
+		if ((!this.video.duration) || this.video.duration.hours == 0 && this.video.duration.minutes == 0 && this.video.duration.seconds == 0) {
+			return "livestream";
+		} else {
+			return "video";
+		}
 	}
 	getThumbnail() {
 		if (this.video.maxRes) {

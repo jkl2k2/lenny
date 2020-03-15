@@ -104,13 +104,15 @@ var lastPlayed;
 // var lastMusicMessage;
 
 async function sendDetails(input, c) {
-    if (await input.getLength() == `unknown`) {
+    if (input.getType() == "livestream") {
         var musicEmbed = new Discord.RichEmbed()
             .setAuthor(`▶️ Now playing`)
-            .setDescription(`**[${input.getTitle()}](${input.getURL()})**\nBy: [${await input.getChannelName()}](${input.getChannelURL()})\n\n\`<⚫——————————> (0:00/${await input.getLength()})\``)
+            .setDescription(`**[${input.getTitle()}](${input.getURL()})**\nBy: [${await input.getChannelName()}](${input.getChannelURL()})\n\n\`YouTube Livestream\``)
             .setThumbnail(input.getThumbnail())
             .setTimestamp()
             .setFooter(`Requested by ${input.getRequesterName()}`)
+        c.send(musicEmbed);
+        lastDetails = musicEmbed;   
     } else {
         var musicEmbed = new Discord.RichEmbed()
             .setAuthor(`▶️ Now playing`)
@@ -118,9 +120,9 @@ async function sendDetails(input, c) {
             .setThumbnail(input.getThumbnail())
             .setTimestamp()
             .setFooter(`Requested by ${input.getRequesterName()}`)
+        c.send(musicEmbed);
+        lastDetails = musicEmbed;   
     }
-    c.send(musicEmbed);
-    lastDetails = musicEmbed;
 }
 
 function sendSCDetails(input, c) {
@@ -147,7 +149,7 @@ async function playMusic(message) {
         logger.warn("playMusic() called, but queue[0] is undefined");
         return;
     } else {
-        if (queue[0].getType() == "youtube") {
+        if (queue[0].getType() == "video" || queue[0].getType() == "livestream") {
             // If regular video
 
             let input = ytdl(queue[0].getURL(), { quality: "highestaudio", highWaterMark: 1 << 25 });

@@ -30,7 +30,9 @@ class YTVideo {
 		return this.requester.username;
 	}
 	getType() {
-		if ((!this.video.duration) || this.video.duration.hours == 0 && this.video.duration.minutes == 0 && this.video.duration.seconds == 0) {
+		if (!this.video.duration) {
+			return "video";
+		} else if (this.video.duration.hours == 0 && this.video.duration.minutes == 0 && this.video.duration.seconds == 0) {
 			return "livestream";
 		} else {
 			return "video";
@@ -58,6 +60,20 @@ class YTVideo {
 				} else {
 					return `${fullVideo.duration.minutes}:${fullVideo.duration.seconds}`;
 				}
+			} else {
+				if (fullVideo.duration.seconds < 10) {
+					if (fullVideo.duration.minutes < 10) {
+						return `${fullVideo.duration.hours}:0${fullVideo.duration.minutes}:0${fullVideo.duration.seconds}`;
+					} else {
+						return `${fullVideo.duration.hours}:${fullVideo.duration.minutes}:0${fullVideo.duration.seconds}`;
+					}
+				} else {
+					if (fullVideo.duration.minutes < 10) {
+						return `${fullVideo.duration.hours}:0${fullVideo.duration.minutes}:${fullVideo.duration.seconds}`;
+					} else {
+						return `${fullVideo.duration.hours}:${fullVideo.duration.minutes}:${fullVideo.duration.seconds}`;
+					}
+				}
 			}
 		}
 
@@ -66,6 +82,20 @@ class YTVideo {
 				return `${this.video.duration.minutes}:0${this.video.duration.seconds}`;
 			} else {
 				return `${this.video.duration.minutes}:${this.video.duration.seconds}`;
+			}
+		} else {
+			if (this.video.duration.seconds < 10) {
+				if (this.video.duration.minutes < 10) {
+					return `${this.video.duration.hours}:0${this.video.duration.minutes}:0${this.video.duration.seconds}`;
+				} else {
+					return `${this.video.duration.hours}:${this.video.duration.minutes}:0${this.video.duration.seconds}`;
+				}
+			} else {
+				if (this.video.duration.minutes < 10) {
+					return `${this.video.duration.hours}:0${this.video.duration.minutes}:${this.video.duration.seconds}`;
+				} else {
+					return `${this.video.duration.hours}:${this.video.duration.minutes}:${this.video.duration.seconds}`;
+				}
 			}
 		}
 	}

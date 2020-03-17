@@ -21,7 +21,7 @@ module.exports = {
 		var playingObj = index.getPlayingVideo();
 
 		// var minsToSec = playing.duration.minutes * 60;
-		var total = playing.duration.seconds + (playing.duration.minutes * 60);
+		var total = playing.duration.seconds + (playing.duration.minutes * 60) + (playing.duration.hours * 60 * 60);
 
 		var formattedTotal = await index.getPlayingVideo().getLength();
 

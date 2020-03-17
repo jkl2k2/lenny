@@ -29,7 +29,9 @@ class YTVideo {
         return this.requester.username;
     }
     getType() {
-        if ((!this.video.duration) || this.video.duration.hours == 0 && this.video.duration.minutes == 0 && this.video.duration.seconds == 0) {
+        if (!this.video.duration) {
+            return "video";
+        } else if (this.video.duration.hours == 0 && this.video.duration.minutes == 0 && this.video.duration.seconds == 0) {
             return "livestream";
         } else {
             return "video";

@@ -35,6 +35,10 @@ module.exports = {
         try {
             const newCommand = require(`./${commandName}.js`);
             message.client.commands.set(newCommand.name, newCommand);
+
+            message.channel.send(new Discord.RichEmbed()
+                .setDescription(`:arrows_counterclockwise: Successfully recached command "${commandName}"`)
+                .setColor(`#0083FF`));
         } catch (error) {
             logger.error(error);
             let commandReloadError = new Discord.RichEmbed()
@@ -43,11 +47,5 @@ module.exports = {
                 .setColor(`#FF0000`);
             message.channel.send(commandReloadError);
         }
-
-        let commandReloaded = new Discord.RichEmbed()
-
-            .setDescription(`:arrows_counterclockwise: Successfully recached command "${commandName}"`)
-            .setColor(`#0083FF`);
-        message.channel.send(commandReloaded);
     },
 };

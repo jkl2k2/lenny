@@ -20,17 +20,13 @@ module.exports = {
                     message.channel.send(`**Best match:**\n${videos[0].url}`);
                 } else if (args.length == 0) {
                     let noArgsSearchEmbed = new Discord.RichEmbed()
-                        .setTitle(`:no_entry: **${message.author.username}, you need to provide search terms**`)
+                        .setTitle(`<:error:643341473772863508> **${message.author.username}, you need to provide search terms**`)
                         .setColor(`#FF0000`);
                     message.channel.send(noArgsSearchEmbed);
                 } else {
-                    let searchFailEmbed = new Discord.RichEmbed()
-
-                        .addField(`:no_entry: **Sorry, ${message.author.username}, I couldn't find any videos with those search terms**`, `Please try again with different search terms`)
-                        .setTimestamp()
-                        .setFooter(`Requested by ${message.author.username}`)
-                        .setColor(`#FF0000`);
-                    message.channel.send(searchFailEmbed);
+                    message.channel.send(new Discord.RichEmbed()
+                        .addField(`<:error:643341473772863508> **Sorry, ${message.author.username}, I couldn't find any videos with those search terms**`, `Please try again with different search terms`)
+                        .setColor(`#FF0000`));
                 }
             });
     }

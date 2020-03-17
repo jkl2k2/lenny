@@ -97,21 +97,20 @@ async function reactionHandler(sent, message, page) {
 
 async function sendDetails(input, c, index) {
 	if (await input.getLength() == `unknown`) {
-		let musicEmbed = new Discord.RichEmbed()
+		c.send(new Discord.RichEmbed()
 			.setAuthor(`➡️ In queue: Video #${index}`)
 			.setDescription(`**[${input.getTitle()}](${input.getURL()})**\nBy: [${await input.getChannelName()}](${input.getChannelURL()})\n\n\`Length not provided by YouTube\``)
 			.setThumbnail(input.getThumbnail())
 			.setTimestamp()
-			.setFooter(`Requested by ${input.getRequesterName()}`);
+			.setFooter(`Requested by ${input.getRequesterName()}`));
 	} else {
-		let musicEmbed = new Discord.RichEmbed()
+		c.send(new Discord.RichEmbed()
 			.setAuthor(`➡️ In queue: Video #${index}`)
 			.setDescription(`**[${input.getTitle()}](${input.getURL()})**\nBy: [${await input.getChannelName()}](${input.getChannelURL()})\n\n\`<⚫——————————> (0:00/${await input.getLength()})\``)
 			.setThumbnail(input.getThumbnail())
 			.setTimestamp()
-			.setFooter(`Requested by ${input.getRequesterName()}`);
+			.setFooter(`Requested by ${input.getRequesterName()}`));
 	}
-	c.send(musicEmbed);
 }
 
 module.exports = {

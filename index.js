@@ -455,8 +455,6 @@ client.on('message', message => {
     const argsShifted = [...args];
     argsShifted.shift();
 
-    logger.info(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`!${args[0]}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}`);
-
     // Extract command name
     const commandName = args.shift().toLowerCase();
 
@@ -464,10 +462,15 @@ client.on('message', message => {
     const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
     // Return if not valid command
-    if (!command) return;
+    if (!command) {
+        return logger.info(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`!${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Not valid command`)}`);
+    }
+
+
 
     // If guild-only, no DMs allowed
     if (command.guildOnly && message.channel.type !== 'text') {
+        logger.info(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`!${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Command is guild-only`)}`);
         let serverOnly = new Discord.RichEmbed()
             .setDescription(`<:error:643341473772863508> Sorry, that command is only usable in servers`)
             .setColor(`#FF0000`);
@@ -476,6 +479,7 @@ client.on('message', message => {
 
     // If command needs arguments
     if (command.args && !args.length) {
+        logger.info(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`!${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Improper usage`)}`);
         let noArgs = new Discord.RichEmbed();
         let msg = `You didn't provide the required arguments, ${message.author.username}`;
 
@@ -505,6 +509,7 @@ client.on('message', message => {
 
         if (now < expirationTime && message.author.id != ownerID) {
             const timeLeft = (expirationTime - now) / 1000;
+            logger.info(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`!${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Cooldown in effect`)}`);
             let cooldownEmbed = new Discord.RichEmbed()
                 .addField(`<:error:643341473772863508> Command cooldown`, `Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command`)
                 .setColor(`#FF0000`);
@@ -517,8 +522,10 @@ client.on('message', message => {
 
     // Attempt to execute command
     try {
+        logger.info(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`!${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}`);
         command.execute(message, args);
     } catch (error) {
+        logger.error(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`!${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Command errored`)}`);
         logger.error(error);
         let errorEmbed = new Discord.RichEmbed()
             .setDescription(`<:error:643341473772863508> Error executing command\n\n\`\`\`${error}\`\`\``)

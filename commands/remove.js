@@ -5,6 +5,7 @@ const logger = index.getLogger();
 module.exports = {
     name: 'remove',
     description: 'Removes a video from the queue',
+    args: true,
     aliases: ['queueremove', 'r'],
     usage: '[video number in queue] OR [range in queue to remove]',
     // cooldown: 5,

@@ -262,6 +262,9 @@ module.exports = {
 						}
 					} else {
 						logger.error(`Playlist not found`);
+						message.channel.send(new Discord.RichEmbed()
+							.setDescription(`:information_source: YouTube could not find a playlist with that input`)
+							.setColor(`#0083FF`));
 					}
 				});
 		}
@@ -272,7 +275,13 @@ module.exports = {
 			} else {
 				await youtube.searchVideos(args.join(" "), 1)
 					.then(async results => {
-						process(await youtube.getVideo(results[0].url));
+						if (results[0]) {
+							process(await youtube.getVideo(results[0].url));
+						} else {
+							message.channel.send(new Discord.RichEmbed()
+								.setDescription(`:information_source: YouTube could not find a video with that input`)
+								.setColor(`#0083FF`));
+						}
 					});
 			}
 		}

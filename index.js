@@ -17,6 +17,8 @@ const cooldowns = new Discord.Collection();
 var queue = [];
 var repeat = false;
 
+var owoEnabled = true;
+
 const applyText = (canvas, text) => {
     const ctx = canvas.getContext('2d');
     let fontSize = 70;
@@ -243,6 +245,9 @@ module.exports = {
     getRepeat: function () {
         return repeat;
     },
+    getOwoToggle: function () {
+        return owoEnabled;
+    },
     setQueue: function (newQueue) {
         queue = newQueue;
     },
@@ -251,6 +256,9 @@ module.exports = {
     },
     setDispatcherVolume: function (newVolume) {
         dispatcher.setVolume(newVolume);
+    },
+    setOwoToggle: function (newState) {
+        owoEnabled = newState;
     },
     pauseMusic: function () {
         dispatcher.pause();

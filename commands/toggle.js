@@ -1,5 +1,8 @@
 const index = require(`../index.js`);
 const Discord = require(`discord.js`);
+const config = require(`config`);
+const ownerID = config.get(`Users.ownerID`);
+const jahyID = config.get(`Users.jahyID`);
 
 module.exports = {
     name: 'toggle',
@@ -10,6 +13,9 @@ module.exports = {
     // cooldown: 5,
     // guildOnly: true,
     execute(message, args) {
+        if (message.author.id != ownerID && message.author.id != jahyID) {
+            return;
+        }
         if (index.getOwoToggle() === true) {
             index.setOwoToggle(false);
             message.channel.send(new Discord.RichEmbed()

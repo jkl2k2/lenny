@@ -2,7 +2,6 @@
 const fs = require('fs');
 const Discord = require('discord.js');
 const config = require('config');
-// const ytdl = require("ytdl-core-discord");
 const ytdl = require('ytdl-core');
 const chalk = require('chalk');
 const winston = require('winston');

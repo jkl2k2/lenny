@@ -1,6 +1,6 @@
 const index = require(`../index.js`);
 const config = require('config');
-var fs = require('fs');
+const fs = require('fs');
 const youtubedl = require('youtube-dl');
 const api = config.get(`Bot.api`);
 const Discord = require(`discord.js`);

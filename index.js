@@ -102,6 +102,10 @@ const activities = [
 var dispatcher;
 var lastDetails;
 var lastPlayed;
+var statusChannel;
+var statusMessage;
+var infoMessage;
+var queueMessage;
 // var lastMusicMessage;
 
 async function sendDetails(input, c) {
@@ -191,6 +195,8 @@ async function playMusic(message) {
             connections[0].player.streamingData.pausedTime = 0;
         }
 
+        updateInfo();
+
         dispatcher.on("end", function () {
             if (repeat) {
                 queue.unshift(lastPlayed);
@@ -209,6 +215,139 @@ async function playMusic(message) {
                 playMusic(message);
             }
         });
+    }
+}
+
+async function updateStatus() {
+    if (dispatcher != undefined && dispatcher.paused) {
+        return statusMessage.edit(new Discord.RichEmbed()
+            .setAuthor(`⬛ Music is currently paused`));
+    }
+    if (dispatcher == undefined || !dispatcher.speaking) {
+        // return logger.info(`Dispatcher not playing, status not updated`);
+        return statusMessage.edit(new Discord.RichEmbed()
+            .setAuthor(`⬛ Player currently inactive`));
+    }
+    // var playing = await lastPlayed.getFullVideo();
+    var playing = lastPlayed.getVideo();
+    var playingObj = lastPlayed;
+
+    // var minsToSec = playing.duration.minutes * 60;
+    var total = playing.duration.seconds + (playing.duration.minutes * 60) + (playing.duration.hours * 60 * 60);
+
+    var formattedTotal = await lastPlayed.getLength();
+
+    var minsPlaying = Math.trunc((dispatcher.time / 1000) / 60);
+    var secondsPlaying = Math.trunc((dispatcher.time / 1000) - (minsPlaying * 60));
+
+    var formattedPlaying = ``;
+
+    if (minsPlaying < 1) {
+        if (secondsPlaying < 10) {
+            formattedPlaying = `0:0${secondsPlaying}`;
+        } else {
+            formattedPlaying = `0:${secondsPlaying}`;
+        }
+    } else {
+        if (secondsPlaying < 10) {
+            formattedPlaying = `${minsPlaying}:0${secondsPlaying}`;
+        } else {
+            formattedPlaying = `${minsPlaying}:${secondsPlaying}`;
+        }
+    }
+
+    var frac = (dispatcher.time / 1000) / total;
+
+    var progressBar = ``;
+
+    if (frac >= 0.9) {
+        progressBar = (`\`<——————————⚫> (${formattedPlaying}/${formattedTotal})\``);
+    } else if (frac >= 0.8) {
+        progressBar = (`\`<—————————⚫—> (${formattedPlaying}/${formattedTotal})\``);
+    } else if (frac >= 0.7) {
+        progressBar = (`\`<————————⚫——> (${formattedPlaying}/${formattedTotal})\``);
+    } else if (frac >= 0.7) {
+        progressBar = (`\`<———————⚫———> (${formattedPlaying}/${formattedTotal})\``);
+    } else if (frac >= 0.6) {
+        progressBar = (`\`<——————⚫————> (${formattedPlaying}/${formattedTotal})\``);
+    } else if (frac >= 0.5) {
+        progressBar = (`\`<—————⚫—————> (${formattedPlaying}/${formattedTotal})\``);
+    } else if (frac >= 0.4) {
+        progressBar = (`\`<————⚫——————> (${formattedPlaying}/${formattedTotal})\``);
+    } else if (frac >= 0.3) {
+        progressBar = (`\`<———⚫———————> (${formattedPlaying}/${formattedTotal})\``);
+    } else if (frac >= 0.2) {
+        progressBar = (`\`<——⚫————————> (${formattedPlaying}/${formattedTotal})\``);
+    } else if (frac >= 0.1) {
+        progressBar = (`\`<—⚫—————————> (${formattedPlaying}/${formattedTotal})\``);
+    } else if (frac >= 0) {
+        progressBar = (`\`<⚫——————————> (${formattedPlaying}/${formattedTotal})\``);
+    }
+
+    // var embed = lastDetails;
+    var embed = new Discord.RichEmbed();
+
+    if (playingObj.getType() == "video") {
+        // embed.setDescription(`**[${playingObj.getTitle()}](${playingObj.getURL()})**\nBy: [${await playingObj.getChannelName()}](${playingObj.getChannelURL()})\n\n${progressBar}`);
+        // embed.setImage(playingObj.getThumbnail());
+
+        embed.setDescription(progressBar);
+    } else if (playingObj.getType() == "livestream") {
+        // embed.setDescription(`**[${playingObj.getTitle()}](${playingObj.getURL()})**\nBy: [${await playingObj.getChannelName()}](${playingObj.getChannelURL()})\n\n\`Time elapsed: ${formattedPlaying}\``);
+        // embed.setImage(playingObj.getThumbnail());
+
+        embed.setDescription(formattedPlaying);
+    }
+
+    statusMessage.edit(embed);
+}
+
+async function updateInfo() {
+    if (dispatcher == undefined /*|| !dispatcher.speaking*/) {
+        // return logger.info(`Dispatcher not playing, status not updated`);
+        return infoMessage.edit(new Discord.RichEmbed()
+            .setDescription(`No video currently playing\nPlayer status will be shown here`));
+    }
+
+    infoMessage.edit(new Discord.RichEmbed()
+        // .setAuthor(`▶️ Now Playing`)
+        .setDescription(`**[${lastPlayed.getTitle()}](${lastPlayed.getURL()})**\nBy: [${await lastPlayed.getChannelName()}](${lastPlayed.getChannelURL()})`)
+        .setFooter(`Requested by ${lastPlayed.getRequesterName()}`)
+        .setImage(lastPlayed.getThumbnail())
+        .setTimestamp());
+}
+
+async function updateQueue() {
+    function queueResolver(arr, index) {
+        if (arr[index]) {
+            return `\`${index + 1}.\` **[${arr[index].getCleanTitle()}](${arr[index].getURL()})**\nBy: [${arr[index].getChannelName()}](${arr[index].getChannelURL()})`;
+        } else {
+            return " ";
+        }
+    }
+
+    function queueOverflowResolver(arr) {
+        if (arr.length <= 5) {
+            return " ";
+        } else if (arr.length > 5) {
+            return `**And ${arr.length - 5} others...\nTotal of ${arr.length} songs**`;
+        }
+    }
+
+    async function sendEmbed(page) {
+        let queueEmbed = new Discord.RichEmbed()
+            .setDescription(`${queueResolver(queue, 0 + page * 5)}\n\n${queueResolver(queue, 1 + page * 5)}\n\n${queueResolver(queue, 2 + page * 5)}\n\n${queueResolver(queue, 3 + page * 5)}\n\n${queueResolver(queue, 4 + page * 5)}\n\n${queueOverflowResolver(queue)}`)
+            .setAuthor(`➡️ Coming up...`)
+            .setColor(`#0083FF`);
+        return queueMessage.edit(queueEmbed);
+    }
+
+    if (queue.length == 0) {
+        return queueMessage.edit(new Discord.RichEmbed()
+            .setDescription(`:information_source: The queue is currently empty`)
+            .setColor(`#0083FF`));
+    } else {
+        sendEmbed(0);
     }
 }
 
@@ -246,6 +385,12 @@ module.exports = {
     },
     getOwoToggle: function () {
         return owoEnabled;
+    },
+    getStatusChannel: function () {
+        return statusChannel;
+    },
+    getStatusMessage: function () {
+        return statusMessage;
     },
     setQueue: function (newQueue) {
         queue = newQueue;
@@ -287,7 +432,31 @@ for (const file of commandFiles) {
 }
 
 // On ready
-client.on('ready', () => {
+client.on('ready', async () => {
+    /*
+    statusChannel = client.channels.get(`690401890785165322`);
+    var fetched = await statusChannel.fetchMessages({ limit: 10 });
+    statusChannel.bulkDelete(fetched);
+
+    statusMessage = await statusChannel.send(new Discord.RichEmbed()
+        .setAuthor(`⬛ Player currently inactive`));
+
+    infoMessage = await statusChannel.send(new Discord.RichEmbed()
+        .setDescription(`No video currently playing\nPlayer status will be shown here`));
+
+    queueMessage = await statusChannel.send(new Discord.RichEmbed()
+        .setDescription(`:information_source: The queue is currently empty`)
+        .setColor(`#0083FF`));
+
+    setInterval(function () {
+        updateStatus();
+    }, 3000);
+
+    setInterval(function () {
+        updateQueue();
+    }, 5000);
+    */
+
     let date = new Date();
 
     // Randomly select status
@@ -399,6 +568,7 @@ client.on('message', message => {
 
     // Find starboard channel by specific ID
     var starChannel = client.channels.get(`554868648964259861`);
+    // var starChannel = client.channels.get(`554873931555667969`);
 
     function checkContent(msg) {
         if (!msg.cleanContent) {
@@ -425,10 +595,12 @@ client.on('message', message => {
                 // If image attached to message
                 if (attachmentsArray[0]) {
                     let starEmbed = new Discord.RichEmbed()
-                        .setTitle(`⭐ Starred Message ⭐`)
-                        .addField(`Author`, message.author.username)
-                        .addField(`Message`, checkContent(message))
+                        .setDescription(`:star: **Starred Message** :star:\nAuthor: **${message.author.username}**`)
                         .setThumbnail(message.author.avatarURL)
+                        .addField(`Message`, checkContent(message))
+                        .addField(`Channel`, `<#${message.channel.id}>`, true)
+                        .addField(`Message link`, `[Jump to message](${message.url})`, true)
+                        // .setThumbnail(message.author.avatarURL)
                         .setImage(attachmentsArray[0].url)
                         .setColor(`#FCF403`)
                         .setTimestamp();
@@ -438,10 +610,11 @@ client.on('message', message => {
                 } else {
                     // If image NOT attached to image
                     let starEmbed = new Discord.RichEmbed()
-                        .setTitle(`⭐ Starred Message ⭐`)
-                        .addField(`Author`, message.author.username)
-                        .addField(`Message`, checkContent(message))
+                        .setDescription(`:star: **Starred Message** :star:\nAuthor: **${message.author.username}**`)
                         .setThumbnail(message.author.avatarURL)
+                        .addField(`Message`, checkContent(message))
+                        .addField(`Channel`, `<#${message.channel.id}>`, true)
+                        .addField(`Message link`, `[Jump to message](${message.url})`, true)
                         .setColor(`#FCF403`)
                         .setTimestamp();
 

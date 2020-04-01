@@ -433,7 +433,6 @@ for (const file of commandFiles) {
 
 // On ready
 client.on('ready', async () => {
-    /*
     statusChannel = client.channels.get(`690401890785165322`);
     var fetched = await statusChannel.fetchMessages({ limit: 10 });
     statusChannel.bulkDelete(fetched);
@@ -455,7 +454,6 @@ client.on('ready', async () => {
     setInterval(function () {
         updateQueue();
     }, 5000);
-    */
 
     let date = new Date();
 

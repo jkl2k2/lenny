@@ -642,7 +642,13 @@ client.on('message', message => {
         return logger.info(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`!${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Not valid command`)}`);
     }
 
-    if (!command.enabled) return message.channel.send(`Sorry, \`!${commandName}\` is disabled`);
+    // Return if command is disabled
+    if (!command.enabled) {
+        logger.info(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`!${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Command is disabled`)}`);
+        return message.channel.send(new Discord.RichEmbed()
+            .setDescription(`<:error:643341473772863508> Sorry, \`!${commandName}\` is disabled`)
+            .setColor(`#FF0000`));
+    }
 
     // If guild-only, no DMs allowed
     if (command.guildOnly && message.channel.type !== 'text') {

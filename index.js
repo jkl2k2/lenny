@@ -16,8 +16,6 @@ const cooldowns = new Discord.Collection();
 var queue = [];
 var repeat = false;
 
-var owoEnabled = true;
-
 const applyText = (canvas, text) => {
     const ctx = canvas.getContext('2d');
     let fontSize = 70;
@@ -195,7 +193,7 @@ async function playMusic(message) {
             connections[0].player.streamingData.pausedTime = 0;
         }
 
-        updateInfo();
+        // updateInfo();
 
         dispatcher.on("end", function () {
             if (repeat) {
@@ -218,8 +216,8 @@ async function playMusic(message) {
     }
 }
 
+/*
 async function updateStatus() {
-    /*
     if (dispatcher != undefined && dispatcher.paused) {
         return statusMessage.edit(new Discord.RichEmbed()
             .setAuthor(`⬛ Music is currently paused`));
@@ -301,11 +299,12 @@ async function updateStatus() {
     }
 
     statusMessage.edit(embed);
-    */
 }
+*/
 
+/*
 async function updateInfo() {
-    if (dispatcher == undefined /*|| !dispatcher.speaking*/) {
+    if (dispatcher == undefined) {
         // return logger.info(`Dispatcher not playing, status not updated`);
         return infoMessage.edit(new Discord.RichEmbed()
             .setDescription(`No video currently playing\nPlayer status will be shown here`));
@@ -318,6 +317,7 @@ async function updateInfo() {
         .setImage(lastPlayed.getThumbnail())
         .setTimestamp());
 }
+*/
 
 async function updateQueue() {
     function queueResolver(arr, index) {
@@ -385,9 +385,6 @@ module.exports = {
     getRepeat: function () {
         return repeat;
     },
-    getOwoToggle: function () {
-        return owoEnabled;
-    },
     getStatusChannel: function () {
         return statusChannel;
     },
@@ -402,9 +399,6 @@ module.exports = {
     },
     setDispatcherVolume: function (newVolume) {
         dispatcher.setVolume(newVolume);
-    },
-    setOwoToggle: function (newState) {
-        owoEnabled = newState;
     },
     pauseMusic: function () {
         dispatcher.pause();
@@ -435,6 +429,7 @@ for (const file of commandFiles) {
 
 // On ready
 client.on('ready', async () => {
+    /*
     statusChannel = client.channels.get(`690401890785165322`);
     var fetched = await statusChannel.fetchMessages({ limit: 10 });
     statusChannel.bulkDelete(fetched);
@@ -456,6 +451,7 @@ client.on('ready', async () => {
     setInterval(function () {
         updateQueue();
     }, 5000);
+    */
 
     let date = new Date();
 
@@ -646,7 +642,7 @@ client.on('message', message => {
         return logger.info(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`!${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Not valid command`)}`);
     }
 
-    if (!command.enabled) return message.channel.send(`Sorry, ${commandName} is disabled`);
+    if (!command.enabled) return message.channel.send(`Sorry, \`!${commandName}\` is disabled`);
 
     // If guild-only, no DMs allowed
     if (command.guildOnly && message.channel.type !== 'text') {

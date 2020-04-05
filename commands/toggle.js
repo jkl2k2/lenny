@@ -17,19 +17,6 @@ module.exports = {
         if (message.author.id != ownerID && message.author.id != jahyID) {
             return message.channel.send(`Insufficient permissions`);
         }
-        /*
-        if (index.getOwoToggle() === true) {
-            index.setOwoToggle(false);
-            message.channel.send(new Discord.RichEmbed()
-                .setDescription(`:information_source: !owo is now disabled`)
-                .setColor(`#0083FF`));
-        } else {
-            index.setOwoToggle(true);
-            message.channel.send(new Discord.RichEmbed()
-                .setDescription(`:information_source: !owo is now enabled`)
-                .setColor(`#0083FF`));
-        }
-        */
 
         const commandName = args[0].toLowerCase();
         const command = message.client.commands.get(commandName) || message.client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));

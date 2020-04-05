@@ -8,6 +8,7 @@ module.exports = {
 	// usage: '[usage]',
 	// cooldown: seconds,
 	guildOnly: true,
+	enabled: true,
 	execute(message, args) {
 		// index.callJoinVC(message);
 		if (message.member.voiceChannel) {

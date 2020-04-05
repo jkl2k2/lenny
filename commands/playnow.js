@@ -2,7 +2,7 @@ const index = require(`../index.js`);
 const config = require('config');
 const fs = require('fs');
 const youtubedl = require('youtube-dl');
-const api = config.get(`Bot.api`);
+const api = config.get(`Bot.api2`);
 const Discord = require(`discord.js`);
 const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
@@ -168,6 +168,7 @@ module.exports = {
 	usage: '[video]',
 	// cooldown: 5,
 	guildOnly: true,
+	enabled: true,
 	execute(message, args) {
 		if (!message.member.voiceChannel) {
 			// If member not in VC

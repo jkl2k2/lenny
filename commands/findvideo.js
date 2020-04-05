@@ -1,7 +1,7 @@
 const index = require(`../index.js`);
 const Discord = require(`discord.js`);
 const config = require('config');
-const api = config.get(`Bot.api`);
+const api = config.get(`Bot.api2`);
 const YouTube = require('simple-youtube-api');
 const youtube = new YouTube(api);
 
@@ -13,6 +13,7 @@ module.exports = {
     usage: '[search term(s)]',
     // cooldown: 5,
     guildOnly: true,
+    enabled: true,
     async execute(message, args) {
         youtube.searchVideos(args.join(), 1)
             .then(videos => {

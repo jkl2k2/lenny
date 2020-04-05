@@ -25,6 +25,7 @@ module.exports = {
     // usage: '[command]',
     // cooldown: 5,
     guildOnly: true,
+    enabled: true,
     execute(message, args) {
         // index.shuffleQueue(message);
 

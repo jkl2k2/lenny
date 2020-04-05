@@ -22,6 +22,7 @@ module.exports = {
     usage: '[url]',
     // cooldown: 5,
     // guildOnly: true,
+    enabled: true,
     async execute(message, args) {
         if (message.author.id != ownerID) {
             return;

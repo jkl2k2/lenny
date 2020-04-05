@@ -18,6 +18,7 @@ module.exports = {
     usage: '[add/remove/view] [ID/mention]',
     // cooldown: 5,
     guildOnly: true,
+    enabled: true,
     execute(message, args) {
 
         var objectToWrite = {

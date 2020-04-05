@@ -3,7 +3,7 @@ const config = require(`config`);
 const ownerID = config.get(`Users.ownerID`);
 const fs = require('fs');
 const youtubedl = require('youtube-dl');
-const api = config.get(`Bot.api`);
+const api = config.get(`Bot.api2`);
 const Discord = require(`discord.js`);
 const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
@@ -84,6 +84,7 @@ module.exports = {
 	// usage: '[command]',
 	// cooldown: 5,
 	// guildOnly: true,
+	enabled: true,
 	async execute(message, args) {
 		if (message.author.id !== ownerID) return;
 		try {

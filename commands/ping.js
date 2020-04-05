@@ -7,6 +7,7 @@ module.exports = {
 	// usage: '[command]',
 	// cooldown: 5,
 	guildOnly: false,
+	enabled: true,
 	async execute(message, args) {
 		let pingEmbed = new Discord.RichEmbed()
 

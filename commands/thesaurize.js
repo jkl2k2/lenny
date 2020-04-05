@@ -9,6 +9,7 @@ module.exports = {
     usage: '[words]',
     // cooldown: 5,
     // guildOnly: true,
+    enabled: true,
     execute(message, args) {
         message.channel.send(thesaurize(args.join(" ")));
     }

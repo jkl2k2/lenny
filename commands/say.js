@@ -8,6 +8,7 @@ module.exports = {
 	usage: '[message]',
 	// cooldown: 5,
 	guildOnly: true,
+	enabled: true,
 	execute(message, args) {
 		message.channel.send(args.join(" "), { tts: true });
 	}

@@ -9,6 +9,7 @@ module.exports = {
     usage: '[1st video\'s position] [position to move to]',
     // cooldown: 5,
     guildOnly: true,
+    enabled: true,
     execute(message, args) {
         var queue = index.getQueue();
         var startPos = args[0] - 1;

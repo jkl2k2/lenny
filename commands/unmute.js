@@ -8,6 +8,7 @@ module.exports = {
     // usage: '[command]',
     // cooldown: 5,
     guildOnly: true,
+    enabled: true,
     execute(message, args) {
         var dispatcher = index.getDispatcher();
         var oldVolume = 1;

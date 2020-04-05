@@ -1,6 +1,6 @@
 const index = require(`../index.js`);
 const config = require('config');
-const api = config.get(`Bot.api`);
+const api = config.get(`Bot.api2`);
 const ownerID = config.get(`Users.ownerID`);
 const jahyID = config.get(`Users.jahyID`);
 const Discord = require(`discord.js`);
@@ -123,6 +123,7 @@ module.exports = {
     usage: '[(opt.) "playlist"] [search term(s)]',
     cooldown: 3,
     guildOnly: true,
+    enabled: true,
     execute(message, args) {
 
         if (!message.member.voiceChannel) {

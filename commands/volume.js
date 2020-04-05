@@ -32,6 +32,7 @@ module.exports = {
 	usage: '[volume]',
 	// cooldown: 5,
 	guildOnly: true,
+	enabled: true,
 	execute(message, args) {
 		if (!args.length) {
 			if (index.getDispatcher() == undefined) {

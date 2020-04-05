@@ -10,6 +10,7 @@ module.exports = {
     usage: '[command name]',
     cooldown: 5,
     guildsOnly: false,
+    enabled: true,
     execute(message, args) {
         const data = [];
         const { commands } = message.client;
@@ -24,7 +25,8 @@ module.exports = {
             generalHelp.addField(`**Volume control**`, `volume\nmute\nunmute`, true);
             generalHelp.addField(`**Queue control**`, `queue\nremove\nmove\nshuffle`, true);
             generalHelp.addField(`**Music information**`, `playing\nnext\nfindvideo\nsearchf/search`, true);
-            generalHelp.addField(`**Fun commands**`, `say\nlenny`, true);
+            generalHelp.addField(`**Fun commands**`, `say\nlenny\nthesaurize`, true);
+            generalHelp.addField(`**Admin commands**`, `prune`, true);
             generalHelp.addField(`**System commands**`, `ping`, true);
 
             // data.push(`\nYou can send \`${prefix}help [command name]\` to get info on a specific command!`);

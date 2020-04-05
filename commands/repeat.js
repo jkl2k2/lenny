@@ -22,6 +22,7 @@ module.exports = {
     usage: '[on/off]',
     // cooldown: 5,
     guildOnly: true,
+    enabled: true,
     execute(message, args) {
         if (!args[0]) {
             if (index.getRepeat() == true) {

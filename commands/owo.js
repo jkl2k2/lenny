@@ -8,6 +8,7 @@ module.exports = {
 	// usage: '[command]',
 	// cooldown: 5,
 	// guildOnly: true,
+	enabled: true,
 	execute(message, args) {
 		if (index.getOwoToggle() == true) {
 			message.channel.send(`Hustle Bones Jul 21, 2018 @ 12:11pm\nJust me and my :two_hearts:daddy:two_hearts:, hanging out I got pretty hungry:eggplant: so I started to pout :disappointed: He asked if I was down :arrow_down:`, { tts: true });

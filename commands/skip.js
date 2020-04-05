@@ -32,6 +32,7 @@ module.exports = {
 	// usage: '[command]',
 	// cooldown: 5,
 	guildOnly: true,
+	enabled: true,
 	execute(message, args) {
 		// index.callEndDispatcher(message.channel, message.author.username, "skip");
 

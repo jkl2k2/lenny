@@ -120,6 +120,7 @@ module.exports = {
 	usage: '[position]',
 	// cooldown: 5,
 	guildOnly: true,
+	enabled: true,
 	async execute(message, args) {
 
 		var queue = index.getQueue();

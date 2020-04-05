@@ -10,6 +10,7 @@ module.exports = {
     usage: '[video number in queue] OR [range in queue to remove]',
     // cooldown: 5,
     guildOnly: true,
+    enabled: true,
     execute(message, args) {
         args.unshift();
         // index.removeFromQueue(args[0]);

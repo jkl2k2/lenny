@@ -9,6 +9,7 @@ module.exports = {
 	// usage: '[usage]',
 	// cooldown: seconds,
 	guildOnly: true,
+	enabled: true,
 	execute(message, args) {
 
 		var connections = client.voiceConnections.array();

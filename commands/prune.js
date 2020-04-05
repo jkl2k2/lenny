@@ -10,16 +10,12 @@ module.exports = {
     guildOnly: true,
     enabled: true,
     async execute(message, args) {
-        if (this.enabled == false) {
-            message.channel.send(`Command disabled`);
-            return;
-        }
         if (isNaN(args[0])) {
-            message.channel.send("Please specify a number (1 - 99)");
-            return;
+            return message.channel.send("Please specify a number (1 - 99)");
         } else if (args[0] > 99) {
-            message.channel.send("Prune target too high (max is 99)");
-            return;
+            return message.channel.send("Prune target too high (max is 99)");
+        } else if (args[0] < 1) {
+            return message.channel.send("Prune target too low (minimum is 1)");
         }
         switch (message.member.roles.some(role => role.name === `The Owners :D` || `Trusted`)) {
             case true:

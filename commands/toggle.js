@@ -26,9 +26,13 @@ module.exports = {
         command.enabled = !command.enabled;
 
         if (command.enabled) {
-            return message.channel.send(`\`!${commandName}\` is now enabled`);
+            return message.channel.send(new Discord.RichEmbed()
+                .setDescription(`:white_check_mark: \`!${commandName}\` is now enabled`)
+                .setColor(`#00FF44`));
         } else if (!command.enabled) {
-            return message.channel.send(`\`!${commandName}\` is now disabled`);
+            return message.channel.send(new Discord.RichEmbed()
+                .setDescription(`:no_entry: \`!${commandName}\` is now disabled`)
+                .setColor(`#FF0000`));
         }
     }
 };

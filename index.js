@@ -219,6 +219,7 @@ async function playMusic(message) {
 }
 
 async function updateStatus() {
+    /*
     if (dispatcher != undefined && dispatcher.paused) {
         return statusMessage.edit(new Discord.RichEmbed()
             .setAuthor(`⬛ Music is currently paused`));
@@ -300,6 +301,7 @@ async function updateStatus() {
     }
 
     statusMessage.edit(embed);
+    */
 }
 
 async function updateInfo() {
@@ -644,7 +646,7 @@ client.on('message', message => {
         return logger.info(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`!${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Not valid command`)}`);
     }
 
-
+    if (!command.enabled) return message.channel.send(`Sorry, ${commandName} is disabled`);
 
     // If guild-only, no DMs allowed
     if (command.guildOnly && message.channel.type !== 'text') {
@@ -713,6 +715,6 @@ client.on('message', message => {
 });
 
 // Handle uncaught promise rejections
-process.on('unhandledRejection', error => logger.error(chalk.whiteBright.bgRedBright(`UNCAUGHT PROMISE REJECTION\n${error}`)));
+// process.on('unhandledRejection', error => logger.error(chalk.whiteBright.bgRedBright(`UNCAUGHT PROMISE REJECTION\n${error}`)));
 
 client.login(token);

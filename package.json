@@ -30,6 +30,7 @@
     "erlpack": "github:hammerandchisel/erlpack",
     "ffmpeg-static": "^2.7.0",
     "fluent-ffmpeg": "^2.1.2",
+    "give-me-a-joke": "^0.2.5",
     "libsodium-wrappers": "^0.7.6",
     "node-opus": "^0.3.3",
     "parse-time": "^0.1.4",

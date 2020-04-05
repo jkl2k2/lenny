@@ -14,7 +14,7 @@ module.exports = {
     execute(message, args) {
         const data = [];
         const { commands } = message.client;
-        var client = index.getClient;
+        var client = index.getClient();
 
         if (!args.length) {
             var generalHelp = new Discord.RichEmbed();
@@ -25,12 +25,11 @@ module.exports = {
             generalHelp.addField(`**Volume control**`, `volume\nmute\nunmute`, true);
             generalHelp.addField(`**Queue control**`, `queue\nremove\nmove\nshuffle`, true);
             generalHelp.addField(`**Music information**`, `playing\nnext\nfindvideo\nsearchf/search`, true);
-            generalHelp.addField(`**Fun commands**`, `say\nlenny\nthesaurize`, true);
-            generalHelp.addField(`**Admin commands**`, `prune`, true);
-            generalHelp.addField(`**System commands**`, `ping`, true);
+            generalHelp.addField(`**Fun commands**`, `say\nlenny\nthesaurize\njoke`, true);
+            generalHelp.addField(`**Admin/System commands**`, `prune\ntoggle\nping`, true);
 
             // data.push(`\nYou can send \`${prefix}help [command name]\` to get info on a specific command!`);
-            generalHelp.setAuthor(`Use ${prefix}help [command name] to get info on a specific command`, `https://cdn.discordapp.com/app-icons/641137495886528513/35676b341ed8ba268e5fff9dcc5c570e.png?size=256`);
+            generalHelp.setAuthor(`Use ${prefix}help [command name] to get info on a specific command`, client.user.avatarURL);
 
             /*
             return message.author.send(generalHelp)
@@ -63,13 +62,19 @@ module.exports = {
         const command = commands.get(name) || commands.find(c => c.aliases && c.aliases.includes(name));
 
         if (!command) {
-            return message.reply('that\'s not a valid command!');
+            return message.channel.send(new Discord.RichEmbed()
+                .setDescription(`<:error:643341473772863508> Sorry, \`${prefix}${name}\` is not a valid command`)
+                .setColor(`#FF0000`));
         }
 
         var commandHelp = new Discord.RichEmbed();
 
+        if (name != command.name) {
+            commandHelp.setDescription(`*(Redirected from ${prefix}${name})*`);
+        }
+
         // data.push(`**Name:** ${command.name}`);
-        commandHelp.setAuthor(config.get(`Bot.prefix`) + command.name, `https://cdn.discordapp.com/app-icons/641137495886528513/35676b341ed8ba268e5fff9dcc5c570e.png?size=256`);
+        commandHelp.setAuthor(config.get(`Bot.prefix`) + command.name, client.user.avatarURL);
 
         // if (command.aliases) data.push(`**Aliases:** ${command.aliases.join(', ')}`);
         if (command.aliases) commandHelp.addField(`**Aliases**`, command.aliases.join(', '));
@@ -84,7 +89,7 @@ module.exports = {
 
         if (!command.guildOnly) commandHelp.addField(`**Servers or DMs**`, `Usable in both servers and bot's DMs`);
 
-        if (command.args) commandHelp.addField(`**Arguments required**`, `Following the command usage is required`);
+        if (command.args) commandHelp.addField(`**Arguments required**`, `Providing the required arguments is required`);
 
         // data.push(`**Cooldown:** ${command.cooldown || 3} second(s)`);
         commandHelp.addField(`**Cooldown**`, `${command.cooldown || 3} second(s)`);

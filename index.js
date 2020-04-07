@@ -7,6 +7,31 @@ const chalk = require('chalk');
 const winston = require('winston');
 const Canvas = require('canvas');
 
+// Initialize database
+const { Users, CurrencyShop } = require('./dbObjects');
+const { Op } = require('sequelize');
+const currency = new Discord.Collection();
+
+Reflect.defineProperty(currency, 'add', {
+    value: async function add(id, amount) {
+        const user = currency.get(id);
+        if (user) {
+            user.balance += Number(amount);
+            return user.save();
+        }
+        const newUser = await Users.create({ user_id: id, balance: amount });
+        currency.set(id, newUser);
+        return newUser;
+    },
+});
+
+Reflect.defineProperty(currency, 'getBalance', {
+    value: function getBalance(id) {
+        const user = currency.get(id);
+        return user ? user.balance : 0;
+    },
+});
+
 // Initialize client
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
@@ -102,9 +127,11 @@ var lastDetails;
 var lastPlayed;
 var statusChannel;
 var statusMessage;
-var infoMessage;
-var queueMessage;
+// var infoMessage;
+// var queueMessage;
 // var lastMusicMessage;
+
+var casinoStatusMessage;
 
 async function sendDetails(input, c) {
     if (input.getType() == "livestream") {
@@ -319,6 +346,7 @@ async function updateInfo() {
 }
 */
 
+/*
 async function updateQueue() {
     function queueResolver(arr, index) {
         if (arr[index]) {
@@ -352,9 +380,25 @@ async function updateQueue() {
         sendEmbed(0);
     }
 }
+*/
+
+async function updateCasinoStats(mainGuild) {
+    var newLeaderboard = new Discord.RichEmbed()
+        .setDescription(`:medal: **Top 10 users by currency**\n\n` + currency.sort((a, b) => b.balance - a.balance)
+            .filter(user => client.users.has(user.user_id) && mainGuild.member(client.users.get(user.user_id)))
+            .first(10)
+            .map((user, position) => `\`${position + 1}.\` **${(client.users.get(user.user_id).username)}**\nBalance: \`$${user.balance}\`\n`)
+            .join('\n'),
+            { code: true })
+        .setColor(`#1b9e56`);
+    casinoStatusMessage.edit(newLeaderboard);
+}
 
 // Functions
 module.exports = {
+    getCurrencyDB: function () {
+        return currency;
+    },
     getLogger: function () {
         return logger;
     },
@@ -453,6 +497,10 @@ client.on('ready', async () => {
     }, 5000);
     */
 
+    // Sync with currency database
+    const storedBalances = await Users.findAll();
+    storedBalances.forEach(b => currency.set(b.user_id, b));
+
     let date = new Date();
 
     // Randomly select status
@@ -461,6 +509,29 @@ client.on('ready', async () => {
         client.user.setActivity(activities[index].getText(), { type: activities[index].getFormat() });
         client.user.setStatus("online");
     }, 15000);
+
+    var casinoChannel = client.channels.get(`696986079584321566`);
+
+    // casinoStatusMessage = await casinoChannel.send(new Discord.RichEmbed()
+    // .setDescription(`:money_with_wings: **OWO GRAND RESORT & CASINO PROFITS** :money_with_wings:\n\n__Total profits__\n**$placeholder**`));
+
+    var casinoFetched = await casinoChannel.fetchMessages({ limit: 10 });
+    casinoChannel.bulkDelete(casinoFetched);
+
+    var mainGuild = client.guilds.get(`471193210102743040`);
+
+    casinoStatusMessage = await casinoChannel.send(new Discord.RichEmbed()
+        .setDescription(`:medal: **Top 10 users by currency**\n\n` + currency.sort((a, b) => b.balance - a.balance)
+            .filter(user => client.users.has(user.user_id) && mainGuild.member(client.users.get(user.user_id)))
+            .first(10)
+            .map((user, position) => `\`${position + 1}.\` **${(client.users.get(user.user_id).username)}**\nBalance: \`$${user.balance}\`\n`)
+            .join('\n'),
+            { code: true })
+        .setColor(`#1b9e56`));
+
+    setInterval(() => {
+        updateCasinoStats(mainGuild);
+    }, 5000);
 
     logger.info(chalk.white.bgCyan(`--------Bot Initialized--------`));
     logger.info(chalk.white.bgCyan(`Timestamp: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} - ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`));
@@ -541,19 +612,27 @@ client.on('error', () => {
     client.user.setStatus("dnd");
 });
 
+/*
 client.on('reconnecting', () => {
     // On reconnecting to Discord
     client.user.setActivity("reconnecting...", { type: "PLAYING" });
     client.user.setStatus("dnd");
 });
+*/
 
 // On message
 client.on('message', message => {
     // Return if message from bot
     if (message.author.bot) return;
 
+    // Give user 1 coin
+    if (message.content.length > 5) {
+        currency.add(message.author.id, 1);
+    }
+
     if (message.content.includes("banana")) {
-        message.react('🇴')
+        message.react('🍌')
+            .then(() => (message.react('🇴')))
             .then(() => (message.react('🇼'))
                 .then(() => message.react('🅾️')));
     }

@@ -54,7 +54,7 @@ function updatePoints(user) {
                 user.points += 10;
                 break;
             case "A":
-                user.points += 1;
+                user.points += 11;
                 break;
             default:
                 user.points += parseInt(user.hand[i].value);
@@ -80,6 +80,18 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance)
         .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\n__Your hand__ (${player.points} points)\n${showHand(player)}\n\n__House hand__ (${house.hand[0].value} + ? points)\n**[${house.hand[0].value}] [?]**\n\nHit or stay?\n**Dealer will hit until at least 17 if you stay**`)
         .setColor(`#801431`));
 
+    if (player.points == 21) {
+
+        // Player hits natural blackjack
+
+        currency.add(message.author.id, bet);
+        currency.add("0", -bet);
+
+        message.channel.send(new Discord.RichEmbed()
+            .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**YOU HIT A NATURAL BLACKJACK**\n\n__Your hand__ (${player.points} points)\n${showHand(player)}\n\n__House hand__ (${house.points} points)\n**[${house.hand[0].value}] [${house.hand[1].value}]**`)
+            .setColor(`#801431`));
+    }
+
     const filter = m => m.author.id == message.author.id && m.content == "hit" || m.content == "stay" || m.content == "cancel";
 
     const collector = message.channel.createMessageCollector(filter, { time: 60000, max: 1 });
@@ -103,7 +115,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance)
                 currency.add("0", bet);
 
                 message.channel.send(new Discord.RichEmbed()
-                    .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nSorry, ${message.author.username}. You **lost** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**YOU WENT OVER 21**\n\n__Your hand__ (${player.points} points)\n${showHand(player)}\n\n__House hand__ (${house.points} points)\n**[${house.hand[0].value}] [${house.hand[1].value}]**`)
+                    .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nSorry, ${message.author.username}. You **lost** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**YOU WENT OVER 21**\n\n__Your hand__ (${player.points} points)\n${showHand(player)}\n\n__House hand__ (${house.points} points)\n${showHand(house)}`)
                     .setColor(`#801431`));
 
             } else if (player.points == 21) {
@@ -114,7 +126,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance)
                 currency.add("0", -bet);
 
                 message.channel.send(new Discord.RichEmbed()
-                    .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**YOU HIT BLACKJACK**\n\n__Your hand__ (${player.points} points)\n${showHand(player)}\n\n__House hand__ (${house.points} points)\n**[${house.hand[0].value}] [${house.hand[1].value}]**`)
+                    .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**YOU HIT BLACKJACK**\n\n__Your hand__ (${player.points} points)\n${showHand(player)}\n\n__House hand__ (${house.points} points)\n${showHand(house)}`)
                     .setColor(`#801431`));
 
             } else {

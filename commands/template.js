@@ -7,6 +7,7 @@ module.exports = {
 	// aliases: ['aliases'],
 	// args: true,
 	// usage: '[command]',
+	// altUsage: 'command',
 	// cooldown: 5,
 	// guildOnly: true,
 	enabled: true,

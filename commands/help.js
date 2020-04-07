@@ -26,7 +26,10 @@ module.exports = {
             generalHelp.addField(`**Queue control**`, `queue\nremove\nmove\nshuffle`, true);
             generalHelp.addField(`**Music information**`, `playing\nnext\nfindvideo\nsearchf/search`, true);
             generalHelp.addField(`**Fun commands**`, `say\nlenny\nthesaurize\njoke`, true);
-            generalHelp.addField(`**Admin/System commands**`, `prune\ntoggle\nping`, true);
+            generalHelp.addField(`**Admin commands**`, `prune\ntoggle`, true);
+            generalHelp.addField(`**System commands**`, `ping`, true);
+            generalHelp.addField(`**Currency commands**`, `balance\ntransfer`, true);
+            generalHelp.addField(`**Game commands**`, `flip\nblackjack`, true);
 
             // data.push(`\nYou can send \`${prefix}help [command name]\` to get info on a specific command!`);
             generalHelp.setAuthor(`Use ${prefix}help [command name] to get info on a specific command`, client.user.avatarURL);
@@ -83,7 +86,13 @@ module.exports = {
         if (command.description) commandHelp.addField(`**Description**`, command.description);
 
         // if (command.usage) data.push(`**Usage:** ${prefix}${command.name} ${command.usage}`);
-        if (command.usage) commandHelp.addField(`**Usage**`, `\`${prefix}${command.name} ${command.usage}\``);
+        if (command.usage) {
+            if (command.altUsage) {
+                commandHelp.addField(`**Usage**`, `\`${prefix}${command.name} ${command.usage}\`\n*Or alternatively*\n\`${prefix}${command.name} ${command.altUsage}\``);
+            } else {
+                commandHelp.addField(`**Usage**`, `\`${prefix}${command.name} ${command.usage}\``);
+            }
+        }
 
         if (command.guildOnly) commandHelp.addField(`**Servers only**`, `Only usable in servers, not DMs`);
 

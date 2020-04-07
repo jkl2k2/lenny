@@ -384,7 +384,7 @@ async function updateQueue() {
 
 async function updateCasinoStats(mainGuild) {
     var newLeaderboard = new Discord.RichEmbed()
-        .setDescription(`:medal: **Top 10 users by currency**\n\n` + currency.sort((a, b) => b.balance - a.balance)
+        .setDescription(`:money_with_wings: **OWO GRAND RESORT & CASINO PROFITS** :money_with_wings:\n\nProfit: **$${currency.getBalance("0")}**\n\n:medal: **Top 10 users by currency**\n\n` + currency.sort((a, b) => b.balance - a.balance)
             .filter(user => client.users.has(user.user_id) && mainGuild.member(client.users.get(user.user_id)))
             .first(10)
             .map((user, position) => `\`${position + 1}.\` **${(client.users.get(user.user_id).username)}**\nBalance: \`$${user.balance}\`\n`)
@@ -521,7 +521,7 @@ client.on('ready', async () => {
     var mainGuild = client.guilds.get(`471193210102743040`);
 
     casinoStatusMessage = await casinoChannel.send(new Discord.RichEmbed()
-        .setDescription(`:medal: **Top 10 users by currency**\n\n` + currency.sort((a, b) => b.balance - a.balance)
+        .setDescription(`:money_with_wings: **OWO GRAND RESORT & CASINO PROFITS** :money_with_wings:\n\nProfit: **$${currency.getBalance("0")}**\n\n:medal: **Top 10 users by currency**\n\n` + currency.sort((a, b) => b.balance - a.balance)
             .filter(user => client.users.has(user.user_id) && mainGuild.member(client.users.get(user.user_id)))
             .first(10)
             .map((user, position) => `\`${position + 1}.\` **${(client.users.get(user.user_id).username)}**\nBalance: \`$${user.balance}\`\n`)

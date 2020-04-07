@@ -60,6 +60,9 @@ module.exports = {
             // Deduct loss from account
             currency.add(message.author.id, -parseInt(args[0]));
 
+            // Add to casino profits
+            currency.add("0", parseInt(args[0]));
+
             // Loss message
             message.channel.send(new Discord.RichEmbed()
                 .setDescription(`:game_die: You flipped: \`Tails\`\n\nSorry, ${message.author.username}! You **lost** your bet of **$${args[0]}**.\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**`)
@@ -69,6 +72,9 @@ module.exports = {
 
             // Add winnings to account
             currency.add(message.author.id, parseInt(args[0]));
+
+            // Deduct from casino profits
+            currency.add("0", -parseInt(args[0]));
 
             // Win message
             message.channel.send(new Discord.RichEmbed()

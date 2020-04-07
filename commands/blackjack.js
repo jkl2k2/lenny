@@ -100,6 +100,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance)
                 // Player bust
 
                 currency.add(message.author.id, -bet);
+                currency.add("0", bet);
 
                 message.channel.send(new Discord.RichEmbed()
                     .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nSorry, ${message.author.username}. You **lost** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**YOU WENT OVER 21**\n\n__Your hand__ (${player.points} points)\n${showHand(player)}\n\n__House hand__ (${house.points} points)\n**[${house.hand[0].value}] [${house.hand[1].value}]**`)
@@ -110,6 +111,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance)
                 // Player hits blackjack
 
                 currency.add(message.author.id, bet);
+                currency.add("0", -bet);
 
                 message.channel.send(new Discord.RichEmbed()
                     .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**YOU HIT BLACKJACK**\n\n__Your hand__ (${player.points} points)\n${showHand(player)}\n\n__House hand__ (${house.points} points)\n**[${house.hand[0].value}] [${house.hand[1].value}]**`)
@@ -132,6 +134,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance)
                 // House bust
 
                 currency.add(message.author.id, bet);
+                currency.add("0", -bet);
 
                 message.channel.send(new Discord.RichEmbed()
                     .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**HOUSE BUST**\n\n__Your hand__ (${player.points} points)\n${showHand(player)}\n\n__House hand__ (${house.points} points)\n${showHand(house)}`)
@@ -142,6 +145,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance)
                 // House blackjack
 
                 currency.add(message.author.id, -bet);
+                currency.add("0", bet);
 
                 message.channel.send(new Discord.RichEmbed()
                     .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nSorry, ${message.author.username}. You **lost** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**HOUSE CLOSER TO 21**\n\n__Your hand__ (${player.points} points)\n${showHand(player)}\n\n__House hand__ (${house.points} points)\n${showHand(house)}`)
@@ -152,6 +156,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance)
                 // House closer to 21
 
                 currency.add(message.author.id, -bet);
+                currency.add("0", bet);
 
                 message.channel.send(new Discord.RichEmbed()
                     .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nSorry, ${message.author.username}. You **lost** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**HOUSE CLOSER TO 21**\n\n__Your hand__ (${player.points} points)\n${showHand(player)}\n\n__House hand__ (${house.points} points)\n${showHand(house)}`)
@@ -162,6 +167,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance)
                 // Player closer to 21
 
                 currency.add(message.author.id, bet);
+                currency.add("0", -bet);
 
                 message.channel.send(new Discord.RichEmbed()
                     .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**YOU'RE CLOSER TO 21**\n\n__Your hand__ (${player.points} points)\n${showHand(player)}\n\n__House hand__ (${house.points} points)\n${showHand(house)}`)

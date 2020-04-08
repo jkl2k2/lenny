@@ -1,4 +1,5 @@
 const index = require(`../index.js`);
+const Discord = require(`discord.js`);
 // Any 'require'
 
 module.exports = {

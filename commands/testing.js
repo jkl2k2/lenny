@@ -1,6 +1,8 @@
 const index = require(`../index.js`);
 const Discord = require(`discord.js`);
-const thesaurize = require(`thesaurize`);
+const { Users, CurrencyShop } = require('../dbObjects');
+const { Op } = require('sequelize');
+const currency = index.getCurrencyDB();
 
 module.exports = {
     name: 'testing',
@@ -11,6 +13,7 @@ module.exports = {
     // guildOnly: true,
     enabled: true,
     execute(message, args) {
-        message.channel.send(thesaurize(args.join(" ")));
+        currency.add(0, 10);
+        message.channel.send(currency.getBalance(0));
     }
 };

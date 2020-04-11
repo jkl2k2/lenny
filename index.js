@@ -622,13 +622,6 @@ client.on('reconnecting', () => {
 
 // On message
 client.on('message', message => {
-    // Return if message from bot
-    if (message.author.bot) return;
-
-    // Give user 1 coin
-    if (message.content.length > 5) {
-        currency.add(message.author.id, 1);
-    }
 
     if (message.content.includes("banana")) {
         message.react('🍌')
@@ -701,6 +694,14 @@ client.on('message', message => {
         .catch(collected => {
             // When collector expires
         });
+
+    // Return if message from bot
+    if (message.author.bot) return;
+
+    // Give user 1 coin
+    if (message.content.length > 5) {
+        currency.add(message.author.id, 1);
+    }
 
     // Return if no prefix
     if (!message.content.startsWith(prefix)) return;

@@ -78,7 +78,7 @@ module.exports = {
 
             // Win message
             message.channel.send(new Discord.RichEmbed()
-                .setDescription(`:game_die: You flipped: \`Heads\`\n\nCongrats, ${message.author.username}! You **won** double your bet of **$${args[0]}**! (total: $${args[0] * 2})\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**`)
+                .setDescription(`:game_die: You flipped: \`Heads\`\n\nCongrats, ${message.author.username}! You **won** your bet of **$${args[0]}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**`)
                 .setColor(`#801431`));
         }
     }

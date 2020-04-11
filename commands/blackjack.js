@@ -46,18 +46,22 @@ function drawCard(deck) {
 
 function updatePoints(user) {
     user.points = 0;
+    user.altPoints = 0;
     for (var i = 0; i < user.hand.length; i++) {
         switch (user.hand[i].value) {
             case "K":
             case "Q":
             case "J":
                 user.points += 10;
+                user.altPoints += 10;
                 break;
             case "A":
-                user.points += 11;
+                user.points += 1;
+                user.altPoints += 11;
                 break;
             default:
                 user.points += parseInt(user.hand[i].value);
+                user.altPoints += parseInt(user.hand[i].value);
         }
     }
 }
@@ -73,130 +77,233 @@ function showHand(user) {
     return str;
 }
 
+function showPoints(user) {
+    if (user.points != user.altPoints) {
+        return `${user.points} / ${user.altPoints} points`;
+    } else if (user.points == user.altPoints) {
+        return `${user.points} points`;
+    }
+}
+
 async function awaitResponse(message, player, house, deck, bet, originalBalance) {
 
     updatePoints(player);
+    updatePoints(house);
     var sent = await message.channel.send(new Discord.RichEmbed()
-        .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\n__Your hand__ (${player.points} points)\n${showHand(player)}\n\n__House hand__ (${house.hand[0].value} + ? points)\n**[${house.hand[0].value}] [?]**\n\nHit or stay?\n**Dealer will hit until at least 17 if you stay**`)
-        .setColor(`#801431`));
+        .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${house.hand[0].value} + ? points)\n**[${house.hand[0].value}] [?]**\n\nHit or stay?\n**Dealer will hit until at least 17 if you stay**`)
+        .setColor(`#801431`)
+        .setThumbnail(message.author.avatarURL));
 
-    if (player.points == 21) {
+    if (player.altPoints == 21) {
 
         // Player hits natural blackjack
 
         currency.add(message.author.id, bet);
         currency.add("0", -bet);
 
+        sent.delete();
+
         message.channel.send(new Discord.RichEmbed()
-            .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**YOU HIT A NATURAL BLACKJACK**\n\n__Your hand__ (${player.points} points)\n${showHand(player)}\n\n__House hand__ (${house.points} points)\n**[${house.hand[0].value}] [${house.hand[1].value}]**`)
-            .setColor(`#801431`));
-    }
+            .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**YOU HIT A NATURAL BLACKJACK**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${showPoints(house)})\n${showHand(house)}`)
+            .setColor(`#801431`)
+            .setThumbnail(message.author.avatarURL));
 
-    const filter = m => m.author.id == message.author.id && m.content == "hit" || m.content == "stay" || m.content == "cancel";
+    } else if (player.points > 21) {
 
-    const collector = message.channel.createMessageCollector(filter, { time: 60000, max: 1 });
+        // Player naturally busts, but returns bet
+        // Should hopefully no longer happen?
 
-    collector.on('collect', m => {
-        if (m.content.toLowerCase() == "cancel") {
-            return message.channel.send(new Discord.RichEmbed()
-                .setDescription(`Canceled the game`));
-        }
+        sent.delete();
 
-        if (m.content.toLowerCase() == "hit") {
-            sent.delete();
-            player.hand.push(drawCard(deck));
-            updatePoints(player);
-            updatePoints(house);
-            if (player.points > 21) {
+        message.channel.send(new Discord.RichEmbed()
+            .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\n${message.author.username}, I returned your bet of **$${bet}**\n\n**Got two aces, but my medicore programming only has aces count as 11, so in the meantime I've returned your money**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${showPoints(house)})\n${showHand(house)}`)
+            .setColor(`#801431`)
+            .setThumbnail(message.author.avatarURL));
 
-                // Player bust
+    } else if (house.altPoints == 21) {
 
-                currency.add(message.author.id, -bet);
-                currency.add("0", bet);
+        // House hits natural blackjack
+        // Confirmed working
 
-                message.channel.send(new Discord.RichEmbed()
-                    .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nSorry, ${message.author.username}. You **lost** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**YOU WENT OVER 21**\n\n__Your hand__ (${player.points} points)\n${showHand(player)}\n\n__House hand__ (${house.points} points)\n${showHand(house)}`)
-                    .setColor(`#801431`));
+        currency.add(message.author.id, -bet);
+        currency.add("0", bet);
 
-            } else if (player.points == 21) {
+        sent.delete();
 
-                // Player hits blackjack
+        message.channel.send(new Discord.RichEmbed()
+            .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nSorry, ${message.author.username}. You **lost** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**HOUSE HIT NATURAL BLACKJACK**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${showPoints(house)})\n${showHand(house)}`)
+            .setColor(`#801431`)
+            .setThumbnail(message.author.avatarURL));
 
-                currency.add(message.author.id, bet);
-                currency.add("0", -bet);
+    } else {
 
-                message.channel.send(new Discord.RichEmbed()
-                    .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**YOU HIT BLACKJACK**\n\n__Your hand__ (${player.points} points)\n${showHand(player)}\n\n__House hand__ (${house.points} points)\n${showHand(house)}`)
-                    .setColor(`#801431`));
+        const filter = m => m.author.id == message.author.id && (m.content == "hit" || m.content == "stay" || m.content == "cancel" || m.content.includes("!blackjack") || m.content.includes("!bj"));
 
-            } else {
-                return awaitResponse(message, player, house, deck, bet, originalBalance);
+        const collector = message.channel.createMessageCollector(filter, { time: 60000, max: 1 });
+
+        collector.on('collect', m => {
+            if (m.content.toLowerCase() == "cancel") {
+                return message.channel.send(new Discord.RichEmbed()
+                    .setDescription(`Canceled the game`));
             }
-        }
 
-        if (m.content.toLowerCase() == "stay") {
-            sent.delete();
-            updatePoints(house);
-            while (house.points < 17) {
-                house.hand.push(drawCard(deck));
+            if (m.content.toLowerCase().includes("!blackjack") || m.content.toLowerCase().includes("!bj")) {
+                // Player accidentally starts another blackjack game
+
+                return message.channel.send(new Discord.RichEmbed()
+                    .setDescription(`<:error:643341473772863508> **You already had a game of blackjack going, ${message.author.username}, but since you started another one I canceled the original game**`)
+                    .setColor(`#FF0000`));
+            }
+
+            if (m.content.toLowerCase() == "hit") {
+                sent.delete();
+                player.hand.push(drawCard(deck));
+                updatePoints(player);
                 updatePoints(house);
+                if (player.points > 21) {
+
+                    // Player bust
+
+                    currency.add(message.author.id, -bet);
+                    currency.add("0", bet);
+
+                    message.channel.send(new Discord.RichEmbed()
+                        .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nSorry, ${message.author.username}. You **lost** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**YOU WENT OVER 21**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${showPoints(house)})\n${showHand(house)}`)
+                        .setColor(`#801431`)
+                        .setThumbnail(message.author.avatarURL));
+
+                } else if (player.points == 21 || player.altPoints == 21) {
+
+                    // Player hits blackjack
+
+                    currency.add(message.author.id, bet);
+                    currency.add("0", -bet);
+
+                    return message.channel.send(new Discord.RichEmbed()
+                        .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**YOU HIT BLACKJACK**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${showPoints(house)})\n${showHand(house)}`)
+                        .setColor(`#801431`)
+                        .setThumbnail(message.author.avatarURL));
+
+                } else {
+                    return awaitResponse(message, player, house, deck, bet, originalBalance);
+                }
             }
-            if (house.points > 21) {
 
-                // House bust
+            if (m.content.toLowerCase() == "stay") {
+                // sent.delete();
+                updatePoints(house);
+                while (house.points < 17 && house.altPoints < 17) {
+                    house.hand.push(drawCard(deck));
+                    updatePoints(house);
+                }
+                if (house.points > 21) {
+                    sent.delete();
+                    // House bust
+                    // Confirmed working
 
-                currency.add(message.author.id, bet);
-                currency.add("0", -bet);
+                    currency.add(message.author.id, bet);
+                    currency.add("0", -bet);
 
-                message.channel.send(new Discord.RichEmbed()
-                    .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**HOUSE BUST**\n\n__Your hand__ (${player.points} points)\n${showHand(player)}\n\n__House hand__ (${house.points} points)\n${showHand(house)}`)
-                    .setColor(`#801431`));
+                    return message.channel.send(new Discord.RichEmbed()
+                        .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**HOUSE BUST**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${showPoints(house)})\n${showHand(house)}`)
+                        .setColor(`#801431`)
+                        .setThumbnail(message.author.avatarURL));
 
-            } else if (house.points == 21) {
+                } else if (house.points == 21 || house.altPoints == 21) {
+                    sent.delete();
+                    // House blackjack
+                    // Confirmed working
 
-                // House blackjack
+                    currency.add(message.author.id, -bet);
+                    currency.add("0", bet);
 
-                currency.add(message.author.id, -bet);
-                currency.add("0", bet);
+                    return message.channel.send(new Discord.RichEmbed()
+                        .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nSorry, ${message.author.username}. You **lost** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**HOUSE HIT BLACKJACK**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${showPoints(house)})\n${showHand(house)}`)
+                        .setColor(`#801431`)
+                        .setThumbnail(message.author.avatarURL));
+                } else if (player.points == house.points || player.altPoints == house.altPoints) {
+                    sent.delete();
+                    // Tie
+                    return message.channel.send(new Discord.RichEmbed()
+                        .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nYou tied, ${message.author.username}. Returned your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**GAME TIED**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${showPoints(house)})\n${showHand(house)}`)
+                        .setColor(`#801431`)
+                        .setThumbnail(message.author.avatarURL));
 
-                message.channel.send(new Discord.RichEmbed()
-                    .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nSorry, ${message.author.username}. You **lost** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**HOUSE CLOSER TO 21**\n\n__Your hand__ (${player.points} points)\n${showHand(player)}\n\n__House hand__ (${house.points} points)\n${showHand(house)}`)
-                    .setColor(`#801431`));
+                } else if (player.points < house.points) {
+                    sent.delete();
+                    // House seemingly closer to 21
 
-            } else if (player.points < house.points) {
+                    if ((player.altPoints < 21 && player.altPoints > house.points) && (house.altPoints < 21 && player.altPoints > house.altPoints)) {
 
-                // House closer to 21
+                        // Player alt score causes win
+                        // Confirmed working?
 
-                currency.add(message.author.id, -bet);
-                currency.add("0", bet);
+                        currency.add(message.author.id, bet);
+                        currency.add("0", -bet);
 
-                message.channel.send(new Discord.RichEmbed()
-                    .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nSorry, ${message.author.username}. You **lost** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**HOUSE CLOSER TO 21**\n\n__Your hand__ (${player.points} points)\n${showHand(player)}\n\n__House hand__ (${house.points} points)\n${showHand(house)}`)
-                    .setColor(`#801431`));
+                        return message.channel.send(new Discord.RichEmbed()
+                            .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**YOU'RE CLOSER TO 21**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${showPoints(house)})\n${showHand(house)}`)
+                            .setColor(`#801431`)
+                            .setThumbnail(message.author.avatarURL));
 
-            } else if (player.points > house.points) {
+                    } else {
 
-                // Player closer to 21
+                        // House truly closer to 21
+                        // Confirmed working?
 
-                currency.add(message.author.id, bet);
-                currency.add("0", -bet);
+                        currency.add(message.author.id, -bet);
+                        currency.add("0", bet);
 
-                message.channel.send(new Discord.RichEmbed()
-                    .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**YOU'RE CLOSER TO 21**\n\n__Your hand__ (${player.points} points)\n${showHand(player)}\n\n__House hand__ (${house.points} points)\n${showHand(house)}`)
-                    .setColor(`#801431`));
+                        return message.channel.send(new Discord.RichEmbed()
+                            .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nSorry, ${message.author.username}. You **lost** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**HOUSE CLOSER TO 21**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${showPoints(house)})\n${showHand(house)}`)
+                            .setColor(`#801431`)
+                            .setThumbnail(message.author.avatarURL));
 
-            } else if (player.points == house.points) {
+                    }
 
-                // Tie
-                message.channel.send(new Discord.RichEmbed()
-                    .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nYou tied, ${message.author.username}. Returned your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**GAME TIED**\n\n__Your hand__ (${player.points} points)\n${showHand(player)}\n\n__House hand__ (${house.points} points)\n${showHand(house)}`)
-                    .setColor(`#801431`));
+                } else if (player.points > house.points) {
+                    sent.delete();
+                    // Player seemingly closer to 21
 
-            } else {
-                message.channel.send(`Catch. (You shouldn't see this ever)`);
+                    if ((house.altPoints < 21 && house.altPoints > player.points) && (player.altPoints < 21 && house.altPoints > player.altPoints)) {
+
+                        // House alt score causes win
+
+                        currency.add(message.author.id, -bet);
+                        currency.add("0", bet);
+
+                        return message.channel.send(new Discord.RichEmbed()
+                            .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nSorry, ${message.author.username}. You **lost** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**HOUSE CLOSER TO 21**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${showPoints(house)})\n${showHand(house)}`)
+                            .setColor(`#801431`)
+                            .setThumbnail(message.author.avatarURL));
+
+                    } else {
+
+                        // Player truly closer to 21
+                        // Confirmed working?
+
+                        currency.add(message.author.id, bet);
+                        currency.add("0", -bet);
+
+                        return message.channel.send(new Discord.RichEmbed()
+                            .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**YOU'RE CLOSER TO 21**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${showPoints(house)})\n${showHand(house)}`)
+                            .setColor(`#801431`)
+                            .setThumbnail(message.author.avatarURL));
+
+                    }
+
+                } else {
+
+                    // Catch
+
+                    currency.add(message.author.id, bet);
+                    currency.add("0", -bet);
+
+                    return message.channel.send(`Hey ${message.author.username}, this is a catch-all statement that you should never see. But, since apparently you ARE seeing this and cat is utterly incompetent at programming and somehow managed to screw up checking points for a simple blackjack game, I'll just pretend you won your bet of **$${bet}**.\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\nHELLO THIS IS CAT FROM 1:47 AM. I HAVE BEEN HUNTING THE CAUSE OF THIS FOR THE PAST 45 MINUTES AND I CAN'T FIND IT PLEASE @ ME WHEN THIS HAPPENS SO I CAN ANALYZE YOUR GAME'S RESULTS THANKS.`);
+                }
             }
-        }
-    });
+        });
+    }
 }
 
 module.exports = {
@@ -253,8 +360,8 @@ module.exports = {
         var playerHand = [drawCard(deck), drawCard(deck)];
         var houseHand = [drawCard(deck), drawCard(deck)];
 
-        var player = { hand: playerHand, points: (playerHand[0].value + playerHand[1].value) };
-        var house = { hand: houseHand, points: (houseHand[0].value + houseHand[1].value) };
+        var player = { hand: playerHand, points: (playerHand[0].value + playerHand[1].value), altPoints: 0 };
+        var house = { hand: houseHand, points: (houseHand[0].value + houseHand[1].value), altPoints: 0 };
 
         awaitResponse(message, player, house, deck, parseInt(args[0]), originalBalance);
     }

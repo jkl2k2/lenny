@@ -699,7 +699,9 @@ client.on('message', message => {
     if (message.author.bot) return;
 
     // Give user 1 coin
-    if (message.content.length > 5) {
+    if (message.attachments.array()[0]) {
+        currency.add(message.author.id, 10);
+    } else if (message.content.length > 5) {
         currency.add(message.author.id, 1);
     }
 
@@ -719,7 +721,8 @@ client.on('message', message => {
 
     // Return if not valid command
     if (!command) {
-        return logger.info(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`!${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Not valid command`)}`);
+        // return logger.info(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`!${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Not valid command`)}`);
+        return;
     }
 
     // Return if command is disabled

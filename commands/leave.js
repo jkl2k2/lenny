@@ -11,25 +11,17 @@ module.exports = {
 	guildOnly: true,
 	enabled: true,
 	execute(message, args) {
+		if (client.voiceConnections.get(message.guild.id) != undefined) {
+			message.channel.send(new Discord.RichEmbed()
+				.setDescription(`:arrow_left: Disconnected from ${client.voiceConnections.get(message.guild.id).channel.name}`)
+				.setColor(`#0083FF`));
 
-		var connections = client.voiceConnections.array();
-
-		if (connections[0] != undefined) {
-			connections[0].disconnect();
-
-			let leaveEmbed = new Discord.RichEmbed()
-
-				.setDescription(`:arrow_left: Disconnected from "${connections[0].channel.name}"`)
-				.setColor(`#0083FF`);
-
-			message.channel.send(leaveEmbed);
+			client.voiceConnections.get(message.guild.id).disconnect();
 		} else {
-			let leaveFailEmbed = new Discord.RichEmbed()
+			message.channel.send(new Discord.RichEmbed()
 
 				.setDescription(`<:error:643341473772863508> I'm not in a voice channel`)
-				.setColor(`#FF0000`);
-
-			message.channel.send(leaveFailEmbed);
+				.setColor(`#FF0000`));
 		}
 	}
 };

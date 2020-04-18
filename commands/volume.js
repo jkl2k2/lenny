@@ -35,7 +35,7 @@ module.exports = {
 	enabled: true,
 	execute(message, args) {
 		if (!args.length) {
-			if (index.getDispatcher() == undefined) {
+			if (index.getDispatcher(message) == undefined) {
 				let currentVol = new Discord.RichEmbed()
 					.setDescription(`:loud_sound: Current volume: 100%`)
 					.setColor(`#0083FF`);

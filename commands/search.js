@@ -8,6 +8,7 @@ const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
 const logger = index.getLogger();
 const prefix = config.get(`Bot.prefix`);
+const Queues = index.getQueues();
 
 class YTVideo {
     constructor(video, requester) {
@@ -27,7 +28,7 @@ class YTVideo {
         return this.requester;
     }
     getRequesterName() {
-        return this.requester.username;
+        return this.requester.user.username;
     }
     getType() {
         if (!this.video.duration) {
@@ -100,7 +101,7 @@ class YTVideo {
         }
     }
     getPosition() {
-        let queue = index.getQueue();
+        let queue = index.getQueue(this.requester.guild.id);
         if (queue.indexOf(this) == -1) {
             return 1;
         } else {
@@ -148,18 +149,24 @@ module.exports = {
             return;
         }
 
-        var queue = index.getQueue();
+        var queue = index.getQueue(message);
 
         async function process(input) {
             logger.debug(input.title);
 
-            let newVideo = new YTVideo(input, message.author);
+            let newVideo = new YTVideo(input, message.member);
 
-            queue.push(newVideo);
+            if (!Queues.has(message.guild.id)) {
+                let newQueue = [];
+                newQueue.push(newVideo);
+                index.setQueue(message.guild.id, newQueue);
+            } else {
+                queue.push(newVideo);
+            }
 
             message.channel.send(new Discord.RichEmbed()
                 .setAuthor(`➕ Queued`)
-                .setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\nBy: [${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\n\`Position in queue: #${newVideo.getPosition()}\``)
+                .setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\nBy: [${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\n\`#${newVideo.getPosition()} in queue\``)
                 .setThumbnail(newVideo.getThumbnail())
                 .setTimestamp()
                 .setFooter(`Requested by ${newVideo.getRequesterName()}`));
@@ -167,7 +174,7 @@ module.exports = {
             if (message.member.voiceChannel) {
                 message.member.voiceChannel.join()
                     .then(connection => {
-                        if (index.getDispatcher() == undefined || (!connection.speaking && !index.getDispatcher().paused)) {
+                        if (index.getDispatcher(message) == undefined || (!connection.speaking && !index.getDispatcher(message).paused)) {
                             index.callPlayMusic(message);
                         }
                     })
@@ -275,7 +282,7 @@ module.exports = {
                                             .setFooter(`Requested by ${message.author.username}`));
 
                                         for (var i = 0; i < videos.length; i++) {
-                                            var newVideo = new YTVideo(videos[i], message.author);
+                                            var newVideo = new YTVideo(videos[i], message.member);
                                             if (newVideo.getTitle() == "Private video") {
                                                 message.channel.send(new Discord.RichEmbed()
                                                     .setDescription(":information_source: At least 1 video from the playlist could not be added as it is private")
@@ -295,7 +302,7 @@ module.exports = {
                                         if (message.member.voiceChannel) {
                                             message.member.voiceChannel.join()
                                                 .then(connection => {
-                                                    if (index.getDispatcher() == undefined || (!connection.speaking && !index.getDispatcher().paused)) {
+                                                    if (index.getDispatcher(message) == undefined || (!connection.speaking && !index.getDispatcher(message).paused)) {
                                                         index.callPlayMusic(message);
                                                     }
                                                 })
@@ -330,35 +337,35 @@ module.exports = {
                         return;
                     }
 
-                    var res1 = new YTVideo(await results[0].fetch(), message.author);
+                    var res1 = new YTVideo(await results[0].fetch(), message.member);
                     var searching1 = new Discord.RichEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<##-------->\``)
                         .setColor(`#0083FF`);
                     var searchingMessage = await message.channel.send(searching1);
 
-                    var res2 = new YTVideo(await results[1].fetch(), message.author);
+                    var res2 = new YTVideo(await results[1].fetch(), message.member);
                     var searching2 = new Discord.RichEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<####------>\``)
                         .setColor(`#0083FF`);
                     searchingMessage.edit(searching2);
 
-                    var res3 = new YTVideo(await results[2].fetch(), message.author);
+                    var res3 = new YTVideo(await results[2].fetch(), message.member);
                     var searching3 = new Discord.RichEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<######---->\``)
                         .setColor(`#0083FF`);
                     searchingMessage.edit(searching3);
 
-                    var res4 = new YTVideo(await results[3].fetch(), message.author);
+                    var res4 = new YTVideo(await results[3].fetch(), message.member);
                     var searching4 = new Discord.RichEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<########-->\``)
                         .setColor(`#0083FF`);
                     searchingMessage.edit(searching4);
 
-                    var res5 = new YTVideo(await results[4].fetch(), message.author);
+                    var res5 = new YTVideo(await results[4].fetch(), message.member);
                     var searching5 = new Discord.RichEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<##########>\``)

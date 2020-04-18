@@ -8,6 +8,7 @@ const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
 const chalk = require('chalk');
 const logger = index.getLogger();
+const Queues = index.getQueues();
 
 class YTVideo {
 	constructor(video, requester) {
@@ -27,7 +28,7 @@ class YTVideo {
 		return this.requester;
 	}
 	getRequesterName() {
-		return this.requester.username;
+		return this.requester.user.username;
 	}
 	getType() {
 		if (!this.video.duration) {
@@ -100,7 +101,7 @@ class YTVideo {
 		}
 	}
 	getPosition() {
-		let queue = index.getQueue();
+		let queue = index.getQueue(this.requester.guild.id);
 		if (queue.indexOf(this) == -1) {
 			return 1;
 		} else {
@@ -186,18 +187,26 @@ module.exports = {
 				.setColor(`#FF0000`));
 		}
 
-		var queue = index.getQueue();
+		var queue = index.getQueue(message);
 
 		async function process(input) {
 			logger.debug(input.title);
 
-			let newVideo = new YTVideo(input, message.author);
+			let newVideo = new YTVideo(input, message.member);
 
-			queue.unshift(newVideo);
+			// queue.push(newVideo);
+
+			if (!Queues.has(message.guild.id)) {
+				let newQueue = [];
+				newQueue.push(newVideo);
+				index.setQueue(message.guild.id, newQueue);
+			} else {
+				queue.unshift(newVideo);
+			}
 
 			message.channel.send(new Discord.RichEmbed()
 				.setAuthor(`➕ Queued`)
-				.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\nBy: [${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\n\`Position in queue: #${newVideo.getPosition()}\``)
+				.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\nBy: [${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\n\`#${newVideo.getPosition()} in queue\``)
 				.setThumbnail(newVideo.getThumbnail())
 				.setTimestamp()
 				.setFooter(`Requested by ${newVideo.getRequesterName()}`));
@@ -205,10 +214,10 @@ module.exports = {
 			if (message.member.voiceChannel) {
 				message.member.voiceChannel.join()
 					.then(connection => {
-						if (index.getDispatcher() == undefined || (!connection.speaking && !index.getDispatcher().paused)) {
+						if (index.getDispatcher(message) == undefined || (!connection.speaking && !index.getDispatcher(message).paused)) {
 							index.callPlayMusic(message);
 						} else {
-							index.endDispatcher();
+							index.endDispatcher(message);
 						}
 					})
 					.catch(`${logger.error}`);
@@ -253,8 +262,6 @@ module.exports = {
 								.then(connection => {
 									if (index.getDispatcher() == undefined || (!connection.speaking && !index.getDispatcher().paused)) {
 										index.callPlayMusic(message);
-									} else {
-										index.endDispatcher();
 									}
 								})
 								.catch(logger.error);

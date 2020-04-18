@@ -3,8 +3,8 @@ const Discord = require(`discord.js`);
 const client = index.getClient();
 
 module.exports = {
-    name: 'kick',
-    description: 'Kicks a user from the server and DMs them a glorious paragraph',
+    name: 'ban',
+    description: 'Bans a user from the server and DMs them a glorious paragraph',
     // aliases: ['aliases'],
     args: true,
     usage: '[user to kick]',
@@ -22,12 +22,12 @@ module.exports = {
                 target.send(theMessage)
                     .then(() => {
                         // var kickTarget = client.users.get(target);
-                        message.channel.send(`User has been kicked.`);
-                        return target.kick("User kicked with the !kick command");
+                        message.channel.send(`User has been banned.`);
+                        return target.ban("User banned with the !ban command");
                     })
                     .catch(error => {
                         console.error(`Could not send help DM to ${message.author.tag}.\n`, error);
-                        message.channel.send("User has DMs disabled");
+                        message.channel.send("User has DMs disabled, unable to send message");
                     });
 
                 break;

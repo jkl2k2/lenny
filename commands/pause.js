@@ -12,10 +12,10 @@ module.exports = {
 	execute(message, args) {
 		// index.pauseMusic(message);
 
-		var dispatcher = index.getDispatcher();
+		var dispatcher = index.getDispatcher(message);
 
 		if (dispatcher != undefined && dispatcher.paused == false) {
-			index.pauseMusic();
+			dispatcher.pause();
 			let pauseEmbed = new Discord.RichEmbed()
 
 				.setDescription(`:pause_button: ${message.author.username} paused playback`)

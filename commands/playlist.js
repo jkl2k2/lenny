@@ -8,6 +8,7 @@ const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
 const logger = index.getLogger();
 const prefix = config.get(`Bot.prefix`);
+const Queues = index.getQueues();
 
 class YTVideo {
     constructor(video, requester) {
@@ -27,7 +28,7 @@ class YTVideo {
         return this.requester;
     }
     getRequesterName() {
-        return this.requester.username;
+        return this.requester.user.username;
     }
     getType() {
         if (!this.video.duration) {
@@ -100,7 +101,7 @@ class YTVideo {
         }
     }
     getPosition() {
-        let queue = index.getQueue();
+        let queue = index.getQueue(this.requester.guild.id);
         if (queue.indexOf(this) == -1) {
             return 1;
         } else {
@@ -148,8 +149,7 @@ module.exports = {
             return;
         }
 
-        var queue = index.getQueue();
-        var play = true;
+        var queue = index.getQueue(message);
 
         youtube.searchPlaylists(args.join(" "))
             .then(async results => {
@@ -234,55 +234,47 @@ module.exports = {
                         return;
                     }
 
-                    if (play) {
-                        await youtube.getPlaylist(results[parseInt(m.content) - 1].url)
-                            .then(async playlist => {
-                                if (playlist) {
-                                    var videos = await playlist.getVideos();
+                    await youtube.getPlaylist(results[parseInt(m.content) - 1].url)
+                        .then(async playlist => {
+                            if (playlist) {
+                                var videos = await playlist.getVideos();
 
-                                    var processing = await message.channel.send(new Discord.RichEmbed()
-                                        .setAuthor(`🔄 Processing playlist`)
-                                        .setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
-                                        .setThumbnail(playlist.thumbnails.default.url)
-                                        .setTimestamp()
-                                        .setFooter(`Requested by ${message.author.username}`));
+                                var processing = await message.channel.send(new Discord.RichEmbed()
+                                    .setAuthor(`🔄 Processing playlist`)
+                                    .setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
+                                    .setThumbnail(playlist.thumbnails.default.url)
+                                    .setTimestamp()
+                                    .setFooter(`Requested by ${message.author.username}`));
 
-                                    for (var i = 0; i < videos.length; i++) {
-                                        var newVideo = new YTVideo(videos[i], message.author);
-                                        if (newVideo.getTitle() == "Private video") {
-                                            message.channel.send(new Discord.RichEmbed()
-                                                .setDescription(":information_source: At least 1 video from the playlist could not be added as it is private")
-                                                .setColor(`#0083FF`));
-                                        } else {
-                                            queue.push(newVideo);
-                                        }
+                                for (var i = 0; i < videos.length; i++) {
+                                    var newVideo = new YTVideo(videos[i], message.member);
+                                    if (newVideo.getTitle() != "Private video") {
+                                        queue.push(newVideo);
                                     }
-
-                                    processing.edit(new Discord.RichEmbed()
-                                        .setAuthor(`➕ Queued playlist`)
-                                        .setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
-                                        .setThumbnail(playlist.thumbnails.default.url)
-                                        .setTimestamp()
-                                        .setFooter(`Requested by ${message.author.username}`));
-
-                                    if (message.member.voiceChannel) {
-                                        message.member.voiceChannel.join()
-                                            .then(connection => {
-                                                if (index.getDispatcher() == undefined || (!connection.speaking && !index.getDispatcher().paused)) {
-                                                    index.callPlayMusic(message);
-                                                }
-                                            })
-                                            .catch(logger.error);
-                                    } else {
-                                        logger.warn(`User not in voice channel after playlist processing`);
-                                    }
-                                } else {
-                                    logger.error(`Playlist not found`);
                                 }
-                            });
-                    } else {
-                        message.channel.send(results[parseInt(m.content) - 1].url);
-                    }
+
+                                processing.edit(new Discord.RichEmbed()
+                                    .setAuthor(`➕ Queued playlist`)
+                                    .setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
+                                    .setThumbnail(playlist.thumbnails.default.url)
+                                    .setTimestamp()
+                                    .setFooter(`Requested by ${message.author.username}`));
+
+                                if (message.member.voiceChannel) {
+                                    message.member.voiceChannel.join()
+                                        .then(connection => {
+                                            if (index.getDispatcher() == undefined || (!connection.speaking && !index.getDispatcher().paused)) {
+                                                index.callPlayMusic(message);
+                                            }
+                                        })
+                                        .catch(logger.error);
+                                } else {
+                                    logger.warn(`User not in voice channel after playlist processing`);
+                                }
+                            } else {
+                                logger.error(`Playlist not found`);
+                            }
+                        });
 
                 });
 

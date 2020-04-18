@@ -10,7 +10,7 @@ module.exports = {
     guildOnly: true,
     enabled: true,
     execute(message, args) {
-        var dispatcher = index.getDispatcher();
+        var dispatcher = index.getDispatcher(message);
         var oldVolume = 1;
 
         if (dispatcher == undefined || dispatcher.speaking == false) {

@@ -12,10 +12,10 @@ module.exports = {
 	execute(message, args) {
 		// index.resumeMusic(message);
 
-		var dispatcher = index.getDispatcher();
+		var dispatcher = index.getDispatcher(message);
 
 		if (dispatcher != undefined && dispatcher.paused == true) {
-			index.resumeMusic();
+			dispatcher.resume();
 			let resumeEmbed = new Discord.RichEmbed()
 
 				.setDescription(`:arrow_forward: ${message.author.username} resumed playback`)

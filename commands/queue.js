@@ -1,10 +1,11 @@
 const index = require(`../index.js`);
 const Discord = require(`discord.js`);
 const config = require(`config`);
+const Queues = index.getQueues();
 
-function queueResolver(arr, index) {
+async function queueResolver(arr, index) {
 	if (arr[index]) {
-		return `${index + 1}. [${arr[index].getCleanTitle()}](${arr[index].getURL()})`;
+		return `\`${index + 1}.\` **[${arr[index].getCleanTitle()}](${arr[index].getURL()})**\n\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0By: **${arr[index].getChannelName()}**\n\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0Length: \`${await arr[index].getLength()}\``;
 	} else {
 		return " ";
 	}
@@ -19,19 +20,19 @@ function queueOverflowResolver(arr) {
 }
 
 async function sendEmbed(page, message) {
-	var queue = index.getQueue();
+	var queue = index.getQueue(message);
 
 	let queueEmbed = new Discord.RichEmbed()
 
 		// .setDescription(`${queueResolver(parsedQueue, 0)}\n\n${queueResolver(parsedQueue, 1)}\n\n${queueResolver(parsedQueue, 2)}\n\n${queueResolver(parsedQueue, 3)}\n\n${queueResolver(parsedQueue, 4)}\n\n${queueOverflowResolver(parsedQueue)}`)
-		.setDescription(`${queueResolver(queue, 0 + page * 5)}\n\n${queueResolver(queue, 1 + page * 5)}\n\n${queueResolver(queue, 2 + page * 5)}\n\n${queueResolver(queue, 3 + page * 5)}\n\n${queueResolver(queue, 4 + page * 5)}\n\n${queueOverflowResolver(queue)}`)
-		.setAuthor(`➡️ Current queue - Page ${page + 1}`)
+		.setDescription(`:information_source: Current queue - Page ${page + 1}\n\n${await queueResolver(queue, 0 + page * 5)}\n\n${await queueResolver(queue, 1 + page * 5)}\n\n${await queueResolver(queue, 2 + page * 5)}\n\n${await queueResolver(queue, 3 + page * 5)}\n\n${await queueResolver(queue, 4 + page * 5)}\n\n${await queueOverflowResolver(queue)}`)
+		// .setAuthor(`➡️ Current queue - Page ${page + 1}`)
 		.setColor(`#0083FF`);
 	return await message.channel.send(queueEmbed);
 }
 
 async function reactionHandler(sent, message, page) {
-	var queue = index.getQueue();
+	var queue = index.getQueue(message);
 
 	const filter = (reaction, user) => {
 		return ['◀️', '🔘', '▶️'].includes(reaction.emoji.name) && user.id === message.author.id;
@@ -81,13 +82,13 @@ async function reactionHandler(sent, message, page) {
 				reactionHandler(newSent, message, page + 1);
 			}
 		})
-		.catch(collected => {
+		.catch(async collected => {
 			// message.reply('Reaction timeout');
 			let noControlQueue = new Discord.RichEmbed()
 
 				// .setDescription(`${queueResolver(parsedQueue, 0)}\n\n${queueResolver(parsedQueue, 1)}\n\n${queueResolver(parsedQueue, 2)}\n\n${queueResolver(parsedQueue, 3)}\n\n${queueResolver(parsedQueue, 4)}\n\n${queueOverflowResolver(parsedQueue)}`)
-				.setDescription(`${queueResolver(queue, 0 + page * 5)}\n\n${queueResolver(queue, 1 + page * 5)}\n\n${queueResolver(queue, 2 + page * 5)}\n\n${queueResolver(queue, 3 + page * 5)}\n\n${queueResolver(queue, 4 + page * 5)}\n\n${queueOverflowResolver(queue)}`)
-				.setAuthor(`➡️ Current queue - Page ${page + 1}`)
+				.setDescription(`:information_source: Current queue - Page ${page + 1}\n\n${await queueResolver(queue, 0 + page * 5)}\n\n${await queueResolver(queue, 1 + page * 5)}\n\n${await queueResolver(queue, 2 + page * 5)}\n\n${await queueResolver(queue, 3 + page * 5)}\n\n${await queueResolver(queue, 4 + page * 5)}\n\n${queueOverflowResolver(queue)}`)
+				// .setAuthor(`➡️ Current queue - Page ${page + 1}`)
 				.setColor(`#0083FF`)
 				.setFooter(`Controls cleared due to inactivity`);
 			sent.edit(noControlQueue);
@@ -106,7 +107,7 @@ async function sendDetails(input, c, index) {
 	} else {
 		c.send(new Discord.RichEmbed()
 			.setAuthor(`➡️ In queue: Video #${index}`)
-			.setDescription(`**[${input.getTitle()}](${input.getURL()})**\nBy: [${await input.getChannelName()}](${input.getChannelURL()})\n\n\`<⚫——————————> (0:00/${await input.getLength()})\``)
+			.setDescription(`**[${input.getTitle()}](${input.getURL()})**\nBy: [${await input.getChannelName()}](${input.getChannelURL()})\n\nLength: \`${await input.getLength()}\``)
 			.setThumbnail(input.getThumbnail())
 			.setTimestamp()
 			.setFooter(`Requested by ${input.getRequesterName()}`));
@@ -123,7 +124,7 @@ module.exports = {
 	enabled: true,
 	async execute(message, args) {
 
-		var queue = index.getQueue();
+		var queue = index.getQueue(message);
 
 		var page = 0;
 
@@ -133,7 +134,7 @@ module.exports = {
 			reqIndex = args[0] - 1;
 		}
 
-		if (queue.length == 0) {
+		if (queue == undefined || queue.length == 0) {
 			let emptyQueueEmbed = new Discord.RichEmbed()
 
 				.setDescription(`:information_source: The queue is currently empty`)

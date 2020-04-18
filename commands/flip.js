@@ -14,6 +14,8 @@ module.exports = {
     // guildOnly: true,
     enabled: true,
     execute(message, args) {
+        if (message.channel.id == "471193210102743042") return;
+
         var rand = Math.floor(Math.random() * 2) + 1;
 
         var originalBalance = currency.getBalance(message.author.id);

@@ -3,7 +3,7 @@ const fs = require('fs');
 const Discord = require(`discord.js`);
 
 function executeSkip(message) {
-	var dispatcher = index.getDispatcher();
+	var dispatcher = index.getDispatcher(message);
 
 	if (dispatcher == undefined || dispatcher.speaking == false) {
 		let skipFailEmbed = new Discord.RichEmbed()
@@ -15,7 +15,7 @@ function executeSkip(message) {
 		return;
 	}
 
-	index.endDispatcher();
+	index.endDispatcher(message);
 
 	let endDispatcherEmbed = new Discord.RichEmbed()
 

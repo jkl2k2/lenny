@@ -10,7 +10,7 @@ module.exports = {
 	guildOnly: true,
 	enabled: true,
 	async execute(message, args) {
-		var dispatcher = index.getDispatcher();
+		var dispatcher = index.getDispatcher(message);
 
 		if (dispatcher == undefined || !dispatcher.speaking) {
 			var nothingPlaying = new Discord.RichEmbed()
@@ -73,7 +73,7 @@ module.exports = {
 			progressBar = (`\`<⚫——————————> (${formattedPlaying}/${formattedTotal})\``);
 		}
 
-		var embed = index.getPlaying();
+		var embed = index.getPlaying(message);
 
 		if (playingObj.getType() == "video") {
 			embed.setDescription(`**[${playingObj.getTitle()}](${playingObj.getURL()})**\nBy: [${await playingObj.getChannelName()}](${playingObj.getChannelURL()})\n\n${progressBar}`);

@@ -1,5 +1,6 @@
 const index = require(`../index.js`);
 const Discord = require(`discord.js`);
+const Queues = index.getQueues();
 
 module.exports = {
     name: 'move',
@@ -11,36 +12,28 @@ module.exports = {
     guildOnly: true,
     enabled: true,
     execute(message, args) {
-        var queue = index.getQueue();
+        var queue = index.getQueue(message);
         var startPos = args[0] - 1;
         var targetPos = args[1] - 1;
 
         if (!args[0]) {
-            let noStart = new Discord.RichEmbed()
+            return message.channel.send(new Discord.RichEmbed()
                 .setDescription(`<:error:643341473772863508> Please specify a start position`)
-                .setColor(`#FF0000`);
-            message.channel.send(noStart);
-            return;
+                .setColor(`#FF0000`));
         } else if (!args[1]) {
-            let noTarget = new Discord.RichEmbed()
+            return message.channel.send(new Discord.RichEmbed()
                 .setDescription(`<:error:643341473772863508> Please specify a target position`)
-                .setColor(`#FF0000`);
-            message.channel.send(noTarget);
-            return;
+                .setColor(`#FF0000`));
         }
 
         if (isNaN(args[0])) {
-            let startNaN = new Discord.RichEmbed()
+            return message.channel.send(new Discord.RichEmbed()
                 .setDescription(`<:error:643341473772863508> Start position must be a number`)
-                .setColor(`#FF0000`);
-            message.channel.send(startNaN);
-            return;
+                .setColor(`#FF0000`));
         } else if (isNaN(args[1])) {
-            let targetNaN = new Discord.RichEmbed()
+            return message.channel.send(new Discord.RichEmbed()
                 .setDescription(`<:error:643341473772863508> Target position must be a number`)
-                .setColor(`#FF0000`);
-            message.channel.send(targetNaN);
-            return;
+                .setColor(`#FF0000`));
         }
 
         // If target video exists at that position
@@ -49,35 +42,29 @@ module.exports = {
             if (targetPos >= 0 && targetPos < queue.length) {
                 queue.splice(targetPos, 0, queue.splice(startPos, 1)[0]);
                 if (targetPos == 0) {
-                    let moveSuccess = new Discord.RichEmbed()
-                        .setDescription(`:white_check_mark: Moved video [${queue[targetPos].getCleanTitle()}](${queue[targetPos].getURL()}) from position #${startPos + 1} to #${targetPos + 1}
-                        
-                                         [${queue[targetPos].getCleanTitle()}](${queue[targetPos].getURL()})
-                                         will now play after
-                                         [${index.getPlayingVideo().getCleanTitle()}](${index.getPlayingVideo().getURL()})`)
-                        .setColor(`#44C408`);
-                    message.channel.send(moveSuccess);
+                    message.channel.send(new Discord.RichEmbed()
+                        .setDescription(`:white_check_mark: Moved from position #${startPos + 1} to #${targetPos + 1}:\n**[${queue[targetPos].getCleanTitle()}](${queue[targetPos].getURL()})**
+
+                                         It will now play after:
+                                         **[${index.getPlayingVideo().getCleanTitle()}](${index.getPlayingVideo().getURL()})**`)
+                        .setColor(`#44C408`));
                 } else {
-                    let moveSuccess = new Discord.RichEmbed()
-                        .setDescription(`:white_check_mark: Moved video [${queue[targetPos].getCleanTitle()}](${queue[targetPos].getURL()}) from position #${startPos + 1} to #${targetPos + 1}
-                        
-                                         [${queue[targetPos].getCleanTitle()}](${queue[targetPos].getURL()})
-                                         will now play after
-                                         [${queue[targetPos - 1].getCleanTitle()}](${queue[targetPos - 1].getURL()})`)
-                        .setColor(`#44C408`);
-                    message.channel.send(moveSuccess);
+                    message.channel.send(new Discord.RichEmbed()
+                        .setDescription(`:white_check_mark: Moved from position #${startPos + 1} to #${targetPos + 1}:\n**[${queue[targetPos].getCleanTitle()}](${queue[targetPos].getURL()})**
+
+                                         It will now play after:
+                                         **[${queue[targetPos - 1].getCleanTitle()}](${queue[targetPos - 1].getURL()})**`)
+                        .setColor(`#44C408`));
                 }
             } else {
-                let targetInvalid = new Discord.RichEmbed()
+                message.channel.send(new Discord.RichEmbed()
                     .setDescription(`<:error:643341473772863508> Sorry, target position #${targetPos + 1} isn't valid`)
-                    .setColor(`#FF0000`);
-                message.channel.send(targetInvalid);
+                    .setColor(`#FF0000`));
             }
         } else {
-            let startInvalid = new Discord.RichEmbed()
+            message.channel.send(new Discord.RichEmbed()
                 .setDescription(`<:error:643341473772863508> Sorry, there isn't a video at position #${startPos + 1}`)
-                .setColor(`#FF0000`);
-            message.channel.send(startInvalid);
+                .setColor(`#FF0000`));
         }
     }
 };

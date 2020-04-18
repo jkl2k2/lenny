@@ -9,22 +9,21 @@ module.exports = {
 	// cooldown: seconds,
 	guildOnly: true,
 	enabled: true,
-	execute(message, args) {
-		// index.callJoinVC(message);
+	async execute(message, args) {
 		if (message.member.voiceChannel) {
+			var sent = await message.channel.send(new Discord.RichEmbed()
+				.setDescription(`:arrows_counterclockwise: Connecting to ${message.member.voiceChannel.name}`)
+				.setColor(`#0083FF`));
 			message.member.voiceChannel.join()
 				.then(connection => {
-					let joinEmbed = new Discord.RichEmbed()
-						.setDescription(`:arrow_right: Connected to "${connection.channel.name}"`)
-						.setColor(`#0083FF`);
-					message.channel.send(joinEmbed);
+					sent.edit(new Discord.RichEmbed()
+						.setDescription(`:arrow_right: Connected to ${connection.channel.name}`)
+						.setColor(`#0083FF`));
 				});
 		} else {
-			let joinFailEmbed = new Discord.RichEmbed()
-
+			message.channel.send(new Discord.RichEmbed()
 				.setDescription(`<:error:643341473772863508> You are not in a voice channel`)
-				.setColor(`#FF0000`);
-			message.channel.send(joinFailEmbed);
+				.setColor(`#FF0000`));
 		}
 	}
 };

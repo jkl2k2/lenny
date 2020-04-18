@@ -1,5 +1,6 @@
 const index = require(`../index.js`);
 const Discord = require(`discord.js`);
+const Queues = index.getQueues();
 
 module.exports = {
 	name: 'skipall',
@@ -11,7 +12,7 @@ module.exports = {
 	enabled: true,
 	execute(message, args) {
 
-		var dispatcher = index.getDispatcher();
+		var dispatcher = index.getDispatcher(message);
 
 		if (dispatcher == undefined || dispatcher.speaking == false) {
 			let skipFailEmbed = new Discord.RichEmbed()
@@ -23,8 +24,8 @@ module.exports = {
 			return;
 		}
 
-		index.setQueue([]);
-		index.endDispatcher();
+		index.setQueue(message, []);
+		index.endDispatcher(message);
 
 		let endDispatcherEmbed = new Discord.RichEmbed()
 

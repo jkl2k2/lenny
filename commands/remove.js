@@ -15,7 +15,7 @@ module.exports = {
         args.unshift();
         // index.removeFromQueue(args[0]);
 
-        var queue = index.getQueue();
+        var queue = index.getQueue(message);
 
         var target = parseInt(args[0]);
 
@@ -23,7 +23,7 @@ module.exports = {
 
         logger.debug(splitArgs);
 
-        if (queue[target - 1] == undefined) {
+        if (queue == undefined || queue[target - 1] == undefined) {
             let indexDNEEmbed = new Discord.RichEmbed()
 
                 .setDescription(`<:error:643341473772863508> ${target} is not a valid position in the queue`)

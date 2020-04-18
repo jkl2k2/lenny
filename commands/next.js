@@ -1,5 +1,6 @@
 const index = require(`../index.js`);
 const Discord = require(`discord.js`);
+const Queues = index.getQueues();
 
 async function sendDetails(input, c) {
     if (input.getLength() == `unknown`) {
@@ -13,7 +14,7 @@ async function sendDetails(input, c) {
     } else {
         let musicEmbed = new Discord.RichEmbed()
             .setAuthor(`➡️ Coming up next`)
-            .setDescription(`**[${input.getTitle()}](${input.getURL()})**\nBy: [${await input.getChannelName()}](${input.getChannelURL()})\n\n\`<⚫——————————> (0:00/${await input.getLength()})\``)
+            .setDescription(`**[${input.getTitle()}](${input.getURL()})**\nBy: [${await input.getChannelName()}](${input.getChannelURL()})\n\nLength: \`${await input.getLength()}\``)
             .setThumbnail(input.getThumbnail())
             .setTimestamp()
             .setFooter(`Requested by ${input.getRequesterName()}`);
@@ -30,15 +31,20 @@ module.exports = {
     guildOnly: true,
     enabled: true,
     execute(message, args) {
-        var queue = index.getQueue();
-        var nextVideo = queue[0];
-        if (nextVideo != undefined) {
-            sendDetails(nextVideo, message.channel);
-        } else {
-            let nextUndefEmbed = new Discord.RichEmbed()
+        var queue = index.getQueue(message);
+
+        if (queue == undefined) {
+            return message.channel.send(new Discord.RichEmbed()
                 .setDescription(`:information_source: There is no video coming up in the queue`)
-                .setColor(`#0083FF`);
-            message.channel.send(nextUndefEmbed);
+                .setColor(`#0083FF`));
+        }
+
+        if (queue[0] != undefined) {
+            sendDetails(queue[0], message.channel);
+        } else {
+            message.channel.send(new Discord.RichEmbed()
+                .setDescription(`:information_source: There is no video coming up in the queue`)
+                .setColor(`#0083FF`));
         }
     }
 };

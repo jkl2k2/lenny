@@ -38,8 +38,11 @@ client.commands = new Discord.Collection();
 const cooldowns = new Discord.Collection();
 
 // Global variables
-var queue = [];
+// var queue = [];
 var repeat = false;
+
+const Queues = new Discord.Collection();
+const Dispatchers = new Discord.Collection();
 
 const applyText = (canvas, text) => {
     const ctx = canvas.getContext('2d');
@@ -127,9 +130,6 @@ var lastDetails;
 var lastPlayed;
 var statusChannel;
 var statusMessage;
-// var infoMessage;
-// var queueMessage;
-// var lastMusicMessage;
 
 var casinoStatusMessage;
 
@@ -170,13 +170,15 @@ function sendSCDetails(input, c) {
 
 async function playMusic(message) {
 
+    var queue = Queues.get(message.guild.id);
+
     if (queue == undefined) {
         logger.warn("playMusic() called, but queue undefined");
         return;
     }
 
     if (queue[0] == undefined) {
-        logger.warn("playMusic() called, but queue[0] is undefined");
+        // logger.warn("playMusic() called, but queue[0] is undefined");
         return;
     } else {
         if (queue[0].getType() == "video" || queue[0].getType() == "livestream") {
@@ -184,9 +186,11 @@ async function playMusic(message) {
 
             let input = ytdl(queue[0].getURL(), { quality: "highestaudio", highWaterMark: 1 << 25 });
 
-            let connections = client.voiceConnections.array();
+            // let connections = client.voiceConnections.array();
 
-            dispatcher = connections[0].playStream(input, { bitrate: 192000 });
+            // dispatcher = connections[0].playStream(input, { bitrate: 192000 });
+
+            Dispatchers.set(message.guild.id, client.voiceConnections.get(message.guild.id).playStream(input));
 
             sendDetails(queue[0], message.channel);
         } else if (queue[0].getType() == "soundcloud") {
@@ -203,6 +207,7 @@ async function playMusic(message) {
         }
 
         lastPlayed = queue.shift();
+        // Queues.get(message.guild.id).shift();
         var path;
         if (lastPlayed && lastPlayed.getType() == "soundcloud") {
             path = `./soundcloud/${lastPlayed.getTitle()}`;
@@ -222,7 +227,7 @@ async function playMusic(message) {
 
         // updateInfo();
 
-        dispatcher.on("end", function () {
+        Dispatchers.get(message.guild.id).on("end", function () {
             if (repeat) {
                 queue.unshift(lastPlayed);
             }
@@ -243,145 +248,6 @@ async function playMusic(message) {
     }
 }
 
-/*
-async function updateStatus() {
-    if (dispatcher != undefined && dispatcher.paused) {
-        return statusMessage.edit(new Discord.RichEmbed()
-            .setAuthor(`⬛ Music is currently paused`));
-    }
-    if (dispatcher == undefined || !dispatcher.speaking) {
-        // return logger.info(`Dispatcher not playing, status not updated`);
-        return statusMessage.edit(new Discord.RichEmbed()
-            .setAuthor(`⬛ Player currently inactive`));
-    }
-    // var playing = await lastPlayed.getFullVideo();
-    var playing = lastPlayed.getVideo();
-    var playingObj = lastPlayed;
-
-    // var minsToSec = playing.duration.minutes * 60;
-    var total = playing.duration.seconds + (playing.duration.minutes * 60) + (playing.duration.hours * 60 * 60);
-
-    var formattedTotal = await lastPlayed.getLength();
-
-    var minsPlaying = Math.trunc((dispatcher.time / 1000) / 60);
-    var secondsPlaying = Math.trunc((dispatcher.time / 1000) - (minsPlaying * 60));
-
-    var formattedPlaying = ``;
-
-    if (minsPlaying < 1) {
-        if (secondsPlaying < 10) {
-            formattedPlaying = `0:0${secondsPlaying}`;
-        } else {
-            formattedPlaying = `0:${secondsPlaying}`;
-        }
-    } else {
-        if (secondsPlaying < 10) {
-            formattedPlaying = `${minsPlaying}:0${secondsPlaying}`;
-        } else {
-            formattedPlaying = `${minsPlaying}:${secondsPlaying}`;
-        }
-    }
-
-    var frac = (dispatcher.time / 1000) / total;
-
-    var progressBar = ``;
-
-    if (frac >= 0.9) {
-        progressBar = (`\`<——————————⚫> (${formattedPlaying}/${formattedTotal})\``);
-    } else if (frac >= 0.8) {
-        progressBar = (`\`<—————————⚫—> (${formattedPlaying}/${formattedTotal})\``);
-    } else if (frac >= 0.7) {
-        progressBar = (`\`<————————⚫——> (${formattedPlaying}/${formattedTotal})\``);
-    } else if (frac >= 0.7) {
-        progressBar = (`\`<———————⚫———> (${formattedPlaying}/${formattedTotal})\``);
-    } else if (frac >= 0.6) {
-        progressBar = (`\`<——————⚫————> (${formattedPlaying}/${formattedTotal})\``);
-    } else if (frac >= 0.5) {
-        progressBar = (`\`<—————⚫—————> (${formattedPlaying}/${formattedTotal})\``);
-    } else if (frac >= 0.4) {
-        progressBar = (`\`<————⚫——————> (${formattedPlaying}/${formattedTotal})\``);
-    } else if (frac >= 0.3) {
-        progressBar = (`\`<———⚫———————> (${formattedPlaying}/${formattedTotal})\``);
-    } else if (frac >= 0.2) {
-        progressBar = (`\`<——⚫————————> (${formattedPlaying}/${formattedTotal})\``);
-    } else if (frac >= 0.1) {
-        progressBar = (`\`<—⚫—————————> (${formattedPlaying}/${formattedTotal})\``);
-    } else if (frac >= 0) {
-        progressBar = (`\`<⚫——————————> (${formattedPlaying}/${formattedTotal})\``);
-    }
-
-    // var embed = lastDetails;
-    var embed = new Discord.RichEmbed();
-
-    if (playingObj.getType() == "video") {
-        // embed.setDescription(`**[${playingObj.getTitle()}](${playingObj.getURL()})**\nBy: [${await playingObj.getChannelName()}](${playingObj.getChannelURL()})\n\n${progressBar}`);
-        // embed.setImage(playingObj.getThumbnail());
-
-        embed.setDescription(progressBar);
-    } else if (playingObj.getType() == "livestream") {
-        // embed.setDescription(`**[${playingObj.getTitle()}](${playingObj.getURL()})**\nBy: [${await playingObj.getChannelName()}](${playingObj.getChannelURL()})\n\n\`Time elapsed: ${formattedPlaying}\``);
-        // embed.setImage(playingObj.getThumbnail());
-
-        embed.setDescription(formattedPlaying);
-    }
-
-    statusMessage.edit(embed);
-}
-*/
-
-/*
-async function updateInfo() {
-    if (dispatcher == undefined) {
-        // return logger.info(`Dispatcher not playing, status not updated`);
-        return infoMessage.edit(new Discord.RichEmbed()
-            .setDescription(`No video currently playing\nPlayer status will be shown here`));
-    }
-
-    infoMessage.edit(new Discord.RichEmbed()
-        // .setAuthor(`▶️ Now Playing`)
-        .setDescription(`**[${lastPlayed.getTitle()}](${lastPlayed.getURL()})**\nBy: [${await lastPlayed.getChannelName()}](${lastPlayed.getChannelURL()})`)
-        .setFooter(`Requested by ${lastPlayed.getRequesterName()}`)
-        .setImage(lastPlayed.getThumbnail())
-        .setTimestamp());
-}
-*/
-
-/*
-async function updateQueue() {
-    function queueResolver(arr, index) {
-        if (arr[index]) {
-            return `\`${index + 1}.\` **[${arr[index].getCleanTitle()}](${arr[index].getURL()})**\nBy: [${arr[index].getChannelName()}](${arr[index].getChannelURL()})`;
-        } else {
-            return " ";
-        }
-    }
-
-    function queueOverflowResolver(arr) {
-        if (arr.length <= 5) {
-            return " ";
-        } else if (arr.length > 5) {
-            return `**And ${arr.length - 5} others...\nTotal of ${arr.length} songs**`;
-        }
-    }
-
-    async function sendEmbed(page) {
-        let queueEmbed = new Discord.RichEmbed()
-            .setDescription(`${queueResolver(queue, 0 + page * 5)}\n\n${queueResolver(queue, 1 + page * 5)}\n\n${queueResolver(queue, 2 + page * 5)}\n\n${queueResolver(queue, 3 + page * 5)}\n\n${queueResolver(queue, 4 + page * 5)}\n\n${queueOverflowResolver(queue)}`)
-            .setAuthor(`➡️ Coming up...`)
-            .setColor(`#0083FF`);
-        return queueMessage.edit(queueEmbed);
-    }
-
-    if (queue.length == 0) {
-        return queueMessage.edit(new Discord.RichEmbed()
-            .setDescription(`:information_source: The queue is currently empty`)
-            .setColor(`#0083FF`));
-    } else {
-        sendEmbed(0);
-    }
-}
-*/
-
 async function updateCasinoStats(mainGuild) {
     var newLeaderboard = new Discord.RichEmbed()
         .setDescription(`:money_with_wings: **OWO GRAND RESORT & CASINO PROFITS** :money_with_wings:\n\nProfit: **$${currency.getBalance("0")}**\n\n:medal: **Top 10 users by currency**\n\n` + currency.sort((a, b) => b.balance - a.balance)
@@ -396,6 +262,9 @@ async function updateCasinoStats(mainGuild) {
 
 // Functions
 module.exports = {
+    getQueues: function () {
+        return Queues;
+    },
     getCurrencyDB: function () {
         return currency;
     },
@@ -405,16 +274,32 @@ module.exports = {
     getVolume: function () {
         return dispatcher.volume;
     },
-    getQueue: function () {
-        return queue;
+    getQueue: function (message) {
+        if (Queues.has(message)) {
+            return Queues.get(message);
+
+        } else if (Queues.has(message.guild.id)) {
+            return Queues.get(message.guild.id);
+
+        } else {
+            return undefined;
+        }
     },
-    getDispatcher: function () {
-        return dispatcher;
+    setQueue: function (message, newQueue) {
+        Queues.set(message.guild.id, newQueue);
+    },
+    getDispatcher: function (message) {
+        if (Dispatchers.get(message.guild.id)) {
+            return Dispatchers.get(message.guild.id);
+        } else {
+            return undefined;
+        }
     },
     getClient: function () {
         return client;
     },
-    getPlaying: function () {
+    getPlaying: function (message) {
+        let dispatcher = Dispatchers.get(message.guild.id);
         if (dispatcher && dispatcher.speaking) {
             return lastDetails;
         } else {
@@ -435,9 +320,6 @@ module.exports = {
     getStatusMessage: function () {
         return statusMessage;
     },
-    setQueue: function (newQueue) {
-        queue = newQueue;
-    },
     setDispatcher: function (newDispatcher) {
         dispatcher = newDispatcher;
     },
@@ -450,8 +332,8 @@ module.exports = {
     resumeMusic: function () {
         dispatcher.resume();
     },
-    endDispatcher: function () {
-        dispatcher.end();
+    endDispatcher: function (message) {
+        Dispatchers.get(message.guild.id).end();
     },
     callPlayMusic: function (message) {
         playMusic(message);
@@ -473,30 +355,6 @@ for (const file of commandFiles) {
 
 // On ready
 client.on('ready', async () => {
-    /*
-    statusChannel = client.channels.get(`690401890785165322`);
-    var fetched = await statusChannel.fetchMessages({ limit: 10 });
-    statusChannel.bulkDelete(fetched);
-
-    statusMessage = await statusChannel.send(new Discord.RichEmbed()
-        .setAuthor(`⬛ Player currently inactive`));
-
-    infoMessage = await statusChannel.send(new Discord.RichEmbed()
-        .setDescription(`No video currently playing\nPlayer status will be shown here`));
-
-    queueMessage = await statusChannel.send(new Discord.RichEmbed()
-        .setDescription(`:information_source: The queue is currently empty`)
-        .setColor(`#0083FF`));
-
-    setInterval(function () {
-        updateStatus();
-    }, 3000);
-
-    setInterval(function () {
-        updateQueue();
-    }, 5000);
-    */
-
     // Sync with currency database
     const storedBalances = await Users.findAll();
     storedBalances.forEach(b => currency.set(b.user_id, b));

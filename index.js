@@ -1,12 +1,13 @@
-// Load discord.js library and load config
+//#region Requires
 const fs = require('fs');
 const Discord = require('discord.js');
 const config = require('config');
 const ytdl = require('ytdl-core');
 const chalk = require('chalk');
 const winston = require('winston');
+//#endregion
 
-// Initialize database
+//#region Initialize database
 const { Users, CurrencyShop } = require('./dbObjects');
 const { Op } = require('sequelize');
 const currency = new Discord.Collection();
@@ -30,14 +31,15 @@ Reflect.defineProperty(currency, 'getBalance', {
         return user ? user.balance : 0;
     },
 });
+//#endregion
 
-// Initialize client
+//#region Initialize client
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 const cooldowns = new Discord.Collection();
+//#endregion
 
-// Global variables
-// var queue = [];
+//#region Globals/Constants/Variables/etc.
 var repeat = false;
 
 const Queues = new Discord.Collection();
@@ -47,6 +49,16 @@ const prefix = config.get(`Bot.prefix`);
 const token = config.get(`Bot.token`);
 const ownerID = config.get(`Users.ownerID`);
 
+var dispatcher;
+var lastDetails;
+var lastPlayed;
+
+var statusChannel;
+var statusMessage;
+var casinoStatusMessage;
+//#endregion
+
+//#region Winston logger
 winston.addColors({
     error: 'red',
     warn: 'yellow',
@@ -90,7 +102,9 @@ const logger = winston.createLogger({
         })
     ]
 });
+//#endregion
 
+//#region ClientUser activities
 class Activity {
     constructor(text, format) {
         this.text = text;
@@ -112,15 +126,9 @@ const activities = [
     new Activity("trash music", "LISTENING"),
     new Activity("Russian spies", "LISTENING")
 ];
+//#endregion
 
-var dispatcher;
-var lastDetails;
-var lastPlayed;
-var statusChannel;
-var statusMessage;
-
-var casinoStatusMessage;
-
+//#region Music info message sending
 async function sendDetails(input, c) {
     if (input.getType() == "livestream") {
         let musicEmbed = new Discord.RichEmbed()
@@ -155,7 +163,9 @@ function sendSCDetails(input, c) {
     c.send(scMusicEmbed);
     lastDetails = scMusicEmbed;
 }
+//#endregion
 
+//#region Music playing
 async function playMusic(message) {
 
     var queue = Queues.get(message.guild.id);
@@ -235,7 +245,9 @@ async function playMusic(message) {
         });
     }
 }
+//#endregion
 
+//#region Casino status
 async function updateCasinoStats(mainGuild) {
     var newLeaderboard = new Discord.RichEmbed()
         .setDescription(`:money_with_wings: **OWO GRAND RESORT & CASINO PROFITS** :money_with_wings:\n\nProfit: **$${currency.getBalance("0")}**\n\n:medal: **Top 10 users by currency**\n\n` + currency.sort((a, b) => b.balance - a.balance)
@@ -247,8 +259,9 @@ async function updateCasinoStats(mainGuild) {
         .setColor(`#1b9e56`);
     casinoStatusMessage.edit(newLeaderboard);
 }
+//#endregion
 
-// Functions
+//#region Exports
 module.exports = {
     getQueues: function () {
         return Queues;
@@ -330,18 +343,19 @@ module.exports = {
         repeat = toSet;
     }
 };
+//#endregion
 
-// Load all command files
+//#region Command file loading
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
     const command = require(`./commands/${file}`);
 
-    // set a new item in the Collection
-    // with the key as the command name and the value as the exported module
+    // Key: name, value: command module
     client.commands.set(command.name, command);
 }
+//#endregion
 
-// On ready
+//#region Client Ready
 client.on('ready', async () => {
     // Sync with currency database
     const storedBalances = await Users.findAll();
@@ -383,22 +397,9 @@ client.on('ready', async () => {
     logger.info(chalk.white.bgCyan(`Timestamp: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} - ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`));
     logger.info(chalk.white.bgCyan.bold(`-------Awaiting Commands-------`));
 });
+//#endregion
 
-client.on('error', () => {
-    // On connection error
-    client.user.setActivity("lost connection...", { type: "PLAYING" });
-    client.user.setStatus("dnd");
-});
-
-/*
-client.on('reconnecting', () => {
-    // On reconnecting to Discord
-    client.user.setActivity("reconnecting...", { type: "PLAYING" });
-    client.user.setStatus("dnd");
-});
-*/
-
-// On message
+//#region Client on message
 client.on('message', message => {
 
     if (message.content.includes("banana")) {
@@ -576,8 +577,6 @@ client.on('message', message => {
         message.channel.send(errorEmbed);
     }
 });
-
-// Handle uncaught promise rejections
-// process.on('unhandledRejection', error => logger.error(chalk.whiteBright.bgRedBright(`UNCAUGHT PROMISE REJECTION\n${error}`)));
+//#endregion
 
 client.login(token);

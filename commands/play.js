@@ -1,3 +1,4 @@
+//#region Constants and requires
 const index = require(`../index.js`);
 const config = require('config');
 const fs = require('fs');
@@ -9,7 +10,9 @@ const youtube = new YouTube(api);
 const chalk = require('chalk');
 const logger = index.getLogger();
 const Queues = index.getQueues();
+//#endregion
 
+//#region Class declarations
 class YTVideo {
 	constructor(video, requester) {
 		this.video = video;
@@ -160,6 +163,7 @@ class SCSong {
 		return queue.indexOf(this) + 1;
 	}
 }
+//#endregion
 
 module.exports = {
 	name: 'play',
@@ -171,6 +175,7 @@ module.exports = {
 	guildOnly: true,
 	enabled: true,
 	execute(message, args) {
+		//#region Error handling and other necessary setup
 		if (!message.member.voiceChannel) {
 			// If member not in VC
 			return message.channel.send(new Discord.RichEmbed()
@@ -188,43 +193,9 @@ module.exports = {
 		}
 
 		var queue = index.getQueue(message);
+		//#endregion
 
-		async function process(input) {
-			logger.debug(input.title);
-
-			let newVideo = new YTVideo(input, message.member);
-
-			// queue.push(newVideo);
-
-			if (!Queues.has(message.guild.id)) {
-				let newQueue = [];
-				newQueue.push(newVideo);
-				// Queues.set(message.guild.id, newQueue);
-				index.setQueue(message, newQueue);
-			} else {
-				queue.push(newVideo);
-			}
-
-			message.channel.send(new Discord.RichEmbed()
-				.setAuthor(`➕ Queued`)
-				.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\nBy: [${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\n\`#${newVideo.getPosition()} in queue\``)
-				.setThumbnail(newVideo.getThumbnail())
-				.setTimestamp()
-				.setFooter(`Requested by ${newVideo.getRequesterName()}`));
-
-			if (message.member.voiceChannel) {
-				message.member.voiceChannel.join()
-					.then(connection => {
-						if (index.getDispatcher(message) == undefined || (!connection.speaking && !index.getDispatcher(message).paused)) {
-							index.callPlayMusic(message);
-						}
-					})
-					.catch(`${logger.error}`);
-			} else {
-				logger.error("Failed to join voice channel");
-			}
-		}
-
+		//#region Playlist handling
 		async function handlePlaylist() {
 			await youtube.getPlaylist(args[0])
 				.then(async function (playlist) {
@@ -275,6 +246,44 @@ module.exports = {
 					}
 				});
 		}
+		//#endregion
+
+		//#region Regular video / livestream handling
+		async function process(input) {
+			logger.debug(input.title);
+
+			let newVideo = new YTVideo(input, message.member);
+
+			// queue.push(newVideo);
+
+			if (!Queues.has(message.guild.id)) {
+				let newQueue = [];
+				newQueue.push(newVideo);
+				// Queues.set(message.guild.id, newQueue);
+				index.setQueue(message, newQueue);
+			} else {
+				queue.push(newVideo);
+			}
+
+			message.channel.send(new Discord.RichEmbed()
+				.setAuthor(`➕ Queued`)
+				.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\nBy: [${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\n\`#${newVideo.getPosition()} in queue\``)
+				.setThumbnail(newVideo.getThumbnail())
+				.setTimestamp()
+				.setFooter(`Requested by ${newVideo.getRequesterName()}`));
+
+			if (message.member.voiceChannel) {
+				message.member.voiceChannel.join()
+					.then(connection => {
+						if (index.getDispatcher(message) == undefined || (!connection.speaking && !index.getDispatcher(message).paused)) {
+							index.callPlayMusic(message);
+						}
+					})
+					.catch(`${logger.error}`);
+			} else {
+				logger.error("Failed to join voice channel");
+			}
+		}
 
 		async function handleVideo() {
 			if (args[0].includes("watch?v=") || args[0].includes('youtu.be')) {
@@ -292,7 +301,9 @@ module.exports = {
 					});
 			}
 		}
+		//#endregion
 
+		//#region SoundCloud handling
 		async function handleSoundCloud() {
 			soundcloudQueued = true;
 
@@ -346,7 +357,9 @@ module.exports = {
 			});
 
 		}
+		//#endregion
 
+		//#region Determine action based on input
 		if (args[0].includes("playlist?list=")) {
 			handlePlaylist();
 		} else if (args[0].includes("soundcloud")) {
@@ -354,5 +367,6 @@ module.exports = {
 		} else {
 			handleVideo();
 		}
+		//#endregion
 	}
 };

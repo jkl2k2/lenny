@@ -98,7 +98,7 @@ module.exports = {
 
         if (!command.guildOnly) commandHelp.addField(`**Servers or DMs**`, `Usable in both servers and bot's DMs`);
 
-        if (command.args) commandHelp.addField(`**Arguments required**`, `Providing the required arguments is required`);
+        // if (command.args) commandHelp.addField(`**Arguments required**`, `Providing the required arguments is required`);
 
         // data.push(`**Cooldown:** ${command.cooldown || 3} second(s)`);
         commandHelp.addField(`**Cooldown**`, `${command.cooldown || 3} second(s)`);

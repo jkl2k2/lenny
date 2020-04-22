@@ -13,112 +13,6 @@ const Queues = index.getQueues();
 //#endregion
 
 //#region Class declarations
-class YTVideo {
-	constructor(video, requester) {
-		this.video = video;
-		this.requester = requester;
-	}
-	getTitle() {
-		return this.video.title;
-	}
-	getCleanTitle() {
-		return this.video.title;
-	}
-	getURL() {
-		return this.video.url;
-	}
-	getRequester() {
-		return this.requester;
-	}
-	getRequesterName() {
-		return this.requester.user.username;
-	}
-	getType() {
-		if (!this.video.duration) {
-			return "video";
-		} else if (this.video.duration.hours == 0 && this.video.duration.minutes == 0 && this.video.duration.seconds == 0) {
-			return "livestream";
-		} else {
-			return "video";
-		}
-	}
-	getThumbnail() {
-		if (this.video.maxRes) {
-			return this.video.maxRes.url;
-		} else {
-			return ``;
-		}
-	}
-	getChannelName() {
-		return this.video.channel.title;
-	}
-	getChannelURL() {
-		return this.video.channel.url;
-	}
-	async getLength() {
-		if ((!this.video.duration) || this.video.duration.hours == 0 && this.video.duration.minutes == 0 && this.video.duration.seconds == 0) {
-			var fullVideo = await youtube.getVideo(this.video.url);
-			if (fullVideo.duration.hours == 0) {
-				if (fullVideo.duration.seconds < 10) {
-					return `${fullVideo.duration.minutes}:0${fullVideo.duration.seconds}`;
-				} else {
-					return `${fullVideo.duration.minutes}:${fullVideo.duration.seconds}`;
-				}
-			} else {
-				if (fullVideo.duration.seconds < 10) {
-					if (fullVideo.duration.minutes < 10) {
-						return `${fullVideo.duration.hours}:0${fullVideo.duration.minutes}:0${fullVideo.duration.seconds}`;
-					} else {
-						return `${fullVideo.duration.hours}:${fullVideo.duration.minutes}:0${fullVideo.duration.seconds}`;
-					}
-				} else {
-					if (fullVideo.duration.minutes < 10) {
-						return `${fullVideo.duration.hours}:0${fullVideo.duration.minutes}:${fullVideo.duration.seconds}`;
-					} else {
-						return `${fullVideo.duration.hours}:${fullVideo.duration.minutes}:${fullVideo.duration.seconds}`;
-					}
-				}
-			}
-		}
-
-		if (this.video.duration.hours == 0) {
-			if (this.video.duration.seconds < 10) {
-				return `${this.video.duration.minutes}:0${this.video.duration.seconds}`;
-			} else {
-				return `${this.video.duration.minutes}:${this.video.duration.seconds}`;
-			}
-		} else {
-			if (this.video.duration.seconds < 10) {
-				if (this.video.duration.minutes < 10) {
-					return `${this.video.duration.hours}:0${this.video.duration.minutes}:0${this.video.duration.seconds}`;
-				} else {
-					return `${this.video.duration.hours}:${this.video.duration.minutes}:0${this.video.duration.seconds}`;
-				}
-			} else {
-				if (this.video.duration.minutes < 10) {
-					return `${this.video.duration.hours}:0${this.video.duration.minutes}:${this.video.duration.seconds}`;
-				} else {
-					return `${this.video.duration.hours}:${this.video.duration.minutes}:${this.video.duration.seconds}`;
-				}
-			}
-		}
-	}
-	getPosition() {
-		let queue = index.getQueue(this.requester.guild.id);
-		if (queue.indexOf(this) == -1) {
-			return 1;
-		} else {
-			return queue.indexOf(this) + 1;
-		}
-	}
-	getVideo() {
-		return this.video;
-	}
-	async getFullVideo() {
-		return await youtube.getVideo(this.video.url);
-	}
-}
-
 class SCSong {
 	constructor(url, requester, info) {
 		this.url = url;
@@ -253,7 +147,8 @@ module.exports = {
 		async function process(input) {
 			logger.debug(input.title);
 
-			let newVideo = new YTVideo(input, message.member);
+			// let newVideo = new YTVideo(input, message.member);
+			let newVideo = global.constructVideo(input, message.member);
 
 			// queue.push(newVideo);
 

@@ -76,8 +76,10 @@ module.exports = {
 		var embed = index.getPlaying(message);
 
 		if (playingObj.getType() == "video") {
+			embed.setAuthor(`▶️ Currently playing`);
 			embed.setDescription(`**[${playingObj.getTitle()}](${playingObj.getURL()})**\nBy: [${await playingObj.getChannelName()}](${playingObj.getChannelURL()})\n\n${progressBar}`);
 		} else if (playingObj.getType() == "livestream") {
+			embed.setAuthor(`▶️ Currently playing`);
 			embed.setDescription(`**[${playingObj.getTitle()}](${playingObj.getURL()})**\nBy: [${await playingObj.getChannelName()}](${playingObj.getChannelURL()})\n\n\`Time elapsed: ${formattedPlaying}\``);
 		}
 

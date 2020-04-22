@@ -14,29 +14,24 @@ module.exports = {
         var oldVolume = 1;
 
         if (dispatcher == undefined || dispatcher.speaking == false) {
-            let notPlaying = new Discord.RichEmbed()
+            return message.channel.send(new Discord.RichEmbed()
                 .setDescription(`:information_source: Cannot mute playback when nothing is playing`)
-                .setColor(`#0083FF`);
-            message.channel.send(notPlaying);
-
-            return;
+                .setColor(`#0083FF`));
         }
 
         if (dispatcher.volume == 0) {
-            index.setDispatcherVolume(oldVolume);
+            dispatcher.setVolume(oldVolume);
 
-            let unmuted = new Discord.RichEmbed()
-                .setDescription(`:loud_sound: Volume unmuted and set to ${oldVolume * 100}%`)
-                .setColor(`#0083FF`);
-            message.channel.send(unmuted);
+            return message.channel.send(new Discord.RichEmbed()
+                .setDescription(`:loud_sound: Playback unmuted and set to \`${oldVolume * 100}%\``)
+                .setColor(`#0083FF`));
 
         } else {
-            index.setDispatcherVolume(0);
+            dispatcher.setVolume(0);
 
-            let muted = new Discord.RichEmbed()
-                .setDescription(`:mute: Volume has been muted`)
-                .setColor(`#0083FF`);
-            message.channel.send(muted);
+            return message.channel.send(new Discord.RichEmbed()
+                .setDescription(`:mute: Playback has been muted`)
+                .setColor(`#0083FF`));
 
         }
     }

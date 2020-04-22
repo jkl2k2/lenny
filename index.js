@@ -5,6 +5,9 @@ const config = require('config');
 const ytdl = require('ytdl-core');
 const chalk = require('chalk');
 const winston = require('winston');
+const api = config.get(`Bot.api2`);
+const YouTube = require('simple-youtube-api');
+const youtube = new YouTube(api);
 //#endregion
 
 //#region Initialize database
@@ -37,9 +40,124 @@ Reflect.defineProperty(currency, 'getBalance', {
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 const cooldowns = new Discord.Collection();
+const newLocal = newFunction();
+//#endregion
+
+//#region Classes
+class YTVideo {
+    constructor(video, requester) {
+        this.video = video;
+        this.requester = requester;
+    }
+    getTitle() {
+        return this.video.title;
+    }
+    getCleanTitle() {
+        return this.video.title;
+    }
+    getURL() {
+        return this.video.url;
+    }
+    getRequester() {
+        return this.requester;
+    }
+    getRequesterName() {
+        return this.requester.user.username;
+    }
+    getType() {
+        if (!this.video.duration) {
+            return "video";
+        } else if (this.video.duration.hours == 0 && this.video.duration.minutes == 0 && this.video.duration.seconds == 0) {
+            return "livestream";
+        } else {
+            return "video";
+        }
+    }
+    getThumbnail() {
+        if (this.video.maxRes) {
+            return this.video.maxRes.url;
+        } else {
+            return ``;
+        }
+    }
+    getChannelName() {
+        return this.video.channel.title;
+    }
+    getChannelURL() {
+        return this.video.channel.url;
+    }
+    async getLength() {
+        if ((!this.video.duration) || this.video.duration.hours == 0 && this.video.duration.minutes == 0 && this.video.duration.seconds == 0) {
+            var fullVideo = await youtube.getVideo(this.video.url);
+            if (fullVideo.duration.hours == 0) {
+                if (fullVideo.duration.seconds < 10) {
+                    return `${fullVideo.duration.minutes}:0${fullVideo.duration.seconds}`;
+                } else {
+                    return `${fullVideo.duration.minutes}:${fullVideo.duration.seconds}`;
+                }
+            } else {
+                if (fullVideo.duration.seconds < 10) {
+                    if (fullVideo.duration.minutes < 10) {
+                        return `${fullVideo.duration.hours}:0${fullVideo.duration.minutes}:0${fullVideo.duration.seconds}`;
+                    } else {
+                        return `${fullVideo.duration.hours}:${fullVideo.duration.minutes}:0${fullVideo.duration.seconds}`;
+                    }
+                } else {
+                    if (fullVideo.duration.minutes < 10) {
+                        return `${fullVideo.duration.hours}:0${fullVideo.duration.minutes}:${fullVideo.duration.seconds}`;
+                    } else {
+                        return `${fullVideo.duration.hours}:${fullVideo.duration.minutes}:${fullVideo.duration.seconds}`;
+                    }
+                }
+            }
+        }
+
+        if (this.video.duration.hours == 0) {
+            if (this.video.duration.seconds < 10) {
+                return `${this.video.duration.minutes}:0${this.video.duration.seconds}`;
+            } else {
+                return `${this.video.duration.minutes}:${this.video.duration.seconds}`;
+            }
+        } else {
+            if (this.video.duration.seconds < 10) {
+                if (this.video.duration.minutes < 10) {
+                    return `${this.video.duration.hours}:0${this.video.duration.minutes}:0${this.video.duration.seconds}`;
+                } else {
+                    return `${this.video.duration.hours}:${this.video.duration.minutes}:0${this.video.duration.seconds}`;
+                }
+            } else {
+                if (this.video.duration.minutes < 10) {
+                    return `${this.video.duration.hours}:0${this.video.duration.minutes}:${this.video.duration.seconds}`;
+                } else {
+                    return `${this.video.duration.hours}:${this.video.duration.minutes}:${this.video.duration.seconds}`;
+                }
+            }
+        }
+    }
+    getPosition() {
+        // let queue = index.getQueue(this.requester.guild.id);
+        let queue = Queues.get(this.requester.guild.id);
+        if (queue.indexOf(this) == -1) {
+            return 1;
+        } else {
+            return queue.indexOf(this) + 1;
+        }
+    }
+    getVideo() {
+        return this.video;
+    }
+    async getFullVideo() {
+        return await youtube.getVideo(this.video.url);
+    }
+}
 //#endregion
 
 //#region Globals/Constants/Variables/etc.
+
+global.constructVideo = (video, requester) => {
+    return new YTVideo(video, requester);
+};
+
 var repeat = false;
 
 const Queues = new Discord.Collection();
@@ -126,6 +244,10 @@ const activities = [
     new Activity("trash music", "LISTENING"),
     new Activity("Russian spies", "LISTENING")
 ];
+function newFunction() {
+    return 1;
+}
+
 //#endregion
 
 //#region Music info message sending
@@ -171,12 +293,12 @@ async function playMusic(message) {
     var queue = Queues.get(message.guild.id);
 
     if (queue == undefined) {
-        logger.warn("playMusic() called, but queue undefined");
+        logger.debug("playMusic() called, but queue undefined");
         return;
     }
 
     if (queue[0] == undefined) {
-        // logger.warn("playMusic() called, but queue[0] is undefined");
+        logger.debug("playMusic() called, but queue[0] is undefined");
         return;
     } else {
         if (queue[0].getType() == "video" || queue[0].getType() == "livestream") {
@@ -186,17 +308,14 @@ async function playMusic(message) {
 
             // let connections = client.voiceConnections.array();
 
-            // dispatcher = connections[0].playStream(input, { bitrate: 192000 });
-
             Dispatchers.set(message.guild.id, client.voiceConnections.get(message.guild.id).playStream(input));
 
             sendDetails(queue[0], message.channel);
+
         } else if (queue[0].getType() == "soundcloud") {
             // If SoundCloud
 
-            let connections = client.voiceConnections.array();
-
-            dispatcher = connections[0].playStream(fs.createReadStream(`./soundcloud/${queue[0].getTitle()}`));
+            Dispatchers.set(message.guild.id, client.voiceConnections.get(message.guild.id).playStream(fs.createReadStream(`./soundcloud/${queue[0].getTitle()}`)));
 
             sendSCDetails(queue[0], message.channel);
 
@@ -222,8 +341,6 @@ async function playMusic(message) {
             var connections = client.voiceConnections.array();
             connections[0].player.streamingData.pausedTime = 0;
         }
-
-        // updateInfo();
 
         Dispatchers.get(message.guild.id).on("end", function () {
             if (repeat) {

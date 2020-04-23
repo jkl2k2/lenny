@@ -16,6 +16,7 @@ module.exports = {
     enabled: true,
     execute(message, args) {
         // message.channel.send(client.voiceConnections.get(message.guild.id).channel.id);
+        /*
         if (Queues.get(message.guild.id)) {
             var str = "";
             for (var i = 0; i < Queues.get(message.guild.id).length; i++) {
@@ -26,5 +27,6 @@ module.exports = {
         } else {
             message.channel.send("Server's queue empty");
         }
+        */
     }
 };

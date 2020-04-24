@@ -160,7 +160,7 @@ module.exports = {
             if (!Queues.has(message.guild.id)) {
                 let newQueue = [];
                 newQueue.push(newVideo);
-                index.setQueue(message.guild.id, newQueue);
+                index.setQueue(message, newQueue);
             } else {
                 queue.push(newVideo);
             }

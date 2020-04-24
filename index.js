@@ -40,7 +40,6 @@ Reflect.defineProperty(currency, 'getBalance', {
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 const cooldowns = new Discord.Collection();
-const newLocal = newFunction();
 //#endregion
 
 //#region Classes
@@ -150,6 +149,19 @@ class YTVideo {
         return await youtube.getVideo(this.video.url);
     }
 }
+
+class Activity {
+    constructor(text, format) {
+        this.text = text;
+        this.format = format;
+    }
+    getText() {
+        return this.text;
+    }
+    getFormat() {
+        return this.format;
+    }
+}
 //#endregion
 
 //#region Globals/Constants/Variables/etc.
@@ -223,19 +235,6 @@ const logger = winston.createLogger({
 //#endregion
 
 //#region ClientUser activities
-class Activity {
-    constructor(text, format) {
-        this.text = text;
-        this.format = format;
-    }
-    getText() {
-        return this.text;
-    }
-    getFormat() {
-        return this.format;
-    }
-}
-
 const activities = [
     new Activity("with Cat!", "PLAYING"),
     new Activity("Sege", "PLAYING"),

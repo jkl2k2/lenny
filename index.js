@@ -150,6 +150,19 @@ class YTVideo {
     }
 }
 
+class Command {
+    constructor(command, folder) {
+        this.command = command;
+        this.folder = folder;
+    }
+    getFolder() {
+        return this.folder;
+    }
+    getCommand() {
+        return this.command;
+    }
+}
+
 class Activity {
     constructor(text, format) {
         this.text = text;
@@ -462,13 +475,54 @@ module.exports = {
 //#endregion
 
 //#region Command file loading
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+
+// Initialize array of command files
+var commandFiles = [];
+
+// Load unsorted commands
+const unsortedCommandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+for (const unsortedCommand of unsortedCommandFiles) {
+    commandFiles.push(new Command(unsortedCommand, "/"));
+}
+
+// Load music commands
+const musicCommandFiles = fs.readdirSync('./commands/music').filter(file => file.endsWith('.js'));
+for (const musicCommand of musicCommandFiles) {
+    commandFiles.push(new Command(musicCommand, '/music/'));
+}
+
+// Load currency commands
+const currencyCommandFiles = fs.readdirSync('./commands/currency').filter(file => file.endsWith('.js'));
+for (const currencyCommand of currencyCommandFiles) {
+    commandFiles.push(new Command(currencyCommand, '/currency/'));
+}
+
+// Load fun commands
+const funCommandFiles = fs.readdirSync('./commands/fun').filter(file => file.endsWith('.js'));
+for (const funCommand of funCommandFiles) {
+    commandFiles.push(new Command(funCommand, '/fun/'));
+}
+
+// Load admin commands
+const adminCommandFiles = fs.readdirSync('./commands/admin').filter(file => file.endsWith('.js'));
+for (const adminCommand of adminCommandFiles) {
+    commandFiles.push(new Command(adminCommand, '/admin/'));
+}
+
+// Load general commands
+const generalCommandFiles = fs.readdirSync('./commands/general').filter(file => file.endsWith('.js'));
+for (const generalCommand of generalCommandFiles) {
+    commandFiles.push(new Command(generalCommand, '/general/'));
+}
+
+// Register commands with client
 for (const file of commandFiles) {
-    const command = require(`./commands/${file}`);
+    const command = require(`./commands${file.getFolder()}${file.getCommand()}`);
 
     // Key: name, value: command module
     client.commands.set(command.name, command);
 }
+
 //#endregion
 
 //#region Client Ready

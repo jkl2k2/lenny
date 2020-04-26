@@ -5,6 +5,4 @@ config/default.json
 soundcloud/
 downloads/
 commands/ligma.json
-.vs/slnx.sqlite
-.vs/VSWorkspaceState.json
 commands/general/testing.js

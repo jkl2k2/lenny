@@ -8,84 +8,6 @@ const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
 const logger = index.getLogger();
 
-class YTVideo {
-    constructor(video, requester) {
-        this.video = video;
-        this.requester = requester;
-    }
-    getTitle() {
-        return this.video.title;
-    }
-    getCleanTitle() {
-        return this.video.title;
-    }
-    getURL() {
-        return this.video.url;
-    }
-    getRequester() {
-        return this.requester;
-    }
-    getRequesterName() {
-        return this.requester.username;
-    }
-    getType() {
-        if (!this.video.duration) {
-            return "video";
-        } else if (this.video.duration.hours == 0 && this.video.duration.minutes == 0 && this.video.duration.seconds == 0) {
-            return "livestream";
-        } else {
-            return "video";
-        }
-    }
-    getThumbnail() {
-        if (this.video.maxRes) {
-            return this.video.maxRes.url;
-        } else {
-            return ``;
-        }
-    }
-    getChannelName() {
-        return this.video.channel.title;
-    }
-    getChannelURL() {
-        return this.video.channel.url;
-    }
-    async getLength() {
-        if ((!this.video.duration) || this.video.duration.hours == 0 && this.video.duration.minutes == 0 && this.video.duration.seconds == 0) {
-            var fullVideo = await youtube.getVideo(this.video.url);
-            if (fullVideo.duration.hours == 0) {
-                if (fullVideo.duration.seconds < 10) {
-                    return `${fullVideo.duration.minutes}:0${fullVideo.duration.seconds}`;
-                } else {
-                    return `${fullVideo.duration.minutes}:${fullVideo.duration.seconds}`;
-                }
-            }
-        }
-
-        if (this.video.duration.hours == 0) {
-            if (this.video.duration.seconds < 10) {
-                return `${this.video.duration.minutes}:0${this.video.duration.seconds}`;
-            } else {
-                return `${this.video.duration.minutes}:${this.video.duration.seconds}`;
-            }
-        }
-    }
-    getPosition() {
-        let queue = index.getQueue();
-        if (queue.indexOf(this) == -1) {
-            return 1;
-        } else {
-            return queue.indexOf(this) + 1;
-        }
-    }
-    getVideo() {
-        return this.video;
-    }
-    async getFullVideo() {
-        return await youtube.getVideo(this.video.url);
-    }
-}
-
 module.exports = {
     name: 'findsearch',
     description: 'Searches YouTube for 5 videos or playlists and sends the link to it',
@@ -218,35 +140,35 @@ module.exports = {
                         return;
                     }
 
-                    var res1 = new YTVideo(await results[0].fetch(), message.author);
+                    var res1 = global.constructVideo(await results[0].fetch(), message.author);
                     var searching1 = new Discord.RichEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<##-------->\``)
                         .setColor(`#0083FF`);
                     var searchingMessage = await message.channel.send(searching1);
 
-                    var res2 = new YTVideo(await results[1].fetch(), message.author);
+                    var res2 = global.constructVideo(await results[1].fetch(), message.author);
                     var searching2 = new Discord.RichEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<####------>\``)
                         .setColor(`#0083FF`);
                     searchingMessage.edit(searching2);
 
-                    var res3 = new YTVideo(await results[2].fetch(), message.author);
+                    var res3 = global.constructVideo(await results[2].fetch(), message.author);
                     var searching3 = new Discord.RichEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<######---->\``)
                         .setColor(`#0083FF`);
                     searchingMessage.edit(searching3);
 
-                    var res4 = new YTVideo(await results[3].fetch(), message.author);
+                    var res4 = global.constructVideo(await results[3].fetch(), message.author);
                     var searching4 = new Discord.RichEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<########-->\``)
                         .setColor(`#0083FF`);
                     searchingMessage.edit(searching4);
 
-                    var res5 = new YTVideo(await results[4].fetch(), message.author);
+                    var res5 = global.constructVideo(await results[4].fetch(), message.author);
                     var searching5 = new Discord.RichEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<##########>\``)

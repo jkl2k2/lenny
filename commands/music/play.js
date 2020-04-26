@@ -98,6 +98,13 @@ module.exports = {
 					if (playlist) {
 						var videos = await playlist.getVideos();
 
+						if (!Queues.has(message.guild.id)) {
+							let newQueue = [];
+							// Queues.set(message.guild.id, newQueue);
+							index.setQueue(message, newQueue);
+							queue = index.getQueue(message);
+						}
+
 						var processing = await message.channel.send(new Discord.RichEmbed()
 							.setAuthor(`🔄 Processing playlist`)
 							.setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
@@ -106,7 +113,7 @@ module.exports = {
 							.setFooter(`Requested by ${message.author.username}`));
 
 						for (var i = 0; i < videos.length; i++) {
-							var newVideo = new YTVideo(videos[i], message.author);
+							var newVideo = global.constructVideo(videos[i], message.member);
 							if (newVideo.getTitle() == "Private video") {
 								message.channel.send(new Discord.RichEmbed()
 									.setDescription(":information_source: At least 1 video from the playlist could not be added as it is private")
@@ -126,7 +133,7 @@ module.exports = {
 						if (message.member.voiceChannel) {
 							message.member.voiceChannel.join()
 								.then(connection => {
-									if (index.getDispatcher() == undefined || (!connection.speaking && !index.getDispatcher().paused)) {
+									if (index.getDispatcher(message) == undefined || (!connection.speaking && !index.getDispatcher(message).paused)) {
 										index.callPlayMusic(message);
 									}
 								})
@@ -148,7 +155,7 @@ module.exports = {
 		async function process(input) {
 			logger.debug(input.title);
 
-			// let newVideo = new YTVideo(input, message.member);
+			// let newVideo = global.constructVideo(input, message.member);
 			let newVideo = global.constructVideo(input, message.member);
 
 			// queue.push(newVideo);

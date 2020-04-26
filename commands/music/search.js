@@ -10,112 +10,6 @@ const logger = index.getLogger();
 const prefix = config.get(`Bot.prefix`);
 const Queues = index.getQueues();
 
-class YTVideo {
-    constructor(video, requester) {
-        this.video = video;
-        this.requester = requester;
-    }
-    getTitle() {
-        return this.video.title;
-    }
-    getCleanTitle() {
-        return this.video.title;
-    }
-    getURL() {
-        return this.video.url;
-    }
-    getRequester() {
-        return this.requester;
-    }
-    getRequesterName() {
-        return this.requester.user.username;
-    }
-    getType() {
-        if (!this.video.duration) {
-            return "video";
-        } else if (this.video.duration.hours == 0 && this.video.duration.minutes == 0 && this.video.duration.seconds == 0) {
-            return "livestream";
-        } else {
-            return "video";
-        }
-    }
-    getThumbnail() {
-        if (this.video.maxRes) {
-            return this.video.maxRes.url;
-        } else {
-            return ``;
-        }
-    }
-    getChannelName() {
-        return this.video.channel.title;
-    }
-    getChannelURL() {
-        return this.video.channel.url;
-    }
-    async getLength() {
-        if ((!this.video.duration) || this.video.duration.hours == 0 && this.video.duration.minutes == 0 && this.video.duration.seconds == 0) {
-            var fullVideo = await youtube.getVideo(this.video.url);
-            if (fullVideo.duration.hours == 0) {
-                if (fullVideo.duration.seconds < 10) {
-                    return `${fullVideo.duration.minutes}:0${fullVideo.duration.seconds}`;
-                } else {
-                    return `${fullVideo.duration.minutes}:${fullVideo.duration.seconds}`;
-                }
-            } else {
-                if (fullVideo.duration.seconds < 10) {
-                    if (fullVideo.duration.minutes < 10) {
-                        return `${fullVideo.duration.hours}:0${fullVideo.duration.minutes}:0${fullVideo.duration.seconds}`;
-                    } else {
-                        return `${fullVideo.duration.hours}:${fullVideo.duration.minutes}:0${fullVideo.duration.seconds}`;
-                    }
-                } else {
-                    if (fullVideo.duration.minutes < 10) {
-                        return `${fullVideo.duration.hours}:0${fullVideo.duration.minutes}:${fullVideo.duration.seconds}`;
-                    } else {
-                        return `${fullVideo.duration.hours}:${fullVideo.duration.minutes}:${fullVideo.duration.seconds}`;
-                    }
-                }
-            }
-        }
-
-        if (this.video.duration.hours == 0) {
-            if (this.video.duration.seconds < 10) {
-                return `${this.video.duration.minutes}:0${this.video.duration.seconds}`;
-            } else {
-                return `${this.video.duration.minutes}:${this.video.duration.seconds}`;
-            }
-        } else {
-            if (this.video.duration.seconds < 10) {
-                if (this.video.duration.minutes < 10) {
-                    return `${this.video.duration.hours}:0${this.video.duration.minutes}:0${this.video.duration.seconds}`;
-                } else {
-                    return `${this.video.duration.hours}:${this.video.duration.minutes}:0${this.video.duration.seconds}`;
-                }
-            } else {
-                if (this.video.duration.minutes < 10) {
-                    return `${this.video.duration.hours}:0${this.video.duration.minutes}:${this.video.duration.seconds}`;
-                } else {
-                    return `${this.video.duration.hours}:${this.video.duration.minutes}:${this.video.duration.seconds}`;
-                }
-            }
-        }
-    }
-    getPosition() {
-        let queue = index.getQueue(this.requester.guild.id);
-        if (queue.indexOf(this) == -1) {
-            return 1;
-        } else {
-            return queue.indexOf(this) + 1;
-        }
-    }
-    getVideo() {
-        return this.video;
-    }
-    async getFullVideo() {
-        return await youtube.getVideo(this.video.url);
-    }
-}
-
 module.exports = {
     name: 'search',
     description: `Plays videos from YouTube by letting you select from 5 videos.\nAlternatively, if you are not in a VC it will instead just send the link, just like ${prefix}findsearch.`,
@@ -152,10 +46,10 @@ module.exports = {
 
         var queue = index.getQueue(message);
 
-        async function process(input) {
+        async function process(input, searchingMessage) {
             logger.debug(input.title);
 
-            let newVideo = new YTVideo(input, message.member);
+            let newVideo = global.constructVideo(input, message.member);
 
             if (!Queues.has(message.guild.id)) {
                 let newQueue = [];
@@ -165,7 +59,7 @@ module.exports = {
                 queue.push(newVideo);
             }
 
-            message.channel.send(new Discord.RichEmbed()
+            searchingMessage.edit(new Discord.RichEmbed()
                 .setAuthor(`➕ Queued`)
                 .setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\nBy: [${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\n\`#${newVideo.getPosition()} in queue\``)
                 .setThumbnail(newVideo.getThumbnail())
@@ -225,11 +119,13 @@ module.exports = {
                     searchingMessage.edit(searching4);
 
                     var res5 = (await results[4].getVideos()).length;
+                    /*
                     var searching5 = new Discord.RichEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for playlists with "${args.join(" ").substring(9)}"
                                          Searching: \`<##########>\``)
                         .setColor(`#0083FF`);
                     searchingMessage.edit(searching5);
+                    */
 
                     var resultsEmbed = new Discord.RichEmbed()
                         .setAuthor(`Top 5 Playlists For: "${args.join(" ").substring(9)}"`)
@@ -265,7 +161,7 @@ module.exports = {
                             let cancelEmbed = new Discord.RichEmbed()
                                 .setDescription(`:stop_button: Canceled playing from search`)
                                 .setColor(`#0083FF`);
-                            message.channel.send(cancelEmbed);
+                            searchingMessage.edit(cancelEmbed);
                             return;
                         }
 
@@ -282,15 +178,23 @@ module.exports = {
                                             .setTimestamp()
                                             .setFooter(`Requested by ${message.author.username}`));
 
-                                        for (var i = 0; i < videos.length; i++) {
-                                            var newVideo = new YTVideo(videos[i], message.member);
+                                        var encounteredPrivate = false;
+                                        var privateCounter = 0;
+
+                                        for (var video of videos) {
+                                            var newVideo = global.constructVideo(video, message.member);
                                             if (newVideo.getTitle() == "Private video") {
-                                                message.channel.send(new Discord.RichEmbed()
-                                                    .setDescription(":information_source: At least 1 video from the playlist could not be added as it is private")
-                                                    .setColor(`#0083FF`));
+                                                encounteredPrivate = true;
+                                                privateCounter++;
                                             } else {
                                                 queue.push(newVideo);
                                             }
+                                        }
+
+                                        if (encounteredPrivate) {
+                                            message.channel.send(new Discord.RichEmbed()
+                                                .setDescription(`:information_source: \`${privateCounter}\` video(s) from the playlist could not be added due to privacy settings`)
+                                                .setColor(`#0083FF`));
                                         }
 
                                         processing.edit(new Discord.RichEmbed()
@@ -338,40 +242,42 @@ module.exports = {
                         return;
                     }
 
-                    var res1 = new YTVideo(await results[0].fetch(), message.member);
+                    var res1 = global.constructVideo(await results[0].fetch(), message.member);
                     var searching1 = new Discord.RichEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<##-------->\``)
                         .setColor(`#0083FF`);
                     var searchingMessage = await message.channel.send(searching1);
 
-                    var res2 = new YTVideo(await results[1].fetch(), message.member);
+                    var res2 = global.constructVideo(await results[1].fetch(), message.member);
                     var searching2 = new Discord.RichEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<####------>\``)
                         .setColor(`#0083FF`);
                     searchingMessage.edit(searching2);
 
-                    var res3 = new YTVideo(await results[2].fetch(), message.member);
+                    var res3 = global.constructVideo(await results[2].fetch(), message.member);
                     var searching3 = new Discord.RichEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<######---->\``)
                         .setColor(`#0083FF`);
                     searchingMessage.edit(searching3);
 
-                    var res4 = new YTVideo(await results[3].fetch(), message.member);
+                    var res4 = global.constructVideo(await results[3].fetch(), message.member);
                     var searching4 = new Discord.RichEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<########-->\``)
                         .setColor(`#0083FF`);
                     searchingMessage.edit(searching4);
 
-                    var res5 = new YTVideo(await results[4].fetch(), message.member);
+                    var res5 = global.constructVideo(await results[4].fetch(), message.member);
+                    /*
                     var searching5 = new Discord.RichEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<##########>\``)
                         .setColor(`#0083FF`);
                     searchingMessage.edit(searching5);
+                    */
 
                     var resultsEmbed = new Discord.RichEmbed()
                         .setAuthor(`Top 5 Results For: "${args.join(" ")}"`)
@@ -407,12 +313,12 @@ module.exports = {
                             let cancelEmbed = new Discord.RichEmbed()
                                 .setDescription(`:stop_button: Canceled playing from search`)
                                 .setColor(`#0083FF`);
-                            message.channel.send(cancelEmbed);
+                            searchingMessage.edit(cancelEmbed);
                             return;
                         }
 
                         if (play) {
-                            process(await youtube.getVideo(results[parseInt(m.content) - 1].url));
+                            process(await youtube.getVideo(results[parseInt(m.content) - 1].url), searchingMessage);
                         } else {
                             message.channel.send(results[parseInt(m.content) - 1].url);
                         }

@@ -7,6 +7,9 @@ const api = config.get(`Bot.api2`);
 const Discord = require(`discord.js`);
 const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
+const { Users, CurrencyShop } = require('../../dbObjects');
+const { Op } = require('sequelize');
+const currency = index.getCurrencyDB();
 
 function clean(text) {
 	if (typeof (text) === "string")

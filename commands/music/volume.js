@@ -5,11 +5,11 @@ const Discord = require(`discord.js`);
 
 function decideWording(input) {
 	if (input == true) {
-		return "raised volume to";
+		return " raised volume to";
 	} else if (input == false) {
-		return "lowered volume to";
+		return " lowered volume to";
 	} else {
-		return "kept the volume at";
+		return ", the volume is already at";
 	}
 }
 
@@ -56,7 +56,7 @@ module.exports = {
 		if ((volume >= 0 && volume <= 500) || message.author.id == jahyID) {
 			dispatcher.setVolume(newVolume);
 			return message.channel.send(new Discord.RichEmbed()
-				.setDescription(`:loud_sound: ${message.author.username} ${decideWording(raisedVolume)} \`${volume}%\``)
+				.setDescription(`:loud_sound: ${message.author.username}${decideWording(raisedVolume)} \`${volume}%\``)
 				.setColor(`#0083FF`));
 		} else {
 			return message.channel.send(new Discord.RichEmbed()

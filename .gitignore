@@ -7,4 +7,4 @@ downloads/
 commands/ligma.json
 .vs/slnx.sqlite
 .vs/VSWorkspaceState.json
-commands/testing.js
+commands/general/testing.js

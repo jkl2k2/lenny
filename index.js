@@ -179,6 +179,8 @@ class Activity {
 
 //#region Globals/Constants/Variables/etc.
 
+var clientReady = false;
+
 global.constructVideo = (video, requester) => {
     return new YTVideo(video, requester);
 };
@@ -187,6 +189,7 @@ var repeat = false;
 
 const Queues = new Discord.Collection();
 const Dispatchers = new Discord.Collection();
+
 
 const prefix = config.get(`Bot.prefix`);
 const token = config.get(`Bot.token`);
@@ -321,6 +324,7 @@ async function playMusic(message) {
             // let connections = client.voiceConnections.array();
 
             Dispatchers.set(message.guild.id, client.voiceConnections.get(message.guild.id).playStream(input));
+            Dispatchers.get(message.guild.id).setBitrate(384);
 
             sendDetails(queue[0], message.channel);
 
@@ -566,11 +570,17 @@ client.on('ready', async () => {
     logger.info(chalk.white.bgCyan(`--------Bot Initialized--------`));
     logger.info(chalk.white.bgCyan(`Timestamp: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} - ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`));
     logger.info(chalk.white.bgCyan.bold(`-------Awaiting Commands-------`));
+
+    clientReady = true;
 });
 //#endregion
 
 //#region Client on message
 client.on('message', message => {
+
+    if (!clientReady) {
+        return;
+    }
 
     if (message.content.includes("banana")) {
         message.react('🍌')
@@ -723,11 +733,12 @@ client.on('message', message => {
 
         if (now < expirationTime && message.author.id != ownerID) {
             const timeLeft = (expirationTime - now) / 1000;
-            logger.info(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`!${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Cooldown in effect`)}`);
+            logger.debug(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`!${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Cooldown in effect`)}`);
             let cooldownEmbed = new Discord.RichEmbed()
                 .addField(`<:error:643341473772863508> Command cooldown`, `Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command`)
                 .setColor(`#FF0000`);
-            return message.channel.send(cooldownEmbed);
+            // return message.channel.send(cooldownEmbed);
+            return;
         }
     }
 

@@ -1,4 +1,4 @@
-const index = require(`../index.js`);
+//const index = require(`../../index.js`);
 const Discord = require(`discord.js`);
 // Any 'require'
 
@@ -12,6 +12,7 @@ module.exports = {
 	// cooldown: 5,
 	// guildOnly: true,
 	enabled: true,
+	type: '',
 	execute(message, args) {
 		// Start here
 	}

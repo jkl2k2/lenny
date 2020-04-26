@@ -194,6 +194,7 @@ const Dispatchers = new Discord.Collection();
 const prefix = config.get(`Bot.prefix`);
 const token = config.get(`Bot.token`);
 const ownerID = config.get(`Users.ownerID`);
+const jahyID = config.get(`Users.jahyID`);
 
 var dispatcher;
 var lastDetails;
@@ -685,7 +686,7 @@ client.on('message', message => {
     }
 
     // Return if command is disabled
-    if (!command.enabled) {
+    if (!command.enabled && (message.author.id != ownerID && message.author.id != jahyID)) {
         logger.info(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`!${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Command is disabled`)}`);
         return message.channel.send(new Discord.RichEmbed()
             .setDescription(`<:error:643341473772863508> Sorry, \`!${commandName}\` is disabled`)

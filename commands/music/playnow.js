@@ -99,12 +99,21 @@ module.exports = {
 				queue.unshift(newVideo);
 			}
 
-			message.channel.send(new Discord.RichEmbed()
-				.setAuthor(`Queued (#${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
-				.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\nBy: [${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\nLength: \`${await newVideo.getLength()}\``)
-				.setThumbnail(newVideo.getThumbnail())
-				.setTimestamp()
-				.setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar()));
+			if (await newVideo.getLength() == "0:00") {
+				message.channel.send(new Discord.RichEmbed()
+					.setAuthor(`Queued (#${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
+					.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\nBy: [${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\n\`YouTube Livestream\``)
+					.setThumbnail(newVideo.getThumbnail())
+					.setTimestamp()
+					.setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar()));
+			} else {
+				message.channel.send(new Discord.RichEmbed()
+					.setAuthor(`Queued (#${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
+					.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\nBy: [${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\nLength: \`${await newVideo.getLength()}\``)
+					.setThumbnail(newVideo.getThumbnail())
+					.setTimestamp()
+					.setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar()));
+			}
 
 			if (message.member.voiceChannel) {
 				message.member.voiceChannel.join()

@@ -104,7 +104,7 @@ module.exports = {
 				.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\nBy: [${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\nLength: \`${await newVideo.getLength()}\``)
 				.setThumbnail(newVideo.getThumbnail())
 				.setTimestamp()
-				.setFooter(`Requested by ${newVideo.getRequesterName()}`));
+				.setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar()));
 
 			if (message.member.voiceChannel) {
 				message.member.voiceChannel.join()
@@ -150,7 +150,7 @@ module.exports = {
 							.setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
 							.setThumbnail(playlist.thumbnails.default.url)
 							.setTimestamp()
-							.setFooter(`Requested by ${message.author.username}`));
+							.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL));
 
 						if (message.member.voiceChannel) {
 							message.member.voiceChannel.join()

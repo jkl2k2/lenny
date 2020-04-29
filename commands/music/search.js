@@ -64,7 +64,7 @@ module.exports = {
                 .setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\nBy: [${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\nLength: \`${await newVideo.getLength()}\``)
                 .setThumbnail(newVideo.getThumbnail())
                 .setTimestamp()
-                .setFooter(`Requested by ${newVideo.getRequesterName()}`));
+                .setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar()));
 
             if (message.member.voiceChannel) {
                 message.member.voiceChannel.join()
@@ -149,7 +149,7 @@ module.exports = {
                                          Length: **${res5} videos**
                                          Uploader: **${results[4].channelTitle}**`)
                         .setTimestamp()
-                        .setFooter(`Requested by ${message.author.username} - Type the number to select - Type cancel to stop`);
+                        .setFooter(`Requested by ${message.author.username} - Type the number to select - Type cancel to stop`, message.author.avatarURL);
                     searchingMessage.edit(resultsEmbed);
 
                     const filter = m => (m.author.id == message.author.id || m.author.id == ownerID || m.author.id == jahyID) && m.content == "1" || m.content == "2" || m.content == "3" || m.content == "4" || m.content == "5" || m.content.toLowerCase() == "cancel";
@@ -176,7 +176,7 @@ module.exports = {
                                             .setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
                                             .setThumbnail(playlist.thumbnails.default.url)
                                             .setTimestamp()
-                                            .setFooter(`Requested by ${message.author.username}`));
+                                            .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL));
 
                                         var encounteredPrivate = false;
                                         var privateCounter = 0;
@@ -202,7 +202,7 @@ module.exports = {
                                             .setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
                                             .setThumbnail(playlist.thumbnails.default.url)
                                             .setTimestamp()
-                                            .setFooter(`Requested by ${message.author.username}`));
+                                            .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL));
 
                                         if (message.member.voiceChannel) {
                                             message.member.voiceChannel.join()
@@ -301,7 +301,7 @@ module.exports = {
                                              Length: **${await res5.getLength()}**
                                              Uploader: **${res5.getChannelName()}**`)
                         .setTimestamp()
-                        .setFooter(`Requested by ${message.author.username} - Type the number to select - Type cancel to stop`);
+                        .setFooter(`Requested by ${message.author.username} - Type the number to select - Type cancel to stop`, message.author.avatarURL);
                     searchingMessage.edit(resultsEmbed);
 
                     const filter = m => (m.author.id == message.author.id || m.author.id == ownerID || m.author.id == jahyID) && m.content == "1" || m.content == "2" || m.content == "3" || m.content == "4" || m.content == "5" || m.content.toLowerCase() == "cancel";

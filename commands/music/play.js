@@ -110,7 +110,7 @@ module.exports = {
 							.setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
 							.setThumbnail(playlist.thumbnails.default.url)
 							.setTimestamp()
-							.setFooter(`Requested by ${message.author.username}`));
+							.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL));
 
 						for (var i = 0; i < videos.length; i++) {
 							var newVideo = global.constructVideo(videos[i], message.member);
@@ -128,12 +128,12 @@ module.exports = {
 							.setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
 							.setThumbnail(playlist.thumbnails.default.url)
 							.setTimestamp()
-							.setFooter(`Requested by ${message.author.username}`));
+							.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL));
 
 						if (message.member.voiceChannel) {
 							message.member.voiceChannel.join()
 								.then(connection => {
-									if (index.getDispatcher(message) == undefined || (!connection.speaking && !index.getDispatcher(message).paused)) {
+									if (index.getDispatcher(message) == undefined) {
 										index.callPlayMusic(message);
 									}
 								})
@@ -170,16 +170,16 @@ module.exports = {
 			}
 
 			message.channel.send(new Discord.RichEmbed()
-				.setAuthor(`➕ Queued`)
-				.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\nBy: [${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\n\`#${newVideo.getPosition()} in queue\``)
+				.setAuthor(`Queued (#${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
+				.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\nBy: [${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\nLength: \`${await newVideo.getLength()}\``)
 				.setThumbnail(newVideo.getThumbnail())
 				.setTimestamp()
-				.setFooter(`Requested by ${newVideo.getRequesterName()}`));
+				.setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar()));
 
 			if (message.member.voiceChannel) {
 				message.member.voiceChannel.join()
 					.then(connection => {
-						if (index.getDispatcher(message) == undefined || (!connection.speaking && !index.getDispatcher(message).paused)) {
+						if (index.getDispatcher(message) == undefined) {
 							index.callPlayMusic(message);
 						}
 					})

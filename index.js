@@ -267,10 +267,6 @@ const activities = [
     new Activity("trash music", "LISTENING"),
     new Activity("Russian spies", "LISTENING")
 ];
-function newFunction() {
-    return 1;
-}
-
 //#endregion
 
 //#region Music info message sending
@@ -491,6 +487,8 @@ module.exports = {
 var commandFiles = [];
 
 // Load unsorted commands
+logger.info(chalk.black.bgGray(`Loading commands...`));
+
 const unsortedCommandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 for (const unsortedCommand of unsortedCommandFiles) {
     commandFiles.push(new Command(unsortedCommand, "/"));
@@ -539,6 +537,7 @@ for (const file of commandFiles) {
 //#region Client Ready
 client.on('ready', async () => {
     // Sync with currency database
+    logger.info(chalk.black.bgGray(`Syncing with currency database...`));
     const storedBalances = await Users.findAll();
     storedBalances.forEach(b => currency.set(b.user_id, b));
 
@@ -556,11 +555,13 @@ client.on('ready', async () => {
     // casinoStatusMessage = await casinoChannel.send(new Discord.RichEmbed()
     // .setDescription(`:money_with_wings: **OWO GRAND RESORT & CASINO PROFITS** :money_with_wings:\n\n__Total profits__\n**$placeholder**`));
 
+    logger.info(chalk.black.bgGray(`Clearing leaderboard channel...`));
     var casinoFetched = await casinoChannel.fetchMessages({ limit: 10 });
     casinoChannel.bulkDelete(casinoFetched);
 
     var mainGuild = client.guilds.get(`471193210102743040`);
 
+    logger.info(chalk.black.bgGray(`Sending initial leaderboard message...`));
     casinoStatusMessage = await casinoChannel.send(new Discord.RichEmbed()
         .setDescription(`:money_with_wings: **OWO GRAND RESORT & CASINO PROFITS** :money_with_wings:\n\nProfit: **$${currency.getBalance("0")}**\n\n:medal: **Top 10 users by currency**\n\n` + currency.sort((a, b) => b.balance - a.balance)
             .filter(user => client.users.has(user.user_id) && mainGuild.member(client.users.get(user.user_id)))

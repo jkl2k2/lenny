@@ -63,6 +63,9 @@ class YTVideo {
     getRequesterName() {
         return this.requester.user.username;
     }
+    getRequesterAvatar() {
+        return this.requester.user.avatarURL;
+    }
     getType() {
         if (!this.video.duration) {
             return "video";
@@ -78,6 +81,10 @@ class YTVideo {
         } else {
             return ``;
         }
+    }
+    async getChannelThumbnail() {
+        let fullChannel = await this.video.channel.fetch();
+        return fullChannel.thumbnails.default.url;
     }
     getChannelName() {
         return this.video.channel.title;
@@ -270,20 +277,20 @@ function newFunction() {
 async function sendDetails(input, c) {
     if (input.getType() == "livestream") {
         let musicEmbed = new Discord.RichEmbed()
-            .setAuthor(`▶️ Now playing`)
+            .setAuthor(`Now playing`, await input.getChannelThumbnail())
             .setDescription(`**[${input.getTitle()}](${input.getURL()})**\nBy: [${await input.getChannelName()}](${input.getChannelURL()})\n\n\`YouTube Livestream\``)
             .setThumbnail(input.getThumbnail())
             .setTimestamp()
-            .setFooter(`Requested by ${input.getRequesterName()}`);
+            .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar());
         c.send(musicEmbed);
         lastDetails = musicEmbed;
     } else {
         let musicEmbed = new Discord.RichEmbed()
-            .setAuthor(`▶️ Now playing`)
+            .setAuthor(`Now playing`, await input.getChannelThumbnail())
             .setDescription(`**[${input.getTitle()}](${input.getURL()})**\nBy: [${await input.getChannelName()}](${input.getChannelURL()})\n\n\`<⚫——————————> (0:00/${await input.getLength()})\``)
             .setThumbnail(input.getThumbnail())
             .setTimestamp()
-            .setFooter(`Requested by ${input.getRequesterName()}`);
+            .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar());
         c.send(musicEmbed);
         lastDetails = musicEmbed;
     }
@@ -308,76 +315,72 @@ async function playMusic(message) {
 
     var queue = Queues.get(message.guild.id);
 
-    if (queue == undefined) {
-        logger.debug("playMusic() called, but queue undefined");
-        return;
-    }
+    if (queue == undefined) return logger.debug("playMusic() called, but queue undefined");
+    if (queue[0] == undefined) return logger.debug("playMusic() called, but queue[0] is undefined");
 
-    if (queue[0] == undefined) {
-        logger.debug("playMusic() called, but queue[0] is undefined");
-        return;
+
+    if (queue[0].getType() == "video" || queue[0].getType() == "livestream") {
+        // If regular video
+
+        let input = ytdl(queue[0].getURL(), { quality: "highestaudio", highWaterMark: 1 << 25 });
+
+        // let connections = client.voiceConnections.array();
+
+        Dispatchers.set(message.guild.id, client.voiceConnections.get(message.guild.id).playStream(input));
+        Dispatchers.get(message.guild.id).setBitrate(384);
+
+        sendDetails(queue[0], message.channel);
+
+    } else if (queue[0].getType() == "soundcloud") {
+        // If SoundCloud
+
+        Dispatchers.set(message.guild.id, client.voiceConnections.get(message.guild.id).playStream(fs.createReadStream(`./soundcloud/${queue[0].getTitle()}`)));
+
+        sendSCDetails(queue[0], message.channel);
+
     } else {
-        if (queue[0].getType() == "video" || queue[0].getType() == "livestream") {
-            // If regular video
-
-            let input = ytdl(queue[0].getURL(), { quality: "highestaudio", highWaterMark: 1 << 25 });
-
-            // let connections = client.voiceConnections.array();
-
-            Dispatchers.set(message.guild.id, client.voiceConnections.get(message.guild.id).playStream(input));
-            Dispatchers.get(message.guild.id).setBitrate(384);
-
-            sendDetails(queue[0], message.channel);
-
-        } else if (queue[0].getType() == "soundcloud") {
-            // If SoundCloud
-
-            Dispatchers.set(message.guild.id, client.voiceConnections.get(message.guild.id).playStream(fs.createReadStream(`./soundcloud/${queue[0].getTitle()}`)));
-
-            sendSCDetails(queue[0], message.channel);
-
-        } else {
-            message.channel.send("Error assigning dispatcher, object at index 0 not of recognized type");
-        }
-
-        lastPlayed = queue.shift();
-        // Queues.get(message.guild.id).shift();
-        var path;
-        if (lastPlayed && lastPlayed.getType() == "soundcloud") {
-            path = `./soundcloud/${lastPlayed.getTitle()}`;
-        } else {
-            path = " ";
-        }
-
-        if (message.member.voiceChannel) {
-            // Reset dispatcher stream delay
-            message.member.voiceChannel.connection.player.streamingData.pausedTime = 0;
-
-        } else {
-            // Fallback in case the original user left voice channel
-            var connections = client.voiceConnections.array();
-            connections[0].player.streamingData.pausedTime = 0;
-        }
-
-        Dispatchers.get(message.guild.id).on("end", function () {
-            if (repeat) {
-                queue.unshift(lastPlayed);
-            }
-            if (path != " ") {
-                fs.unlink(path, (err) => {
-                    if (err) {
-                        logger.error(`FAILED to delete file at path ${path}`);
-                        logger.error(err);
-                        return;
-                    }
-                    logger.info(`Removed file at path ${path}`);
-                });
-            }
-            if (queue[0]) {
-                playMusic(message);
-            }
-        });
+        return message.channel.send("Error assigning dispatcher, object at index 0 not of recognized type");
     }
+
+    lastPlayed = queue.shift();
+    // Queues.get(message.guild.id).shift();
+    var path;
+    if (lastPlayed && lastPlayed.getType() == "soundcloud") {
+        path = `./soundcloud/${lastPlayed.getTitle()}`;
+    } else {
+        path = " ";
+    }
+
+    if (message.member.voiceChannel) {
+        // Reset dispatcher stream delay
+        message.member.voiceChannel.connection.player.streamingData.pausedTime = 0;
+
+    } else {
+        // Fallback in case the original user left voice channel
+        var connections = client.voiceConnections.array();
+        connections[0].player.streamingData.pausedTime = 0;
+    }
+
+    Dispatchers.get(message.guild.id).on("end", function () {
+        if (repeat) {
+            queue.unshift(lastPlayed);
+        }
+        if (path != " ") {
+            fs.unlink(path, (err) => {
+                if (err) {
+                    logger.error(`FAILED to delete file at path ${path}`);
+                    logger.error(err);
+                    return;
+                }
+                logger.info(`Removed file at path ${path}`);
+            });
+        }
+        if (queue[0]) {
+            playMusic(message);
+        } else {
+            Dispatchers.set(message.guild.id, undefined);
+        }
+    });
 }
 //#endregion
 
@@ -430,6 +433,9 @@ module.exports = {
             return undefined;
         }
     },
+    getDispatchers: function () {
+        return Dispatchers;
+    },
     getClient: function () {
         return client;
     },
@@ -455,8 +461,8 @@ module.exports = {
     getStatusMessage: function () {
         return statusMessage;
     },
-    setDispatcher: function (newDispatcher) {
-        dispatcher = newDispatcher;
+    setDispatcher: function (message, newDispatcher) {
+        Dispatchers.set(message.guild.id, newDispatcher);
     },
     setDispatcherVolume: function (newVolume) {
         dispatcher.setVolume(newVolume);

@@ -100,8 +100,8 @@ module.exports = {
 			}
 
 			message.channel.send(new Discord.RichEmbed()
-				.setAuthor(`➕ Queued`)
-				.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\nBy: [${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\n\`#${newVideo.getPosition()} in queue\``)
+				.setAuthor(`Queued (#${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
+				.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\nBy: [${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\nLength: \`${await newVideo.getLength()}\``)
 				.setThumbnail(newVideo.getThumbnail())
 				.setTimestamp()
 				.setFooter(`Requested by ${newVideo.getRequesterName()}`));

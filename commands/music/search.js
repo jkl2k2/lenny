@@ -59,9 +59,9 @@ module.exports = {
                 queue.push(newVideo);
             }
 
-            searchingMessage.edit(new Discord.RichEmbed()
-                .setAuthor(`➕ Queued`)
-                .setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\nBy: [${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\n\`#${newVideo.getPosition()} in queue\``)
+            message.channel.send(new Discord.RichEmbed()
+                .setAuthor(`Queued (${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
+                .setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\nBy: [${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\nLength: \`${await newVideo.getLength()}\``)
                 .setThumbnail(newVideo.getThumbnail())
                 .setTimestamp()
                 .setFooter(`Requested by ${newVideo.getRequesterName()}`));

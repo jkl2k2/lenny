@@ -7,6 +7,7 @@ const Discord = require(`discord.js`);
 const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
 const logger = index.getLogger();
+const Queues = index.getQueues();
 
 module.exports = {
     name: 'playlist',
@@ -43,6 +44,13 @@ module.exports = {
         }
 
         var queue = index.getQueue(message);
+
+        if (!Queues.has(message.guild.id)) {
+            let newQueue = [];
+            // Queues.set(message.guild.id, newQueue);
+            index.setQueue(message, newQueue);
+            queue = index.getQueue(message);
+        }
 
         youtube.searchPlaylists(args.join(" "))
             .then(async results => {
@@ -113,7 +121,7 @@ module.exports = {
                                          Uploader: **${results[4].channelTitle}**
                                          Length: \`${res5} videos\``)
                     .setTimestamp()
-                    .setFooter(`Requested by ${message.author.username} - Type the number to select - Type cancel to stop`);
+                    .setFooter(`Requested by ${message.author.username} - Type the number to select - Type cancel to stop`, message.author.avatarURL);
                 searchingMessage.edit(resultsEmbed);
 
                 const filter = m => (m.author.id == message.author.id || m.author.id == ownerID || m.author.id == jahyID) && m.content == "1" || m.content == "2" || m.content == "3" || m.content == "4" || m.content == "5" || m.content.toLowerCase() == "cancel";
@@ -137,7 +145,7 @@ module.exports = {
                                     .setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
                                     .setThumbnail(playlist.thumbnails.default.url)
                                     .setTimestamp()
-                                    .setFooter(`Requested by ${message.author.username}`));
+                                    .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL));
 
                                 var encounteredPrivate = false;
                                 var privateCounter = 0;
@@ -163,7 +171,7 @@ module.exports = {
                                     .setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
                                     .setThumbnail(playlist.thumbnails.default.url)
                                     .setTimestamp()
-                                    .setFooter(`Requested by ${message.author.username}`));
+                                    .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL));
 
                                 if (message.member.voiceChannel) {
                                     message.member.voiceChannel.join()

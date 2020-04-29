@@ -6,35 +6,21 @@ module.exports = {
 	aliases: ['test'],
 	// usage: '[command]',
 	// cooldown: 5,
-	guildOnly: false,
+	// guildOnly: false,
 	enabled: true,
 	type: 'general',
 	async execute(message, args) {
-		let pingEmbed = new Discord.RichEmbed()
+		const m = await message.channel.send(new Discord.RichEmbed()
+			.addField(`:clock3: Frontend Status`, `\`Testing...\``)
+			.addField(`:heartbeat: Websocket Heartbeat`, `\`Testing...\``)
+			.setColor(`#0083FF`));
 
-			.setDescription(`:arrows_counterclockwise: Testing latency...`)
-			.addField(`Frontend Latency`, `Testing...`, true)
-			.addField(`Frontend Status`, `:arrows_counterclockwise: Testing...`, true)
-			.addBlankField()
-			.addField(`Discord API Latency`, `Testing...`, true)
-			.addField(`Discord API Status`, `:arrows_counterclockwise: Testing...`, true)
-			.setColor(`#0083FF`);
+		var frontendLatency = (m.createdTimestamp - message.createdTimestamp);
+		var roundedPing = Math.round(message.client.ping);
 
-		const m = await message.channel.send(pingEmbed);
-
-		let newPingEmbed = new Discord.RichEmbed()
-
-			.setDescription(`:information_source: Latency Test Completed`)
-			.setColor(`#0083FF`);
-
-		newPingEmbed.addField(`Frontend Latency`, `${m.createdTimestamp - message.createdTimestamp}ms`, true);
-		if ((m.createdTimestamp - message.createdTimestamp) < 300) newPingEmbed.addField(`Frontend Status`, `:white_check_mark: Appears normal`, true);
-		if ((m.createdTimestamp - message.createdTimestamp) >= 300) newPingEmbed.addField(`Frontend Status`, `:warning: Frontend is lagging`, true);
-		newPingEmbed.addBlankField();
-		newPingEmbed.addField(`Discord API Latency`, `${Math.round(message.client.ping)}ms`, true);
-		if (Math.round(message.client.ping) < 100) newPingEmbed.addField(`Discord API Status`, `:white_check_mark: Appears normal`, true);
-		if (Math.round(message.client.ping) >= 100) newPingEmbed.addField(`Discord API Status`, `:warning: Discord is lagging`, true);
-
-		m.edit(newPingEmbed);
+		m.edit(new Discord.RichEmbed()
+			.setColor(`#0083FF`)
+			.addField(`:clock3: Frontend Latency`, `\`${frontendLatency}ms\``)
+			.addField(`:heartbeat: Websocket Heartbeat`, `\`${roundedPing}ms\``));
 	},
 };

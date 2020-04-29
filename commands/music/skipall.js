@@ -27,6 +27,7 @@ module.exports = {
 
 		index.setQueue(message, []);
 		index.endDispatcher(message);
+		index.setDispatcher(message, undefined);
 
 		let endDispatcherEmbed = new Discord.RichEmbed()
 

@@ -13,11 +13,11 @@ module.exports = {
     // cooldown: 5,
     // guildOnly: true,
     enabled: true,
+    restrictions: {
+        id: [ownerID, jahyID]
+    },
     type: 'admin',
     execute(message, args) {
-        if (message.author.id != ownerID && message.author.id != jahyID) {
-            return message.channel.send(`Insufficient permissions`);
-        }
 
         const commandName = args[0].toLowerCase();
         const command = message.client.commands.get(commandName) || message.client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));

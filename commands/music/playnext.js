@@ -87,7 +87,7 @@ module.exports = {
 		async function process(input) {
 			logger.debug(input.title);
 
-			let newVideo = global.constructVideo(input, message.member);
+			let newVideo = index.constructVideo(input, message.member);
 
 			// queue.push(newVideo);
 
@@ -143,7 +143,7 @@ module.exports = {
 							.setFooter(`Requested by ${message.author.username}`));
 
 						for (var i = 0; i < videos.length; i++) {
-							var newVideo = global.constructVideo(videos[i], message.author);
+							var newVideo = index.constructVideo(videos[i], message.author);
 							if (newVideo.getTitle() == "Private video") {
 								message.channel.send(new Discord.RichEmbed()
 									.setDescription(":information_source: At least 1 video from the playlist could not be added as it is private")

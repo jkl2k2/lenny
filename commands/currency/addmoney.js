@@ -17,11 +17,11 @@ module.exports = {
     // cooldown: 5,
     guildOnly: true,
     enabled: true,
+    restrictions: {
+        id: [ownerID, jahyID]
+    },
     type: 'currency',
     execute(message, args) {
-        if (message.author.id != ownerID && message.author.id != jahyID) {
-            return;
-        }
 
         const currentAmount = 1000000000000000;
         const transferAmount = args.find(arg => !/<@!?\d+>/g.test(arg));

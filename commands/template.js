@@ -1,5 +1,6 @@
 //const index = require(`../../index.js`);
 const Discord = require(`discord.js`);
+const config = require(`config`);
 // Any 'require'
 
 module.exports = {
@@ -12,6 +13,12 @@ module.exports = {
 	// cooldown: 5,
 	// guildOnly: true,
 	enabled: true,
+	/*
+	restrictions: {
+		resolvable: [],
+		id: [],
+	},
+	*/
 	type: '',
 	execute(message, args) {
 		// Start here

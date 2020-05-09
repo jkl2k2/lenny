@@ -151,7 +151,7 @@ module.exports = {
                                 var privateCounter = 0;
 
                                 for (var video of videos) {
-                                    var newVideo = global.constructVideo(video, message.member);
+                                    var newVideo = index.constructVideo(video, message.member);
                                     if (newVideo.getTitle() == "Private video") {
                                         encounteredPrivate = true;
                                         privateCounter++;
@@ -193,9 +193,11 @@ module.exports = {
 
                 collector.on('end', collected => {
                     // When collector expires
+                    /*
                     return searchingMessage.edit(new Discord.RichEmbed()
                         .setDescription(`:stop_button: Search canceled from inactivity`)
                         .setColor(`#0083FF`));
+                    */
                 });
             });
     }

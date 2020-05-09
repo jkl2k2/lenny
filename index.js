@@ -188,10 +188,6 @@ class Activity {
 
 var clientReady = false;
 
-global.constructVideo = (video, requester) => {
-    return new YTVideo(video, requester);
-};
-
 var repeat = false;
 
 const Queues = new Discord.Collection();
@@ -203,7 +199,6 @@ const token = config.get(`Bot.token`);
 const ownerID = config.get(`Users.ownerID`);
 const jahyID = config.get(`Users.jahyID`);
 
-var dispatcher;
 var lastDetails;
 var lastPlayed;
 
@@ -347,15 +342,8 @@ async function playMusic(message) {
         path = " ";
     }
 
-    if (message.member.voiceChannel) {
-        // Reset dispatcher stream delay
-        message.member.voiceChannel.connection.player.streamingData.pausedTime = 0;
-
-    } else {
-        // Fallback in case the original user left voice channel
-        var connections = client.voiceConnections.array();
-        connections[0].player.streamingData.pausedTime = 0;
-    }
+    // Reset dispatcher stream delay
+    client.voiceConnections.get(message.guild.id).player.streamingData.pausedTime = 0;
 
     Dispatchers.get(message.guild.id).on("end", function () {
         if (repeat) {
@@ -396,6 +384,9 @@ async function updateCasinoStats(mainGuild) {
 
 //#region Exports
 module.exports = {
+    constructVideo: function (input, member) {
+        return new YTVideo(input, member);
+    },
     getQueues: function () {
         return Queues;
     },
@@ -404,9 +395,6 @@ module.exports = {
     },
     getLogger: function () {
         return logger;
-    },
-    getVolume: function () {
-        return dispatcher.volume;
     },
     getQueue: function (message) {
         if (Queues.has(message)) {
@@ -459,15 +447,6 @@ module.exports = {
     },
     setDispatcher: function (message, newDispatcher) {
         Dispatchers.set(message.guild.id, newDispatcher);
-    },
-    setDispatcherVolume: function (newVolume) {
-        dispatcher.setVolume(newVolume);
-    },
-    pauseMusic: function () {
-        dispatcher.pause();
-    },
-    resumeMusic: function () {
-        dispatcher.resume();
     },
     endDispatcher: function (message) {
         Dispatchers.get(message.guild.id).end();
@@ -745,13 +724,28 @@ client.on('message', message => {
             let cooldownEmbed = new Discord.RichEmbed()
                 .addField(`<:error:643341473772863508> Command cooldown`, `Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command`)
                 .setColor(`#FF0000`);
-            // return message.channel.send(cooldownEmbed);
-            return;
+            return message.channel.send(cooldownEmbed);
         }
     }
 
     timestamps.set(message.author.id, now);
     setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
+
+    // If command has permission restrictions
+    if (command.restrictions) {
+        if (command.restrictions.resolvable && !message.member.hasPermission(command.restrictions.resolvable)) {
+            return message.channel.send(new Discord.RichEmbed()
+                .setDescription(`<:error:643341473772863508> Sorry, ${message.author.username}, you do not have the required permission(s) to use \`${prefix}${command.name}\`\n\nPermissions required:\n\`${command.restrictions.resolvable.join("\n")}\``)
+                .setColor(`#FF0000`));
+        } else if (command.restrictions.id) {
+            const match = (element) => element == message.author.id;
+            if (!command.restrictions.id.some(match)) {
+                return message.channel.send(new Discord.RichEmbed()
+                    .setDescription(`<:error:643341473772863508> Sorry, ${message.author.username}, only certain users can use \`${prefix}${command.name}\``)
+                    .setColor(`#FF0000`));
+            }
+        }
+    }
 
     // Attempt to execute command
     try {
@@ -768,4 +762,5 @@ client.on('message', message => {
 });
 //#endregion
 
+logger.info(chalk.black.bgGray(`Logging in to Discord...`));
 client.login(token);

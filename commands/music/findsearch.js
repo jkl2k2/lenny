@@ -140,35 +140,35 @@ module.exports = {
                         return;
                     }
 
-                    var res1 = global.constructVideo(await results[0].fetch(), message.author);
+                    var res1 = index.constructVideo(await results[0].fetch(), message.author);
                     var searching1 = new Discord.RichEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<##-------->\``)
                         .setColor(`#0083FF`);
                     var searchingMessage = await message.channel.send(searching1);
 
-                    var res2 = global.constructVideo(await results[1].fetch(), message.author);
+                    var res2 = index.constructVideo(await results[1].fetch(), message.author);
                     var searching2 = new Discord.RichEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<####------>\``)
                         .setColor(`#0083FF`);
                     searchingMessage.edit(searching2);
 
-                    var res3 = global.constructVideo(await results[2].fetch(), message.author);
+                    var res3 = index.constructVideo(await results[2].fetch(), message.author);
                     var searching3 = new Discord.RichEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<######---->\``)
                         .setColor(`#0083FF`);
                     searchingMessage.edit(searching3);
 
-                    var res4 = global.constructVideo(await results[3].fetch(), message.author);
+                    var res4 = index.constructVideo(await results[3].fetch(), message.author);
                     var searching4 = new Discord.RichEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<########-->\``)
                         .setColor(`#0083FF`);
                     searchingMessage.edit(searching4);
 
-                    var res5 = global.constructVideo(await results[4].fetch(), message.author);
+                    var res5 = index.constructVideo(await results[4].fetch(), message.author);
                     var searching5 = new Discord.RichEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<##########>\``)

@@ -33,11 +33,11 @@ module.exports = {
 
             if (queue[index1] && queue[index2]) {
                 // Range remove successful
-                queue.splice(index1, (index2 - index1) + 1);
-
-                return message.channel.send(new Discord.RichEmbed()
+                message.channel.send(new Discord.RichEmbed()
                     .setDescription(`:eject: Removed\n**[${queue[index1].getTitle()}](${queue[index1].getURL()})**\n[+${index2 - index1 - 1} other video(s)] up to\n**[${queue[index2].getTitle()}](${queue[index2].getURL()})**`)
                     .setColor(`#0083FF`));
+
+                return queue.splice(index1, (index2 - index1) + 1);
             } else {
                 // Invalid range
                 return message.channel.send(new Discord.RichEmbed()

@@ -26,9 +26,11 @@ module.exports = {
 	// cooldown: 5,
 	// guildOnly: true,
 	enabled: true,
+	restrictions: {
+		id: [config.get(`Users.ownerID`)],
+	},
 	type: 'admin',
 	async execute(message, args) {
-		if (message.author.id !== ownerID) return;
 		try {
 			const code = args.join(" ");
 			let evaled = await eval(code);

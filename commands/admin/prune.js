@@ -9,6 +9,9 @@ module.exports = {
     cooldown: 5,
     guildOnly: true,
     enabled: true,
+    restrictions: {
+        resolvable: ['ADMINISTRATOR'],
+    },
     type: 'admin',
     async execute(message, args) {
         if (isNaN(args[0])) {
@@ -18,14 +21,9 @@ module.exports = {
         } else if (args[0] < 1) {
             return message.channel.send("Prune target too low (minimum is 1)");
         }
-        switch (message.member.roles.some(role => role.name === `The Owners :D` || `Trusted`)) {
-            case true:
-                await message.channel.fetchMessages({ limit: (parseInt(args[0])) + 1 }).then(messages => {
-                    message.channel.bulkDelete(messages);
-                });
-                break;
-            default:
-                message.channel.send("Sorry, only admins can use this command");
-        }
+
+        await message.channel.fetchMessages({ limit: (parseInt(args[0])) + 1 }).then(messages => {
+            message.channel.bulkDelete(messages);
+        });
     }
 };

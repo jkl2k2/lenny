@@ -9,12 +9,11 @@ module.exports = {
     description: 'Reloads a command, mostly for testing commands while changing code. Don\'t use if you don\'t know what you\'re doing.',
     // guildOnly: true,
     enabled: true,
+    restrictions: {
+        id: [ownerID]
+    },
     type: 'admin',
     execute(message, args) {
-        if (message.author.id != ownerID) {
-            message.channel.send("Sorry, this command can only be used by the bot owner");
-            return;
-        }
 
         let noArgs = new Discord.RichEmbed()
 

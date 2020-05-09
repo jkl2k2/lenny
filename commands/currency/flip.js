@@ -10,7 +10,7 @@ module.exports = {
     aliases: ['coin', 'coinflip', 'flipcoin'],
     args: true,
     usage: '[amount to bet]',
-    cooldown: 5,
+    cooldown: 2,
     // guildOnly: true,
     enabled: true,
     type: 'currency',

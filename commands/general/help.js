@@ -25,7 +25,7 @@ module.exports = {
 
             generalHelp.addField(`**Playback control**`, `play\nplaynext\nplaynow\nsearch\nskip\nskipall\njoin\nleave\npause\nresume`, true);
             generalHelp.addField(`**Volume control**`, `volume\nmute\nunmute`, true);
-            generalHelp.addField(`**Queue control**`, `queue\nremove\nmove\nshuffle`, true);
+            generalHelp.addField(`**Queue control**`, `queue\nremove\nmove\nshuffle\nclear`, true);
             generalHelp.addField(`**Music information**`, `playing\nnext\nfindvideo\nsearchf/search`, true);
             generalHelp.addField(`**Fun commands**`, `say\nlenny\nthesaurize\njoke`, true);
             generalHelp.addField(`**Admin commands**`, `prune\ntoggle`, true);

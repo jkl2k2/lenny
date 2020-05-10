@@ -143,10 +143,10 @@ class YTVideo {
     getPosition() {
         // let queue = index.getQueue(this.requester.guild.id);
         let queue = Queues.get(this.requester.guild.id);
-        if (queue.indexOf(this) == -1) {
+        if (queue.list.indexOf(this) == -1) {
             return 1;
         } else {
-            return queue.indexOf(this) + 1;
+            return queue.list.indexOf(this) + 1;
         }
     }
     getVideo() {
@@ -167,6 +167,20 @@ class Command {
     }
     getCommand() {
         return this.command;
+    }
+}
+
+class Queue {
+    constructor() {
+        this.list = [];
+        this.repeat = false;
+        this.volume = 1;
+    }
+    push(input) {
+        this.list.push(input);
+    }
+    unshift(input) {
+        this.list.unshift(input);
     }
 }
 
@@ -306,34 +320,31 @@ async function playMusic(message) {
 
     var queue = Queues.get(message.guild.id);
 
-    if (queue == undefined) return logger.debug("playMusic() called, but queue undefined");
-    if (queue[0] == undefined) return logger.debug("playMusic() called, but queue[0] is undefined");
+    if (queue.list == undefined) return logger.debug("playMusic() called, but queue undefined");
+    if (queue.list[0] == undefined) return logger.debug("playMusic() called, but queue[0] is undefined");
 
-
-    if (queue[0].getType() == "video" || queue[0].getType() == "livestream") {
+    if (queue.list[0].getType() == "video" || queue.list[0].getType() == "livestream") {
         // If regular video
 
-        let input = ytdl(queue[0].getURL(), { quality: "highestaudio", highWaterMark: 1 << 25 });
+        var input = ytdl(queue.list[0].getURL(), { quality: "highestaudio", highWaterMark: 1000 * 1000 * 128 });
 
-        // let connections = client.voiceConnections.array();
+        Dispatchers.set(message.guild.id, client.voiceConnections.get(message.guild.id).playStream(input, { bitrate: 384000, volume: Queues.get(message.guild.id).volume, passes: 5, highWaterMark: 1000 * 1000 * 128 }));
 
-        Dispatchers.set(message.guild.id, client.voiceConnections.get(message.guild.id).playStream(input));
-        Dispatchers.get(message.guild.id).setBitrate(384);
+        if (!queue.repeat) sendDetails(queue.list[0], message.channel);
 
-        sendDetails(queue[0], message.channel);
-
-    } else if (queue[0].getType() == "soundcloud") {
+    } else if (queue.list[0].getType() == "soundcloud") {
         // If SoundCloud
 
-        Dispatchers.set(message.guild.id, client.voiceConnections.get(message.guild.id).playStream(fs.createReadStream(`./soundcloud/${queue[0].getTitle()}`)));
+        // Dispatchers.set(message.guild.id, client.voiceConnections.get(message.guild.id).playStream(fs.createReadStream(`./soundcloud/${queue.list[0].getTitle()}`)));
+        Dispatchers.set(message.guild.id, client.voiceConnections.get(message.guild.id).playStream(queue.list[0].getURL()));
 
-        sendSCDetails(queue[0], message.channel);
+        sendSCDetails(queue.list[0], message.channel);
 
     } else {
         return message.channel.send("Error assigning dispatcher, object at index 0 not of recognized type");
     }
 
-    lastPlayed = queue.shift();
+    lastPlayed = queue.list.shift();
     // Queues.get(message.guild.id).shift();
     var path;
     if (lastPlayed && lastPlayed.getType() == "soundcloud") {
@@ -346,8 +357,8 @@ async function playMusic(message) {
     client.voiceConnections.get(message.guild.id).player.streamingData.pausedTime = 0;
 
     Dispatchers.get(message.guild.id).on("end", function () {
-        if (repeat) {
-            queue.unshift(lastPlayed);
+        if (queue.repeat) {
+            queue.list.unshift(lastPlayed);
         }
         if (path != " ") {
             fs.unlink(path, (err) => {
@@ -359,7 +370,7 @@ async function playMusic(message) {
                 logger.info(`Removed file at path ${path}`);
             });
         }
-        if (queue[0]) {
+        if (queue.list[0]) {
             playMusic(message);
         } else {
             Dispatchers.set(message.guild.id, undefined);
@@ -384,6 +395,9 @@ async function updateCasinoStats(mainGuild) {
 
 //#region Exports
 module.exports = {
+    constructQueue: function () {
+        return new Queue();
+    },
     constructVideo: function (input, member) {
         return new YTVideo(input, member);
     },

@@ -21,7 +21,7 @@ module.exports = {
                 .setDescription(`<:error:643341473772863508> There is nothing to skip`)
                 .setColor(`#FF0000`));
         } else {
-            index.setQueue(message, []);
+            queue.list = [];
             return message.channel.send(new Discord.RichEmbed()
                 .setDescription(`:arrow_double_up: ${message.author.username} cleared the queue`)
                 .setColor(`#0083FF`));

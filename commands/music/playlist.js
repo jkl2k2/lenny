@@ -46,8 +46,7 @@ module.exports = {
         var queue = index.getQueue(message);
 
         if (!Queues.has(message.guild.id)) {
-            let newQueue = [];
-            // Queues.set(message.guild.id, newQueue);
+            let newQueue = new index.constructQueue();
             index.setQueue(message, newQueue);
             queue = index.getQueue(message);
         }
@@ -156,7 +155,7 @@ module.exports = {
                                         encounteredPrivate = true;
                                         privateCounter++;
                                     } else {
-                                        queue.push(newVideo);
+                                        queue.list.push(newVideo);
                                     }
                                 }
 

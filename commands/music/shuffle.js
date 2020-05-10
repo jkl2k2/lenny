@@ -29,24 +29,18 @@ module.exports = {
     enabled: true,
     type: 'music',
     execute(message, args) {
-        // index.shuffleQueue(message);
-
         var queue = index.getQueue(message);
 
-        if (queue.length > 0) {
-            var shuffled = shuffle(queue);
+        if (queue.list.length > 0) {
+            var shuffled = shuffle(queue.list);
 
-            let shuffleCompleteEmbed = new Discord.RichEmbed()
-
-                .setDescription(`:twisted_rightwards_arrows: ${message.author.username} shuffled ${queue.length} songs in queue`)
-                .setColor(`#0083FF`);
-            message.channel.send(shuffleCompleteEmbed);
+            message.channel.send(new Discord.RichEmbed()
+                .setDescription(`:twisted_rightwards_arrows: ${message.author.username} shuffled ${queue.list.length} songs in queue`)
+                .setColor(`#0083FF`));
         } else {
-            let shuffleFailEmbed = new Discord.RichEmbed()
-
+            message.channel.send(new Discord.RichEmbed()
                 .setDescription(`<:error:643341473772863508> Cannot shuffle an empty queue`)
-                .setColor(`#FF0000`);
-            message.channel.send(shuffleFailEmbed);
+                .setColor(`#FF0000`));
         }
     }
 };

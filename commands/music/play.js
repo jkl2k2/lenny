@@ -44,7 +44,7 @@ class SCSong {
 		return this.info.uploader_url;
 	}
 	getRequesterName() {
-		return this.requester.username;
+		return this.requester.user.username;
 	}
 	getLength() {
 		return this.info._duration_hms.substring(3, 8);
@@ -53,8 +53,13 @@ class SCSong {
 		return this.info.thumbnail;
 	}
 	getPosition() {
-		let queue = index.getQueue();
-		return queue.indexOf(this) + 1;
+		// let queue = index.getQueue(this.requester.guild.id);
+		let queue = Queues.get(this.requester.guild.id);
+		if (queue.list.indexOf(this) == -1) {
+			return 1;
+		} else {
+			return queue.list.indexOf(this) + 1;
+		}
 	}
 }
 //#endregion
@@ -161,7 +166,7 @@ module.exports = {
 			// queue.push(newVideo);
 
 			if (!Queues.has(message.guild.id)) {
-				let newQueue = [];
+				let newQueue = index.constructQueue();
 				newQueue.push(newVideo);
 				// Queues.set(message.guild.id, newQueue);
 				index.setQueue(message, newQueue);
@@ -235,9 +240,16 @@ module.exports = {
 				// console.log('size: ' + info.size);
 				gInfo = info;
 
-				var newSC = new SCSong(args[0], message.author, gInfo);
+				var newSC = new SCSong(args[0], message.member, gInfo);
 
-				queue.push(newSC);
+				if (!Queues.has(message.guild.id)) {
+					let newQueue = index.constructQueue();
+					newQueue.push(newSC);
+					// Queues.set(message.guild.id, newQueue);
+					index.setQueue(message, newQueue);
+				} else {
+					queue.push(newSC);
+				}
 
 				sent.edit(new Discord.RichEmbed()
 					.setTitle(` `)
@@ -256,7 +268,7 @@ module.exports = {
 				if (message.member.voiceChannel) {
 					message.member.voiceChannel.join()
 						.then(connection => {
-							if (index.getDispatcher() == undefined || (!connection.speaking && !index.getDispatcher().paused)) {
+							if (index.getDispatcher(message) == undefined) {
 								index.callPlayMusic(message);
 							}
 						})

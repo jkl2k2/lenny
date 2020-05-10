@@ -13,7 +13,7 @@ module.exports = {
     enabled: true,
     type: 'music',
     execute(message, args) {
-        var queue = index.getQueue(message);
+        var queue = index.getQueue(message).list;
         var startPos = args[0] - 1;
         var targetPos = args[1] - 1;
 

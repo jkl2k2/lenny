@@ -2,23 +2,21 @@ const index = require(`../../index.js`);
 const Discord = require(`discord.js`);
 const Queues = index.getQueues();
 
-async function sendDetails(input, c) {
-    if (input.getLength() == `unknown`) {
-        let musicEmbed = new Discord.RichEmbed()
-            .setAuthor(`➡️ Coming up next`)
-            .setDescription(`**[${input.getTitle()}](${input.getURL()})**\nBy: [${await input.getChannelName()}](${input.getChannelURL()})`)
+async function sendDetails(input, c, index) {
+    if (await input.getLength() == `unknown`) {
+        c.send(new Discord.RichEmbed()
+            .setAuthor(`Coming up next`, await input.getChannelThumbnail())
+            .setDescription(`**[${input.getTitle()}](${input.getURL()})**\nBy: [${await input.getChannelName()}](${input.getChannelURL()})\n\n\`Length not provided by YouTube\``)
             .setThumbnail(input.getThumbnail())
             .setTimestamp()
-            .setFooter(`Requested by ${input.getRequesterName()}`);
-        c.send(musicEmbed);
+            .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar()));
     } else {
-        let musicEmbed = new Discord.RichEmbed()
-            .setAuthor(`➡️ Coming up next`)
+        c.send(new Discord.RichEmbed()
+            .setAuthor(`Coming up next`, await input.getChannelThumbnail())
             .setDescription(`**[${input.getTitle()}](${input.getURL()})**\nBy: [${await input.getChannelName()}](${input.getChannelURL()})\n\nLength: \`${await input.getLength()}\``)
             .setThumbnail(input.getThumbnail())
             .setTimestamp()
-            .setFooter(`Requested by ${input.getRequesterName()}`);
-        c.send(musicEmbed);
+            .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar()));
     }
 }
 
@@ -32,7 +30,7 @@ module.exports = {
     enabled: true,
     type: 'music',
     execute(message, args) {
-        var queue = index.getQueue(message);
+        var queue = index.getQueue(message).list;
 
         if (queue == undefined) {
             return message.channel.send(new Discord.RichEmbed()

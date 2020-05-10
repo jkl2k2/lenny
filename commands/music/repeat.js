@@ -25,19 +25,25 @@ module.exports = {
     enabled: true,
     type: 'music',
     execute(message, args) {
+        var queue = index.getQueue(message);
+        if (queue == undefined) {
+            return message.channel.send(new Discord.RichEmbed()
+                .setDescription(`:information_source: There is nothing currently playing`)
+                .setColor(`#0083FF`));
+        }
         if (!args[0]) {
-            if (index.getRepeat() == true) {
-                index.setRepeat(false);
+            if (queue.repeat == true) {
+                queue.repeat = false;
                 sendRepeatOff(message);
-            } else if (index.getRepeat() == false) {
-                index.setRepeat(true);
+            } else if (queue.repeat == false) {
+                queue.repeat = true;
                 sendRepeatOn(message);
             }
         } else if (args[0] == "on") {
-            index.setRepeat(true);
+            queue.repeat = true;
             sendRepeatOn(message);
         } else if (args[0] == "off") {
-            index.setRepeat(false);
+            queue.repeat = false;
             sendRepeatOff(message);
         }
     }

@@ -50,11 +50,18 @@ module.exports = {
 
 		volume = args[0];
 		var dispatcher = index.getDispatcher(message);
+		var queue = index.getQueue(message);
+		if (dispatcher == undefined || queue == undefined) {
+			return message.channel.send(new Discord.RichEmbed()
+				.setDescription(`:information_source: Nothing is currently playing`)
+				.setColor(`#0083FF`));
+		}
 		raisedVolume = compareVolume(volume, dispatcher);
 
 		var newVolume = volume / 100;
 		if ((volume >= 0 && volume <= 500) || message.author.id == jahyID) {
 			dispatcher.setVolume(newVolume);
+			queue.volume = newVolume;
 			return message.channel.send(new Discord.RichEmbed()
 				.setDescription(`:loud_sound: ${message.author.username}${decideWording(raisedVolume)} \`${volume}%\``)
 				.setColor(`#0083FF`));

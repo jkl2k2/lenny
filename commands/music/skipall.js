@@ -16,24 +16,19 @@ module.exports = {
 		var dispatcher = index.getDispatcher(message);
 
 		if (dispatcher == undefined || dispatcher.speaking == false) {
-			let skipFailEmbed = new Discord.RichEmbed()
+			return message.channel.send(new Discord.RichEmbed()
 
 				.setDescription(`<:error:643341473772863508> There is nothing to skip`)
-				.setColor(`#FF0000`);
-			message.channel.send(skipFailEmbed);
-
-			return;
+				.setColor(`#FF0000`));
 		}
 
-		index.setQueue(message, []);
+		index.setQueue(message, index.constructQueue());
 		index.endDispatcher(message);
 		index.setDispatcher(message, undefined);
 
-		let endDispatcherEmbed = new Discord.RichEmbed()
-
+		message.channel.send(new Discord.RichEmbed()
 			.setDescription(`:fast_forward: ${message.author.username} skipped all songs`)
-			.setColor(`#0083FF`);
-		message.channel.send(endDispatcherEmbed);
+			.setColor(`#0083FF`));
 
 	}
 };

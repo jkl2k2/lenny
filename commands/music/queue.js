@@ -1,7 +1,6 @@
 const index = require(`../../index.js`);
 const Discord = require(`discord.js`);
 const config = require(`config`);
-const Queues = index.getQueues();
 
 async function queueResolver(arr, index) {
 	if (arr[index]) {
@@ -20,7 +19,7 @@ function queueOverflowResolver(arr) {
 }
 
 async function sendEmbed(page, message) {
-	var queue = index.getQueue(message);
+	var queue = index.getQueue(message).list;
 
 	let queueEmbed = new Discord.RichEmbed()
 
@@ -32,7 +31,7 @@ async function sendEmbed(page, message) {
 }
 
 async function reactionHandler(sent, message, page) {
-	var queue = index.getQueue(message);
+	var queue = index.getQueue(message).list;
 
 	const filter = (reaction, user) => {
 		return ['◀️', '🔘', '▶️'].includes(reaction.emoji.name) && user.id === message.author.id;
@@ -87,8 +86,8 @@ async function reactionHandler(sent, message, page) {
 			let noControlQueue = new Discord.RichEmbed()
 
 				// .setDescription(`${queueResolver(parsedQueue, 0)}\n\n${queueResolver(parsedQueue, 1)}\n\n${queueResolver(parsedQueue, 2)}\n\n${queueResolver(parsedQueue, 3)}\n\n${queueResolver(parsedQueue, 4)}\n\n${queueOverflowResolver(parsedQueue)}`)
-				.setDescription(`:information_source: Current queue - Page ${page + 1}\n\n${await queueResolver(queue, 0 + page * 5)}\n\n${await queueResolver(queue, 1 + page * 5)}\n\n${await queueResolver(queue, 2 + page * 5)}\n\n${await queueResolver(queue, 3 + page * 5)}\n\n${await queueResolver(queue, 4 + page * 5)}\n\n${queueOverflowResolver(queue)}`)
-				// .setAuthor(`➡️ Current queue - Page ${page + 1}`)
+				.setDescription(`${await queueResolver(queue, 0 + page * 5)}\n\n${await queueResolver(queue, 1 + page * 5)}\n\n${await queueResolver(queue, 2 + page * 5)}\n\n${await queueResolver(queue, 3 + page * 5)}\n\n${await queueResolver(queue, 4 + page * 5)}\n\n${queueOverflowResolver(queue)}`)
+				.setAuthor(`➡️ Current queue - Page ${page + 1}`, message.guild.iconURL)
 				.setColor(`#0083FF`)
 				.setFooter(`Controls cleared due to inactivity`);
 			sent.edit(noControlQueue);
@@ -99,14 +98,14 @@ async function reactionHandler(sent, message, page) {
 async function sendDetails(input, c, index) {
 	if (await input.getLength() == `unknown`) {
 		c.send(new Discord.RichEmbed()
-			.setAuthor(`In queue: Video #${index}`, input.getChannelThumbnail())
+			.setAuthor(`In queue: Video #${index}`, await input.getChannelThumbnail())
 			.setDescription(`**[${input.getTitle()}](${input.getURL()})**\nBy: [${await input.getChannelName()}](${input.getChannelURL()})\n\n\`Length not provided by YouTube\``)
 			.setThumbnail(input.getThumbnail())
 			.setTimestamp()
 			.setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar()));
 	} else {
 		c.send(new Discord.RichEmbed()
-			.setAuthor(`In queue: Video #${index}`, input.getChannelThumbnail())
+			.setAuthor(`In queue: Video #${index}`, await input.getChannelThumbnail())
 			.setDescription(`**[${input.getTitle()}](${input.getURL()})**\nBy: [${await input.getChannelName()}](${input.getChannelURL()})\n\nLength: \`${await input.getLength()}\``)
 			.setThumbnail(input.getThumbnail())
 			.setTimestamp()
@@ -125,7 +124,7 @@ module.exports = {
 	type: 'music',
 	async execute(message, args) {
 
-		var queue = index.getQueue(message);
+		var queue = index.getQueue(message).list;
 
 		var page = 0;
 

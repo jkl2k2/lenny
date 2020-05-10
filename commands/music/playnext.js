@@ -92,12 +92,12 @@ module.exports = {
 			// queue.push(newVideo);
 
 			if (!Queues.has(message.guild.id)) {
-				let newQueue = [];
+				let newQueue = index.constructQueue();
 				newQueue.push(newVideo);
 				// Queues.set(message.guild.id, newQueue);
 				index.setQueue(message, newQueue);
 			} else {
-				queue.unshift(newVideo);
+				queue.push(newVideo);
 			}
 
 			if (await newVideo.getLength() == "0:00") {

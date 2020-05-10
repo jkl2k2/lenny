@@ -11,42 +11,6 @@ module.exports = {
 	enabled: true,
 	type: 'music',
 	execute(message, args) {
-		// index.callEndDispatcher(message.channel, message.author.username, "skip");
-
-		/*
-		var objectToWrite = {
-			list: []
-		};
-		fs.readFile('./commands/ligma.json',
-			// callback function that is called when reading file is done
-			function (err, data) {
-				// json data
-				var jsonData = data;
-
-				// parse json
-				var jsonParsed = JSON.parse(jsonData);
-
-				objectToWrite.list = jsonParsed.list;
-
-				if (objectToWrite.list.indexOf(message.author.id) != -1) {
-					let ligmaEmbed = new Discord.RichEmbed()
-
-						.addField(`:warning: LIGMA DETECTED :warning:`, `Sorry, ${message.author.username}, but you cannot use the skip command because you have ligma`)
-						.setColor(`#FF0000`);
-					message.channel.send(ligmaEmbed);
-
-					return;
-				} else {
-					executeSkip(message);
-				}
-
-				// console.log(objectToWrite.list);
-
-				// access elements
-				// console.log(jsonParsed.list);
-			});
-			*/
-
 		var dispatcher = index.getDispatcher(message);
 
 		if (dispatcher == undefined || dispatcher.speaking == false) {
@@ -54,6 +18,10 @@ module.exports = {
 				.setDescription(`:information_source: There is nothing to skip`)
 				.setColor(`#0083FF`));
 		}
+
+		var queue = index.getQueue(message);
+
+		if (queue.repeat) queue.repeat = false;
 
 		index.endDispatcher(message);
 

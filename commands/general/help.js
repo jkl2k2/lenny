@@ -59,6 +59,15 @@ module.exports = {
         // Description
         if (command.description) commandHelp.addField(`**Description**`, command.description);
 
+        // Restrictions
+        if (command.restrictions) {
+            if (command.restrictions.resolvable) {
+                commandHelp.addField(`**Required Permissions**`, `\`${command.restrictions.resolvable.join(", ")}\``);
+            } else if (command.restrictions.id) {
+                commandHelp.addField(`**Restricted Command**`, `Only certain users can access this command`);
+            }
+        }
+
         // Usage
         if (command.usage) {
             if (command.altUsage) {

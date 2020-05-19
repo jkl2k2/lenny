@@ -219,7 +219,6 @@ const ownerID = config.get(`Users.ownerID`);
 const jahyID = config.get(`Users.jahyID`);
 
 var lastDetails;
-var lastPlayed;
 
 var statusChannel;
 var statusMessage;

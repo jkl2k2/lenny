@@ -11,12 +11,10 @@ module.exports = {
 	enabled: true,
 	type: 'music',
 	execute(message, args) {
-		let forceEmbed = new Discord.RichEmbed()
-
+		message.channel.send(new Discord.RichEmbed()
 			.addField(":information_source: Forcing playback", "Attemping to unstick queue...")
-			.setColor("#0083FF");
-		message.channel.send(forceEmbed);
+			.setColor("#0083FF"));
 
-		index.callPlayMusic();
+		index.callPlayMusic(message);
 	}
 };

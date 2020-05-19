@@ -14,7 +14,7 @@ module.exports = {
     // guildOnly: true,
     enabled: true,
     restrictions: {
-        id: [ownerID, jahyID]
+        resolvable: ["ADMINISTRATOR"],
     },
     type: 'admin',
     execute(message, args) {
@@ -23,6 +23,10 @@ module.exports = {
         const command = message.client.commands.get(commandName) || message.client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
         if (!command) return message.channel.send("Command not found");
+
+        if (command.name == 'toggle') return message.channel.send(new Discord.RichEmbed()
+            .setDescription(`:no_entry: Nice try`)
+            .setColor(`#FF0000`));
 
         command.enabled = !command.enabled;
 

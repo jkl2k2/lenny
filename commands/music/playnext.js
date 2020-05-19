@@ -97,7 +97,7 @@ module.exports = {
 				// Queues.set(message.guild.id, newQueue);
 				index.setQueue(message, newQueue);
 			} else {
-				queue.push(newVideo);
+				queue.unshift(newVideo);
 			}
 
 			if (await newVideo.getLength() == "0:00") {

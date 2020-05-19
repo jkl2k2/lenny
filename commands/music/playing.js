@@ -19,13 +19,13 @@ module.exports = {
 				.setColor(`#0083FF`);
 			return message.channel.send(nothingPlaying);
 		}
-		var playing = await index.getPlayingVideo().getFullVideo();
-		var playingObj = index.getPlayingVideo();
+		var playing = await index.getQueue(message).lastPlayed.getFullVideo();
+		var playingObj = index.getQueue(message).lastPlayed;
 
 		// var minsToSec = playing.duration.minutes * 60;
 		var total = playing.duration.seconds + (playing.duration.minutes * 60) + (playing.duration.hours * 60 * 60);
 
-		var formattedTotal = await index.getPlayingVideo().getLength();
+		var formattedTotal = await playingObj.getLength();
 
 		var minsPlaying = Math.trunc((dispatcher.time / 1000) / 60);
 		var secondsPlaying = Math.trunc((dispatcher.time / 1000) - (minsPlaying * 60));

@@ -6,14 +6,14 @@ async function sendDetails(input, c, index) {
     if (await input.getLength() == `unknown`) {
         c.send(new Discord.RichEmbed()
             .setAuthor(`Coming up next`, await input.getChannelThumbnail())
-            .setDescription(`**[${input.getTitle()}](${input.getURL()})**\nBy: [${await input.getChannelName()}](${input.getChannelURL()})\n\n\`Length not provided by YouTube\``)
+            .setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${await input.getChannelName()}](${input.getChannelURL()})\n\n\`Length not provided by YouTube\``)
             .setThumbnail(input.getThumbnail())
             .setTimestamp()
             .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar()));
     } else {
         c.send(new Discord.RichEmbed()
             .setAuthor(`Coming up next`, await input.getChannelThumbnail())
-            .setDescription(`**[${input.getTitle()}](${input.getURL()})**\nBy: [${await input.getChannelName()}](${input.getChannelURL()})\n\nLength: \`${await input.getLength()}\``)
+            .setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${await input.getChannelName()}](${input.getChannelURL()})\n\nLength: \`${await input.getLength()}\``)
             .setThumbnail(input.getThumbnail())
             .setTimestamp()
             .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar()));

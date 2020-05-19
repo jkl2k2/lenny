@@ -23,10 +23,16 @@ module.exports = {
 
 		if (queue.repeat) queue.repeat = false;
 
-		index.endDispatcher(message);
+		if (queue.lastPlayed != undefined && queue.lastPlayed.getTitle() != undefined) {
+			message.channel.send(new Discord.RichEmbed()
+				.setDescription(`:track_next: ${message.author.username} skipped **[${queue.lastPlayed.getTitle()}](${queue.lastPlayed.getURL()})**`)
+				.setColor(`#0083FF`));
+		} else {
+			message.channel.send(new Discord.RichEmbed()
+				.setDescription(`:track_next: ${message.author.username} skipped the current song`)
+				.setColor(`#0083FF`));
+		}
 
-		return message.channel.send(new Discord.RichEmbed()
-			.setDescription(`:fast_forward: ${message.author.username} skipped the current song`)
-			.setColor(`#0083FF`));
+		index.endDispatcher(message);
 	}
 };

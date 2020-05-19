@@ -12,7 +12,7 @@ module.exports = {
     type: 'music',
     execute(message, args) {
         var dispatcher = index.getDispatcher(message);
-        var oldVolume = 1;
+        var oldVolume = index.getQueue(message).volume;
 
         if (dispatcher == undefined || dispatcher.speaking == false) {
             return message.channel.send(new Discord.RichEmbed()

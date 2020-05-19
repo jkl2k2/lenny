@@ -2,17 +2,15 @@ const index = require(`../../index.js`);
 const Discord = require(`discord.js`);
 
 function sendRepeatOn(message) {
-    let repeatOnEmbed = new Discord.RichEmbed()
-        .setDescription(`:repeat: **[${index.getPlayingVideo().getCleanTitle()}](${index.getPlayingVideo().getURL()})** **will** now repeat`)
-        .setColor(`#0083FF`);
-    message.channel.send(repeatOnEmbed);
+    message.channel.send(new Discord.RichEmbed()
+        .setDescription(`:repeat: **[${index.getQueue(message).lastPlayed.getCleanTitle()}](${index.getQueue(message).lastPlayed.getURL()})** **will** now repeat`)
+        .setColor(`#0083FF`));
 }
 
 function sendRepeatOff(message) {
-    let repeatOffEmbed = new Discord.RichEmbed()
-        .setDescription(`:stop_button: **[${index.getPlayingVideo().getCleanTitle()}](${index.getPlayingVideo().getURL()})** will **no longer** repeat`)
-        .setColor(`#0083FF`);
-    message.channel.send(repeatOffEmbed);
+    message.channel.send(new Discord.RichEmbed()
+        .setDescription(`:stop_button: **[${index.getQueue(message).lastPlayed.getCleanTitle()}](${index.getQueue(message).lastPlayed.getURL()})** will **no longer** repeat`)
+        .setColor(`#0083FF`));
 }
 
 module.exports = {

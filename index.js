@@ -175,12 +175,17 @@ class Queue {
         this.list = [];
         this.repeat = false;
         this.volume = 1;
+        this.oldVolume = 1;
+        this.lastPlayed = undefined;
     }
     push(input) {
         this.list.push(input);
     }
     unshift(input) {
         this.list.unshift(input);
+    }
+    setLastPlayed(input) {
+        this.lastPlayed = input;
     }
 }
 
@@ -283,7 +288,7 @@ async function sendDetails(input, c) {
     if (input.getType() == "livestream") {
         let musicEmbed = new Discord.RichEmbed()
             .setAuthor(`Now playing`, await input.getChannelThumbnail())
-            .setDescription(`**[${input.getTitle()}](${input.getURL()})**\nBy: [${await input.getChannelName()}](${input.getChannelURL()})\n\n\`YouTube Livestream\``)
+            .setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${await input.getChannelName()}](${input.getChannelURL()})\n\n\`YouTube Livestream\``)
             .setThumbnail(input.getThumbnail())
             .setTimestamp()
             .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar());
@@ -292,7 +297,7 @@ async function sendDetails(input, c) {
     } else {
         let musicEmbed = new Discord.RichEmbed()
             .setAuthor(`Now playing`, await input.getChannelThumbnail())
-            .setDescription(`**[${input.getTitle()}](${input.getURL()})**\nBy: [${await input.getChannelName()}](${input.getChannelURL()})\n\n\`<⚫——————————> (0:00/${await input.getLength()})\``)
+            .setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${await input.getChannelName()}](${input.getChannelURL()})\n\n\`<⚫——————————> (0:00/${await input.getLength()})\``)
             .setThumbnail(input.getThumbnail())
             .setTimestamp()
             .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar());
@@ -344,11 +349,11 @@ async function playMusic(message) {
         return message.channel.send("Error assigning dispatcher, object at index 0 not of recognized type");
     }
 
-    lastPlayed = queue.list.shift();
+    queue.lastPlayed = queue.list.shift();
     // Queues.get(message.guild.id).shift();
     var path;
-    if (lastPlayed && lastPlayed.getType() == "soundcloud") {
-        path = `./soundcloud/${lastPlayed.getTitle()}`;
+    if (queue.lastPlayed && queue.lastPlayed.getType() == "soundcloud") {
+        path = `./soundcloud/${queue.lastPlayed.getTitle()}`;
     } else {
         path = " ";
     }
@@ -358,7 +363,7 @@ async function playMusic(message) {
 
     Dispatchers.get(message.guild.id).on("end", function () {
         if (queue.repeat) {
-            queue.list.unshift(lastPlayed);
+            queue.list.unshift(queue.lastPlayed);
         }
         if (path != " ") {
             fs.unlink(path, (err) => {
@@ -446,9 +451,6 @@ module.exports = {
                 .setDescription(`:information_source: Nothing is currently playing`)
                 .setColor(`#0083FF`);
         }
-    },
-    getPlayingVideo: function () {
-        return lastPlayed;
     },
     getRepeat: function () {
         return repeat;
@@ -589,6 +591,9 @@ client.on('message', message => {
             .then(() => (message.react('🇼'))
                 .then(() => message.react('🅾️')));
     }
+
+    //#region Starboard
+
     // Declare reaction filter
     const filter = (reaction, user) => {
         return ['⭐'].includes(reaction.emoji.name);
@@ -654,11 +659,12 @@ client.on('message', message => {
         .catch(collected => {
             // When collector expires
         });
+    //#endregion
 
     // Return if message from bot
     if (message.author.bot) return;
 
-    // Give user 1 coin
+    // Award money for activity
     if (message.attachments.array()[0]) {
         currency.add(message.author.id, 10);
     } else if (message.content.length > 5) {

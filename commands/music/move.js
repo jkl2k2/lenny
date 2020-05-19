@@ -47,7 +47,7 @@ module.exports = {
                         .setDescription(`:white_check_mark: Moved from position #${startPos + 1} to #${targetPos + 1}:\n**[${queue[targetPos].getCleanTitle()}](${queue[targetPos].getURL()})**
 
                                          It will now play after:
-                                         **[${index.getPlayingVideo().getCleanTitle()}](${index.getPlayingVideo().getURL()})**`)
+                                         **[${index.getQueue(message).lastPlayed.getCleanTitle()}](${index.getQueue(message).lastPlayed.getURL()})**`)
                         .setColor(`#44C408`));
                 } else {
                     message.channel.send(new Discord.RichEmbed()

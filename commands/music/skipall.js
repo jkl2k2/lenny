@@ -27,7 +27,7 @@ module.exports = {
 		index.setDispatcher(message, undefined);
 
 		message.channel.send(new Discord.RichEmbed()
-			.setDescription(`:fast_forward: ${message.author.username} skipped all songs`)
+			.setDescription(`:stop_button: ${message.author.username} skipped all songs`)
 			.setColor(`#0083FF`));
 
 	}

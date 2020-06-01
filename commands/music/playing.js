@@ -12,6 +12,7 @@ module.exports = {
 	type: 'music',
 	async execute(message, args) {
 		var dispatcher = index.getDispatcher(message);
+		var queue = index.getQueue(message);
 
 		if (dispatcher == undefined || !dispatcher.speaking) {
 			var nothingPlaying = new Discord.RichEmbed()
@@ -77,11 +78,21 @@ module.exports = {
 		var embed = index.getPlaying(message);
 
 		if (playingObj.getType() == "video") {
-			embed.setAuthor(`Currently playing`, await playingObj.getChannelThumbnail());
-			embed.setDescription(`**[${playingObj.getTitle()}](${playingObj.getURL()})**\nBy: [${await playingObj.getChannelName()}](${playingObj.getChannelURL()})\n\n${progressBar}`);
+			if (queue.repeat) {
+				embed.setAuthor(`Currently playing`, await playingObj.getChannelThumbnail());
+				embed.setDescription(`**[${playingObj.getTitle()}](${playingObj.getURL()})**\nBy: [${await playingObj.getChannelName()}](${playingObj.getChannelURL()})\n\n${progressBar}\n\n\`🔁 Repeat enabled\``);
+			} else {
+				embed.setAuthor(`Currently playing`, await playingObj.getChannelThumbnail());
+				embed.setDescription(`**[${playingObj.getTitle()}](${playingObj.getURL()})**\nBy: [${await playingObj.getChannelName()}](${playingObj.getChannelURL()})\n\n${progressBar}`);
+			}
 		} else if (playingObj.getType() == "livestream") {
-			embed.setAuthor(`Currently playing`, await playingObj.getChannelThumbnail());
-			embed.setDescription(`**[${playingObj.getTitle()}](${playingObj.getURL()})**\nBy: [${await playingObj.getChannelName()}](${playingObj.getChannelURL()})\n\n\`Time elapsed: ${formattedPlaying}\``);
+			if (queue.repeat) {
+				embed.setAuthor(`Currently playing`, await playingObj.getChannelThumbnail());
+				embed.setDescription(`**[${playingObj.getTitle()}](${playingObj.getURL()})**\nBy: [${await playingObj.getChannelName()}](${playingObj.getChannelURL()})\n\n\`Time elapsed: ${formattedPlaying}\`\n\n\`🔁 Reconnect enabled\``);
+			} else {
+				embed.setAuthor(`Currently playing`, await playingObj.getChannelThumbnail());
+				embed.setDescription(`**[${playingObj.getTitle()}](${playingObj.getURL()})**\nBy: [${await playingObj.getChannelName()}](${playingObj.getChannelURL()})\n\n\`Time elapsed: ${formattedPlaying}\`\n\n\`🔁 Reconnect disabled\`\n\`⚠️ Repeat should be on\`\n\`   for livestreams    \``);
+			}
 		}
 
 		message.channel.send(embed);

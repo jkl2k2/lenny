@@ -217,6 +217,7 @@ const prefix = config.get(`Bot.prefix`);
 const token = config.get(`Bot.token`);
 const ownerID = config.get(`Users.ownerID`);
 const jahyID = config.get(`Users.jahyID`);
+const fookID = config.get(`Users.fookID`);
 
 var lastDetails;
 
@@ -335,6 +336,10 @@ async function playMusic(message) {
         Dispatchers.set(message.guild.id, client.voiceConnections.get(message.guild.id).playStream(input, { bitrate: 384000, volume: Queues.get(message.guild.id).volume, passes: 5, highWaterMark: 1000 * 1000 * 128 }));
 
         if (!queue.repeat) sendDetails(queue.list[0], message.channel);
+
+        if (queue.list[0].getType() == "livestream") {
+            queue.repeat = true;
+        }
 
     } else if (queue.list[0].getType() == "soundcloud") {
         // If SoundCloud
@@ -691,7 +696,7 @@ client.on('message', message => {
     }
 
     // Return if command is disabled
-    if (!command.enabled && (message.author.id != ownerID && message.author.id != jahyID)) {
+    if (!command.enabled && (message.author.id != ownerID && message.author.id != jahyID && message.author.id != fookID)) {
         logger.info(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`!${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Command is disabled`)}`);
         return message.channel.send(new Discord.RichEmbed()
             .setDescription(`<:error:643341473772863508> Sorry, \`!${commandName}\` is disabled`)

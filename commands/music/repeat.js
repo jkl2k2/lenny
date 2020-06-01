@@ -29,6 +29,15 @@ module.exports = {
                 .setDescription(`:information_source: There is nothing currently playing`)
                 .setColor(`#0083FF`));
         }
+
+        var last = queue.lastPlayed;
+
+        if (last.getType() == "livestream") {
+            return message.channel.send(new Discord.RichEmbed()
+                .setDescription(`:information_source: Sorry, repeat is force-enabled on livestreams to allow for the bot to reconnect to livestreams when they cut out\n\nIt would only be harmful to disable repeat with a stream playing\n\n**(This unlocks when a normal video is playing)**`)
+                .setColor(`#0083FF`));
+        }
+
         if (!args[0]) {
             if (queue.repeat == true) {
                 queue.repeat = false;

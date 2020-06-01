@@ -25,7 +25,7 @@ module.exports = {
         if (!command) return message.channel.send("Command not found");
 
         if (command.name == 'toggle') return message.channel.send(new Discord.RichEmbed()
-            .setDescription(`:no_entry: Nice try`)
+            .setDescription(`:no_entry: Nice try, dingus`)
             .setColor(`#FF0000`));
 
         command.enabled = !command.enabled;

@@ -8,7 +8,7 @@ module.exports = {
     description: 'List all bot commands or info about a specific command.',
     aliases: ['commands'],
     usage: '[command name]',
-    cooldown: 5,
+    // cooldown: 5,
     guildsOnly: false,
     enabled: true,
     type: 'general',
@@ -23,13 +23,14 @@ module.exports = {
 
             generalHelp.setAuthor(`Use ${prefix}help [command name] to get info on a specific command`, client.user.avatarURL);
 
-            generalHelp.addField(`**Playback control**`, `play\nplaynext\nplaynow\nsearch\nskip\nskipall\njoin\nleave\npause\nresume`, true);
+            generalHelp.addField(`**Music playing**`, `play\nplaynext\nplaynow\nplaylist\nsearch\ntwitch`, true);
+            generalHelp.addField(`**Playback control**`, `skip\nskipall\njoin\nleave\npause\nresume`, true);
             generalHelp.addField(`**Volume control**`, `volume\nmute\nunmute`, true);
             generalHelp.addField(`**Queue control**`, `queue\nremove\nmove\nshuffle\nclear`, true);
             generalHelp.addField(`**Music information**`, `playing\nnext\nfindvideo\nsearchf/search`, true);
-            generalHelp.addField(`**Fun commands**`, `say\nlenny\nthesaurize\njoke`, true);
-            generalHelp.addField(`**Admin commands**`, `prune\ntoggle`, true);
-            generalHelp.addField(`**System commands**`, `ping`, true);
+            generalHelp.addField(`**Fun commands**`, `ask\ncool\ncorn\nfookify\nfookifytts\nsay\nlenny\nthesaurize\njoke`, true);
+            generalHelp.addField(`**Admin commands**`, `prune\ntoggle\nkick\nban\naddmoney`, true);
+            generalHelp.addField(`**System commands**`, `help\nping`, true);
             generalHelp.addField(`**Currency commands**`, `balance\ntransfer\nleaderboard`, true);
             generalHelp.addField(`**Game commands**`, `flip\nblackjack`, true);
 

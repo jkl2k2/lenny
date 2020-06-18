@@ -8,6 +8,8 @@ const winston = require('winston');
 const api = config.get(`Bot.api2`);
 const YouTube = require('simple-youtube-api');
 const youtube = new YouTube(api);
+const TwitchClient = require('twitch').default;
+const twitchClient = TwitchClient.withCredentials(config.get(`Bot.TWITCH_CLIENT_ID`), config.get(`Bot.TWITCH_CLIENT_SECRET`));
 //#endregion
 
 //#region Initialize database
@@ -157,6 +159,25 @@ class YTVideo {
     }
 }
 
+class TwitchStream extends YTVideo {
+    constructor(url, name, requester) {
+        super(url, requester);
+        this.name = name;
+    }
+    getTitle() {
+        return this.name;
+    }
+    getCleanTitle() {
+        return this.name;
+    }
+    getURL() {
+        return this.url;
+    }
+    getType() {
+        return "twitch";
+    }
+}
+
 class Command {
     constructor(command, folder) {
         this.command = command;
@@ -224,6 +245,9 @@ var lastDetails;
 var statusChannel;
 var statusMessage;
 var casinoStatusMessage;
+
+var adminStatusChannel;
+var adminStatusMessage;
 //#endregion
 
 //#region Winston logger
@@ -279,7 +303,8 @@ const activities = [
     new Activity("Cat's PC melt", "WATCHING"),
     new Activity("your private convos", "WATCHING"),
     new Activity("trash music", "LISTENING"),
-    new Activity("Russian spies", "LISTENING")
+    new Activity("Russian spies", "LISTENING"),
+    new Activity("the shaft", "PLAYING")
 ];
 //#endregion
 
@@ -294,6 +319,16 @@ async function sendDetails(input, c) {
             .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar());
         c.send(musicEmbed);
         lastDetails = musicEmbed;
+    } else if (input.getType() == "twitch") {
+        let channel = await twitchClient.helix.users.getUserByName(input.getTitle());
+        let musicEmbed = new Discord.RichEmbed()
+            .setAuthor(`Now playing`, channel.profilePictureUrl)
+            .setDescription(`**[${channel.displayName}](www.twitch.tv/${channel.displayName})**\n\n\`Twitch Livestream\``)
+            .setThumbnail(channel.profilePictureUrl)
+            .setTimestamp()
+            .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar());
+        c.send(musicEmbed);
+        lastDeatils = musicEmbed;
     } else {
         let musicEmbed = new Discord.RichEmbed()
             .setAuthor(`Now playing`, await input.getChannelThumbnail())
@@ -340,6 +375,13 @@ async function playMusic(message) {
         if (queue.list[0].getType() == "livestream") {
             queue.repeat = true;
         }
+
+    } else if (queue.list[0].getType() == "twitch") {
+        // If Twitch
+
+        // Dispatchers.set(message.guild.id, client.voiceConnections.get(message.guild.id).playStream(queue.list[0].getURL()));
+
+        sendDetails(queue.list[0], message.channel);
 
     } else if (queue.list[0].getType() == "soundcloud") {
         // If SoundCloud
@@ -402,6 +444,26 @@ async function updateCasinoStats(mainGuild) {
 }
 //#endregion
 
+//#region Admin dashboard
+function formatDate() {
+    var date = new Date();
+    if (date.getSeconds() < 10) {
+        return `${date.getMonth()}/${date.getDate()}/${date.getFullYear()} - ${date.getHours()}:${date.getMinutes()}:0${date.getSeconds()}`;
+    } else {
+        return `${date.getMonth()}/${date.getDate()}/${date.getFullYear()} - ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+    }
+}
+
+async function updateAdminDashboard() {
+    var heartbeatPing = Math.round(client.ping);
+
+    var newMessage = new Discord.RichEmbed()
+        .setDescription(`:clock3: Websocket Ping: **${heartbeatPing}ms**`)
+        .setFooter(`Updated ${formatDate()}`);
+    adminStatusMessage.edit(newMessage);
+}
+//#endregion
+
 //#region Exports
 module.exports = {
     constructQueue: function () {
@@ -409,6 +471,13 @@ module.exports = {
     },
     constructVideo: function (input, member) {
         return new YTVideo(input, member);
+    },
+    constructTwitch: function (input, name, member) {
+        console.log("Constructing Twitch stream");
+        return new TwitchStream(input, name, member);
+    },
+    getTwitchClient: function () {
+        return twitchClient;
     },
     getQueues: function () {
         return Queues;
@@ -570,8 +639,17 @@ client.on('ready', async () => {
             { code: true })
         .setColor(`#1b9e56`));
 
+    adminStatusChannel = client.channels.get(`719807359622578206`);
+
+    var adminStatusFetched = await adminStatusChannel.fetchMessages({ limit: 10 });
+    adminStatusChannel.bulkDelete(adminStatusFetched);
+    adminStatusMessage = await adminStatusChannel.send(new Discord.RichEmbed()
+        .setDescription(`:clock3: Websocket Ping: **${Math.round(client.ping)}ms**`)
+        .setFooter(`Updated ${formatDate()}`));
+
     setInterval(() => {
         updateCasinoStats(mainGuild);
+        updateAdminDashboard();
     }, 5000);
 
     logger.info(chalk.white.bgCyan(`--------Bot Initialized--------`));
@@ -594,6 +672,15 @@ client.on('message', message => {
             .then(() => (message.react('🇴')))
             .then(() => (message.react('🇼'))
                 .then(() => message.react('🅾️')));
+    }
+
+    // Ban the word "bored" in school group server
+    if (message.guild.id == "717141100766298203" && message.content.toLowerCase().split(" ").join("").includes("bored")) {
+        message.delete();
+        return message.channel.send(new Discord.RichEmbed()
+            .setDescription(`:wastebasket: **Message Deleted**\n\n**Author:** ${message.author}\n**Reason:** Banned word or phrase`)
+            .setColor(`#FF0000`)
+            .setTimestamp());
     }
 
     //#region Starboard
@@ -720,6 +807,10 @@ client.on('message', message => {
 
         if (command.usage) {
             msg += `\n\nThe proper usage would be:\n\`${prefix}${command.name} ${command.usage}\``;
+        }
+
+        if (command.altUsage) {
+            msg += `\n*Or alternatively*\n\`${prefix}${command.name} ${command.altUsage}\``;
         }
 
         noArgs.setDescription(msg);

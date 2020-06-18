@@ -3,30 +3,60 @@ const Discord = require(`discord.js`);
 const twitch = require(`twitch-get-stream`);
 const Dispatchers = index.getDispatchers();
 const client = index.getClient();
+const Queues = index.getQueues();
+const twitchClient = index.getTwitchClient();
 
 module.exports = {
     name: 'twitch',
-    description: 'Template command for easier coding, does nothing',
+    description: 'Plays Twitch streams',
     // aliases: ['aliases'],
     // args: true,
-    usage: '[channel URL]',
+    usage: '[channel name]',
     // altUsage: 'command',
     // cooldown: 5,
     guildOnly: true,
-    enabled: true,
+    enabled: false,
     type: 'music',
-    execute(message, args) {
+    async execute(message, args) {
         twitch.get(args[0])
-            .then(function (streams) {
+            .then(async function (streams) {
+                var newVideo = index.constructTwitch(streams[0].url, args[0], message.member);
+
+                if (!Queues.has(message.guild.id)) {
+                    let newQueue = index.constructQueue();
+                    newQueue.push(newVideo);
+                    index.setQueue(message, newQueue);
+                    console.log("Created queue");
+                } else {
+                    queue.push(newVideo);
+                    console.log("Pushed Twitch stream to queue");
+                }
+
                 if (message.member.voiceChannel) {
                     message.member.voiceChannel.join()
                         .then(connection => {
-                            if (index.getDispatcher(message) == undefined || (!connection.speaking && !index.getDispatcher(message).paused)) {
-                                Dispatchers.set(message.guild.id, client.voiceConnections.get(message.guild.id).playStream(streams[0].url));
+                            if (index.getDispatcher(message) == undefined) {
+                                index.callPlayMusic(message);
                             }
                         });
                 } else {
                     message.channel.send(`You are not in a voice channel`);
+                }
+
+                let channel = await twitchClient.helix.users.getUserByName(args[0]);
+                message.channel.send(new Discord.RichEmbed()
+                    .setAuthor(`Queued`, channel.profilePictureUrl)
+                    .setDescription(`**[${channel.displayName}](www.twitch.tv/${channel.displayName})**\n\n\`Twitch Livestream\``)
+                    .setThumbnail(channel.profilePictureUrl)
+                    .setTimestamp()
+                    .setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar()));
+            })
+
+            .catch(err => {
+                if (err.message.includes(`404`)) {
+                    message.channel.send(new Discord.RichEmbed()
+                        .setDescription(`<:error:643341473772863508>\`${err}\`\n\nSorry, but the Twitch channel you provided either doesn't exist or is not currently streaming.`)
+                        .setColor(`#FF0000`));
                 }
             });
     }

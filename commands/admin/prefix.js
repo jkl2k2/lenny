@@ -19,13 +19,14 @@ module.exports = {
     },
     type: 'admin',
     execute(message, args) {
-        let prefixes = JSON.parse(fs.readFileSync(`./config/prefixes.json`, `utf8`));
+        let serverConfig = JSON.parse(fs.readFileSync(`./config/serverConfig.json`, `utf8`));
 
-        prefixes[message.guild.id] = {
+        serverConfig[message.guild.id] = {
+            name: message.guild.name,
             prefix: args[0]
         };
 
-        fs.writeFile(`./config/prefixes.json`, JSON.stringify(prefixes, null, `\t`), err => {
+        fs.writeFile(`./config/serverConfig.json`, JSON.stringify(serverConfig, null, `\t`), err => {
             if (err) logger.error(err);
         });
 

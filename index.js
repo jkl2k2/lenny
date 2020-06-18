@@ -665,17 +665,42 @@ client.on('message', message => {
         return;
     }
 
-    // Read prefixes.json
-    let prefixes = JSON.parse(fs.readFileSync(`./config/prefixes.json`, `utf8`));
+    // Read serverConfig.json
+    let serverConfig = JSON.parse(fs.readFileSync(`./config/serverConfig.json`, `utf8`));
 
     // If server not registered
-    if (!prefixes[message.guild.id]) {
-        prefixes[message.guild.id] = {
+    if (!serverConfig[message.guild.id]) {
+        logger.info(chalk.bgWhiteBright.black(`New server registered with serverConfig\nName: "${message.guild.name}"\nID: ${message.guild.id}`));
+
+        // Register server with default prefix
+        serverConfig[message.guild.id] = {
+            name: message.guild.name,
             prefix: config.get(`Bot.prefix`)
         };
+
+        // Write to serverConfig.json
+        fs.writeFile(`./config/serverConfig.json`, JSON.stringify(serverConfig, null, `\t`), err => {
+            if (err) logger.error(err);
+        });
     }
 
-    let prefix = prefixes[message.guild.id].prefix;
+    // If server name changed
+    if (serverConfig[message.guild.id] && serverConfig[message.guild.id].name != message.guild.name) {
+        logger.info(chalk.bgWhiteBright.black(`Updating server in serverConfig\nPrevious Name: "${serverConfig[message.guild.id].name}"\nNew Name: "${message.guild.name}"\nID: ${message.guild.id}`));
+
+        // Update server config with new name
+        serverConfig[message.guild.id] = {
+            name: message.guild.name,
+            prefix: serverConfig[message.guild.id].prefix
+        };
+
+        // Write to serverConfig.json
+        fs.writeFile(`./config/serverConfig.json`, JSON.stringify(serverConfig, null, `\t`), err => {
+            if (err) logger.error(err);
+        });
+    }
+
+    let prefix = serverConfig[message.guild.id].prefix;
 
     if (message.content.includes("banana")) {
         message.react('🍌')

@@ -40,6 +40,7 @@
     "soundcloud-v2-api": "0.0.6",
     "sqlite3": "^4.2.0",
     "thesaurize": "^1.0.11",
+    "twitch": "^4.0.10",
     "twitch-get-stream": "^0.6.0",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v17.1.0",
     "winston": "^3.2.1",

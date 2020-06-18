@@ -4,7 +4,7 @@ const Discord = require(`discord.js`);
 module.exports = {
 	name: 'playing',
 	description: 'Shows the currently playing song',
-	// aliases: ['aliases'],
+	aliases: ['np'],
 	// usage: '[command]',
 	// cooldown: 5,
 	guildOnly: true,

@@ -233,8 +233,6 @@ var repeat = false;
 const Queues = new Discord.Collection();
 const Dispatchers = new Discord.Collection();
 
-
-const prefix = config.get(`Bot.prefix`);
 const token = config.get(`Bot.token`);
 const ownerID = config.get(`Users.ownerID`);
 const jahyID = config.get(`Users.jahyID`);
@@ -667,6 +665,18 @@ client.on('message', message => {
         return;
     }
 
+    // Read prefixes.json
+    let prefixes = JSON.parse(fs.readFileSync(`./config/prefixes.json`, `utf8`));
+
+    // If server not registered
+    if (!prefixes[message.guild.id]) {
+        prefixes[message.guild.id] = {
+            prefix: config.get(`Bot.prefix`)
+        };
+    }
+
+    let prefix = prefixes[message.guild.id].prefix;
+
     if (message.content.includes("banana")) {
         message.react('🍌')
             .then(() => (message.react('🇴')))
@@ -762,6 +772,13 @@ client.on('message', message => {
         currency.add(message.author.id, 1);
     }
 
+    // If message is only bot mention, show prefix
+    if (message.content == "<@!641137495886528513>") {
+        return message.channel.send(new Discord.RichEmbed()
+            .setDescription(`:information_source: The prefix for the server \`${message.guild.name}\` is currently \`${prefix}\``)
+            .setColor(`#0083FF`));
+    }
+
     // Return if no prefix
     if (!message.content.startsWith(prefix)) return;
 
@@ -784,7 +801,7 @@ client.on('message', message => {
 
     // Return if command is disabled
     if (!command.enabled && (message.author.id != ownerID && message.author.id != jahyID && message.author.id != fookID)) {
-        logger.info(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`!${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Command is disabled`)}`);
+        logger.info(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`${prefix}${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Command is disabled`)}`);
         return message.channel.send(new Discord.RichEmbed()
             .setDescription(`<:error:643341473772863508> Sorry, \`!${commandName}\` is disabled`)
             .setColor(`#FF0000`));
@@ -792,7 +809,7 @@ client.on('message', message => {
 
     // If guild-only, no DMs allowed
     if (command.guildOnly && message.channel.type !== 'text') {
-        logger.info(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`!${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Command is guild-only`)}`);
+        logger.info(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`${prefix}${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Command is guild-only`)}`);
         let serverOnly = new Discord.RichEmbed()
             .setDescription(`<:error:643341473772863508> Sorry, that command is only usable in servers`)
             .setColor(`#FF0000`);
@@ -801,7 +818,7 @@ client.on('message', message => {
 
     // If command needs arguments
     if (command.args && !args.length) {
-        logger.info(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`!${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Improper usage`)}`);
+        logger.info(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`${prefix}${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Improper usage`)}`);
         let noArgs = new Discord.RichEmbed();
         let msg = `You didn't provide the required arguments, ${message.author.username}`;
 
@@ -847,7 +864,7 @@ client.on('message', message => {
     setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
 
     // If command has permission restrictions
-    if (command.restrictions) {
+    if (command.restrictions && message.member.id != ownerID) {
         if (command.restrictions.resolvable && !message.member.hasPermission(command.restrictions.resolvable)) {
             return message.channel.send(new Discord.RichEmbed()
                 .setDescription(`<:error:643341473772863508> Sorry, ${message.author.username}, you do not have the required permission(s) to use \`${prefix}${command.name}\`\n\nPermissions required:\n\`${command.restrictions.resolvable.join("\n")}\``)

@@ -1,7 +1,7 @@
 const config = require('config');
 const index = require(`../../index.js`);
-const prefix = config.get(`Bot.prefix`);
 const Discord = require(`discord.js`);
+const fs = require(`fs`);
 
 module.exports = {
     name: 'help',
@@ -16,6 +16,10 @@ module.exports = {
         const { commands } = message.client;
         var client = index.getClient();
 
+        let serverConfig = JSON.parse(fs.readFileSync(`./config/serverConfig.json`, `utf8`));
+
+        let prefix = serverConfig[message.guild.id].prefix;
+
         if (!args.length) {
             // Send list of commands
 
@@ -29,7 +33,7 @@ module.exports = {
             generalHelp.addField(`**Queue control**`, `queue\nremove\nmove\nshuffle\nclear`, true);
             generalHelp.addField(`**Music information**`, `playing\nnext\nfindvideo\nsearchf/search`, true);
             generalHelp.addField(`**Fun commands**`, `ask\ncool\ncorn\nfookify\nfookifytts\nsay\nlenny\nthesaurize\njoke`, true);
-            generalHelp.addField(`**Admin commands**`, `prune\ntoggle\nkick\nban\naddmoney`, true);
+            generalHelp.addField(`**Admin commands**`, `prefix\nprune\ntoggle\nkick\nban\naddmoney`, true);
             generalHelp.addField(`**System commands**`, `help\nping`, true);
             generalHelp.addField(`**Currency commands**`, `balance\ntransfer\nleaderboard`, true);
             generalHelp.addField(`**Game commands**`, `flip\nblackjack`, true);
@@ -52,7 +56,7 @@ module.exports = {
             commandHelp.setDescription(`*(Redirected from ${prefix}${name})*`);
         }
 
-        commandHelp.setAuthor(config.get(`Bot.prefix`) + command.name, client.user.avatarURL);
+        commandHelp.setAuthor(prefix + command.name, client.user.avatarURL);
 
         // Aliases
         if (command.aliases) commandHelp.addField(`**Aliases**`, command.aliases.join(', '));

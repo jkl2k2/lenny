@@ -2,7 +2,10 @@ const index = require(`../../index.js`);
 const Discord = require(`discord.js`);
 const { Users, CurrencyShop } = require('../../dbObjects');
 const { Op } = require('sequelize');
+const { loggers } = require('winston');
 const currency = index.getCurrencyDB();
+
+var sent;
 
 function createDeck() {
     var suits = ["Spades", "Hearts", "Diamonds", "Clubs"];
@@ -85,14 +88,16 @@ function showPoints(user) {
     }
 }
 
-async function awaitResponse(message, player, house, deck, bet, originalBalance) {
+async function awaitResponse(message, player, house, deck, bet, originalBalance, resend) {
 
     updatePoints(player);
     updatePoints(house);
-    var sent = await message.channel.send(new Discord.RichEmbed()
-        .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${house.hand[0].value} + ? points)\n**[${house.hand[0].value}] [?]**\n\nHit, stay, or double?\n**Dealer will hit until at least 17**`)
-        .setColor(`#801431`)
-        .setThumbnail(message.author.avatarURL));
+    if (resend) {
+        sent = await message.channel.send(new Discord.RichEmbed()
+            .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${house.hand[0].value} + ? points)\n**[${house.hand[0].value}] [?]**\n\nHit, stay, or double?\n**Dealer will hit until at least 17**`)
+            .setColor(`#801431`)
+            .setThumbnail(message.author.avatarURL));
+    }
 
     if (player.altPoints == 21) {
 
@@ -142,6 +147,9 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance)
         const collector = message.channel.createMessageCollector(filter, { time: 600000, max: 1 });
 
         collector.on('collect', m => {
+
+            // console.log("Collection passed filter");
+
             if (m.content.toLowerCase() == "cancel") {
                 return message.channel.send(new Discord.RichEmbed()
                     .setDescription(`Canceled the game`));
@@ -150,9 +158,12 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance)
             if (m.content.toLowerCase().includes("!blackjack") || m.content.toLowerCase().includes("!bj")) {
                 // Player accidentally starts another blackjack game
 
+                /*
                 return message.channel.send(new Discord.RichEmbed()
                     .setDescription(`<:error:643341473772863508> **You already had a game of blackjack going, ${message.author.username}, but since you started another one I canceled the original game**`)
                     .setColor(`#FF0000`));
+                */
+                return;
             }
 
             if (m.content.toLowerCase() == "double") {
@@ -163,7 +174,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance)
                     message.channel.send(new Discord.RichEmbed()
                         .setDescription(`<:error:643341473772863508> Sorry, ${message.author.username}, but your balance is too low to double down`)
                         .setColor(`#FF0000`));
-                    return awaitResponse(message, player, house, deck, bet, originalBalance);
+                    return awaitResponse(message, player, house, deck, bet, originalBalance, true);
                 }
 
                 // Double bet
@@ -341,7 +352,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance)
                         .setThumbnail(message.author.avatarURL));
 
                 } else {
-                    return awaitResponse(message, player, house, deck, bet, originalBalance);
+                    return awaitResponse(message, player, house, deck, bet, originalBalance, true);
                 }
             }
 
@@ -459,6 +470,19 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance)
                 }
             }
         });
+        collector.on('end', collected => {
+            /*
+            var m = collected[0];
+            console.log(`Collector ended`);
+            if ((m.content != "hit" && m.content != "stay" && m.content != "double" && m.content != "cancel" && !m.content.includes("!blackjack") && !m.content.includes("!bj"))) {
+                console.log("Restarting collector");
+                return awaitResponse(message, player, house, deck, bet, originalBalance);
+            }
+            */
+            if (collected.size == 0) {
+                return awaitResponse(message, player, house, deck, bet, originalBalance, false);
+            }
+        });
     }
 }
 
@@ -522,6 +546,6 @@ module.exports = {
         var player = { hand: playerHand, points: (playerHand[0].value + playerHand[1].value), altPoints: 0 };
         var house = { hand: houseHand, points: (houseHand[0].value + houseHand[1].value), altPoints: 0 };
 
-        awaitResponse(message, player, house, deck, parseInt(args[0]), originalBalance);
+        awaitResponse(message, player, house, deck, parseInt(args[0]), originalBalance, true);
     }
 };

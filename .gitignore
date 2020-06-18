@@ -1,8 +1,5 @@
-config.json
 .vscode/
-config/default-0.json
 config/default.json
 soundcloud/
 downloads/
-commands/ligma.json
 commands/general/testing.js

@@ -1,5 +1,6 @@
 .vscode/
 config/default.json
+config/serverConfig.json
 soundcloud/
 downloads/
 commands/general/testing.js

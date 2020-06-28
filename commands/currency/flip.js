@@ -3,6 +3,8 @@ const Discord = require(`discord.js`);
 const { Users, CurrencyShop } = require('../../dbObjects');
 const { Op } = require('sequelize');
 const currency = index.getCurrencyDB();
+const config = require(`config`);
+const ownerID = config.get(`Users.ownerID`);
 
 module.exports = {
     name: 'flip',

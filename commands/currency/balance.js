@@ -7,7 +7,7 @@ const currency = index.getCurrencyDB();
 module.exports = {
     name: 'balance',
     description: 'Displays your current balance',
-    aliases: ['bal'],
+    aliases: ['bal', 'wallet'],
     // args: true,
     usage: '[(optional) tag a user]',
     // cooldown: 5,

@@ -5,6 +5,7 @@ const config = require('config');
 const ytdl = require('ytdl-core');
 const chalk = require('chalk');
 const winston = require('winston');
+const winstonRotate = require(`winston-daily-rotate-file`);
 const api = config.get(`Bot.api2`);
 const YouTube = require('simple-youtube-api');
 const youtube = new YouTube(api);
@@ -257,30 +258,38 @@ winston.addColors({
 });
 
 const logger = winston.createLogger({
-    // level: `debug`,
     transports: [
-        new winston.transports.File({
+        new winstonRotate({
             format: winston.format.combine(
-                winston.format.printf(log => `[${log.level.toUpperCase()}] - ${log.message}`),
-                winston.format.uncolorize()
+                winston.format.timestamp(),
+                winston.format.align(),
+                winston.format.uncolorize(),
+                winston.format.printf(log => `[${log.level.toUpperCase()}] - ${log.message}`)
             ),
-            filename: `combined.log`,
+            filename: `./logs/info-%DATE%.log`,
+            datePattern: `YYYY-MM-DD`,
             level: `info`
         }),
-        new winston.transports.File({
+        new winstonRotate({
             format: winston.format.combine(
-                winston.format.printf(log => `[${log.level.toUpperCase()}] - ${log.message}`),
-                winston.format.uncolorize()
+                winston.format.timestamp(),
+                winston.format.align(),
+                winston.format.uncolorize(),
+                winston.format.printf(log => `[${log.level.toUpperCase()}] - ${log.message}`)
             ),
-            filename: `errors.log`,
-            level: `warn`
+            filename: `./logs/error-%DATE%.log`,
+            datePattern: `YYYY-MM-DD`,
+            level: `error`
         }),
-        new winston.transports.File({
+        new winstonRotate({
             format: winston.format.combine(
-                winston.format.printf(log => `[${log.level.toUpperCase()}] - ${log.message}`),
-                winston.format.uncolorize()
+                winston.format.timestamp(),
+                winston.format.align(),
+                winston.format.uncolorize(),
+                winston.format.printf(log => `[${log.level.toUpperCase()}] - ${log.message}`)
             ),
-            filename: `debug.log`,
+            filename: `./logs/debug-%DATE%.log`,
+            datePattern: `YYYY-MM-DD`,
             level: `debug`
         }),
         new winston.transports.Console({
@@ -288,7 +297,8 @@ const logger = winston.createLogger({
                 winston.format.colorize(),
                 // winston.format.printf(log => `[${log.level.toUpperCase()}] - ${log.message}`),
                 winston.format.simple()
-            )
+            ),
+            level: `info`
         })
     ]
 });
@@ -553,7 +563,7 @@ module.exports = {
 var commandFiles = [];
 
 // Load unsorted commands
-logger.info(chalk.black.bgGray(`Loading commands...`));
+logger.debug(chalk.black.bgGray(`Loading commands...`));
 
 const unsortedCommandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 for (const unsortedCommand of unsortedCommandFiles) {
@@ -603,7 +613,7 @@ for (const file of commandFiles) {
 //#region Client Ready
 client.on('ready', async () => {
     // Sync with currency database
-    logger.info(chalk.black.bgGray(`Syncing with currency database...`));
+    logger.debug(chalk.black.bgGray(`Syncing with currency database...`));
     const storedBalances = await Users.findAll();
     storedBalances.forEach(b => currency.set(b.user_id, b));
 
@@ -621,13 +631,13 @@ client.on('ready', async () => {
     // casinoStatusMessage = await casinoChannel.send(new Discord.RichEmbed()
     // .setDescription(`:money_with_wings: **OWO GRAND RESORT & CASINO PROFITS** :money_with_wings:\n\n__Total profits__\n**$placeholder**`));
 
-    logger.info(chalk.black.bgGray(`Clearing leaderboard channel...`));
+    logger.debug(chalk.black.bgGray(`Clearing leaderboard channel...`));
     var casinoFetched = await casinoChannel.fetchMessages({ limit: 10 });
     casinoChannel.bulkDelete(casinoFetched);
 
     var mainGuild = client.guilds.get(`471193210102743040`);
 
-    logger.info(chalk.black.bgGray(`Sending initial leaderboard message...`));
+    logger.debug(chalk.black.bgGray(`Sending initial leaderboard message...`));
     casinoStatusMessage = await casinoChannel.send(new Discord.RichEmbed()
         .setDescription(`:money_with_wings: **OWO GRAND RESORT & CASINO PROFITS** :money_with_wings:\n\nProfit: **$${currency.getBalance("0")}**\n\n:medal: **Top 10 users by currency**\n\n` + currency.sort((a, b) => b.balance - a.balance)
             .filter(user => client.users.has(user.user_id) && mainGuild.member(client.users.get(user.user_id)))
@@ -651,7 +661,18 @@ client.on('ready', async () => {
     }, 5000);
 
     logger.info(chalk.white.bgCyan(`--------Bot Initialized--------`));
-    logger.info(chalk.white.bgCyan(`Timestamp: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} - ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`));
+    if (date.getMinutes() < 10) {
+        if (date.getSeconds() < 10) {
+            logger.info(chalk.white.bgCyan(`Timestamp: ${date.getHours()}:0${date.getMinutes()}:0${date.getSeconds()} - ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`));
+        } else {
+            logger.info(chalk.white.bgCyan(`Timestamp: ${date.getHours()}:0${date.getMinutes()}:${date.getSeconds()} - ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`));
+        }
+    } else if (date.getSeconds() < 10) {
+        logger.info(chalk.white.bgCyan(`Timestamp: ${date.getHours()}:${date.getMinutes()}:0${date.getSeconds()} - ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`));
+    } else {
+        logger.info(chalk.white.bgCyan(`Timestamp: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} - ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`));
+    }
+    // logger.info(chalk.white.bgCyan(`Timestamp: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} - ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`));
     logger.info(chalk.white.bgCyan.bold(`-------Awaiting Commands-------`));
 
     clientReady = true;
@@ -919,5 +940,5 @@ client.on('message', message => {
 });
 //#endregion
 
-logger.info(chalk.black.bgGray(`Logging in to Discord...`));
+logger.debug(chalk.black.bgGray(`Logging in to Discord...`));
 client.login(token);

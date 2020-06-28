@@ -158,7 +158,7 @@ module.exports = {
 
 		//#region Regular video / livestream handling
 		async function process(input) {
-			logger.debug(input.title);
+			// logger.debug(input.title);
 
 			// let newVideo = index.constructVideo(input, message.member);
 			let newVideo = index.constructVideo(input, message.member);

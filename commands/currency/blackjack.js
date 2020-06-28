@@ -142,7 +142,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance,
 
     } else {
 
-        const filter = m => m.author.id == message.author.id && (m.content == "hit" || m.content == "stay" || m.content == "double" || m.content == "cancel" || m.content.includes("!blackjack") || m.content.includes("!bj"));
+        const filter = m => m.author.id == message.author.id && (m.content.toLowerCase() == "hit" || m.content.toLowerCase() == "stay" || m.content.toLowerCase() == "double" || m.content.toLowerCase() == "cancel" || m.content.toLowerCase().includes("!blackjack") || m.content.toLowerCase().includes("!bj"));
 
         const collector = message.channel.createMessageCollector(filter, { time: 600000, max: 1 });
 

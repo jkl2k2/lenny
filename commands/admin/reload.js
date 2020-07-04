@@ -17,12 +17,12 @@ module.exports = {
 
         let noArgs = new Discord.RichEmbed()
 
-            .setDescription(`<:error:643341473772863508> No command passed in arguments`)
+            .setDescription(`<:cross:728885860623319120> No command passed in arguments`)
             .setColor(`#FF0000`);
 
         let notFound = new Discord.RichEmbed()
 
-            .setDescription(`<:error:643341473772863508> Command not found`)
+            .setDescription(`<:cross:728885860623319120> Command not found`)
             .setColor(`#FF0000`);
 
         if (!args.length) return message.channel.send(noArgs);

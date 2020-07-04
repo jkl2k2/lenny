@@ -22,7 +22,7 @@ module.exports = {
         if (queue == undefined || queue[target - 1] == undefined) {
             // Invalid target
             return message.channel.send(new Discord.RichEmbed()
-                .setDescription(`<:error:643341473772863508> ${target} is not a valid position in the queue`)
+                .setDescription(`<:cross:728885860623319120> ${target} is not a valid position in the queue`)
                 .setColor(`#FF0000`));
         }
 
@@ -41,7 +41,7 @@ module.exports = {
             } else {
                 // Invalid range
                 return message.channel.send(new Discord.RichEmbed()
-                    .setDescription(`<:error:643341473772863508> The range you provided is not valid`)
+                    .setDescription(`<:cross:728885860623319120> The range you provided is not valid`)
                     .setColor(`#FF0000`));
             }
         }

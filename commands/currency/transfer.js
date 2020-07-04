@@ -21,13 +21,13 @@ module.exports = {
         const transferTarget = message.mentions.users.first();
 
         if (!transferAmount || isNaN(transferAmount)) return message.channel.send(new Discord.RichEmbed()
-            .setDescription(`<:error:643341473772863508> Sorry ${message.author.username}, that's an invalid amount.`)
+            .setDescription(`<:cross:728885860623319120> Sorry ${message.author.username}, that's an invalid amount.`)
             .setColor(`#FF0000`));
         if (transferAmount > currentAmount) return message.channel.send(new Discord.RichEmbed()
-            .setDescription(`<:error:643341473772863508> Sorry ${message.author.username}, you only have **$${currentAmount}**.`)
+            .setDescription(`<:cross:728885860623319120> Sorry ${message.author.username}, you only have **$${currentAmount}**.`)
             .setColor(`#FF0000`));
         if (transferAmount <= 0) return message.channel.send(new Discord.RichEmbed()
-            .setDescription(`<:error:643341473772863508> Please enter an amount greater than zero, ${message.author.username}.`)
+            .setDescription(`<:cross:728885860623319120> Please enter an amount greater than zero, ${message.author.username}.`)
             .setColor(`#FF0000`));
 
         var originalBalance = currency.getBalance(message.author.id);
@@ -37,6 +37,6 @@ module.exports = {
 
         return message.channel.send(new Discord.RichEmbed()
             .setDescription(`:money_with_wings: Successfully transferred $${transferAmount} to ${transferTarget.tag}.\n\nYour previous balance: **$${originalBalance}**\nYour new balance: **$${currency.getBalance(message.author.id)}**`)
-            .setColor(`#1b9e56`));
+            .setColor(`#2EC14E`));
     }
 };

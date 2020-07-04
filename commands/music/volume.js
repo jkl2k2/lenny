@@ -67,7 +67,7 @@ module.exports = {
 				.setColor(`#0083FF`));
 		} else {
 			return message.channel.send(new Discord.RichEmbed()
-				.addField(`<:error:643341473772863508> Failed to change volume`, `You can't set the volume to that number`)
+				.addField(`<:cross:728885860623319120> Failed to change volume`, `You can't set the volume to that number`)
 				.setColor(`#FF0000`));
 		}
 	}

@@ -25,7 +25,7 @@ module.exports = {
 		} else {
 			let resumeFailEmbed = new Discord.RichEmbed()
 
-				.setDescription(`<:error:643341473772863508> ${message.author.username}, the music is already playing`)
+				.setDescription(`<:cross:728885860623319120> ${message.author.username}, the music is already playing`)
 				.setColor(`#FF0000`);
 			message.channel.send(resumeFailEmbed);
 		}

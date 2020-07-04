@@ -31,8 +31,8 @@ module.exports = {
         });
 
         message.channel.send(new Discord.RichEmbed()
-            .setDescription(`:white_check_mark: Prefix for \`${message.guild.name}\` successfully set to \`${args[0]}\``)
-            .setColor(`#1b9e56`)
+            .setDescription(`<:check:728881238970073090> Prefix for \`${message.guild.name}\` successfully set to \`${args[0]}\``)
+            .setColor(`#2EC14E`)
             .setFooter(`Changed by ${message.author.username}`, message.author.avatarURL)
             .setTimestamp());
     }

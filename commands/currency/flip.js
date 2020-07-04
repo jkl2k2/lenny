@@ -25,37 +25,37 @@ module.exports = {
 
         if (args[0] == "coosin" || args[0] == "collin" || args[0] == "cucino") {
             return message.channel.send(new Discord.RichEmbed()
-                .setDescription(`<:error:643341473772863508> Sorry, we do not accept trash as a currency for betting.`)
+                .setDescription(`<:cross:728885860623319120> Sorry, we do not accept trash as a currency for betting.`)
                 .setColor(`#FF0000`));
         }
 
         if (isNaN(args[0])) {
             return message.channel.send(new Discord.RichEmbed()
-                .setDescription(`<:error:643341473772863508> Please input a number to bet`)
+                .setDescription(`<:cross:728885860623319120> Please input a number to bet`)
                 .setColor(`#FF0000`));
         }
 
         if (parseInt(args[0]) == 0) {
             return message.channel.send(new Discord.RichEmbed()
-                .setDescription(`<:error:643341473772863508> Please bet more than $0`)
+                .setDescription(`<:cross:728885860623319120> Please bet more than $0`)
                 .setColor(`#FF0000`));
         }
 
         if (parseInt((args[0]) < 1 && parseInt(args[0]) > 0) || (Math.floor(args[0]) != args[0])) {
             return message.channel.send(new Discord.RichEmbed()
-                .setDescription(`<:error:643341473772863508> Please input a whole number, not a decimal`)
+                .setDescription(`<:cross:728885860623319120> Please input a whole number, not a decimal`)
                 .setColor(`#FF0000`));
         }
 
         if (parseInt(args[0]) < 0) {
             return message.channel.send(new Discord.RichEmbed()
-                .setDescription(`<:error:643341473772863508> Please input a positive number`)
+                .setDescription(`<:cross:728885860623319120> Please input a positive number`)
                 .setColor(`#FF0000`));
         }
 
         if (originalBalance < args[0]) {
             return message.channel.send(new Discord.RichEmbed()
-                .setDescription("<:error:643341473772863508> Sorry, you do not have enough money to bet that amount")
+                .setDescription("<:cross:728885860623319120> Sorry, you do not have enough money to bet that amount")
                 .setColor(`#FF0000`));
         }
 

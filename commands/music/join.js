@@ -23,7 +23,7 @@ module.exports = {
 				});
 		} else {
 			message.channel.send(new Discord.RichEmbed()
-				.setDescription(`<:error:643341473772863508> You are not in a voice channel`)
+				.setDescription(`<:cross:728885860623319120> You are not in a voice channel`)
 				.setColor(`#FF0000`));
 		}
 	}

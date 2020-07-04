@@ -853,7 +853,7 @@ client.on('message', message => {
     if (!command.enabled && (message.author.id != ownerID && message.author.id != jahyID && message.author.id != fookID)) {
         logger.info(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`${prefix}${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Command is disabled`)}`);
         return message.channel.send(new Discord.RichEmbed()
-            .setDescription(`<:error:643341473772863508> Sorry, \`!${commandName}\` is disabled`)
+            .setDescription(`<:cross:728885860623319120> Sorry, \`!${commandName}\` is disabled`)
             .setColor(`#FF0000`));
     }
 
@@ -861,7 +861,7 @@ client.on('message', message => {
     if (command.guildOnly && message.channel.type !== 'text') {
         logger.info(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`${prefix}${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Command is guild-only`)}`);
         let serverOnly = new Discord.RichEmbed()
-            .setDescription(`<:error:643341473772863508> Sorry, that command is only usable in servers`)
+            .setDescription(`<:cross:728885860623319120> Sorry, that command is only usable in servers`)
             .setColor(`#FF0000`);
         return message.channel.send(serverOnly);
     }
@@ -904,7 +904,7 @@ client.on('message', message => {
             const timeLeft = (expirationTime - now) / 1000;
             logger.debug(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`!${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Cooldown in effect`)}`);
             let cooldownEmbed = new Discord.RichEmbed()
-                .addField(`<:error:643341473772863508> Command cooldown`, `Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command`)
+                .addField(`<:cross:728885860623319120> Command cooldown`, `Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command`)
                 .setColor(`#FF0000`);
             return message.channel.send(cooldownEmbed);
         }
@@ -917,13 +917,13 @@ client.on('message', message => {
     if (command.restrictions && message.member.id != ownerID) {
         if (command.restrictions.resolvable && command.restrictions.resolvable.length > 0 && !message.member.hasPermission(command.restrictions.resolvable)) {
             return message.channel.send(new Discord.RichEmbed()
-                .setDescription(`<:error:643341473772863508> Sorry, ${message.author.username}, you do not have the required permission(s) to use \`${prefix}${command.name}\`\n\nPermissions required:\n\`${command.restrictions.resolvable.join("\n")}\``)
+                .setDescription(`<:cross:728885860623319120> Sorry, ${message.author.username}, you do not have the required permission(s) to use \`${prefix}${command.name}\`\n\nPermissions required:\n\`${command.restrictions.resolvable.join("\n")}\``)
                 .setColor(`#FF0000`));
         } else if (command.restrictions.id && command.restrictions.id.length > 0) {
             const match = (element) => element == message.author.id;
             if (!command.restrictions.id.some(match)) {
                 return message.channel.send(new Discord.RichEmbed()
-                    .setDescription(`<:error:643341473772863508> Sorry, ${message.author.username}, only certain users can use \`${prefix}${command.name}\``)
+                    .setDescription(`<:cross:728885860623319120> Sorry, ${message.author.username}, only certain users can use \`${prefix}${command.name}\``)
                     .setColor(`#FF0000`));
             }
         }
@@ -937,7 +937,7 @@ client.on('message', message => {
         logger.error(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`!${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Command errored`)}`);
         logger.error(error);
         let errorEmbed = new Discord.RichEmbed()
-            .setDescription(`<:error:643341473772863508> Error executing command\n\n\`\`\`${error}\`\`\``)
+            .setDescription(`<:cross:728885860623319120> Error executing command\n\n\`\`\`${error}\`\`\``)
             .setColor(`#FF0000`);
         message.channel.send(errorEmbed);
     }

@@ -26,7 +26,7 @@ module.exports = {
 				.setColor(`#0083FF`));
 		} else {
 			message.channel.send(new Discord.RichEmbed()
-				.setDescription(`<:error:643341473772863508> I'm not in a voice channel`)
+				.setDescription(`<:cross:728885860623319120> I'm not in a voice channel`)
 				.setColor(`#FF0000`));
 		}
 	}

@@ -18,7 +18,7 @@ module.exports = {
         const target = message.mentions.users.first() || message.author;
         return message.channel.send(new Discord.RichEmbed()
             .setDescription(`:moneybag: ${target.username}, you have **$${currency.getBalance(target.id)}**`)
-            .setColor(`#1b9e56`));
+            .setColor(`#2EC14E`));
         // return message.channel.send(`${target.tag} has $${currency.getBalance(target.id)}`);
     }
 };

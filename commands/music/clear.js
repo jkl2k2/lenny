@@ -18,7 +18,7 @@ module.exports = {
 
         if (queue == undefined) {
             return message.channel.send(new Discord.RichEmbed()
-                .setDescription(`<:error:643341473772863508> There is nothing to skip`)
+                .setDescription(`<:cross:728885860623319120> There is nothing to skip`)
                 .setColor(`#FF0000`));
         } else {
             queue.list = [];

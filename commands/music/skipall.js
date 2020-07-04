@@ -17,7 +17,7 @@ module.exports = {
 
 		if (dispatcher == undefined || dispatcher.speaking == false) {
 			return message.channel.send(new Discord.RichEmbed()
-				.setDescription(`<:error:643341473772863508> There is nothing to skip`)
+				.setDescription(`<:cross:728885860623319120> There is nothing to skip`)
 				.setColor(`#FF0000`));
 		}
 

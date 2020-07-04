@@ -55,7 +55,7 @@ module.exports = {
             .catch(err => {
                 if (err.message.includes(`404`)) {
                     message.channel.send(new Discord.RichEmbed()
-                        .setDescription(`<:error:643341473772863508>\`${err}\`\n\nSorry, but the Twitch channel you provided either doesn't exist or is not currently streaming.`)
+                        .setDescription(`<:cross:728885860623319120>\`${err}\`\n\nSorry, but the Twitch channel you provided either doesn't exist or is not currently streaming.`)
                         .setColor(`#FF0000`));
                 }
             });

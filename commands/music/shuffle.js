@@ -39,7 +39,7 @@ module.exports = {
                 .setColor(`#0083FF`));
         } else {
             message.channel.send(new Discord.RichEmbed()
-                .setDescription(`<:error:643341473772863508> Cannot shuffle an empty queue`)
+                .setDescription(`<:cross:728885860623319120> Cannot shuffle an empty queue`)
                 .setColor(`#FF0000`));
         }
     }

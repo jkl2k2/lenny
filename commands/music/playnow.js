@@ -70,7 +70,7 @@ module.exports = {
 			// If member not in VC
 			return message.channel.send(new Discord.RichEmbed()
 				.setTitle(` `)
-				.setDescription(`<:error:643341473772863508> ${message.author.username}, you are not in a voice channel`)
+				.setDescription(`<:cross:728885860623319120> ${message.author.username}, you are not in a voice channel`)
 				.setColor(`#FF0000`));
 		}
 
@@ -78,7 +78,7 @@ module.exports = {
 			// If no arguments
 			return message.channel.send(new Discord.RichEmbed()
 				.setTitle(` `)
-				.setDescription(`:no_entry: Please include at least one search term or URL`)
+				.setDescription(`<:cross:728885860623319120> Please include at least one search term or URL`)
 				.setColor(`#FF0000`));
 		}
 

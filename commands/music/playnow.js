@@ -70,16 +70,16 @@ module.exports = {
 			// If member not in VC
 			return message.channel.send(new Discord.RichEmbed()
 				.setTitle(` `)
-				.setDescription(`<:cross:728885860623319120> ${message.author.username}, you are not in a voice channel`)
-				.setColor(`#FF0000`));
+				.setDescription(`<:cross:729019052571492434> ${message.author.username}, you are not in a voice channel`)
+				.setColor(`#FF3838`));
 		}
 
 		if (args[0] == undefined) {
 			// If no arguments
 			return message.channel.send(new Discord.RichEmbed()
 				.setTitle(` `)
-				.setDescription(`<:cross:728885860623319120> Please include at least one search term or URL`)
-				.setColor(`#FF0000`));
+				.setDescription(`<:cross:729019052571492434> Please include at least one search term or URL`)
+				.setColor(`#FF3838`));
 		}
 
 		var queue = index.getQueue(message);
@@ -246,7 +246,7 @@ module.exports = {
 				} else {
 					let vcFailEmbed = new Discord.RichEmbed()
 						.setTitle(`:warning: ${message.author.username}, you are not in a voice channel. Your video has been queued, but I am unable to join you.`)
-						.setColor(`#FF0000`);
+						.setColor(`#FF3838`);
 					message.channel.send(vcFailEmbed);
 				}
 			});

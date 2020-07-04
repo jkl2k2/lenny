@@ -17,13 +17,13 @@ module.exports = {
 
         let noArgs = new Discord.RichEmbed()
 
-            .setDescription(`<:cross:728885860623319120> No command passed in arguments`)
-            .setColor(`#FF0000`);
+            .setDescription(`<:cross:729019052571492434> No command passed in arguments`)
+            .setColor(`#FF3838`);
 
         let notFound = new Discord.RichEmbed()
 
-            .setDescription(`<:cross:728885860623319120> Command not found`)
-            .setColor(`#FF0000`);
+            .setDescription(`<:cross:729019052571492434> Command not found`)
+            .setColor(`#FF3838`);
 
         if (!args.length) return message.channel.send(noArgs);
         const commandName = args[0].toLowerCase();
@@ -45,7 +45,7 @@ module.exports = {
             let commandReloadError = new Discord.RichEmbed()
 
                 .setDescription(`Error while recaching command\n\n${error.message}`)
-                .setColor(`#FF0000`);
+                .setColor(`#FF3838`);
             message.channel.send(commandReloadError);
         }
     },

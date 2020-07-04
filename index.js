@@ -735,7 +735,7 @@ client.on('message', message => {
         message.delete();
         return message.channel.send(new Discord.RichEmbed()
             .setDescription(`:wastebasket: **Message Deleted**\n\n**Author:** ${message.author}\n**Reason:** Banned word or phrase`)
-            .setColor(`#FF0000`)
+            .setColor(`#FF3838`)
             .setTimestamp());
     }
 
@@ -853,17 +853,16 @@ client.on('message', message => {
     if (!command.enabled && (message.author.id != ownerID && message.author.id != jahyID && message.author.id != fookID)) {
         logger.info(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`${prefix}${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Command is disabled`)}`);
         return message.channel.send(new Discord.RichEmbed()
-            .setDescription(`<:cross:728885860623319120> Sorry, \`!${commandName}\` is disabled`)
-            .setColor(`#FF0000`));
+            .setDescription(`<:cross:729019052571492434> Sorry, \`!${commandName}\` is disabled`)
+            .setColor(`#FF3838`));
     }
 
     // If guild-only, no DMs allowed
     if (command.guildOnly && message.channel.type !== 'text') {
         logger.info(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`${prefix}${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Command is guild-only`)}`);
-        let serverOnly = new Discord.RichEmbed()
-            .setDescription(`<:cross:728885860623319120> Sorry, that command is only usable in servers`)
-            .setColor(`#FF0000`);
-        return message.channel.send(serverOnly);
+        return message.channel.send(new Discord.RichEmbed()
+            .setDescription(`<:cross:729019052571492434> Sorry, that command is only usable in servers`)
+            .setColor(`#FF3838`));
     }
 
     // If command needs arguments
@@ -904,8 +903,8 @@ client.on('message', message => {
             const timeLeft = (expirationTime - now) / 1000;
             logger.debug(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`!${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Cooldown in effect`)}`);
             let cooldownEmbed = new Discord.RichEmbed()
-                .addField(`<:cross:728885860623319120> Command cooldown`, `Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command`)
-                .setColor(`#FF0000`);
+                .addField(`<:cross:729019052571492434> Command cooldown`, `Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command`)
+                .setColor(`#FF3838`);
             return message.channel.send(cooldownEmbed);
         }
     }
@@ -917,14 +916,14 @@ client.on('message', message => {
     if (command.restrictions && message.member.id != ownerID) {
         if (command.restrictions.resolvable && command.restrictions.resolvable.length > 0 && !message.member.hasPermission(command.restrictions.resolvable)) {
             return message.channel.send(new Discord.RichEmbed()
-                .setDescription(`<:cross:728885860623319120> Sorry, ${message.author.username}, you do not have the required permission(s) to use \`${prefix}${command.name}\`\n\nPermissions required:\n\`${command.restrictions.resolvable.join("\n")}\``)
-                .setColor(`#FF0000`));
+                .setDescription(`<:cross:729019052571492434> Sorry, ${message.author.username}, you do not have the required permission(s) to use \`${prefix}${command.name}\`\n\nPermissions required:\n\`${command.restrictions.resolvable.join("\n")}\``)
+                .setColor(`#FF3838`));
         } else if (command.restrictions.id && command.restrictions.id.length > 0) {
             const match = (element) => element == message.author.id;
             if (!command.restrictions.id.some(match)) {
                 return message.channel.send(new Discord.RichEmbed()
-                    .setDescription(`<:cross:728885860623319120> Sorry, ${message.author.username}, only certain users can use \`${prefix}${command.name}\``)
-                    .setColor(`#FF0000`));
+                    .setDescription(`<:cross:729019052571492434> Sorry, ${message.author.username}, only certain users can use \`${prefix}${command.name}\``)
+                    .setColor(`#FF3838`));
             }
         }
     }
@@ -937,8 +936,8 @@ client.on('message', message => {
         logger.error(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`!${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Command errored`)}`);
         logger.error(error);
         let errorEmbed = new Discord.RichEmbed()
-            .setDescription(`<:cross:728885860623319120> Error executing command\n\n\`\`\`${error}\`\`\``)
-            .setColor(`#FF0000`);
+            .setDescription(`<:cross:729019052571492434> Error executing command\n\n\`\`\`${error}\`\`\``)
+            .setColor(`#FF3838`);
         message.channel.send(errorEmbed);
     }
 });

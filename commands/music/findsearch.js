@@ -24,8 +24,8 @@ module.exports = {
             // If no arguments
             let undefArgsEmbed = new Discord.RichEmbed()
                 .setTitle(` `)
-                .setDescription(`<:cross:728885860623319120> Please include at least one search term`)
-                .setColor(`#FF0000`);
+                .setDescription(`<:cross:729019052571492434> Please include at least one search term`)
+                .setColor(`#FF3838`);
             message.channel.send(undefArgsEmbed);
 
             return;

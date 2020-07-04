@@ -22,8 +22,8 @@ module.exports = {
         if (queue == undefined || queue[target - 1] == undefined) {
             // Invalid target
             return message.channel.send(new Discord.RichEmbed()
-                .setDescription(`<:cross:728885860623319120> ${target} is not a valid position in the queue`)
-                .setColor(`#FF0000`));
+                .setDescription(`<:cross:729019052571492434> ${target} is not a valid position in the queue`)
+                .setColor(`#FF3838`));
         }
 
         if (splitArgs.length == 2) {
@@ -41,8 +41,8 @@ module.exports = {
             } else {
                 // Invalid range
                 return message.channel.send(new Discord.RichEmbed()
-                    .setDescription(`<:cross:728885860623319120> The range you provided is not valid`)
-                    .setColor(`#FF0000`));
+                    .setDescription(`<:cross:729019052571492434> The range you provided is not valid`)
+                    .setColor(`#FF3838`));
             }
         }
 
@@ -55,7 +55,7 @@ module.exports = {
         } else {
             message.channel.send(new Discord.RichEmbed()
                 .setTitle(`Somehow, I failed to remove "[${elementToRemove.getTitle()}](${elementToRemove.getURL()})" from queue. This should never happen.`)
-                .setColor(`#FF0000`));
+                .setColor(`#FF3838`));
         }
     }
 };

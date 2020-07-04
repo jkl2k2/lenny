@@ -20,30 +20,30 @@ module.exports = {
 
         if (fullQueue == undefined) {
             return message.channel.send(new Discord.RichEmbed()
-                .setDescription(`<:cross:728885860623319120> The queue is empty`)
-                .setColor(`#FF0000`));
+                .setDescription(`<:cross:729019052571492434> The queue is empty`)
+                .setColor(`#FF3838`));
         } else {
             queue = fullQueue.list;
         }
 
         if (!args[0]) {
             return message.channel.send(new Discord.RichEmbed()
-                .setDescription(`<:cross:728885860623319120> Please specify a start position`)
-                .setColor(`#FF0000`));
+                .setDescription(`<:cross:729019052571492434> Please specify a start position`)
+                .setColor(`#FF3838`));
         } else if (!args[1]) {
             return message.channel.send(new Discord.RichEmbed()
-                .setDescription(`<:cross:728885860623319120> Please specify a target position`)
-                .setColor(`#FF0000`));
+                .setDescription(`<:cross:729019052571492434> Please specify a target position`)
+                .setColor(`#FF3838`));
         }
 
         if (isNaN(args[0])) {
             return message.channel.send(new Discord.RichEmbed()
-                .setDescription(`<:cross:728885860623319120> Start position must be a number`)
-                .setColor(`#FF0000`));
+                .setDescription(`<:cross:729019052571492434> Start position must be a number`)
+                .setColor(`#FF3838`));
         } else if (isNaN(args[1])) {
             return message.channel.send(new Discord.RichEmbed()
-                .setDescription(`<:cross:728885860623319120> Target position must be a number`)
-                .setColor(`#FF0000`));
+                .setDescription(`<:cross:729019052571492434> Target position must be a number`)
+                .setColor(`#FF3838`));
         }
 
         // If target video exists at that position
@@ -68,13 +68,13 @@ module.exports = {
                 }
             } else {
                 message.channel.send(new Discord.RichEmbed()
-                    .setDescription(`<:cross:728885860623319120> Sorry, target position #${targetPos + 1} isn't valid`)
-                    .setColor(`#FF0000`));
+                    .setDescription(`<:cross:729019052571492434> Sorry, target position #${targetPos + 1} isn't valid`)
+                    .setColor(`#FF3838`));
             }
         } else {
             message.channel.send(new Discord.RichEmbed()
-                .setDescription(`<:cross:728885860623319120> Sorry, there isn't a video at position #${startPos + 1}`)
-                .setColor(`#FF0000`));
+                .setDescription(`<:cross:729019052571492434> Sorry, there isn't a video at position #${startPos + 1}`)
+                .setColor(`#FF3838`));
         }
     }
 };

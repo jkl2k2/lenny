@@ -46,8 +46,8 @@ module.exports = {
 
         if (!command) {
             return message.channel.send(new Discord.RichEmbed()
-                .setDescription(`<:cross:728885860623319120> Sorry, \`${prefix}${name}\` is not a valid command`)
-                .setColor(`#FF0000`));
+                .setDescription(`<:cross:729019052571492434> Sorry, \`${prefix}${name}\` is not a valid command`)
+                .setColor(`#FF3838`));
         }
 
         var commandHelp = new Discord.RichEmbed();

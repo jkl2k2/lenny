@@ -25,38 +25,38 @@ module.exports = {
 
         if (args[0] == "coosin" || args[0] == "collin" || args[0] == "cucino") {
             return message.channel.send(new Discord.RichEmbed()
-                .setDescription(`<:cross:728885860623319120> Sorry, we do not accept trash as a currency for betting.`)
-                .setColor(`#FF0000`));
+                .setDescription(`<:cross:729019052571492434> Sorry, we do not accept trash as a currency for betting.`)
+                .setColor(`#FF3838`));
         }
 
         if (isNaN(args[0])) {
             return message.channel.send(new Discord.RichEmbed()
-                .setDescription(`<:cross:728885860623319120> Please input a number to bet`)
-                .setColor(`#FF0000`));
+                .setDescription(`<:cross:729019052571492434> Please input a number to bet`)
+                .setColor(`#FF3838`));
         }
 
         if (parseInt(args[0]) == 0) {
             return message.channel.send(new Discord.RichEmbed()
-                .setDescription(`<:cross:728885860623319120> Please bet more than $0`)
-                .setColor(`#FF0000`));
+                .setDescription(`<:cross:729019052571492434> Please bet more than $0`)
+                .setColor(`#FF3838`));
         }
 
         if (parseInt((args[0]) < 1 && parseInt(args[0]) > 0) || (Math.floor(args[0]) != args[0])) {
             return message.channel.send(new Discord.RichEmbed()
-                .setDescription(`<:cross:728885860623319120> Please input a whole number, not a decimal`)
-                .setColor(`#FF0000`));
+                .setDescription(`<:cross:729019052571492434> Please input a whole number, not a decimal`)
+                .setColor(`#FF3838`));
         }
 
         if (parseInt(args[0]) < 0) {
             return message.channel.send(new Discord.RichEmbed()
-                .setDescription(`<:cross:728885860623319120> Please input a positive number`)
-                .setColor(`#FF0000`));
+                .setDescription(`<:cross:729019052571492434> Please input a positive number`)
+                .setColor(`#FF3838`));
         }
 
         if (originalBalance < args[0]) {
             return message.channel.send(new Discord.RichEmbed()
-                .setDescription("<:cross:728885860623319120> Sorry, you do not have enough money to bet that amount")
-                .setColor(`#FF0000`));
+                .setDescription("<:cross:729019052571492434> Sorry, you do not have enough money to bet that amount")
+                .setColor(`#FF3838`));
         }
 
         if (rand == 1) {

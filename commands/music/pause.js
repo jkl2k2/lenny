@@ -25,8 +25,8 @@ module.exports = {
 		} else {
 			let pauseFailEmbed = new Discord.RichEmbed()
 
-				.setDescription(`<:cross:728885860623319120> ${message.author.username}, the music is already paused`)
-				.setColor(`#FF0000`);
+				.setDescription(`<:cross:729019052571492434> ${message.author.username}, the music is already paused`)
+				.setColor(`#FF3838`);
 			message.channel.send(pauseFailEmbed);
 		}
 	}

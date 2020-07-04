@@ -23,8 +23,8 @@ module.exports = {
 				});
 		} else {
 			message.channel.send(new Discord.RichEmbed()
-				.setDescription(`<:cross:728885860623319120> You are not in a voice channel`)
-				.setColor(`#FF0000`));
+				.setDescription(`<:cross:729019052571492434> You are not in a voice channel`)
+				.setColor(`#FF3838`));
 		}
 	}
 };

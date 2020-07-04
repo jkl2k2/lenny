@@ -25,8 +25,8 @@ module.exports = {
         if (!command) return message.channel.send("Command not found");
 
         if (command.name == 'toggle') return message.channel.send(new Discord.RichEmbed()
-            .setDescription(`<:cross:728885860623319120> Nice try, dingus`)
-            .setColor(`#FF0000`));
+            .setDescription(`<:cross:729019052571492434> Nice try, dingus`)
+            .setColor(`#FF3838`));
 
         command.enabled = !command.enabled;
 
@@ -36,8 +36,8 @@ module.exports = {
                 .setColor(`#00FF44`));
         } else if (!command.enabled) {
             return message.channel.send(new Discord.RichEmbed()
-                .setDescription(`<:cross:728885860623319120> \`!${commandName}\` is now disabled`)
-                .setColor(`#FF0000`));
+                .setDescription(`<:cross:729019052571492434> \`!${commandName}\` is now disabled`)
+                .setColor(`#FF3838`));
         }
     }
 };

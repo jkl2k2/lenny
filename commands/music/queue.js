@@ -155,8 +155,8 @@ module.exports = {
 				sendDetails(queue[reqIndex], message.channel, args[0]);
 			} else if (args[0] && !queue[reqIndex]) {
 				message.channel.send(new Discord.RichEmbed()
-					.setDescription(`<:cross:728885860623319120> There is not a video at that spot in the queue`)
-					.setColor(`#FF0000`));
+					.setDescription(`<:cross:729019052571492434> There is not a video at that spot in the queue`)
+					.setColor(`#FF3838`));
 			} else if (!args[0]) {
 				var sent = await sendEmbed(page, message);
 				reactionHandler(sent, message, page);

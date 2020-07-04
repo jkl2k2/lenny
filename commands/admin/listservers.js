@@ -2,6 +2,7 @@ const index = require(`../../index.js`);
 const Discord = require(`discord.js`);
 const config = require(`config`);
 const client = index.getClient();
+const ownerID = config.get(`Users.ownerID`);
 
 module.exports = {
     name: 'listservers',
@@ -13,12 +14,10 @@ module.exports = {
     // cooldown: 5,
     // guildOnly: true,
     enabled: true,
-	/*
-	restrictions: {
-		resolvable: [],
-		id: [],
-	},
-	*/
+    restrictions: {
+        resolvable: [],
+        id: [ownerID],
+    },
     type: 'admin',
     execute(message, args) {
         var count = 0;

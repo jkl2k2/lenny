@@ -10,7 +10,7 @@ module.exports = {
     guildOnly: true,
     enabled: true,
     restrictions: {
-        resolvable: ['ADMINISTRATOR'],
+        resolvable: ['MANAGE_MESSAGES'],
     },
     type: 'admin',
     async execute(message, args) {

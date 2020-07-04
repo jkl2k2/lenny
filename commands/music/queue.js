@@ -127,7 +127,16 @@ module.exports = {
 	type: 'music',
 	async execute(message, args) {
 
-		var queue = index.getQueue(message).list;
+		var fullQueue = index.getQueue(message);
+		var queue;
+
+		if (fullQueue == undefined) {
+			return message.channel.send(new Discord.RichEmbed()
+				.setDescription(`:information_source: The queue is currently empty`)
+				.setColor(`#0083FF`));
+		} else {
+			queue = fullQueue.list;
+		}
 
 		var page = 0;
 
@@ -138,20 +147,16 @@ module.exports = {
 		}
 
 		if (queue == undefined || queue.length == 0) {
-			let emptyQueueEmbed = new Discord.RichEmbed()
-
+			message.channel.send(new Discord.RichEmbed()
 				.setDescription(`:information_source: The queue is currently empty`)
-				.setColor(`#0083FF`);
-			message.channel.send(emptyQueueEmbed);
+				.setColor(`#0083FF`));
 		} else {
 			if (args[0] && queue[reqIndex]) {
 				sendDetails(queue[reqIndex], message.channel, args[0]);
 			} else if (args[0] && !queue[reqIndex]) {
-				let invalidQueuePos = new Discord.RichEmbed()
-
-					.setDescription(`<:error:643341473772863508> There is not a video at that spot in the queue`)
-					.setColor(`#FF0000`);
-				message.channel.send(invalidQueuePos);
+				message.channel.send(new Discord.RichEmbed()
+					.setDescription(`<:cross:728885860623319120> There is not a video at that spot in the queue`)
+					.setColor(`#FF0000`));
 			} else if (!args[0]) {
 				var sent = await sendEmbed(page, message);
 				reactionHandler(sent, message, page);

@@ -312,7 +312,7 @@ const activities = [
     new Activity("your private convos", "WATCHING"),
     new Activity("trash music", "LISTENING"),
     new Activity("Russian spies", "LISTENING"),
-    new Activity("the shaft", "PLAYING")
+    new Activity("Minecraft", "PLAYING")
 ];
 //#endregion
 
@@ -813,9 +813,13 @@ client.on('message', message => {
 
     // Award money for activity
     if (message.attachments.array()[0]) {
-        currency.add(message.author.id, 10);
-    } else if (message.content.length > 5) {
-        currency.add(message.author.id, 1);
+        currency.add(message.author.id, Math.floor((message.content.length / 10)) + 10);
+    } else if (message.content.length >= 5) {
+        if (Math.floor(message.content.length / 10) < 1) {
+            currency.add(message.author.id, 1);
+        } else {
+            currency.add(message.author.id, Math.floor((message.content.length / 10)));
+        }
     }
 
     // If message is only bot mention, show prefix
@@ -911,11 +915,11 @@ client.on('message', message => {
 
     // If command has permission restrictions
     if (command.restrictions && message.member.id != ownerID) {
-        if (command.restrictions.resolvable && !message.member.hasPermission(command.restrictions.resolvable)) {
+        if (command.restrictions.resolvable && command.restrictions.resolvable.length > 0 && !message.member.hasPermission(command.restrictions.resolvable)) {
             return message.channel.send(new Discord.RichEmbed()
                 .setDescription(`<:error:643341473772863508> Sorry, ${message.author.username}, you do not have the required permission(s) to use \`${prefix}${command.name}\`\n\nPermissions required:\n\`${command.restrictions.resolvable.join("\n")}\``)
                 .setColor(`#FF0000`));
-        } else if (command.restrictions.id) {
+        } else if (command.restrictions.id && command.restrictions.id.length > 0) {
             const match = (element) => element == message.author.id;
             if (!command.restrictions.id.some(match)) {
                 return message.channel.send(new Discord.RichEmbed()

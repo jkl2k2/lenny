@@ -66,9 +66,9 @@ module.exports = {
 
         // Restrictions
         if (command.restrictions) {
-            if (command.restrictions.resolvable) {
+            if (command.restrictions.resolvable && command.restrictions.resolvable.length > 0) {
                 commandHelp.addField(`**Required Permissions**`, `\`${command.restrictions.resolvable.join(", ")}\``);
-            } else if (command.restrictions.id) {
+            } else if (command.restrictions.id && command.restrictions.id.length > 0) {
                 commandHelp.addField(`**Restricted Command**`, `Only certain users can access this command`);
             }
         }

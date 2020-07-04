@@ -11,8 +11,8 @@ module.exports = {
 	type: 'general',
 	async execute(message, args) {
 		const m = await message.channel.send(new Discord.RichEmbed()
-			.addField(`:clock3: Frontend Status`, `\`Testing...\``)
-			.addField(`:heartbeat: Websocket Heartbeat`, `\`Testing...\``)
+			.addField(`:clock3: Message Edit Latency`, `\`Testing...\``)
+			.addField(`:heartbeat: Discord API Ping`, `\`Testing...\``)
 			.setColor(`#0083FF`));
 
 		var frontendLatency = (m.createdTimestamp - message.createdTimestamp);
@@ -20,7 +20,7 @@ module.exports = {
 
 		m.edit(new Discord.RichEmbed()
 			.setColor(`#0083FF`)
-			.addField(`:clock3: Frontend Latency`, `\`${frontendLatency}ms\``)
-			.addField(`:heartbeat: Websocket Heartbeat`, `\`${roundedPing}ms\``));
+			.addField(`:clock3: Message Edit Latency`, `\`${frontendLatency}ms\``)
+			.addField(`:heartbeat: Discord API Ping`, `\`${roundedPing}ms\``));
 	},
 };

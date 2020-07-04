@@ -13,12 +13,10 @@ module.exports = {
 	// cooldown: 5,
 	// guildOnly: true,
 	enabled: true,
-	/*
 	restrictions: {
 		resolvable: [],
 		id: [],
 	},
-	*/
 	type: '',
 	execute(message, args) {
 		// Start here

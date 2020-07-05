@@ -3,6 +3,8 @@ const Discord = require(`discord.js`);
 const { Users, CurrencyShop } = require('../../dbObjects');
 const { Op } = require('sequelize');
 const currency = index.getCurrencyDB();
+const client = index.getClient();
+const logger = index.getLogger();
 
 module.exports = {
     name: 'balance',
@@ -16,9 +18,22 @@ module.exports = {
     type: 'currency',
     execute(message, args) {
         const target = message.mentions.users.first() || message.author;
+
+        var rank;
+
+        var list = currency.sort((a, b) => b.balance - a.balance)
+            .filter(user => client.users.has(user.user_id) && message.guild.member(client.users.get(user.user_id)))
+            .array();
+
+        for (var i = 0; i < list.length; i++) {
+            var id = list[i].user_id;
+            if (message.author.id == id) {
+                rank = i + 1;
+            }
+        }
+
         return message.channel.send(new Discord.RichEmbed()
-            .setDescription(`:moneybag: ${target.username}, you have **$${currency.getBalance(target.id)}**`)
+            .setDescription(`:moneybag: ${target} has \`$${currency.getBalance(target.id)}\`\n\n:information_source: Ranked \`#${rank}\` in \`${message.guild.name}\``)
             .setColor(`#2EC14E`));
-        // return message.channel.send(`${target.tag} has $${currency.getBalance(target.id)}`);
     }
 };

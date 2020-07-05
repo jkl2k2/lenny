@@ -22,7 +22,7 @@ module.exports = {
 
         let notFound = new Discord.RichEmbed()
 
-            .setDescription(`<:cross:729019052571492434> Command not found`)
+            .setDescription(`<:cross:729019052571492434> \`${args[0]}\` is not a valid command`)
             .setColor(`#FF3838`);
 
         if (!args.length) return message.channel.send(noArgs);
@@ -38,8 +38,8 @@ module.exports = {
             message.client.commands.set(newCommand.name, newCommand);
 
             message.channel.send(new Discord.RichEmbed()
-                .setDescription(`:arrows_counterclockwise: Successfully recached command "${command.name}"`)
-                .setColor(`#0083FF`));
+                .setDescription(`<:check:728881238970073090> Successfully recached command \`${command.name}\``)
+                .setColor(`#2EC14E`));
         } catch (error) {
             logger.error(error);
             let commandReloadError = new Discord.RichEmbed()

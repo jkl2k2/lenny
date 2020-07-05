@@ -20,6 +20,9 @@ module.exports = {
         const transferAmount = args.find(arg => !/<@!?\d+>/g.test(arg));
         const transferTarget = message.mentions.users.first();
 
+        if (transferTarget.bot) return message.channel.send(new Discord.RichEmbed()
+            .setDescription(`<:cross:729019052571492434> Sorry ${message.author.username}, bots cannot hold money.`)
+            .setColor(`#FF3838`));
         if (!transferAmount || isNaN(transferAmount)) return message.channel.send(new Discord.RichEmbed()
             .setDescription(`<:cross:729019052571492434> Sorry ${message.author.username}, that's an invalid amount.`)
             .setColor(`#FF3838`));
@@ -35,8 +38,16 @@ module.exports = {
         currency.add(message.author.id, -transferAmount);
         currency.add(transferTarget.id, transferAmount);
 
+        /*
         return message.channel.send(new Discord.RichEmbed()
             .setDescription(`:money_with_wings: Successfully transferred $${transferAmount} to ${transferTarget.tag}.\n\nYour previous balance: **$${originalBalance}**\nYour new balance: **$${currency.getBalance(message.author.id)}**`)
             .setColor(`#2EC14E`));
+        */
+
+        return message.channel.send(new Discord.RichEmbed()
+            .setDescription(`:arrow_down: Gave \`$${transferAmount}\``)
+            .setColor(`#2EC14E`)
+            .setAuthor(message.author.username, message.author.avatarURL)
+            .setFooter(transferTarget.username, transferTarget.avatarURL));
     }
 };

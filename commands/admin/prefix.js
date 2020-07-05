@@ -8,7 +8,7 @@ module.exports = {
     name: 'prefix',
     description: 'Sets the server\'s prefix',
     // aliases: ['aliases'],
-    // args: true,
+    args: true,
     usage: '[prefix]',
     // altUsage: 'command',
     // cooldown: 5,
@@ -23,7 +23,7 @@ module.exports = {
 
         serverConfig[message.guild.id] = {
             name: message.guild.name,
-            prefix: args[0]
+            prefix: args.join(" ")
         };
 
         fs.writeFile(`./config/serverConfig.json`, JSON.stringify(serverConfig, null, `\t`), err => {
@@ -31,7 +31,7 @@ module.exports = {
         });
 
         message.channel.send(new Discord.RichEmbed()
-            .setDescription(`<:check:728881238970073090> Prefix for \`${message.guild.name}\` successfully set to \`${args[0]}\``)
+            .setDescription(`<:check:728881238970073090> Prefix for \`${message.guild.name}\` successfully set to \`${args.join(" ")}\``)
             .setColor(`#2EC14E`)
             .setFooter(`Changed by ${message.author.username}`, message.author.avatarURL)
             .setTimestamp());

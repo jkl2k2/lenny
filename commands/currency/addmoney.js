@@ -42,7 +42,9 @@ module.exports = {
         currency.add(transferTarget.id, transferAmount);
 
         return message.channel.send(new Discord.RichEmbed()
-            .setDescription(`:money_with_wings: Successfully transferred $${transferAmount} to ${transferTarget.tag}.`)
-            .setColor(`#2EC14E`));
+            .setDescription(`:arrow_down: Gave \`$${transferAmount}\``)
+            .setColor(`#2EC14E`)
+            .setAuthor(message.author.username, message.author.avatarURL)
+            .setFooter(transferTarget.username, transferTarget.avatarURL));
     }
 };

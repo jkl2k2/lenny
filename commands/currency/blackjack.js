@@ -28,16 +28,18 @@ function createDeck() {
 }
 
 function shuffle(array) {
-    var currentIndex = array.length, temporaryValue, randomIndex;
+    var m = array.length, t, i;
 
-    while (0 !== currentIndex) {
+    // While there remain elements to shuffle…
+    while (m) {
 
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
+        // Pick a remaining element…
+        i = Math.floor(Math.random() * m--);
 
-        temporaryValue = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temporaryValue;
+        // And swap it with the current element.
+        t = array[m];
+        array[m] = array[i];
+        array[i] = t;
     }
 
     return array;
@@ -142,7 +144,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance,
 
     } else {
 
-        const filter = m => m.author.id == message.author.id && (m.content.toLowerCase() == "hit" || m.content.toLowerCase() == "stay" || m.content.toLowerCase() == "double" || m.content.toLowerCase() == "cancel" || m.content.toLowerCase().includes("!blackjack") || m.content.toLowerCase().includes("!bj"));
+        const filter = m => m.author.id == message.author.id && (m.content.toLowerCase() == "hit" || m.content.toLowerCase() == "stay" || m.content.toLowerCase() == "stand" || m.content.toLowerCase() == "double" || m.content.toLowerCase() == "cancel" || m.content.toLowerCase().includes("!blackjack") || m.content.toLowerCase().includes("!bj"));
 
         const collector = message.channel.createMessageCollector(filter, { time: 600000, max: 1 });
 
@@ -356,7 +358,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance,
                 }
             }
 
-            if (m.content.toLowerCase() == "stay") {
+            if (m.content.toLowerCase() == "stay" || m.content.toLowerCase() == "stand") {
                 // sent.delete();
                 updatePoints(house);
                 while (house.points < 17 && house.altPoints < 17) {

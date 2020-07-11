@@ -11,6 +11,9 @@ const YouTube = require('simple-youtube-api');
 const youtube = new YouTube(api);
 const TwitchClient = require('twitch').default;
 const twitchClient = TwitchClient.withCredentials(config.get(`Bot.TWITCH_CLIENT_ID`), config.get(`Bot.TWITCH_CLIENT_SECRET`));
+const hex = require(`rgb-hex`);
+const colorThief = require(`colorthief`);
+const fetch = require(`node-fetch`);
 //#endregion
 
 //#region Initialize database
@@ -52,7 +55,20 @@ class YTVideo {
         this.requester = requester;
     }
     getTitle() {
-        return this.video.title;
+        var unformatted = this.video.title;
+        var formatted = ``;
+
+        for (var i = 0; i < unformatted.length; i++) {
+            if (unformatted.substring(i, i + 1) == `*` || unformatted.substring(i, i + 1) == `_`) {
+                formatted += `\\`;
+                formatted += unformatted.substring(i, i + 1);
+                // i++;
+            } else {
+                formatted += unformatted.substring(i, i + 1);
+            }
+        }
+
+        return formatted;
     }
     getCleanTitle() {
         return this.video.title;
@@ -319,12 +335,15 @@ const activities = [
 //#region Music info message sending
 async function sendDetails(input, c) {
     if (input.getType() == "livestream") {
+        let buffer = await fetch(input.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
+        let rgb = await colorThief.getColor(buffer);
         let musicEmbed = new Discord.RichEmbed()
             .setAuthor(`Now playing`, await input.getChannelThumbnail())
             .setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${await input.getChannelName()}](${input.getChannelURL()})\n\n\`YouTube Livestream\``)
             .setThumbnail(input.getThumbnail())
             .setTimestamp()
-            .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar());
+            .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar())
+            .setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`);
         c.send(musicEmbed);
         lastDetails = musicEmbed;
     } else if (input.getType() == "twitch") {
@@ -338,12 +357,15 @@ async function sendDetails(input, c) {
         c.send(musicEmbed);
         lastDeatils = musicEmbed;
     } else {
+        let buffer = await fetch(input.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
+        let rgb = await colorThief.getColor(buffer);
         let musicEmbed = new Discord.RichEmbed()
             .setAuthor(`Now playing`, await input.getChannelThumbnail())
             .setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${await input.getChannelName()}](${input.getChannelURL()})\n\n\`<⚫——————————> (0:00/${await input.getLength()})\``)
             .setThumbnail(input.getThumbnail())
             .setTimestamp()
-            .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar());
+            .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar())
+            .setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`);
         c.send(musicEmbed);
         lastDetails = musicEmbed;
     }

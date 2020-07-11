@@ -9,6 +9,9 @@ const youtube = new YouTube(api);
 const chalk = require('chalk');
 const logger = index.getLogger();
 const Queues = index.getQueues();
+const fetch = require(`node-fetch`);
+const hex = require(`rgb-hex`);
+const colorThief = require(`colorthief`);
 
 class SCSong {
 	constructor(url, requester, info) {
@@ -101,19 +104,25 @@ module.exports = {
 			}
 
 			if (await newVideo.getLength() == "0:00") {
+				let buffer = await fetch(newVideo.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
+				let rgb = await colorThief.getColor(buffer);
 				message.channel.send(new Discord.RichEmbed()
 					.setAuthor(`Queued (#${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
-					.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\nBy: [${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\n\`YouTube Livestream\``)
+					.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\n[${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\n\`YouTube Livestream\``)
 					.setThumbnail(newVideo.getThumbnail())
 					.setTimestamp()
-					.setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar()));
+					.setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar())
+					.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
 			} else {
+				let buffer = await fetch(newVideo.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
+				let rgb = await colorThief.getColor(buffer);
 				message.channel.send(new Discord.RichEmbed()
 					.setAuthor(`Queued (#${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
-					.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\nBy: [${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\nLength: \`${await newVideo.getLength()}\``)
+					.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\n[${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\nLength: \`${await newVideo.getLength()}\``)
 					.setThumbnail(newVideo.getThumbnail())
 					.setTimestamp()
-					.setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar()));
+					.setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar())
+					.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
 			}
 
 			if (message.member.voiceChannel) {
@@ -137,12 +146,15 @@ module.exports = {
 					if (playlist) {
 						var videos = await playlist.getVideos();
 
+						let buffer = await fetch(playlist.thumbnails.default.url).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
+						let rgb = await colorThief.getColor(buffer);
 						var processing = await message.channel.send(new Discord.RichEmbed()
 							.setAuthor(`🔄 Processing playlist`)
 							.setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
 							.setThumbnail(playlist.thumbnails.default.url)
 							.setTimestamp()
-							.setFooter(`Requested by ${message.author.username}`));
+							.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL)
+							.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
 
 						for (var i = 0; i < videos.length; i++) {
 							var newVideo = index.constructVideo(videos[i], message.author);
@@ -160,7 +172,8 @@ module.exports = {
 							.setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
 							.setThumbnail(playlist.thumbnails.default.url)
 							.setTimestamp()
-							.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL));
+							.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL)
+							.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
 
 						if (message.member.voiceChannel) {
 							message.member.voiceChannel.join()

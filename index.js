@@ -701,6 +701,93 @@ client.on('ready', async () => {
 });
 //#endregion
 
+//#region starboard
+client.on('messageReactionAdd', async (reaction, user) => {
+    // ready check attachments function 
+    function extension(reaction, attachment) {
+        const imageLink = attachment.split('.');
+        const typeOfImage = imageLink[imageLink.length - 1];
+        const image = /(jpg|jpeg|png|gif)/gi.test(typeOfImage);
+        if (!image) return '';
+        return attachment;
+    }
+
+    function getDescription(message) {
+        if (message.cleanContent.length < 1 && message.attachments.array()[0].filename) {
+            return `[${message.attachments.array()[0].filename}](${message.attachments.array()[0].url})`;
+        } else {
+            return message.cleanContent;
+        }
+    }
+
+    // easy access of message
+    const message = reaction.message;
+
+    // if not star, return
+    if (reaction.emoji.name != `⭐`) return;
+
+    // look for "starboard"
+    const starChannel = client.guilds.get(message.guild.id).channels.find(channel => channel.name == `starboard`);
+
+    // if no starboard found
+    if (!starChannel) return message.channel.send(`It seems you do not have a "starboard" channel`);
+
+    // fetch last 100 embeds in starChannel
+    const fetch = await starChannel.fetchMessages({ limit: 100 });
+
+    // check if previous embed with same message
+    // const stars = fetch.find(m => m.embeds[0].footer.text.startsWith('⭐') && m.embeds[0].footer.text.endsWith(message.id));
+    const stars = fetch.filter((m) => m.embeds.length != 0).find((m) => m.embeds[0].footer && m.embeds[0].footer.text.includes(message.id));
+
+    if (stars) {
+        // if message already starred
+
+        // check star amount
+        const star = /^\⭐\s([0-9]{1,3})\s\|\s([0-9]{17,20})/.exec(stars.embeds[0].footer.text);
+
+        // store previous embed
+        const foundStar = stars.embeds[0];
+
+        // check for attachment
+        const image = message.attachments.size > 0 ? await extension(reaction, message.attachments.array()[0].url) : '';
+
+        // construct new embed to edit old one with
+        const embed = new Discord.RichEmbed()
+            .setColor(foundStar.color)
+            .setDescription(foundStar.description)
+            .addField(`Channel`, message.channel, true)
+            .addField(`Message Link`, `[Jump](${message.url})`, true)
+            .setAuthor(message.author.tag, message.author.displayAvatarURL)
+            .setTimestamp()
+            .setFooter(`⭐ ${parseInt(star[1]) + 1} | ${message.id}`)
+            .setImage(image);
+
+        // fetch previous embed's ID
+        const starMsg = await starChannel.fetchMessage(stars.id);
+
+        // edit old embed with new one
+        await starMsg.edit({ embed });
+    } else {
+        // check for attachment
+        const image = message.attachments.size > 0 ? await extension(reaction, message.attachments.array()[0].url) : '';
+
+        // disallow empty messages
+        // if (image === '' && message.cleanContent.length < 1) return message.channel.send(`${user}, you cannot star an empty message.`);
+
+        const embed = new Discord.RichEmbed()
+            .setColor(15844367)
+            .setDescription(getDescription(message))
+            .addField(`Channel`, message.channel, true)
+            .addField(`Message Link`, `[Jump](${message.url})`, true)
+            .setAuthor(message.author.username, message.author.displayAvatarURL)
+            .setTimestamp()
+            .setFooter(`⭐ 1 | ${message.id}`)
+            .setImage(image);
+        await starChannel.send({ embed });
+    }
+});
+//#endregion
+
 //#region Client on message
 client.on('message', message => {
 
@@ -760,75 +847,6 @@ client.on('message', message => {
             .setColor(`#FF3838`)
             .setTimestamp());
     }
-
-    //#region Starboard
-
-    // Declare reaction filter
-    const filter = (reaction, user) => {
-        return ['⭐'].includes(reaction.emoji.name);
-    };
-
-    // Find starboard channel by specific ID
-    var starChannel = client.channels.get(`554868648964259861`);
-    // var starChannel = client.channels.get(`554873931555667969`);
-
-    function checkContent(msg) {
-        if (!msg.cleanContent) {
-            return "*Message had no text*";
-        } else {
-            return msg.cleanContent;
-        }
-    }
-
-    // Check for star reactions for 48 hours
-    message.awaitReactions(filter, { max: 1, time: 172800000, errors: ['time'] })
-        .then(collected => {
-            const reaction = collected.first();
-
-            // If reaction is a star
-            if (reaction.emoji.name === '⭐') {
-                logger.info(`Message by ${message.author.username} has been starred`);
-            }
-
-            // If starboard channel exists
-            if (starChannel) {
-                var attachmentsArray = (message.attachments).array();
-
-                // If image attached to message
-                if (attachmentsArray[0]) {
-                    let starEmbed = new Discord.RichEmbed()
-                        .setDescription(`:star: **Starred Message** :star:\nAuthor: **${message.author.username}**`)
-                        .setThumbnail(message.author.avatarURL)
-                        .addField(`Message`, checkContent(message))
-                        .addField(`Channel`, `<#${message.channel.id}>`, true)
-                        .addField(`Message link`, `[Jump to message](${message.url})`, true)
-                        // .setThumbnail(message.author.avatarURL)
-                        .setImage(attachmentsArray[0].url)
-                        .setColor(`#FCF403`)
-                        .setTimestamp();
-
-                    starChannel.send(starEmbed);
-                    logger.info(`Sent embed with image to starboard`);
-                } else {
-                    // If image NOT attached to image
-                    let starEmbed = new Discord.RichEmbed()
-                        .setDescription(`:star: **Starred Message** :star:\nAuthor: **${message.author.username}**`)
-                        .setThumbnail(message.author.avatarURL)
-                        .addField(`Message`, checkContent(message))
-                        .addField(`Channel`, `<#${message.channel.id}>`, true)
-                        .addField(`Message link`, `[Jump to message](${message.url})`, true)
-                        .setColor(`#FCF403`)
-                        .setTimestamp();
-
-                    starChannel.send(starEmbed);
-                    logger.info(`Sent embed WITHOUT image to starboard`);
-                }
-            }
-        })
-        .catch(collected => {
-            // When collector expires
-        });
-    //#endregion
 
     // Return if message from bot
     if (message.author.bot) return;

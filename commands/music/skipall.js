@@ -16,7 +16,7 @@ module.exports = {
 		var dispatcher = index.getDispatcher(message);
 
 		if (dispatcher == undefined || dispatcher.speaking == false) {
-			return message.channel.send(new Discord.RichEmbed()
+			return message.channel.send(new Discord.MessageEmbed()
 				.setDescription(`<:cross:729019052571492434> There is nothing to skip`)
 				.setColor(`#FF3838`));
 		}
@@ -25,7 +25,7 @@ module.exports = {
 		index.endDispatcher(message);
 		index.setDispatcher(message, undefined);
 
-		message.channel.send(new Discord.RichEmbed()
+		message.channel.send(new Discord.MessageEmbed()
 			.setDescription(`:stop_button: ${message.author.username} skipped all songs`)
 			.setColor(`#0083FF`));
 

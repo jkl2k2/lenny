@@ -22,12 +22,12 @@ module.exports = {
     execute(message, args) {
         var count = 0;
         var msg = "";
-        for (var server of client.guilds.array()) {
+        for (var server of client.guilds.cache.array()) {
             msg += server.name;
             msg += "\n";
             count++;
         }
-        message.channel.send(new Discord.RichEmbed()
+        message.channel.send(new Discord.MessageEmbed()
             .setDescription(`**__Servers__**\n\n${msg}\n**Total: ${count} servers**`));
     }
 };

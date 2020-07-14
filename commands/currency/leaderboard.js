@@ -16,23 +16,13 @@ module.exports = {
     enabled: true,
     type: 'currency',
     execute(message, args) {
-        return message.channel.send(new Discord.RichEmbed()
+        return message.channel.send(new Discord.MessageEmbed()
             .setDescription(`:medal: **Top 10 users by currency**\n\n` + currency.sort((a, b) => b.balance - a.balance)
-                .filter(user => client.users.has(user.user_id) && message.guild.member(client.users.get(user.user_id)))
+                .filter(user => client.users.cache.has(user.user_id) && message.guild.member(client.users.cache.get(user.user_id)))
                 .first(10)
-                .map((user, position) => `\`${position + 1}.\` **${(client.users.get(user.user_id).username)}**\nBalance: \`$${user.balance}\`\n`)
+                .map((user, position) => `\`${position + 1}.\` **${(client.users.cache.get(user.user_id).username)}**\nBalance: \`$${user.balance}\`\n`)
                 .join('\n'),
                 { code: true })
             .setColor(`#1b9e56`));
-        /*
-        return message.channel.send(
-            currency.sort((a, b) => b.balance - a.balance)
-                .filter(user => client.users.has(user.user_id))
-                .first(10)
-                .map((user, position) => `(${position + 1}) ${(client.users.get(user.user_id).tag)}: $${user.balance}`)
-                .join('\n'),
-            { code: true }
-        );
-        */
     }
 };

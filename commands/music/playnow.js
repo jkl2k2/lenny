@@ -69,9 +69,9 @@ module.exports = {
 	enabled: true,
 	type: 'music',
 	execute(message, args) {
-		if (!message.member.voiceChannel) {
+		if (!message.member.voice.channel) {
 			// If member not in VC
-			return message.channel.send(new Discord.RichEmbed()
+			return message.channel.send(new Discord.MessageEmbed()
 				.setTitle(` `)
 				.setDescription(`<:cross:729019052571492434> ${message.author.username}, you are not in a voice channel`)
 				.setColor(`#FF3838`));
@@ -79,7 +79,7 @@ module.exports = {
 
 		if (args[0] == undefined) {
 			// If no arguments
-			return message.channel.send(new Discord.RichEmbed()
+			return message.channel.send(new Discord.MessageEmbed()
 				.setTitle(` `)
 				.setDescription(`<:cross:729019052571492434> Please include at least one search term or URL`)
 				.setColor(`#FF3838`));
@@ -106,7 +106,7 @@ module.exports = {
 			if (await newVideo.getLength() == "0:00") {
 				let buffer = await fetch(newVideo.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
 				let rgb = await colorThief.getColor(buffer);
-				message.channel.send(new Discord.RichEmbed()
+				message.channel.send(new Discord.MessageEmbed()
 					.setAuthor(`Queued (#${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
 					.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\n[${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\n\`YouTube Livestream\``)
 					.setThumbnail(newVideo.getThumbnail())
@@ -116,7 +116,7 @@ module.exports = {
 			} else {
 				let buffer = await fetch(newVideo.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
 				let rgb = await colorThief.getColor(buffer);
-				message.channel.send(new Discord.RichEmbed()
+				message.channel.send(new Discord.MessageEmbed()
 					.setAuthor(`Queued (#${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
 					.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\n[${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\nLength: \`${await newVideo.getLength()}\``)
 					.setThumbnail(newVideo.getThumbnail())
@@ -125,8 +125,8 @@ module.exports = {
 					.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
 			}
 
-			if (message.member.voiceChannel) {
-				message.member.voiceChannel.join()
+			if (message.member.voice.channel) {
+				message.member.voice.channel.join()
 					.then(connection => {
 						if (index.getDispatcher(message) == undefined || (!connection.speaking && !index.getDispatcher(message).paused)) {
 							index.callPlayMusic(message);
@@ -148,18 +148,18 @@ module.exports = {
 
 						let buffer = await fetch(playlist.thumbnails.default.url).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
 						let rgb = await colorThief.getColor(buffer);
-						var processing = await message.channel.send(new Discord.RichEmbed()
+						var processing = await message.channel.send(new Discord.MessageEmbed()
 							.setAuthor(`🔄 Processing playlist`)
 							.setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
 							.setThumbnail(playlist.thumbnails.default.url)
 							.setTimestamp()
-							.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL)
+							.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
 							.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
 
 						for (var i = 0; i < videos.length; i++) {
 							var newVideo = index.constructVideo(videos[i], message.author);
 							if (newVideo.getTitle() == "Private video") {
-								message.channel.send(new Discord.RichEmbed()
+								message.channel.send(new Discord.MessageEmbed()
 									.setDescription(":information_source: At least 1 video from the playlist could not be added as it is private")
 									.setColor(`#0083FF`));
 							} else {
@@ -167,16 +167,16 @@ module.exports = {
 							}
 						}
 
-						processing.edit(new Discord.RichEmbed()
+						processing.edit(new Discord.MessageEmbed()
 							.setAuthor(`➕ Queued playlist`)
 							.setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
 							.setThumbnail(playlist.thumbnails.default.url)
 							.setTimestamp()
-							.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL)
+							.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
 							.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
 
-						if (message.member.voiceChannel) {
-							message.member.voiceChannel.join()
+						if (message.member.voice.channel) {
+							message.member.voice.channel.join()
 								.then(connection => {
 									if (index.getDispatcher() == undefined || (!connection.speaking && !index.getDispatcher().paused)) {
 										index.callPlayMusic(message);
@@ -188,7 +188,7 @@ module.exports = {
 						}
 					} else {
 						logger.error(`Playlist not found`);
-						message.channel.send(new Discord.RichEmbed()
+						message.channel.send(new Discord.MessageEmbed()
 							.setDescription(`:information_source: YouTube could not find a playlist with that input`)
 							.setColor(`#0083FF`));
 					}
@@ -204,7 +204,7 @@ module.exports = {
 						if (results[0]) {
 							process(await youtube.getVideo(results[0].url));
 						} else {
-							message.channel.send(new Discord.RichEmbed()
+							message.channel.send(new Discord.MessageEmbed()
 								.setDescription(`:information_source: YouTube could not find a video with that input`)
 								.setColor(`#0083FF`));
 						}
@@ -219,7 +219,7 @@ module.exports = {
 
 			var gInfo;
 
-			var sent = await message.channel.send(new Discord.RichEmbed()
+			var sent = await message.channel.send(new Discord.MessageEmbed()
 				.setTitle(` `)
 				.addField(`:arrows_counterclockwise: Downloading SoundCloud song`, `[Download in progress...](${args[0]})`)
 				.setColor(`#0083FF`));
@@ -234,7 +234,7 @@ module.exports = {
 
 				queue.unshift(newSC);
 
-				sent.edit(new Discord.RichEmbed()
+				sent.edit(new Discord.MessageEmbed()
 					.setTitle(` `)
 					.setAuthor(`➕ Queued`)
 					.setDescription(`**[${newSC.getCleanTitle()}](${newSC.getURL()})**`)
@@ -248,8 +248,8 @@ module.exports = {
 			});
 
 			video.on('end', function () {
-				if (message.member.voiceChannel) {
-					message.member.voiceChannel.join()
+				if (message.member.voice.channel) {
+					message.member.voice.channel.join()
 						.then(connection => {
 							if (index.getDispatcher() == undefined || (!connection.speaking && !index.getDispatcher().paused)) {
 								index.callPlayMusic(message);
@@ -257,7 +257,7 @@ module.exports = {
 						})
 						.catch(logger.error);
 				} else {
-					let vcFailEmbed = new Discord.RichEmbed()
+					let vcFailEmbed = new Discord.MessageEmbed()
 						.setTitle(`:warning: ${message.author.username}, you are not in a voice channel. Your video has been queued, but I am unable to join you.`)
 						.setColor(`#FF3838`);
 					message.channel.send(vcFailEmbed);

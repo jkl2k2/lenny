@@ -21,7 +21,7 @@ function queueOverflowResolver(arr) {
 async function sendEmbed(page, message) {
 	var queue = index.getQueue(message).list;
 
-	let queueEmbed = new Discord.RichEmbed()
+	let queueEmbed = new Discord.MessageEmbed()
 
 		// .setDescription(`${queueResolver(parsedQueue, 0)}\n\n${queueResolver(parsedQueue, 1)}\n\n${queueResolver(parsedQueue, 2)}\n\n${queueResolver(parsedQueue, 3)}\n\n${queueResolver(parsedQueue, 4)}\n\n${queueOverflowResolver(parsedQueue)}`)
 		.setDescription(`${await queueResolver(queue, 0 + page * 5)}\n\n${await queueResolver(queue, 1 + page * 5)}\n\n${await queueResolver(queue, 2 + page * 5)}\n\n${await queueResolver(queue, 3 + page * 5)}\n\n${await queueResolver(queue, 4 + page * 5)}\n\n${await queueOverflowResolver(queue)}`)
@@ -85,7 +85,7 @@ async function reactionHandler(sent, message, page) {
 		.catch(async collected => {
 			// message.reply('Reaction timeout');
 			/*
-			let noControlQueue = new Discord.RichEmbed()
+			let noControlQueue = new Discord.MessageEmbed()
 
 				// .setDescription(`${queueResolver(parsedQueue, 0)}\n\n${queueResolver(parsedQueue, 1)}\n\n${queueResolver(parsedQueue, 2)}\n\n${queueResolver(parsedQueue, 3)}\n\n${queueResolver(parsedQueue, 4)}\n\n${queueOverflowResolver(parsedQueue)}`)
 				.setDescription(`${await queueResolver(queue, 0 + page * 5)}\n\n${await queueResolver(queue, 1 + page * 5)}\n\n${await queueResolver(queue, 2 + page * 5)}\n\n${await queueResolver(queue, 3 + page * 5)}\n\n${await queueResolver(queue, 4 + page * 5)}\n\n${queueOverflowResolver(queue)}`)
@@ -94,20 +94,20 @@ async function reactionHandler(sent, message, page) {
 			*/
 			// .setFooter(`Controls cleared due to inactivity`);
 			// sent.edit(noControlQueue);
-			sent.clearReactions();
+			sent.reactions.removeAll();
 		});
 }
 
 async function sendDetails(input, c, index) {
 	if (await input.getLength() == `unknown`) {
-		c.send(new Discord.RichEmbed()
+		c.send(new Discord.MessageEmbed()
 			.setAuthor(`In queue: Video #${index}`, await input.getChannelThumbnail())
 			.setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${await input.getChannelName()}](${input.getChannelURL()})\n\n\`Length not provided by YouTube\``)
 			.setThumbnail(input.getThumbnail())
 			.setTimestamp()
 			.setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar()));
 	} else {
-		c.send(new Discord.RichEmbed()
+		c.send(new Discord.MessageEmbed()
 			.setAuthor(`In queue: Video #${index}`, await input.getChannelThumbnail())
 			.setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${await input.getChannelName()}](${input.getChannelURL()})\n\nLength: \`${await input.getLength()}\``)
 			.setThumbnail(input.getThumbnail())
@@ -131,7 +131,7 @@ module.exports = {
 		var queue;
 
 		if (fullQueue == undefined) {
-			return message.channel.send(new Discord.RichEmbed()
+			return message.channel.send(new Discord.MessageEmbed()
 				.setDescription(`:information_source: The queue is currently empty`)
 				.setColor(`#0083FF`));
 		} else {
@@ -147,14 +147,14 @@ module.exports = {
 		}
 
 		if (queue == undefined || queue.length == 0) {
-			message.channel.send(new Discord.RichEmbed()
+			message.channel.send(new Discord.MessageEmbed()
 				.setDescription(`:information_source: The queue is currently empty`)
 				.setColor(`#0083FF`));
 		} else {
 			if (args[0] && queue[reqIndex]) {
 				sendDetails(queue[reqIndex], message.channel, args[0]);
 			} else if (args[0] && !queue[reqIndex]) {
-				message.channel.send(new Discord.RichEmbed()
+				message.channel.send(new Discord.MessageEmbed()
 					.setDescription(`<:cross:729019052571492434> There is not a video at that spot in the queue`)
 					.setColor(`#FF3838`));
 			} else if (!args[0]) {

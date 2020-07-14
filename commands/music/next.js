@@ -4,14 +4,14 @@ const Queues = index.getQueues();
 
 async function sendDetails(input, c, index) {
     if (await input.getLength() == `unknown`) {
-        c.send(new Discord.RichEmbed()
+        c.send(new Discord.MessageEmbed()
             .setAuthor(`Coming up next`, await input.getChannelThumbnail())
             .setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${await input.getChannelName()}](${input.getChannelURL()})\n\n\`Length not provided by YouTube\``)
             .setThumbnail(input.getThumbnail())
             .setTimestamp()
             .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar()));
     } else {
-        c.send(new Discord.RichEmbed()
+        c.send(new Discord.MessageEmbed()
             .setAuthor(`Coming up next`, await input.getChannelThumbnail())
             .setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${await input.getChannelName()}](${input.getChannelURL()})\n\nLength: \`${await input.getLength()}\``)
             .setThumbnail(input.getThumbnail())
@@ -33,7 +33,7 @@ module.exports = {
         var queue = index.getQueue(message).list;
 
         if (queue == undefined) {
-            return message.channel.send(new Discord.RichEmbed()
+            return message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`:information_source: There is no video coming up in the queue`)
                 .setColor(`#0083FF`));
         }
@@ -41,7 +41,7 @@ module.exports = {
         if (queue[0] != undefined) {
             sendDetails(queue[0], message.channel);
         } else {
-            message.channel.send(new Discord.RichEmbed()
+            message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`:information_source: There is no video coming up in the queue`)
                 .setColor(`#0083FF`));
         }

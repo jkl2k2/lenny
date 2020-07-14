@@ -29,7 +29,7 @@ module.exports = {
             return;
         }
 
-        var progressEmbed = new Discord.RichEmbed()
+        var progressEmbed = new Discord.MessageEmbed()
             .setDescription(`:arrows_counterclockwise: Downloading audio`)
             .setColor(`#0083FF`);
         var progressMsg = await message.channel.send(progressEmbed);
@@ -41,7 +41,7 @@ module.exports = {
             process.stdout.write(`(${(downloaded / 1024 / 1024).toFixed(2)}MB of ${(total / 1024 / 1024).toFixed(2)}MB)`);
             if ((downloaded / total) == 1) {
                 // When 100% downloaded
-                let progressEmbed = new Discord.RichEmbed()
+                let progressEmbed = new Discord.MessageEmbed()
                     .setDescription(`:arrow_double_up: Uploading file...`)
                     .setColor(`#0083FF`);
                 progressMsg.edit(progressEmbed);

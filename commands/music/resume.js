@@ -17,13 +17,13 @@ module.exports = {
 
 		if (dispatcher != undefined && dispatcher.paused == true) {
 			dispatcher.resume();
-			let resumeEmbed = new Discord.RichEmbed()
+			let resumeEmbed = new Discord.MessageEmbed()
 
 				.setDescription(`:arrow_forward: ${message.author.username} resumed playback`)
 				.setColor(`#0083FF`);
 			message.channel.send(resumeEmbed);
 		} else {
-			let resumeFailEmbed = new Discord.RichEmbed()
+			let resumeFailEmbed = new Discord.MessageEmbed()
 
 				.setDescription(`<:cross:729019052571492434> ${message.author.username}, the music is already playing`)
 				.setColor(`#FF3838`);

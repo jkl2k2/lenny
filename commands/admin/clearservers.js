@@ -24,7 +24,7 @@ module.exports = {
         var count2 = 0;
         var msg = "";
         var msg2 = "";
-        for (var server of client.guilds.array()) {
+        for (var server of client.guilds.cache.array()) {
             if (server.id == "471193210102743040" || server.id == "438485091824697344" || server.id == "593318966202597383") {
                 msg += server.name;
                 msg += "\n";
@@ -36,7 +36,7 @@ module.exports = {
                 count2++;
             }
         }
-        message.channel.send(new Discord.RichEmbed()
+        message.channel.send(new Discord.MessageEmbed()
             .setDescription(`**__Servers NOT left__**\n${msg}\n**Total: ${count1} servers whitelisted**\n\n**__Servers the bot has left__**\n${msg2}\n**Total: ${count2} servers have been left**`));
     }
 };

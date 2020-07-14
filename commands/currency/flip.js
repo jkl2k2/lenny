@@ -24,37 +24,37 @@ module.exports = {
         var originalBalance = currency.getBalance(message.author.id);
 
         if (args[0] == "coosin" || args[0] == "collin" || args[0] == "cucino") {
-            return message.channel.send(new Discord.RichEmbed()
+            return message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`<:cross:729019052571492434> Sorry, we do not accept trash as a currency for betting.`)
                 .setColor(`#FF3838`));
         }
 
         if (isNaN(args[0])) {
-            return message.channel.send(new Discord.RichEmbed()
+            return message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`<:cross:729019052571492434> Please input a number to bet`)
                 .setColor(`#FF3838`));
         }
 
         if (parseInt(args[0]) == 0) {
-            return message.channel.send(new Discord.RichEmbed()
+            return message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`<:cross:729019052571492434> Please bet more than $0`)
                 .setColor(`#FF3838`));
         }
 
         if (parseInt((args[0]) < 1 && parseInt(args[0]) > 0) || (Math.floor(args[0]) != args[0])) {
-            return message.channel.send(new Discord.RichEmbed()
+            return message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`<:cross:729019052571492434> Please input a whole number, not a decimal`)
                 .setColor(`#FF3838`));
         }
 
         if (parseInt(args[0]) < 0) {
-            return message.channel.send(new Discord.RichEmbed()
+            return message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`<:cross:729019052571492434> Please input a positive number`)
                 .setColor(`#FF3838`));
         }
 
         if (originalBalance < args[0]) {
-            return message.channel.send(new Discord.RichEmbed()
+            return message.channel.send(new Discord.MessageEmbed()
                 .setDescription("<:cross:729019052571492434> Sorry, you do not have enough money to bet that amount")
                 .setColor(`#FF3838`));
         }
@@ -69,7 +69,7 @@ module.exports = {
             currency.add("0", parseInt(args[0]));
 
             // Loss message
-            message.channel.send(new Discord.RichEmbed()
+            message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`:game_die: You flipped: \`Tails\`\n\nSorry, ${message.author.username}! You **lost** your bet of **$${args[0]}**.\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**`)
                 .setColor(`#801431`));
         } else {
@@ -82,7 +82,7 @@ module.exports = {
             currency.add("0", -parseInt(args[0]));
 
             // Win message
-            message.channel.send(new Discord.RichEmbed()
+            message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`:game_die: You flipped: \`Heads\`\n\nCongrats, ${message.author.username}! You **won** your bet of **$${args[0]}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**`)
                 .setColor(`#801431`));
         }

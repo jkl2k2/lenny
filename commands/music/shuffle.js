@@ -34,11 +34,11 @@ module.exports = {
         if (queue.list.length > 0) {
             var shuffled = shuffle(queue.list);
 
-            message.channel.send(new Discord.RichEmbed()
+            message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`:twisted_rightwards_arrows: ${message.author.username} shuffled ${queue.list.length} songs in queue`)
                 .setColor(`#0083FF`));
         } else {
-            message.channel.send(new Discord.RichEmbed()
+            message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`<:cross:729019052571492434> Cannot shuffle an empty queue`)
                 .setColor(`#FF3838`));
         }

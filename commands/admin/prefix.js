@@ -30,10 +30,10 @@ module.exports = {
             if (err) logger.error(err);
         });
 
-        message.channel.send(new Discord.RichEmbed()
+        message.channel.send(new Discord.MessageEmbed()
             .setDescription(`<:check:728881238970073090> Prefix for \`${message.guild.name}\` successfully set to \`${args.join(" ")}\``)
             .setColor(`#2EC14E`)
-            .setFooter(`Changed by ${message.author.username}`, message.author.avatarURL)
+            .setFooter(`Changed by ${message.author.username}`, message.author.avatarURL())
             .setTimestamp());
     }
 };

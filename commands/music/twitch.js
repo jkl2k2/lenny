@@ -32,8 +32,8 @@ module.exports = {
                     console.log("Pushed Twitch stream to queue");
                 }
 
-                if (message.member.voiceChannel) {
-                    message.member.voiceChannel.join()
+                if (message.member.voice.channel) {
+                    message.member.voice.channel.join()
                         .then(connection => {
                             if (index.getDispatcher(message) == undefined) {
                                 index.callPlayMusic(message);
@@ -44,7 +44,7 @@ module.exports = {
                 }
 
                 let channel = await twitchClient.helix.users.getUserByName(args[0]);
-                message.channel.send(new Discord.RichEmbed()
+                message.channel.send(new Discord.MessageEmbed()
                     .setAuthor(`Queued`, channel.profilePictureUrl)
                     .setDescription(`**[${channel.displayName}](www.twitch.tv/${channel.displayName})**\n\n\`Twitch Livestream\``)
                     .setThumbnail(channel.profilePictureUrl)
@@ -54,7 +54,7 @@ module.exports = {
 
             .catch(err => {
                 if (err.message.includes(`404`)) {
-                    message.channel.send(new Discord.RichEmbed()
+                    message.channel.send(new Discord.MessageEmbed()
                         .setDescription(`<:cross:729019052571492434>\`${err}\`\n\nSorry, but the Twitch channel you provided either doesn't exist or is not currently streaming.`)
                         .setColor(`#FF3838`));
                 }

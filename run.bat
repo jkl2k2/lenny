@@ -1,5 +1,5 @@
 @echo off
 
-node index.js
+node index.js --no-deprecation
 
 pause

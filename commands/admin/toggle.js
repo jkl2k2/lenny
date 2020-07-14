@@ -24,18 +24,18 @@ module.exports = {
 
         if (!command) return message.channel.send("Command not found");
 
-        if (command.name == 'toggle') return message.channel.send(new Discord.RichEmbed()
+        if (command.name == 'toggle') return message.channel.send(new Discord.MessageEmbed()
             .setDescription(`<:cross:729019052571492434> Nice try, dingus`)
             .setColor(`#FF3838`));
 
         command.enabled = !command.enabled;
 
         if (command.enabled) {
-            return message.channel.send(new Discord.RichEmbed()
+            return message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`<:check:728881238970073090> \`!${commandName}\` is now enabled`)
                 .setColor(`#00FF44`));
         } else if (!command.enabled) {
-            return message.channel.send(new Discord.RichEmbed()
+            return message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`<:cross:729019052571492434> \`!${commandName}\` is now disabled`)
                 .setColor(`#FF3838`));
         }

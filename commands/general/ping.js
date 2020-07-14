@@ -10,15 +10,15 @@ module.exports = {
 	enabled: true,
 	type: 'general',
 	async execute(message, args) {
-		const m = await message.channel.send(new Discord.RichEmbed()
+		const m = await message.channel.send(new Discord.MessageEmbed()
 			.addField(`:clock3: Message Edit Latency`, `\`Testing...\``)
 			.addField(`:heartbeat: Discord API Ping`, `\`Testing...\``)
 			.setColor(`#0083FF`));
 
 		var frontendLatency = (m.createdTimestamp - message.createdTimestamp);
-		var roundedPing = Math.round(message.client.ping);
+		var roundedPing = Math.round(message.client.ws.ping);
 
-		m.edit(new Discord.RichEmbed()
+		m.edit(new Discord.MessageEmbed()
 			.setColor(`#0083FF`)
 			.addField(`:clock3: Message Edit Latency`, `\`${frontendLatency}ms\``)
 			.addField(`:heartbeat: Discord API Ping`, `\`${roundedPing}ms\``));

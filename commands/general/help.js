@@ -23,9 +23,9 @@ module.exports = {
         if (!args.length) {
             // Send list of commands
 
-            var generalHelp = new Discord.RichEmbed();
+            var generalHelp = new Discord.MessageEmbed();
 
-            generalHelp.setAuthor(`Use ${prefix}help [command name] to get info on a specific command`, client.user.avatarURL);
+            generalHelp.setAuthor(`Use ${prefix}help [command name] to get info on a specific command`, client.user.avatarURL());
 
             generalHelp.addField(`**Music playing**`, `play\nplaynext\nplaynow\nplaylist\nsearch\ntwitch`, true);
             generalHelp.addField(`**Playback control**`, `skip\nskipall\njoin\nleave\npause\nresume`, true);
@@ -45,18 +45,18 @@ module.exports = {
         const command = commands.get(name) || commands.find(c => c.aliases && c.aliases.includes(name));
 
         if (!command) {
-            return message.channel.send(new Discord.RichEmbed()
+            return message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`<:cross:729019052571492434> Sorry, \`${prefix}${name}\` is not a valid command`)
                 .setColor(`#FF3838`));
         }
 
-        var commandHelp = new Discord.RichEmbed();
+        var commandHelp = new Discord.MessageEmbed();
 
         if (name != command.name) {
             commandHelp.setDescription(`*(Redirected from ${prefix}${name})*`);
         }
 
-        commandHelp.setAuthor(prefix + command.name, client.user.avatarURL);
+        commandHelp.setAuthor(prefix + command.name, client.user.avatarURL());
 
         // Aliases
         if (command.aliases) commandHelp.addField(`**Aliases**`, command.aliases.join(', '));

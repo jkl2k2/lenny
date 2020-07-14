@@ -17,13 +17,13 @@ module.exports = {
 
 		if (dispatcher != undefined && dispatcher.paused == false) {
 			dispatcher.pause();
-			let pauseEmbed = new Discord.RichEmbed()
+			let pauseEmbed = new Discord.MessageEmbed()
 
 				.setDescription(`:pause_button: ${message.author.username} paused playback`)
 				.setColor(`#0083FF`);
 			message.channel.send(pauseEmbed);
 		} else {
-			let pauseFailEmbed = new Discord.RichEmbed()
+			let pauseFailEmbed = new Discord.MessageEmbed()
 
 				.setDescription(`<:cross:729019052571492434> ${message.author.username}, the music is already paused`)
 				.setColor(`#FF3838`);

@@ -15,7 +15,7 @@ module.exports = {
 		var queue = index.getQueue(message);
 
 		if (dispatcher == undefined || !dispatcher.speaking) {
-			var nothingPlaying = new Discord.RichEmbed()
+			var nothingPlaying = new Discord.MessageEmbed()
 				.setDescription(`:information_source: Nothing is currently playing`)
 				.setColor(`#0083FF`);
 			return message.channel.send(nothingPlaying);

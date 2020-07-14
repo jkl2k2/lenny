@@ -22,7 +22,7 @@ module.exports = {
     type: 'music',
     execute(message, args) {
 
-        if (!message.member.voiceChannel) {
+        if (!message.member.voice.channel) {
             // If member not in VC
             if (args.join(" ").includes("playlist")) {
                 handlePlaylist(false);
@@ -35,7 +35,7 @@ module.exports = {
 
         if (args[0] == undefined) {
             // If no arguments
-            let undefArgsEmbed = new Discord.RichEmbed()
+            let undefArgsEmbed = new Discord.MessageEmbed()
                 .setTitle(` `)
                 .setDescription(`<:cross:729019052571492434> Please include at least one search term or URL`)
                 .setColor(`#FF3838`);
@@ -59,15 +59,15 @@ module.exports = {
                 queue.push(newVideo);
             }
 
-            message.channel.send(new Discord.RichEmbed()
+            message.channel.send(new Discord.MessageEmbed()
                 .setAuthor(`Queued (${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
                 .setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\nBy: [${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\nLength: \`${await newVideo.getLength()}\``)
                 .setThumbnail(newVideo.getThumbnail())
                 .setTimestamp()
                 .setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar()));
 
-            if (message.member.voiceChannel) {
-                message.member.voiceChannel.join()
+            if (message.member.voice.channel) {
+                message.member.voice.channel.join()
                     .then(connection => {
                         if (index.getDispatcher(message) == undefined || (!connection.speaking && !index.getDispatcher(message).paused)) {
                             index.callPlayMusic(message);
@@ -83,7 +83,7 @@ module.exports = {
             youtube.searchPlaylists(args.join(" ").substring(9), 5)
                 .then(async results => {
                     if (!results[0] && !results[1] && !results[2] && !results[3] && !results[4]) {
-                        var noPlaylistFound = new Discord.RichEmbed()
+                        var noPlaylistFound = new Discord.MessageEmbed()
                             .setDescription(`:information_source: Sorry, no playlist could be found with that input`)
                             .setColor(`#0083FF`);
                         message.channel.send(noPlaylistFound);
@@ -91,28 +91,28 @@ module.exports = {
                     }
 
                     var res1 = (await results[0].getVideos()).length;
-                    var searching1 = new Discord.RichEmbed()
+                    var searching1 = new Discord.MessageEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for playlists with "${args.join(" ").substring(9)}"
                                          Searching: \`<##-------->\``)
                         .setColor(`#0083FF`);
                     var searchingMessage = await message.channel.send(searching1);
 
                     var res2 = (await results[1].getVideos()).length;
-                    var searching2 = new Discord.RichEmbed()
+                    var searching2 = new Discord.MessageEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for playlists with "${args.join(" ").substring(9)}"
                                          Searching: \`<####------>\``)
                         .setColor(`#0083FF`);
                     searchingMessage.edit(searching2);
 
                     var res3 = (await results[2].getVideos()).length;
-                    var searching3 = new Discord.RichEmbed()
+                    var searching3 = new Discord.MessageEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for playlists with "${args.join(" ").substring(9)}"
                                          Searching: \`<######---->\``)
                         .setColor(`#0083FF`);
                     searchingMessage.edit(searching3);
 
                     var res4 = (await results[3].getVideos()).length;
-                    var searching4 = new Discord.RichEmbed()
+                    var searching4 = new Discord.MessageEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for playlists with "${args.join(" ").substring(9)}"
                                          Searching: \`<########-->\``)
                         .setColor(`#0083FF`);
@@ -120,14 +120,14 @@ module.exports = {
 
                     var res5 = (await results[4].getVideos()).length;
                     /*
-                    var searching5 = new Discord.RichEmbed()
+                    var searching5 = new Discord.MessageEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for playlists with "${args.join(" ").substring(9)}"
                                          Searching: \`<##########>\``)
                         .setColor(`#0083FF`);
                     searchingMessage.edit(searching5);
                     */
 
-                    var resultsEmbed = new Discord.RichEmbed()
+                    var resultsEmbed = new Discord.MessageEmbed()
                         .setAuthor(`Top 5 Playlists For: "${args.join(" ").substring(9)}"`)
                         .setDescription(`1. **[${results[0].title}](${results[0].url})**
                                          Length: **${res1} videos**
@@ -149,7 +149,7 @@ module.exports = {
                                          Length: **${res5} videos**
                                          Uploader: **${results[4].channelTitle}**`)
                         .setTimestamp()
-                        .setFooter(`Requested by ${message.author.username} - Type the number to select - Type cancel to stop`, message.author.avatarURL);
+                        .setFooter(`Requested by ${message.author.username} - Type the number to select - Type cancel to stop`, message.author.avatarURL());
                     searchingMessage.edit(resultsEmbed);
 
                     const filter = m => (m.author.id == message.author.id || m.author.id == ownerID || m.author.id == jahyID) && m.content == "1" || m.content == "2" || m.content == "3" || m.content == "4" || m.content == "5" || m.content.toLowerCase() == "cancel";
@@ -158,7 +158,7 @@ module.exports = {
 
                     collector.on('collect', async m => {
                         if (m.content.toLowerCase() == "cancel") {
-                            let cancelEmbed = new Discord.RichEmbed()
+                            let cancelEmbed = new Discord.MessageEmbed()
                                 .setDescription(`:stop_button: Canceled playing from search`)
                                 .setColor(`#0083FF`);
                             searchingMessage.edit(cancelEmbed);
@@ -171,12 +171,12 @@ module.exports = {
                                     if (playlist) {
                                         var videos = await playlist.getVideos();
 
-                                        var processing = await message.channel.send(new Discord.RichEmbed()
+                                        var processing = await message.channel.send(new Discord.MessageEmbed()
                                             .setAuthor(`🔄 Processing playlist`)
                                             .setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
                                             .setThumbnail(playlist.thumbnails.default.url)
                                             .setTimestamp()
-                                            .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL));
+                                            .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL()));
 
                                         var encounteredPrivate = false;
                                         var privateCounter = 0;
@@ -192,20 +192,20 @@ module.exports = {
                                         }
 
                                         if (encounteredPrivate) {
-                                            message.channel.send(new Discord.RichEmbed()
+                                            message.channel.send(new Discord.MessageEmbed()
                                                 .setDescription(`:information_source: \`${privateCounter}\` video(s) from the playlist could not be added due to privacy settings`)
                                                 .setColor(`#0083FF`));
                                         }
 
-                                        processing.edit(new Discord.RichEmbed()
+                                        processing.edit(new Discord.MessageEmbed()
                                             .setAuthor(`➕ Queued playlist`)
                                             .setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
                                             .setThumbnail(playlist.thumbnails.default.url)
                                             .setTimestamp()
-                                            .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL));
+                                            .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL()));
 
-                                        if (message.member.voiceChannel) {
-                                            message.member.voiceChannel.join()
+                                        if (message.member.voice.channel) {
+                                            message.member.voice.channel.join()
                                                 .then(connection => {
                                                     if (index.getDispatcher(message) == undefined || (!connection.speaking && !index.getDispatcher(message).paused)) {
                                                         index.callPlayMusic(message);
@@ -235,7 +235,7 @@ module.exports = {
             youtube.searchVideos(args.join(" "), 5)
                 .then(async results => {
                     if (!results[0] && !results[1] && !results[2] && !results[3] && !results[4]) {
-                        var noVideoFound = new Discord.RichEmbed()
+                        var noVideoFound = new Discord.MessageEmbed()
                             .setDescription(`:information_source: Sorry, no video could be found with that input`)
                             .setColor(`#0083FF`);
                         message.channel.send(noVideoFound);
@@ -243,28 +243,28 @@ module.exports = {
                     }
 
                     var res1 = index.constructVideo(await results[0].fetch(), message.member);
-                    var searching1 = new Discord.RichEmbed()
+                    var searching1 = new Discord.MessageEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<##-------->\``)
                         .setColor(`#0083FF`);
                     var searchingMessage = await message.channel.send(searching1);
 
                     var res2 = index.constructVideo(await results[1].fetch(), message.member);
-                    var searching2 = new Discord.RichEmbed()
+                    var searching2 = new Discord.MessageEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<####------>\``)
                         .setColor(`#0083FF`);
                     searchingMessage.edit(searching2);
 
                     var res3 = index.constructVideo(await results[2].fetch(), message.member);
-                    var searching3 = new Discord.RichEmbed()
+                    var searching3 = new Discord.MessageEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<######---->\``)
                         .setColor(`#0083FF`);
                     searchingMessage.edit(searching3);
 
                     var res4 = index.constructVideo(await results[3].fetch(), message.member);
-                    var searching4 = new Discord.RichEmbed()
+                    var searching4 = new Discord.MessageEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<########-->\``)
                         .setColor(`#0083FF`);
@@ -272,14 +272,14 @@ module.exports = {
 
                     var res5 = index.constructVideo(await results[4].fetch(), message.member);
                     /*
-                    var searching5 = new Discord.RichEmbed()
+                    var searching5 = new Discord.MessageEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<##########>\``)
                         .setColor(`#0083FF`);
                     searchingMessage.edit(searching5);
                     */
 
-                    var resultsEmbed = new Discord.RichEmbed()
+                    var resultsEmbed = new Discord.MessageEmbed()
                         .setAuthor(`Top 5 Results For: "${args.join(" ")}"`)
                         .setDescription(`1. **[${results[0].title}](${results[0].url})**
                                              Length: **${await res1.getLength()}**
@@ -301,7 +301,7 @@ module.exports = {
                                              Length: **${await res5.getLength()}**
                                              Uploader: **${res5.getChannelName()}**`)
                         .setTimestamp()
-                        .setFooter(`Requested by ${message.author.username} - Type the number to select - Type cancel to stop`, message.author.avatarURL);
+                        .setFooter(`Requested by ${message.author.username} - Type the number to select - Type cancel to stop`, message.author.avatarURL());
                     searchingMessage.edit(resultsEmbed);
 
                     const filter = m => (m.author.id == message.author.id || m.author.id == ownerID || m.author.id == jahyID) && m.content == "1" || m.content == "2" || m.content == "3" || m.content == "4" || m.content == "5" || m.content.toLowerCase() == "cancel";
@@ -310,7 +310,7 @@ module.exports = {
 
                     collector.on('collect', async m => {
                         if (m.content.toLowerCase() == "cancel") {
-                            let cancelEmbed = new Discord.RichEmbed()
+                            let cancelEmbed = new Discord.MessageEmbed()
                                 .setDescription(`:stop_button: Canceled playing from search`)
                                 .setColor(`#0083FF`);
                             searchingMessage.edit(cancelEmbed);

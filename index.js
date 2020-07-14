@@ -83,7 +83,7 @@ class YTVideo {
         return this.requester.user.username;
     }
     getRequesterAvatar() {
-        return this.requester.user.avatarURL;
+        return this.requester.user.avatarURL();
     }
     getType() {
         if (!this.video.duration) {
@@ -337,7 +337,7 @@ async function sendDetails(input, c) {
     if (input.getType() == "livestream") {
         let buffer = await fetch(input.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
         let rgb = await colorThief.getColor(buffer);
-        let musicEmbed = new Discord.RichEmbed()
+        let musicEmbed = new Discord.MessageEmbed()
             .setAuthor(`Now playing`, await input.getChannelThumbnail())
             .setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${await input.getChannelName()}](${input.getChannelURL()})\n\n\`YouTube Livestream\``)
             .setThumbnail(input.getThumbnail())
@@ -348,7 +348,7 @@ async function sendDetails(input, c) {
         lastDetails = musicEmbed;
     } else if (input.getType() == "twitch") {
         let channel = await twitchClient.helix.users.getUserByName(input.getTitle());
-        let musicEmbed = new Discord.RichEmbed()
+        let musicEmbed = new Discord.MessageEmbed()
             .setAuthor(`Now playing`, channel.profilePictureUrl)
             .setDescription(`**[${channel.displayName}](www.twitch.tv/${channel.displayName})**\n\n\`Twitch Livestream\``)
             .setThumbnail(channel.profilePictureUrl)
@@ -359,7 +359,7 @@ async function sendDetails(input, c) {
     } else {
         let buffer = await fetch(input.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
         let rgb = await colorThief.getColor(buffer);
-        let musicEmbed = new Discord.RichEmbed()
+        let musicEmbed = new Discord.MessageEmbed()
             .setAuthor(`Now playing`, await input.getChannelThumbnail())
             .setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${await input.getChannelName()}](${input.getChannelURL()})\n\n\`<⚫——————————> (0:00/${await input.getLength()})\``)
             .setThumbnail(input.getThumbnail())
@@ -372,7 +372,7 @@ async function sendDetails(input, c) {
 }
 
 function sendSCDetails(input, c) {
-    var scMusicEmbed = new Discord.RichEmbed()
+    var scMusicEmbed = new Discord.MessageEmbed()
         .setAuthor(`▶️ Now playing`)
         .setDescription(`**[${input.getCleanTitle()}](${input.getURL()})**`)
         .addField(`Uploader`, `[${input.getUploader()}](${input.getUploaderUrl()})`, true)
@@ -398,7 +398,7 @@ async function playMusic(message) {
 
         var input = ytdl(queue.list[0].getURL(), { quality: "highestaudio", highWaterMark: 1000 * 1000 * 128 });
 
-        Dispatchers.set(message.guild.id, client.voiceConnections.get(message.guild.id).playStream(input, { bitrate: 384000, volume: Queues.get(message.guild.id).volume, passes: 5, highWaterMark: 1000 * 1000 * 128 }));
+        Dispatchers.set(message.guild.id, client.voice.connections.get(message.guild.id).play(input, { bitrate: 384000, volume: Queues.get(message.guild.id).volume, passes: 5, highWaterMark: 1000 * 1000 * 128 }));
 
         if (!queue.repeat) sendDetails(queue.list[0], message.channel);
 
@@ -409,15 +409,15 @@ async function playMusic(message) {
     } else if (queue.list[0].getType() == "twitch") {
         // If Twitch
 
-        // Dispatchers.set(message.guild.id, client.voiceConnections.get(message.guild.id).playStream(queue.list[0].getURL()));
+        // Dispatchers.set(message.guild.id, client.voice.connections.get(message.guild.id).playStream(queue.list[0].getURL()));
 
         sendDetails(queue.list[0], message.channel);
 
     } else if (queue.list[0].getType() == "soundcloud") {
         // If SoundCloud
 
-        // Dispatchers.set(message.guild.id, client.voiceConnections.get(message.guild.id).playStream(fs.createReadStream(`./soundcloud/${queue.list[0].getTitle()}`)));
-        Dispatchers.set(message.guild.id, client.voiceConnections.get(message.guild.id).playStream(queue.list[0].getURL()));
+        // Dispatchers.set(message.guild.id, client.voice.connections.get(message.guild.id).playStream(fs.createReadStream(`./soundcloud/${queue.list[0].getTitle()}`)));
+        Dispatchers.set(message.guild.id, client.voice.connections.get(message.guild.id).play(queue.list[0].getURL()));
 
         sendSCDetails(queue.list[0], message.channel);
 
@@ -435,9 +435,9 @@ async function playMusic(message) {
     }
 
     // Reset dispatcher stream delay
-    client.voiceConnections.get(message.guild.id).player.streamingData.pausedTime = 0;
+    client.voice.connections.get(message.guild.id).player.streamingData.pausedTime = 0;
 
-    Dispatchers.get(message.guild.id).on("end", function () {
+    Dispatchers.get(message.guild.id).on("close", function () {
         if (queue.repeat) {
             queue.list.unshift(queue.lastPlayed);
         }
@@ -462,7 +462,7 @@ async function playMusic(message) {
 
 //#region Casino status
 async function updateCasinoStats(mainGuild) {
-    var newLeaderboard = new Discord.RichEmbed()
+    var newLeaderboard = new Discord.MessageEmbed()
         .setDescription(`:money_with_wings: **OWO GRAND RESORT & CASINO PROFITS** :money_with_wings:\n\nProfit: **$${currency.getBalance("0")}**\n\n:medal: **Top 10 users by currency**\n\n` + currency.sort((a, b) => b.balance - a.balance)
             .filter(user => client.users.has(user.user_id) && mainGuild.member(client.users.get(user.user_id)))
             .first(10)
@@ -487,7 +487,7 @@ function formatDate() {
 async function updateAdminDashboard() {
     var heartbeatPing = Math.round(client.ping);
 
-    var newMessage = new Discord.RichEmbed()
+    var newMessage = new Discord.MessageEmbed()
         .setDescription(`:clock3: Websocket Ping: **${heartbeatPing}ms**`)
         .setFooter(`Updated ${formatDate()}`);
     adminStatusMessage.edit(newMessage);
@@ -550,7 +550,7 @@ module.exports = {
         if (dispatcher && dispatcher.speaking) {
             return lastDetails;
         } else {
-            return new Discord.RichEmbed()
+            return new Discord.MessageEmbed()
                 .setDescription(`:information_source: Nothing is currently playing`)
                 .setColor(`#0083FF`);
         }
@@ -568,7 +568,7 @@ module.exports = {
         Dispatchers.set(message.guild.id, newDispatcher);
     },
     endDispatcher: function (message) {
-        Dispatchers.get(message.guild.id).end();
+        Dispatchers.get(message.guild.id).destroy();
     },
     callPlayMusic: function (message) {
         playMusic(message);
@@ -644,43 +644,10 @@ client.on('ready', async () => {
     // Randomly select status
     setInterval(() => {
         const index = Math.floor(Math.random() * (activities.length - 1) + 1);
-        client.user.setActivity(activities[index].getText(), { type: activities[index].getFormat() });
+        // client.user.setActivity(activities[index].getText(), { type: activities[index].getFormat() });
+        client.user.setActivity(`stuff`, { type: "PLAYING" });
         client.user.setStatus("online");
     }, 15000);
-
-    var casinoChannel = client.channels.get(`696986079584321566`);
-
-    // casinoStatusMessage = await casinoChannel.send(new Discord.RichEmbed()
-    // .setDescription(`:money_with_wings: **OWO GRAND RESORT & CASINO PROFITS** :money_with_wings:\n\n__Total profits__\n**$placeholder**`));
-
-    logger.debug(chalk.black.bgGray(`Clearing leaderboard channel...`));
-    var casinoFetched = await casinoChannel.fetchMessages({ limit: 10 });
-    casinoChannel.bulkDelete(casinoFetched);
-
-    var mainGuild = client.guilds.get(`471193210102743040`);
-
-    logger.debug(chalk.black.bgGray(`Sending initial leaderboard message...`));
-    casinoStatusMessage = await casinoChannel.send(new Discord.RichEmbed()
-        .setDescription(`:money_with_wings: **OWO GRAND RESORT & CASINO PROFITS** :money_with_wings:\n\nProfit: **$${currency.getBalance("0")}**\n\n:medal: **Top 10 users by currency**\n\n` + currency.sort((a, b) => b.balance - a.balance)
-            .filter(user => client.users.has(user.user_id) && mainGuild.member(client.users.get(user.user_id)))
-            .first(10)
-            .map((user, position) => `\`${position + 1}.\` **${(client.users.get(user.user_id).username)}**\nBalance: \`$${user.balance}\`\n`)
-            .join('\n'),
-            { code: true })
-        .setColor(`#1b9e56`));
-
-    adminStatusChannel = client.channels.get(`719807359622578206`);
-
-    var adminStatusFetched = await adminStatusChannel.fetchMessages({ limit: 10 });
-    adminStatusChannel.bulkDelete(adminStatusFetched);
-    adminStatusMessage = await adminStatusChannel.send(new Discord.RichEmbed()
-        .setDescription(`:clock3: Websocket Ping: **${Math.round(client.ping)}ms**`)
-        .setFooter(`Updated ${formatDate()}`));
-
-    setInterval(() => {
-        updateCasinoStats(mainGuild);
-        updateAdminDashboard();
-    }, 5000);
 
     logger.info(chalk.white.bgCyan(`--------Bot Initialized--------`));
     if (date.getMinutes() < 10) {
@@ -752,12 +719,12 @@ client.on('messageReactionAdd', async (reaction, user) => {
         const image = message.attachments.size > 0 ? await extension(reaction, message.attachments.array()[0].url) : '';
 
         // construct new embed to edit old one with
-        const embed = new Discord.RichEmbed()
+        const embed = new Discord.MessageEmbed()
             .setColor(foundStar.color)
             .setDescription(foundStar.description)
             .addField(`Channel`, message.channel, true)
             .addField(`Message Link`, `[Jump](${message.url})`, true)
-            .setAuthor(message.author.tag, message.author.displayAvatarURL)
+            .setAuthor(message.author.tag, message.author.displayavatarURL())
             .setTimestamp()
             .setFooter(`⭐ ${parseInt(star[1]) + 1} | ${message.id}`)
             .setImage(image);
@@ -774,12 +741,12 @@ client.on('messageReactionAdd', async (reaction, user) => {
         // disallow empty messages
         // if (image === '' && message.cleanContent.length < 1) return message.channel.send(`${user}, you cannot star an empty message.`);
 
-        const embed = new Discord.RichEmbed()
+        const embed = new Discord.MessageEmbed()
             .setColor(15844367)
             .setDescription(getDescription(message))
             .addField(`Channel`, message.channel, true)
             .addField(`Message Link`, `[Jump](${message.url})`, true)
-            .setAuthor(message.author.username, message.author.displayAvatarURL)
+            .setAuthor(message.author.username, message.author.displayavatarURL())
             .setTimestamp()
             .setFooter(`⭐ 1 | ${message.id}`)
             .setImage(image);
@@ -842,7 +809,7 @@ client.on('message', message => {
     // Ban the word "bored" in school group server
     if (message.guild.id == "717141100766298203" && message.content.toLowerCase().split(" ").join("").includes("bored")) {
         message.delete();
-        return message.channel.send(new Discord.RichEmbed()
+        return message.channel.send(new Discord.MessageEmbed()
             .setDescription(`:wastebasket: **Message Deleted**\n\n**Author:** ${message.author}\n**Reason:** Banned word or phrase`)
             .setColor(`#FF3838`)
             .setTimestamp());
@@ -864,7 +831,7 @@ client.on('message', message => {
 
     // If message is only bot mention, show prefix
     if (message.content == "<@!641137495886528513>") {
-        return message.channel.send(new Discord.RichEmbed()
+        return message.channel.send(new Discord.MessageEmbed()
             .setDescription(`:information_source: The prefix for the server \`${message.guild.name}\` is currently \`${prefix}\``)
             .setColor(`#0083FF`));
     }
@@ -892,7 +859,7 @@ client.on('message', message => {
     // Return if command is disabled
     if (!command.enabled && (message.author.id != ownerID && message.author.id != jahyID && message.author.id != fookID)) {
         logger.info(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`${prefix}${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Command is disabled`)}`);
-        return message.channel.send(new Discord.RichEmbed()
+        return message.channel.send(new Discord.MessageEmbed()
             .setDescription(`<:cross:729019052571492434> Sorry, \`!${commandName}\` is disabled`)
             .setColor(`#FF3838`));
     }
@@ -900,7 +867,7 @@ client.on('message', message => {
     // If guild-only, no DMs allowed
     if (command.guildOnly && message.channel.type !== 'text') {
         logger.info(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`${prefix}${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Command is guild-only`)}`);
-        return message.channel.send(new Discord.RichEmbed()
+        return message.channel.send(new Discord.MessageEmbed()
             .setDescription(`<:cross:729019052571492434> Sorry, that command is only usable in servers`)
             .setColor(`#FF3838`));
     }
@@ -908,7 +875,7 @@ client.on('message', message => {
     // If command needs arguments
     if (command.args && !args.length) {
         logger.info(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`${prefix}${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Improper usage`)}`);
-        let noArgs = new Discord.RichEmbed();
+        let noArgs = new Discord.MessageEmbed();
         let msg = `You didn't provide the required arguments, ${message.author.username}`;
 
         if (command.usage) {
@@ -920,7 +887,7 @@ client.on('message', message => {
         }
 
         noArgs.setDescription(msg);
-        noArgs.setAuthor(`Improper usage`, client.user.avatarURL);
+        noArgs.setAuthor(`Improper usage`, client.user.avatarURL());
 
         return message.channel.send(noArgs);
     }
@@ -942,7 +909,7 @@ client.on('message', message => {
         if (now < expirationTime && message.author.id != ownerID) {
             const timeLeft = (expirationTime - now) / 1000;
             logger.debug(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`!${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Cooldown in effect`)}`);
-            let cooldownEmbed = new Discord.RichEmbed()
+            let cooldownEmbed = new Discord.MessageEmbed()
                 .addField(`<:cross:729019052571492434> Command cooldown`, `Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command`)
                 .setColor(`#FF3838`);
             return message.channel.send(cooldownEmbed);
@@ -955,13 +922,13 @@ client.on('message', message => {
     // If command has permission restrictions
     if (command.restrictions && message.member.id != ownerID) {
         if (command.restrictions.resolvable && command.restrictions.resolvable.length > 0 && !message.member.hasPermission(command.restrictions.resolvable)) {
-            return message.channel.send(new Discord.RichEmbed()
+            return message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`<:cross:729019052571492434> Sorry, ${message.author.username}, you do not have the required permission(s) to use \`${prefix}${command.name}\`\n\nPermissions required:\n\`${command.restrictions.resolvable.join("\n")}\``)
                 .setColor(`#FF3838`));
         } else if (command.restrictions.id && command.restrictions.id.length > 0) {
             const match = (element) => element == message.author.id;
             if (!command.restrictions.id.some(match)) {
-                return message.channel.send(new Discord.RichEmbed()
+                return message.channel.send(new Discord.MessageEmbed()
                     .setDescription(`<:cross:729019052571492434> Sorry, ${message.author.username}, only certain users can use \`${prefix}${command.name}\``)
                     .setColor(`#FF3838`));
             }
@@ -975,7 +942,7 @@ client.on('message', message => {
     } catch (error) {
         logger.error(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`!${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Command errored`)}`);
         logger.error(error);
-        let errorEmbed = new Discord.RichEmbed()
+        let errorEmbed = new Discord.MessageEmbed()
             .setDescription(`<:cross:729019052571492434> Error executing command\n\n\`\`\`${error}\`\`\``)
             .setColor(`#FF3838`);
         message.channel.send(errorEmbed);

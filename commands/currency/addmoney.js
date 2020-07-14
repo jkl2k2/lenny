@@ -27,24 +27,24 @@ module.exports = {
         const transferAmount = args.find(arg => !/<@!?\d+>/g.test(arg));
         const transferTarget = message.mentions.users.first();
 
-        if (!transferAmount || isNaN(transferAmount)) return message.channel.send(new Discord.RichEmbed()
+        if (!transferAmount || isNaN(transferAmount)) return message.channel.send(new Discord.MessageEmbed()
             .setDescription(`<:cross:729019052571492434> Sorry ${message.author.username}, that's an invalid amount.`)
             .setColor(`#FF3838`));
-        if (transferAmount > currentAmount) return message.channel.send(new Discord.RichEmbed()
+        if (transferAmount > currentAmount) return message.channel.send(new Discord.MessageEmbed()
             .setDescription(`<:cross:729019052571492434> Sorry ${message.author.username}, you only have **$${currentAmount}**.`)
             .setColor(`#FF3838`));
         /*
-        if (transferAmount <= 0) return message.channel.send(new Discord.RichEmbed()
+        if (transferAmount <= 0) return message.channel.send(new Discord.MessageEmbed()
             .setDescription(`<:cross:729019052571492434> Please enter an amount greater than zero, ${message.author.username}.`)
             .setColor(`#FF3838`));
         */
 
         currency.add(transferTarget.id, transferAmount);
 
-        return message.channel.send(new Discord.RichEmbed()
+        return message.channel.send(new Discord.MessageEmbed()
             .setDescription(`:arrow_down: Gave \`$${transferAmount}\``)
             .setColor(`#2EC14E`)
-            .setAuthor(message.author.username, message.author.avatarURL)
-            .setFooter(transferTarget.username, transferTarget.avatarURL));
+            .setAuthor(message.author.username, message.author.avatarURL())
+            .setFooter(transferTarget.username, transferTarget.avatarURL()));
     }
 };

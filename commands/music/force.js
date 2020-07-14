@@ -11,7 +11,7 @@ module.exports = {
 	enabled: true,
 	type: 'music',
 	execute(message, args) {
-		message.channel.send(new Discord.RichEmbed()
+		message.channel.send(new Discord.MessageEmbed()
 			.setDescription(":information_source: Attemping to unstick queue...")
 			.setColor("#0083FF"));
 

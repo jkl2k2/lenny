@@ -29,7 +29,7 @@ module.exports = {
             default:
                 images.search('corn')
                     .then(images => {
-                        message.channel.send(new Discord.RichEmbed()
+                        message.channel.send(new Discord.MessageEmbed()
                             .setImage(images[pictureChoice].url)
                             .setColor(`#FCF403`)
                             .setDescription(`OwO what's this?`));
@@ -38,7 +38,7 @@ module.exports = {
             case 1:
                 images.search('buttery corn')
                     .then(images => {
-                        message.channel.send(new Discord.RichEmbed()
+                        message.channel.send(new Discord.MessageEmbed()
                             .setImage(images[pictureChoice].url)
                             .setColor(`#FCF403`)
                             .setDescription(`OwO what's this?`));
@@ -47,7 +47,7 @@ module.exports = {
             case 2:
                 images.search('steamy corn')
                     .then(images => {
-                        message.channel.send(new Discord.RichEmbed()
+                        message.channel.send(new Discord.MessageEmbed()
                             .setImage(images[pictureChoice].url)
                             .setColor(`#FCF403`)
                             .setDescription(`OwO what's this?`));
@@ -56,7 +56,7 @@ module.exports = {
             case 3:
                 images.search('delicious corn')
                     .then(images => {
-                        message.channel.send(new Discord.RichEmbed()
+                        message.channel.send(new Discord.MessageEmbed()
                             .setImage(images[pictureChoice].url)
                             .setColor(`#FCF403`)
                             .setDescription(`OwO what's this?`));
@@ -65,7 +65,7 @@ module.exports = {
             case 4:
                 images.search('HD corn')
                     .then(images => {
-                        message.channel.send(new Discord.RichEmbed()
+                        message.channel.send(new Discord.MessageEmbed()
                             .setImage(images[pictureChoice].url)
                             .setColor(`#FCF403`)
                             .setDescription(`OwO what's this?`));
@@ -74,7 +74,7 @@ module.exports = {
             case 5:
                 images.search('fresh and steamy corn')
                     .then(images => {
-                        message.channel.send(new Discord.RichEmbed()
+                        message.channel.send(new Discord.MessageEmbed()
                             .setImage(images[pictureChoice].url)
                             .setColor(`#FCF403`)
                             .setDescription(`OwO what's this?`));

@@ -22,7 +22,7 @@ module.exports = {
         var rank;
 
         var list = currency.sort((a, b) => b.balance - a.balance)
-            .filter(user => client.users.has(user.user_id) && message.guild.member(client.users.get(user.user_id)))
+            .filter(user => client.users.cache.has(user.user_id) && message.guild.member(client.users.cache.get(user.user_id)))
             .array();
 
         for (var i = 0; i < list.length; i++) {
@@ -32,7 +32,7 @@ module.exports = {
             }
         }
 
-        return message.channel.send(new Discord.RichEmbed()
+        return message.channel.send(new Discord.MessageEmbed()
             .setDescription(`:moneybag: ${target} has \`$${currency.getBalance(target.id)}\`\n\n:information_source: Ranked \`#${rank}\` in \`${message.guild.name}\``)
             .setColor(`#2EC14E`));
     }

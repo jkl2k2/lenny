@@ -37,13 +37,13 @@ module.exports = {
 	execute(message, args) {
 		if (!args.length) {
 			if (index.getDispatcher(message) == undefined) {
-				let currentVol = new Discord.RichEmbed()
+				let currentVol = new Discord.MessageEmbed()
 					.setDescription(`:loud_sound: Current volume: 100%`)
 					.setColor(`#0083FF`);
 
 				return message.channel.send(currentVol);
 			}
-			return message.channel.send(new Discord.RichEmbed()
+			return message.channel.send(new Discord.MessageEmbed()
 				.setDescription(`:loud_sound: Current volume: \`${(index.getDispatcher(message).volume) * 100}%\``)
 				.setColor(`#0083FF`));
 		}
@@ -52,7 +52,7 @@ module.exports = {
 		var dispatcher = index.getDispatcher(message);
 		var queue = index.getQueue(message);
 		if (dispatcher == undefined || queue == undefined) {
-			return message.channel.send(new Discord.RichEmbed()
+			return message.channel.send(new Discord.MessageEmbed()
 				.setDescription(`:information_source: Nothing is currently playing`)
 				.setColor(`#0083FF`));
 		}
@@ -62,11 +62,11 @@ module.exports = {
 		if ((volume >= 0 && volume <= 500) || message.author.id == jahyID) {
 			dispatcher.setVolume(newVolume);
 			queue.volume = newVolume;
-			return message.channel.send(new Discord.RichEmbed()
+			return message.channel.send(new Discord.MessageEmbed()
 				.setDescription(`:loud_sound: ${message.author.username}${decideWording(raisedVolume)} \`${volume}%\``)
 				.setColor(`#0083FF`));
 		} else {
-			return message.channel.send(new Discord.RichEmbed()
+			return message.channel.send(new Discord.MessageEmbed()
 				.addField(`<:cross:729019052571492434> Failed to change volume`, `You can't set the volume to that number`)
 				.setColor(`#FF3838`));
 		}

@@ -398,7 +398,7 @@ async function playMusic(message) {
 
         var input = ytdl(queue.list[0].getURL(), { quality: "highestaudio", highWaterMark: 1000 * 1000 * 128 });
 
-        Dispatchers.set(message.guild.id, client.voice.connections.get(message.guild.id).play(input, { bitrate: 384000, volume: Queues.get(message.guild.id).volume, passes: 5, highWaterMark: 1000 * 1000 * 128 }));
+        Dispatchers.set(message.guild.id, client.voice.connections.get(message.guild.id).play(input, { bitrate: 384000, volume: Queues.get(message.guild.id).volume, passes: 5, highWaterMark: 1000 * 1000 * 128, fec: true }));
 
         if (!queue.repeat) sendDetails(queue.list[0], message.channel);
 
@@ -438,6 +438,27 @@ async function playMusic(message) {
     client.voice.connections.get(message.guild.id).player.streamingData.pausedTime = 0;
 
     Dispatchers.get(message.guild.id).on("close", function () {
+        if (queue.repeat) {
+            queue.list.unshift(queue.lastPlayed);
+        }
+        if (path != " ") {
+            fs.unlink(path, (err) => {
+                if (err) {
+                    logger.error(`FAILED to delete file at path ${path}`);
+                    logger.error(err);
+                    return;
+                }
+                logger.info(`Removed file at path ${path}`);
+            });
+        }
+        if (queue.list[0]) {
+            playMusic(message);
+        } else {
+            Dispatchers.set(message.guild.id, undefined);
+        }
+    });
+
+    Dispatchers.get(message.guild.id).on("finish", function () {
         if (queue.repeat) {
             queue.list.unshift(queue.lastPlayed);
         }
@@ -641,13 +662,17 @@ client.on('ready', async () => {
 
     let date = new Date();
 
+    client.user.setActivity(`trash music`, { type: "LISTENING" });
+
     // Randomly select status
+    /*
     setInterval(() => {
         const index = Math.floor(Math.random() * (activities.length - 1) + 1);
         // client.user.setActivity(activities[index].getText(), { type: activities[index].getFormat() });
         client.user.setActivity(`stuff`, { type: "PLAYING" });
         client.user.setStatus("online");
     }, 15000);
+    */
 
     logger.info(chalk.white.bgCyan(`--------Bot Initialized--------`));
     if (date.getMinutes() < 10) {
@@ -694,13 +719,13 @@ client.on('messageReactionAdd', async (reaction, user) => {
     if (reaction.emoji.name != `⭐`) return;
 
     // look for "starboard"
-    const starChannel = client.guilds.get(message.guild.id).channels.find(channel => channel.name == `starboard`);
+    const starChannel = client.guilds.cache.get(message.guild.id).channels.cache.find(channel => channel.name == `starboard`);
 
     // if no starboard found
     if (!starChannel) return message.channel.send(`It seems you do not have a "starboard" channel`);
 
     // fetch last 100 embeds in starChannel
-    const fetch = await starChannel.fetchMessages({ limit: 100 });
+    const fetch = await starChannel.messages.fetch({ limit: 100 });
 
     // check if previous embed with same message
     // const stars = fetch.find(m => m.embeds[0].footer.text.startsWith('⭐') && m.embeds[0].footer.text.endsWith(message.id));
@@ -724,13 +749,13 @@ client.on('messageReactionAdd', async (reaction, user) => {
             .setDescription(foundStar.description)
             .addField(`Channel`, message.channel, true)
             .addField(`Message Link`, `[Jump](${message.url})`, true)
-            .setAuthor(message.author.tag, message.author.displayavatarURL())
+            .setAuthor(message.author.username, message.author.avatarURL())
             .setTimestamp()
             .setFooter(`⭐ ${parseInt(star[1]) + 1} | ${message.id}`)
             .setImage(image);
 
         // fetch previous embed's ID
-        const starMsg = await starChannel.fetchMessage(stars.id);
+        const starMsg = await starChannel.messages.fetch(stars.id);
 
         // edit old embed with new one
         await starMsg.edit({ embed });
@@ -746,7 +771,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
             .setDescription(getDescription(message))
             .addField(`Channel`, message.channel, true)
             .addField(`Message Link`, `[Jump](${message.url})`, true)
-            .setAuthor(message.author.username, message.author.displayavatarURL())
+            .setAuthor(message.author.username, message.author.avatarURL())
             .setTimestamp()
             .setFooter(`⭐ 1 | ${message.id}`)
             .setImage(image);

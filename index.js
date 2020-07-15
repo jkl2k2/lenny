@@ -975,5 +975,7 @@ client.on('message', message => {
 });
 //#endregion
 
+//#region Login
 logger.debug(chalk.black.bgGray(`Logging in to Discord...`));
 client.login(token);
+//#endregion

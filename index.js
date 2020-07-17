@@ -705,8 +705,8 @@ client.on('messageReactionAdd', async (reaction, user) => {
     }
 
     function getDescription(message) {
-        if (message.cleanContent.length < 1 && message.attachments.array()[0].filename) {
-            return `[${message.attachments.array()[0].filename}](${message.attachments.array()[0].url})`;
+        if (message.cleanContent.length < 1 && message.attachments.array()[0]) {
+            return `[${message.attachments.array()[0].name}](${message.attachments.array()[0].url})`;
         } else {
             return message.cleanContent;
         }
@@ -722,7 +722,9 @@ client.on('messageReactionAdd', async (reaction, user) => {
     const starChannel = client.guilds.cache.get(message.guild.id).channels.cache.find(channel => channel.name == `starboard`);
 
     // if no starboard found
-    if (!starChannel) return message.channel.send(`It seems you do not have a "starboard" channel`);
+    if (!starChannel) return message.channel.send(new Discord.MessageEmbed()
+        .setDescription(`<:cross:729019052571492434> Unable to find a valid \`#starboard\` channel`)
+        .setColor(`#FF3838`));
 
     // fetch last 100 embeds in starChannel
     const fetch = await starChannel.messages.fetch({ limit: 100 });
@@ -735,7 +737,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
         // if message already starred
 
         // check star amount
-        const star = /^\⭐\s([0-9]{1,3})\s\|\s([0-9]{17,20})/.exec(stars.embeds[0].footer.text);
+        const star = /^\🌟\s([0-9]{1,3})\s\|\s([0-9]{17,20})/.exec(stars.embeds[0].footer.text);
 
         // store previous embed
         const foundStar = stars.embeds[0];
@@ -751,7 +753,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
             .addField(`Message Link`, `[Jump](${message.url})`, true)
             .setAuthor(message.author.username, message.author.avatarURL())
             .setTimestamp()
-            .setFooter(`⭐ ${parseInt(star[1]) + 1} | ${message.id}`)
+            .setFooter(`🌟 ${parseInt(star[1]) + 1} | ${message.id}`)
             .setImage(image);
 
         // fetch previous embed's ID
@@ -773,7 +775,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
             .addField(`Message Link`, `[Jump](${message.url})`, true)
             .setAuthor(message.author.username, message.author.avatarURL())
             .setTimestamp()
-            .setFooter(`⭐ 1 | ${message.id}`)
+            .setFooter(`🌟 1 | ${message.id}`)
             .setImage(image);
         await starChannel.send({ embed });
     }

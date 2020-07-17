@@ -705,9 +705,21 @@ client.on('messageReactionAdd', async (reaction, user) => {
     }
 
     function getDescription(message) {
-        if (message.cleanContent.length < 1 && message.attachments.array()[0]) {
+        if (message.cleanContent.length < 1 && message.embeds.length > 0) {
+            // If starred message is an embed
+            let constructed = ``;
+            let embed = message.embeds[0];
+
+            if (embed.author) constructed += `**${embed.author.name}**`;
+            if (embed.title) constructed += `\n\n**${embed.title}**`;
+            if (embed.description) constructed += `\n${embed.description}`;
+
+            return constructed;
+        } else if (message.cleanContent.length < 1 && message.attachments.array()[0]) {
+            // If attachment detected
             return `[${message.attachments.array()[0].name}](${message.attachments.array()[0].url})`;
         } else {
+            // If only text
             return message.cleanContent;
         }
     }
@@ -730,7 +742,6 @@ client.on('messageReactionAdd', async (reaction, user) => {
     const fetch = await starChannel.messages.fetch({ limit: 100 });
 
     // check if previous embed with same message
-    // const stars = fetch.find(m => m.embeds[0].footer.text.startsWith('⭐') && m.embeds[0].footer.text.endsWith(message.id));
     const stars = fetch.filter((m) => m.embeds.length != 0).find((m) => m.embeds[0].footer && m.embeds[0].footer.text.includes(message.id));
 
     if (stars) {
@@ -742,19 +753,16 @@ client.on('messageReactionAdd', async (reaction, user) => {
         // store previous embed
         const foundStar = stars.embeds[0];
 
-        // check for attachment
-        const image = message.attachments.size > 0 ? await extension(reaction, message.attachments.array()[0].url) : '';
-
         // construct new embed to edit old one with
         const embed = new Discord.MessageEmbed()
             .setColor(foundStar.color)
             .setDescription(foundStar.description)
             .addField(`Channel`, message.channel, true)
-            .addField(`Message Link`, `[Jump](${message.url})`, true)
+            .addField(`Source`, `[Jump](${message.url})`, true)
             .setAuthor(message.author.username, message.author.avatarURL())
             .setTimestamp()
             .setFooter(`🌟 ${parseInt(star[1]) + 1} | ${message.id}`)
-            .setImage(image);
+            .setImage(foundStar.image.url);
 
         // fetch previous embed's ID
         const starMsg = await starChannel.messages.fetch(stars.id);
@@ -763,16 +771,22 @@ client.on('messageReactionAdd', async (reaction, user) => {
         await starMsg.edit({ embed });
     } else {
         // check for attachment
-        const image = message.attachments.size > 0 ? await extension(reaction, message.attachments.array()[0].url) : '';
+        var image = message.attachments.size > 0 ? await extension(reaction, message.attachments.array()[0].url) : '';
 
-        // disallow empty messages
-        // if (image === '' && message.cleanContent.length < 1) return message.channel.send(`${user}, you cannot star an empty message.`);
+        // if embed exists
+        if (image == '' && message.embeds.length > 0 && message.embeds[0].image) {
+            // if embed has full image
+            image = message.embeds[0].image.url;
+        } else if (image == '' && message.embeds.length > 0 && message.embeds[0].thumbnail) {
+            // if embed has thumbnail
+            image = message.embeds[0].thumbnail.url;
+        }
 
         const embed = new Discord.MessageEmbed()
             .setColor(15844367)
             .setDescription(getDescription(message))
             .addField(`Channel`, message.channel, true)
-            .addField(`Message Link`, `[Jump](${message.url})`, true)
+            .addField(`Source`, `[Jump](${message.url})`, true)
             .setAuthor(message.author.username, message.author.avatarURL())
             .setTimestamp()
             .setFooter(`🌟 1 | ${message.id}`)

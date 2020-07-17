@@ -43,7 +43,7 @@ Reflect.defineProperty(currency, 'getBalance', {
 //#endregion
 
 //#region Initialize client
-const client = new Discord.Client();
+const client = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
 client.commands = new Discord.Collection();
 const cooldowns = new Discord.Collection();
 //#endregion
@@ -724,6 +724,17 @@ client.on('messageReactionAdd', async (reaction, user) => {
         }
     }
 
+    // if uncached message
+    if (reaction.message.partial) await reaction.message.fetch();
+
+    // console.log(`${reaction.message.author}'s message "${reaction.message.content}" gained a reaction!`);
+
+    // cache reaction (fetches potentially defunct resources)
+    if (reaction.partial) await reaction.fetch();
+
+    // full message now available
+    // console.log(`${reaction.count} user(s) have given the same reaction to this message!`);
+
     // easy access of message
     const message = reaction.message;
 
@@ -789,7 +800,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
             .addField(`Source`, `[Jump](${message.url})`, true)
             .setAuthor(message.author.username, message.author.avatarURL())
             .setTimestamp()
-            .setFooter(`🌟 1 | ${message.id}`)
+            .setFooter(`🌟 ${reaction.count} | ${message.id}`)
             .setImage(image);
         await starChannel.send({ embed });
     }

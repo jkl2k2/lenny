@@ -1,5 +1,7 @@
 const index = require(`../../index.js`);
 const Discord = require(`discord.js`);
+const logger = index.getLogger();
+const chalk = require(`chalk`);
 
 module.exports = {
 	name: 'playing',
@@ -47,7 +49,7 @@ module.exports = {
 			}
 		}
 
-		var frac = (dispatcher.time / 1000) / total;
+		var frac = (dispatcher.streamTime / 1000) / total;
 
 		var progressBar = ``;
 
@@ -73,27 +75,29 @@ module.exports = {
 			progressBar = (`\`<—⚫—————————> (${formattedPlaying}/${formattedTotal})\``);
 		} else if (frac >= 0) {
 			progressBar = (`\`<⚫——————————> (${formattedPlaying}/${formattedTotal})\``);
+		} else {
+			logger.warn(chalk.black.bgYellow(`Failed to generate progress bar`));
 		}
 
 		var embed = index.getPlaying(message);
 
 		if (playingObj.getType() == "video") {
 			if (queue.repeat) {
-				embed.setAuthor(`Currently playing`, await playingObj.getChannelThumbnail());
 				embed.setDescription(`**[${playingObj.getTitle()}](${playingObj.getURL()})**\nBy: [${await playingObj.getChannelName()}](${playingObj.getChannelURL()})\n\n${progressBar}\n\n\`🔁 Repeat enabled\``);
 			} else {
-				embed.setAuthor(`Currently playing`, await playingObj.getChannelThumbnail());
 				embed.setDescription(`**[${playingObj.getTitle()}](${playingObj.getURL()})**\nBy: [${await playingObj.getChannelName()}](${playingObj.getChannelURL()})\n\n${progressBar}`);
 			}
 		} else if (playingObj.getType() == "livestream") {
 			if (queue.repeat) {
-				embed.setAuthor(`Currently playing`, await playingObj.getChannelThumbnail());
 				embed.setDescription(`**[${playingObj.getTitle()}](${playingObj.getURL()})**\nBy: [${await playingObj.getChannelName()}](${playingObj.getChannelURL()})\n\n\`Time elapsed: ${formattedPlaying}\`\n\n\`🔁 Reconnect enabled\``);
 			} else {
-				embed.setAuthor(`Currently playing`, await playingObj.getChannelThumbnail());
 				embed.setDescription(`**[${playingObj.getTitle()}](${playingObj.getURL()})**\nBy: [${await playingObj.getChannelName()}](${playingObj.getChannelURL()})\n\n\`Time elapsed: ${formattedPlaying}\`\n\n\`🔁 Reconnect disabled\`\n\`⚠️ Repeat should be on\`\n\`   for livestreams    \``);
 			}
 		}
+
+		embed.setAuthor(`Currently playing`, await playingObj.getChannelThumbnail());
+		embed.setThumbnail(playingObj.getThumbnail());
+		embed.setFooter(`Requested by ${playingObj.getRequesterName()}`, playingObj.getRequesterAvatar());
 
 		message.channel.send(embed);
 	}

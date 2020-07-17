@@ -1,6 +1,6 @@
 {
   "name": "l-bot-rewrite",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "Complete rewrite of Lenny Bot for Discord",
   "main": "index.js",
   "scripts": {

@@ -23,6 +23,10 @@ module.exports = {
     enabled: true,
     type: 'music',
     execute(message, args) {
+        return message.channel.send(new Discord.MessageEmbed()
+            .setDescription(`<:cross:729019052571492434> Sorry, \`repeat\` is currently broken for some unknown reason`)
+            .setColor(`#FF3838`));
+
         var queue = index.getQueue(message);
         if (queue == undefined) {
             return message.channel.send(new Discord.MessageEmbed()

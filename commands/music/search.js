@@ -9,6 +9,9 @@ const youtube = new YouTube(api);
 const logger = index.getLogger();
 const prefix = config.get(`Bot.prefix`);
 const Queues = index.getQueues();
+const fetch = require(`node-fetch`);
+const hex = require(`rgb-hex`);
+const colorThief = require(`colorthief`);
 
 module.exports = {
     name: 'search',
@@ -59,8 +62,11 @@ module.exports = {
                 queue.push(newVideo);
             }
 
+            let buffer = await fetch(newVideo.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
+            let rgb = await colorThief.getColor(buffer);
             message.channel.send(new Discord.MessageEmbed()
-                .setAuthor(`Queued (${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
+                .setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`)
+                .setAuthor(`Queued (#${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
                 .setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\nBy: [${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\nLength: \`${await newVideo.getLength()}\``)
                 .setThumbnail(newVideo.getThumbnail())
                 .setTimestamp()
@@ -171,7 +177,10 @@ module.exports = {
                                     if (playlist) {
                                         var videos = await playlist.getVideos();
 
+                                        let buffer = await fetch(playlist.thumbnails.default.url).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
+                                        let rgb = await colorThief.getColor(buffer);
                                         var processing = await message.channel.send(new Discord.MessageEmbed()
+                                            .setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`)
                                             .setAuthor(`🔄 Processing playlist`)
                                             .setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
                                             .setThumbnail(playlist.thumbnails.default.url)
@@ -198,6 +207,7 @@ module.exports = {
                                         }
 
                                         processing.edit(new Discord.MessageEmbed()
+                                            .setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`)
                                             .setAuthor(`➕ Queued playlist`)
                                             .setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
                                             .setThumbnail(playlist.thumbnails.default.url)

@@ -8,6 +8,9 @@ const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
 const logger = index.getLogger();
 const Queues = index.getQueues();
+const fetch = require(`node-fetch`);
+const hex = require(`rgb-hex`);
+const colorThief = require(`colorthief`);
 
 module.exports = {
     name: 'playlist',
@@ -139,9 +142,12 @@ module.exports = {
                             if (playlist) {
                                 var videos = await playlist.getVideos();
 
+                                let buffer = await fetch(playlist.thumbnails.default.url).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
+                                let rgb = await colorThief.getColor(buffer);
                                 searchingMessage.edit(new Discord.MessageEmbed()
+                                    .setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`)
                                     .setAuthor(`🔄 Processing playlist`)
-                                    .setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
+                                    .setDescription(`**[${playlist.title}](${playlist.url})**\n[${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
                                     .setThumbnail(playlist.thumbnails.default.url)
                                     .setTimestamp()
                                     .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL()));
@@ -166,6 +172,7 @@ module.exports = {
                                 }
 
                                 searchingMessage.edit(new Discord.MessageEmbed()
+                                    .setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`)
                                     .setAuthor(`➕ Queued playlist`)
                                     .setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
                                     .setThumbnail(playlist.thumbnails.default.url)

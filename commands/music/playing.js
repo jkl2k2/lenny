@@ -14,7 +14,7 @@ module.exports = {
 		var dispatcher = index.getDispatcher(message);
 		var queue = index.getQueue(message);
 
-		if (dispatcher == undefined || !dispatcher.speaking) {
+		if (dispatcher == undefined || !dispatcher.player.voiceConnection.speaking) {
 			var nothingPlaying = new Discord.MessageEmbed()
 				.setDescription(`:information_source: Nothing is currently playing`)
 				.setColor(`#0083FF`);
@@ -28,8 +28,8 @@ module.exports = {
 
 		var formattedTotal = await playingObj.getLength();
 
-		var minsPlaying = Math.trunc((dispatcher.time / 1000) / 60);
-		var secondsPlaying = Math.trunc((dispatcher.time / 1000) - (minsPlaying * 60));
+		var minsPlaying = Math.trunc((dispatcher.streamTime / 1000) / 60);
+		var secondsPlaying = Math.trunc((dispatcher.streamTime / 1000) - (minsPlaying * 60));
 
 		var formattedPlaying = ``;
 

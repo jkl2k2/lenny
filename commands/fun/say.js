@@ -1,4 +1,5 @@
 const index = require(`../../index.js`);
+const { Util } = require("discord.js");
 // Any 'require'
 
 module.exports = {
@@ -11,6 +12,6 @@ module.exports = {
 	enabled: true,
 	type: 'fun',
 	execute(message, args) {
-		message.channel.send(args.join(" "), { tts: true });
+		message.channel.send(Util.removeMentions(args.join(" ")), { tts: true });
 	}
 };

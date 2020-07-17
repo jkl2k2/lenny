@@ -4,7 +4,7 @@ const Discord = require(`discord.js`);
 module.exports = {
 	name: 'resume',
 	description: 'Resumes music playback if it was paused',
-	// aliases: ['aliases'],
+	aliases: ['start'],
 	// usage: '[command]',
 	// cooldown: 5,
 	guildOnly: true,

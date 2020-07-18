@@ -724,6 +724,14 @@ client.on('messageReactionAdd', async (reaction, user) => {
         }
     }
 
+    function checkImage(embed) {
+        if (embed.image && embed.image.url) {
+            return embed.image.url;
+        } else {
+            return "";
+        }
+    }
+
     // if uncached message
     if (reaction.message.partial) await reaction.message.fetch();
 
@@ -773,7 +781,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
             .setAuthor(message.author.username, message.author.avatarURL())
             .setTimestamp()
             .setFooter(`🌟 ${parseInt(star[1]) + 1} | ${message.id}`)
-            .setImage(foundStar.image.url);
+            .setImage(checkImage(foundStar));
 
         // fetch previous embed's ID
         const starMsg = await starChannel.messages.fetch(stars.id);

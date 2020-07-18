@@ -55,7 +55,7 @@ module.exports = {
             let newVideo = index.constructVideo(input, message.member);
 
             if (!Queues.has(message.guild.id)) {
-                let newQueue = [];
+                let newQueue = index.constructQueue();
                 newQueue.push(newVideo);
                 index.setQueue(message, newQueue);
             } else {
@@ -64,13 +64,27 @@ module.exports = {
 
             let buffer = await fetch(newVideo.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
             let rgb = await colorThief.getColor(buffer);
-            message.channel.send(new Discord.MessageEmbed()
-                .setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`)
-                .setAuthor(`Queued (#${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
-                .setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\nBy: [${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\nLength: \`${await newVideo.getLength()}\``)
-                .setThumbnail(newVideo.getThumbnail())
-                .setTimestamp()
-                .setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar()));
+            if (await newVideo.getLength() == "0:00") {
+                let buffer = await fetch(newVideo.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
+                let rgb = await colorThief.getColor(buffer);
+                message.channel.send(new Discord.MessageEmbed()
+                    .setAuthor(`Queued (#${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
+                    .setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\n[${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\n\`YouTube Livestream\``)
+                    .setThumbnail(newVideo.getThumbnail())
+                    .setTimestamp()
+                    .setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar())
+                    .setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
+            } else {
+                let buffer = await fetch(newVideo.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
+                let rgb = await colorThief.getColor(buffer);
+                message.channel.send(new Discord.MessageEmbed()
+                    .setAuthor(`Queued (#${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
+                    .setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\n[${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\nLength: \`${await newVideo.getLength()}\``)
+                    .setThumbnail(newVideo.getThumbnail())
+                    .setTimestamp()
+                    .setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar())
+                    .setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
+            }
 
             if (message.member.voice.channel) {
                 message.member.voice.channel.join()

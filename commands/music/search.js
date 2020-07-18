@@ -150,23 +150,23 @@ module.exports = {
                     var resultsEmbed = new Discord.MessageEmbed()
                         .setAuthor(`Top 5 Playlists For: "${args.join(" ").substring(9)}"`)
                         .setDescription(`1. **[${results[0].title}](${results[0].url})**
-                                         Length: **${res1} videos**
+                                         Length: \`${res1} videos\`
                                          Uploader: **${results[0].channelTitle}**
 
                                          2. **[${results[1].title}](${results[1].url})**
-                                         Length: **${res2} videos**
+                                         Length: \`${res2} videos\`
                                          Uploader: **${results[1].channelTitle}**
 
                                          3. **[${results[2].title}](${results[2].url})**
-                                         Length: **${res3} videos**
+                                         Length: \`${res3} videos\`
                                          Uploader: **${results[2].channelTitle}**
 
                                          4. **[${results[3].title}](${results[3].url})**
-                                         Length: **${res4} videos**
+                                         Length: \`${res4} videos\`
                                          Uploader: **${results[3].channelTitle}**
 
                                          5. **[${results[4].title}](${results[4].url})**
-                                         Length: **${res5} videos**
+                                         Length: \`${res5} videos\`
                                          Uploader: **${results[4].channelTitle}**`)
                         .setTimestamp()
                         .setFooter(`Requested by ${message.author.username} - Type the number to select - Type cancel to stop`, message.author.avatarURL());
@@ -303,26 +303,34 @@ module.exports = {
                     searchingMessage.edit(searching5);
                     */
 
+                    function formatLength(input) {
+                        if (input == "0:00") {
+                            return `YouTube Livestream`;
+                        } else {
+                            return input;
+                        }
+                    }
+
                     var resultsEmbed = new Discord.MessageEmbed()
                         .setAuthor(`Top 5 Results For: "${args.join(" ")}"`)
                         .setDescription(`1. **[${results[0].title}](${results[0].url})**
-                                             Length: **${await res1.getLength()}**
+                                             Length: \`${formatLength(await res1.getLength())}\`
                                              Uploader: **${res1.getChannelName()}**
 
                                              2. **[${results[1].title}](${results[1].url})**
-                                             Length: **${await res2.getLength()}**
+                                             Length: \`${formatLength(await res2.getLength())}\`
                                              Uploader: **${res2.getChannelName()}**
 
                                              3. **[${results[2].title}](${results[2].url})**
-                                             Length: **${await res3.getLength()}**
+                                             Length: \`${formatLength(await res3.getLength())}\`
                                              Uploader: **${res3.getChannelName()}**
 
                                              4. **[${results[3].title}](${results[3].url})**
-                                             Length: **${await res4.getLength()}**
+                                             Length: \`${formatLength(await res4.getLength())}\`
                                              Uploader: **${res4.getChannelName()}**
 
                                              5. **[${results[4].title}](${results[4].url})**
-                                             Length: **${await res5.getLength()}**
+                                             Length: \`${formatLength(await res5.getLength())}\`
                                              Uploader: **${res5.getChannelName()}**`)
                         .setTimestamp()
                         .setFooter(`Requested by ${message.author.username} - Type the number to select - Type cancel to stop`, message.author.avatarURL());

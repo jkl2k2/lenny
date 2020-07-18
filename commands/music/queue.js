@@ -1,6 +1,9 @@
 const index = require(`../../index.js`);
 const Discord = require(`discord.js`);
 const config = require(`config`);
+const fetch = require(`node-fetch`);
+const hex = require(`rgb-hex`);
+const colorThief = require(`colorthief`);
 
 async function queueResolver(arr, index) {
 	if (arr[index]) {
@@ -99,20 +102,40 @@ async function reactionHandler(sent, message, page) {
 }
 
 async function sendDetails(input, c, index) {
-	if (await input.getLength() == `unknown`) {
-		c.send(new Discord.MessageEmbed()
-			.setAuthor(`In queue: Video #${index}`, await input.getChannelThumbnail())
-			.setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${await input.getChannelName()}](${input.getChannelURL()})\n\n\`Length not provided by YouTube\``)
+	if (input.getType() == "livestream") {
+		let buffer = await fetch(input.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
+		let rgb = await colorThief.getColor(buffer);
+		let musicEmbed = new Discord.MessageEmbed()
+			.setAuthor(`In queue: video #${index}`, await input.getChannelThumbnail())
+			.setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${await input.getChannelName()}](${input.getChannelURL()})\n\n\`YouTube Livestream\``)
 			.setThumbnail(input.getThumbnail())
 			.setTimestamp()
-			.setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar()));
+			.setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar())
+			.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`);
+		c.send(musicEmbed);
+		lastDetails = musicEmbed;
+	} else if (input.getType() == "twitch") {
+		let channel = await twitchClient.helix.users.getUserByName(input.getTitle());
+		let musicEmbed = new Discord.MessageEmbed()
+			.setAuthor(`In queue: video #${index}`, channel.profilePictureUrl)
+			.setDescription(`**[${channel.displayName}](www.twitch.tv/${channel.displayName})**\n\n\`Twitch Livestream\``)
+			.setThumbnail(channel.profilePictureUrl)
+			.setTimestamp()
+			.setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar());
+		c.send(musicEmbed);
+		lastDeatils = musicEmbed;
 	} else {
-		c.send(new Discord.MessageEmbed()
-			.setAuthor(`In queue: Video #${index}`, await input.getChannelThumbnail())
+		let buffer = await fetch(input.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
+		let rgb = await colorThief.getColor(buffer);
+		let musicEmbed = new Discord.MessageEmbed()
+			.setAuthor(`In queue: video #${index}`, await input.getChannelThumbnail())
 			.setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${await input.getChannelName()}](${input.getChannelURL()})\n\nLength: \`${await input.getLength()}\``)
 			.setThumbnail(input.getThumbnail())
 			.setTimestamp()
-			.setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar()));
+			.setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar())
+			.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`);
+		c.send(musicEmbed);
+		lastDetails = musicEmbed;
 	}
 }
 

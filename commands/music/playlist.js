@@ -103,25 +103,25 @@ module.exports = {
 
                 var resultsEmbed = new Discord.MessageEmbed()
                     .setAuthor(`Top 5 Playlists For: "${args.join(" ")}"`)
-                    .setDescription(`\`1.\` **[${results[0].title}](${results[0].url})**
-                                         Uploader: **${results[0].channelTitle}**
+                    .setDescription(`1. **[${results[0].title}](${results[0].url})**
                                          Length: \`${res1} videos\`
+                                         Uploader: **${results[0].channelTitle}**
 
-                                         \`2.\` **[${results[1].title}](${results[1].url})**
-                                         Uploader: **${results[1].channelTitle}**
+                                         2. **[${results[1].title}](${results[1].url})**
                                          Length: \`${res2} videos\`
+                                         Uploader: **${results[1].channelTitle}**
 
-                                         \`3.\` **[${results[2].title}](${results[2].url})**
-                                         Uploader: **${results[2].channelTitle}**
+                                         3. **[${results[2].title}](${results[2].url})**
                                          Length: \`${res3} videos\`
+                                         Uploader: **${results[2].channelTitle}**
 
-                                         \`4.\` **[${results[3].title}](${results[3].url})**
-                                         Uploader: **${results[3].channelTitle}**
+                                         4. **[${results[3].title}](${results[3].url})**
                                          Length: \`${res4} videos\`
+                                         Uploader: **${results[3].channelTitle}**
 
-                                         \`5.\` **[${results[4].title}](${results[4].url})**
-                                         Uploader: **${results[4].channelTitle}**
-                                         Length: \`${res5} videos\``)
+                                         5. **[${results[4].title}](${results[4].url})**
+                                         Length: \`${res5} videos\`
+                                         Uploader: **${results[4].channelTitle}**`)
                     .setTimestamp()
                     .setFooter(`Requested by ${message.author.username} - Type the number to select - Type cancel to stop`, message.author.avatarURL());
                 searchingMessage.edit(resultsEmbed);

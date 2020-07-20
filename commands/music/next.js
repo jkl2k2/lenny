@@ -1,22 +1,31 @@
 const index = require(`../../index.js`);
 const Discord = require(`discord.js`);
 const Queues = index.getQueues();
+const fetch = require(`node-fetch`);
+const hex = require(`rgb-hex`);
+const colorThief = require(`colorthief`);
 
 async function sendDetails(input, c, index) {
     if (await input.getLength() == `unknown`) {
+        let buffer = await fetch(input.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
+        let rgb = await colorThief.getColor(buffer);
         c.send(new Discord.MessageEmbed()
             .setAuthor(`Coming up next`, await input.getChannelThumbnail())
             .setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${await input.getChannelName()}](${input.getChannelURL()})\n\n\`Length not provided by YouTube\``)
             .setThumbnail(input.getThumbnail())
             .setTimestamp()
-            .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar()));
+            .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar())
+            .setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
     } else {
+        let buffer = await fetch(input.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
+        let rgb = await colorThief.getColor(buffer);
         c.send(new Discord.MessageEmbed()
             .setAuthor(`Coming up next`, await input.getChannelThumbnail())
             .setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${await input.getChannelName()}](${input.getChannelURL()})\n\nLength: \`${await input.getLength()}\``)
             .setThumbnail(input.getThumbnail())
             .setTimestamp()
-            .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar()));
+            .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar())
+            .setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
     }
 }
 

@@ -5,6 +5,8 @@ const { Op } = require('sequelize');
 const currency = index.getCurrencyDB();
 const config = require(`config`);
 const ownerID = config.get(`Users.ownerID`);
+const MersenneTwister = require('mersenne-twister');
+const generator = new MersenneTwister();
 
 module.exports = {
     name: 'flip',
@@ -20,7 +22,7 @@ module.exports = {
     execute(message, args) {
         if (message.channel.id == "471193210102743042") return;
 
-        var rand = Math.floor(Math.random() * 2) + 1;
+        let rand = Math.round(generator.random_incl());
 
         var originalBalance = currency.getBalance(message.author.id);
 
@@ -89,7 +91,7 @@ module.exports = {
         }
 
         // 1 is heads
-        // 2 is tails
+        // 0 is tails
         if (rand == 1) {
             // Heads
             if (side == "heads") {

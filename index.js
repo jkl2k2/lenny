@@ -960,7 +960,7 @@ client.on('message', message => {
 
     let prefix = serverConfig[message.guild.id].prefix;
 
-    if (message.content.includes("banana")) {
+    if (message.content.toLowerCase().includes("banana")) {
         message.react('🍌')
             .then(() => (message.react('🇴')))
             .then(() => (message.react('🇼'))

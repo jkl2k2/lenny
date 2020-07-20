@@ -113,15 +113,36 @@ module.exports = {
 							queue = index.getQueue(message);
 						}
 
-						let buffer = await fetch(playlist.thumbnails.default.url).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
-						let rgb = await colorThief.getColor(buffer);
-						var processing = await message.channel.send(new Discord.MessageEmbed()
-							.setAuthor(`🔄 Processing playlist`)
-							.setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
-							.setThumbnail(playlist.thumbnails.default.url)
-							.setTimestamp()
-							.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
-							.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
+						let processing;
+
+						if (playlist.thumbnails.default) {
+							let buffer = await fetch(playlist.thumbnails.default.url).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
+							let rgb = await colorThief.getColor(buffer);
+							processing = await message.channel.send(new Discord.MessageEmbed()
+								.setAuthor(`🔄 Processing playlist`)
+								.setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
+								.setThumbnail(playlist.thumbnails.default.url)
+								.setTimestamp()
+								.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+								.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
+						} else if (videos[0].thumbnails.default) {
+							let buffer = await fetch(videos[0].maxRes.url).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
+							let rgb = await colorThief.getColor(buffer);
+							processing = await message.channel.send(new Discord.MessageEmbed()
+								.setAuthor(`🔄 Processing playlist`)
+								.setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
+								.setThumbnail(videos[0].maxRes.url)
+								.setTimestamp()
+								.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+								.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
+						} else {
+							processing = await message.channel.send(new Discord.MessageEmbed()
+								.setAuthor(`🔄 Processing playlist`)
+								.setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
+								.setTimestamp()
+								.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL()));
+						}
+
 
 						for (var i = 0; i < videos.length; i++) {
 							var newVideo = index.constructVideo(videos[i], message.member);
@@ -134,13 +155,15 @@ module.exports = {
 							}
 						}
 
+						// jshint ignore:start
 						processing.edit(new Discord.MessageEmbed()
 							.setAuthor(`➕ Queued playlist`)
 							.setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
-							.setThumbnail(playlist.thumbnails.default.url)
+							.setThumbnail(processing.embeds[0].thumbnail?.url)
 							.setTimestamp()
-							.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
-							.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
+							.setFooter(processing.embeds[0].footer?.text)
+							.setColor(processing.embeds[0].hexColor));
+						// jshint ignore:end
 
 						if (message.member.voice.channel) {
 							message.member.voice.channel.join()
@@ -172,35 +195,44 @@ module.exports = {
 
 			// queue.push(newVideo);
 
+			let queue = index.getQueue(message);
+			let prevQueue = index.getQueue(message);
+			let dispatcher = index.getDispatcher(message);
+
 			if (!Queues.has(message.guild.id)) {
 				let newQueue = index.constructQueue();
 				newQueue.push(newVideo);
 				// Queues.set(message.guild.id, newQueue);
 				index.setQueue(message, newQueue);
+				queue = index.getQueue(message);
 			} else {
 				queue.push(newVideo);
 			}
 
 			if (await newVideo.getLength() == "0:00") {
-				let buffer = await fetch(newVideo.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
-				let rgb = await colorThief.getColor(buffer);
-				message.channel.send(new Discord.MessageEmbed()
-					.setAuthor(`Queued (#${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
-					.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\n[${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\n\`YouTube Livestream\``)
-					.setThumbnail(newVideo.getThumbnail())
-					.setTimestamp()
-					.setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar())
-					.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
+				if (dispatcher != undefined || (prevQueue != undefined && prevQueue.list[1])) {
+					let buffer = await fetch(newVideo.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
+					let rgb = await colorThief.getColor(buffer);
+					message.channel.send(new Discord.MessageEmbed()
+						.setAuthor(`Queued (#${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
+						.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\n[${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\n\`YouTube Livestream\``)
+						.setThumbnail(newVideo.getThumbnail())
+						.setTimestamp()
+						.setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar())
+						.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
+				}
 			} else {
-				let buffer = await fetch(newVideo.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
-				let rgb = await colorThief.getColor(buffer);
-				message.channel.send(new Discord.MessageEmbed()
-					.setAuthor(`Queued (#${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
-					.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\n[${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\nLength: \`${await newVideo.getLength()}\``)
-					.setThumbnail(newVideo.getThumbnail())
-					.setTimestamp()
-					.setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar())
-					.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
+				if (dispatcher != undefined || (prevQueue != undefined && prevQueue.list[1])) {
+					let buffer = await fetch(newVideo.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
+					let rgb = await colorThief.getColor(buffer);
+					message.channel.send(new Discord.MessageEmbed()
+						.setAuthor(`Queued (#${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
+						.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\n[${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\nLength: \`${await newVideo.getLength()}\``)
+						.setThumbnail(newVideo.getThumbnail())
+						.setTimestamp()
+						.setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar())
+						.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
+				}
 			}
 
 			if (message.member.voice.channel) {

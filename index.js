@@ -485,9 +485,9 @@ async function playMusic(message) {
 async function updateCasinoStats(mainGuild) {
     var newLeaderboard = new Discord.MessageEmbed()
         .setDescription(`:money_with_wings: **OWO GRAND RESORT & CASINO PROFITS** :money_with_wings:\n\nProfit: **$${currency.getBalance("0")}**\n\n:medal: **Top 10 users by currency**\n\n` + currency.sort((a, b) => b.balance - a.balance)
-            .filter(user => client.users.has(user.user_id) && mainGuild.member(client.users.get(user.user_id)))
+            .filter(user => client.users.cache.has(user.user_id) && mainGuild.member(client.users.cache.get(user.user_id)))
             .first(10)
-            .map((user, position) => `\`${position + 1}.\` **${(client.users.get(user.user_id).username)}**\nBalance: \`$${user.balance}\`\n`)
+            .map((user, position) => `\`${position + 1}.\` **${(client.users.cache.get(user.user_id).username)}**\nBalance: \`$${user.balance}\`\n`)
             .join('\n'),
             { code: true })
         .setColor(`#1b9e56`);
@@ -662,18 +662,40 @@ client.on('ready', async () => {
 
     let date = new Date();
 
-    client.user.setActivity(`trash music`, { type: "LISTENING" });
+    // client.user.setActivity(`trash music`, { type: "LISTENING" });
 
     // Randomly select status
-    /*
     setInterval(() => {
-        const index = Math.floor(Math.random() * (activities.length - 1) + 1);
-        // client.user.setActivity(activities[index].getText(), { type: activities[index].getFormat() });
-        client.user.setActivity(`stuff`, { type: "PLAYING" });
-        client.user.setStatus("online");
+        let index = Math.floor(Math.random() * (activities.length - 1) + 1);
+        client.user.setActivity(activities[index].getText(), { type: activities[index].getFormat() });
     }, 15000);
-    */
 
+    //#region Casino stats
+
+    var casinoChannel = client.channels.cache.get(`696986079584321566`);
+    var mainGuild = client.guilds.cache.get(`471193210102743040`);
+
+    logger.debug(chalk.black.bgGray(`Clearing leaderboard channel...`));
+    var casinoFetched = await casinoChannel.messages.fetch({ limit: 10 });
+    casinoChannel.bulkDelete(casinoFetched);
+
+    logger.debug(chalk.black.bgGray(`Sending initial leaderboard message...`));
+    casinoStatusMessage = await casinoChannel.send(new Discord.MessageEmbed()
+        .setDescription(`:money_with_wings: **OWO GRAND RESORT & CASINO PROFITS** :money_with_wings:\n\nProfit: **$${currency.getBalance("0")}**\n\n:medal: **Top 10 users by currency**\n\n` + currency.sort((a, b) => b.balance - a.balance)
+            .filter(user => client.users.cache.has(user.user_id) && mainGuild.member(client.users.cache.get(user.user_id)))
+            .first(10)
+            .map((user, position) => `\`${position + 1}.\` **${(client.users.cache.get(user.user_id).username)}**\nBalance: \`$${user.balance}\`\n`)
+            .join('\n'),
+            { code: true })
+        .setColor(`#1b9e56`));
+
+    setInterval(() => {
+        updateCasinoStats(mainGuild);
+    }, 10000);
+
+    //#endregion
+
+    //#region Init log message
     logger.info(chalk.white.bgCyan(`--------Bot Initialized--------`));
     if (date.getMinutes() < 10) {
         if (date.getSeconds() < 10) {
@@ -688,12 +710,13 @@ client.on('ready', async () => {
     }
     // logger.info(chalk.white.bgCyan(`Timestamp: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} - ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`));
     logger.info(chalk.white.bgCyan.bold(`-------Awaiting Commands-------`));
+    //#endregion
 
     clientReady = true;
 });
 //#endregion
 
-//#region starboard
+//#region Starboard
 client.on('messageReactionAdd', async (reaction, user) => {
     // ready check attachments function 
     function extension(reaction, attachment) {

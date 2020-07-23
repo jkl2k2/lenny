@@ -22,7 +22,7 @@ module.exports = {
             return message.channel.send("Prune target too low (minimum is 1)");
         }
 
-        await message.channel.fetchMessages({ limit: (parseInt(args[0])) + 1 }).then(messages => {
+        await message.channel.messages.fetch({ limit: (parseInt(args[0])) + 1 }).then(messages => {
             message.channel.bulkDelete(messages);
         });
     }

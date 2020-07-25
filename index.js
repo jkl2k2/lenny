@@ -395,7 +395,7 @@ async function playMusic(message) {
     if (queue.list[0].getType() == "video" || queue.list[0].getType() == "livestream") {
         // If regular video
 
-        var input = ytdl(queue.list[0].getURL(), { quality: "highestaudio", highWaterMark: 1000 * 1000 * 128 });
+        var input = ytdl(queue.list[0].getURL(), { quality: "highestaudio" });
 
         Dispatchers.set(message.guild.id, client.voice.connections.get(message.guild.id).play(input, { bitrate: 384000, volume: Queues.get(message.guild.id).volume, passes: 5, highWaterMark: 1000 * 1000 * 128, fec: true }));
 

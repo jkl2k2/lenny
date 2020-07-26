@@ -715,6 +715,26 @@ client.on('ready', async () => {
 });
 //#endregion
 
+//#region Administrative logging
+
+client.on(`messageDelete`, message => {
+
+    let logChannel = message.guild.channels.cache.find(channel => channel.name == `admin-log`);
+
+    if (logChannel == undefined) return;
+
+    if (message.guild.id != `438485091824697344`) return;
+
+    logChannel.send(new Discord.MessageEmbed()
+        .setTitle(`:wastebasket: Message Deleted`)
+        .setDescription(`By: **${message.author.tag}** in channel ${message.channel}\n\`\`\`${message.cleanContent}\`\`\``)
+        .setFooter(`ID: ${message.id}`)
+        .setColor(`#FF3838`)
+        .setTimestamp());
+});
+
+//#endregion
+
 //#region Starboard
 client.on('messageReactionAdd', async (reaction, user) => {
     // ready check attachments function 
@@ -982,15 +1002,6 @@ client.on('message', message => {
             .then(() => (message.react('🇴')))
             .then(() => (message.react('🇼'))
                 .then(() => message.react('🅾️')));
-    }
-
-    // Ban the word "bored" in school group server
-    if (message.guild.id == "717141100766298203" && message.content.toLowerCase().split(" ").join("").includes("bored")) {
-        message.delete();
-        return message.channel.send(new Discord.MessageEmbed()
-            .setDescription(`:wastebasket: **Message Deleted**\n\n**Author:** ${message.author}\n**Reason:** Banned word or phrase`)
-            .setColor(`#FF3838`)
-            .setTimestamp());
     }
 
     // Return if message from bot

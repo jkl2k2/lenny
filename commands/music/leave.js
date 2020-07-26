@@ -5,7 +5,7 @@ var client = index.getClient();
 module.exports = {
 	name: 'leave',
 	description: `Leaves the user's voice channel, clearing the queue and anything that was playing`,
-	aliases: ['l'],
+	aliases: ['l', 'disconnect'],
 	// usage: '[usage]',
 	// cooldown: seconds,
 	guildOnly: true,

@@ -718,6 +718,13 @@ client.on('ready', async () => {
 //#region Administrative logging
 
 client.on(`messageDelete`, message => {
+    function getMessageTimestamp(message) {
+        if (message.createdAt.getMinutes() < 10) {
+            return `[${message.createdAt.getMonth() + 1}/${message.createdAt.getDate() + 1} @ ${message.createdAt.getHours()}:0${message.createdAt.getMinutes()}]`;
+        } else {
+            return `[${message.createdAt.getMonth() + 1}/${message.createdAt.getDate() + 1} @ ${message.createdAt.getHours()}:${message.createdAt.getMinutes()}]`;
+        }
+    }
 
     let logChannel = message.guild.channels.cache.find(channel => channel.name == `admin-log`);
 
@@ -726,9 +733,25 @@ client.on(`messageDelete`, message => {
     if (message.guild.id != `438485091824697344`) return;
 
     logChannel.send(new Discord.MessageEmbed()
-        .setTitle(`:wastebasket: Message Deleted`)
-        .setDescription(`By: **${message.author.tag}** in channel ${message.channel}\n\`\`\`${message.cleanContent}\`\`\``)
+        .setDescription(`:wastebasket: Message Deleted By: **${message.author.tag}** in channel ${message.channel}\n\`\`\`${getMessageTimestamp(message)} ${message.cleanContent}\`\`\``)
         .setFooter(`ID: ${message.id}`)
+        .setColor(`#FF3838`)
+        .setTimestamp());
+});
+
+client.on(`messageDeleteBulk`, async messages => {
+    let message = messages.array()[0];
+
+    if (message.partial) await message.fetch();
+
+    let logChannel = message.guild.channels.cache.find(channel => channel.name == `admin-log`);
+
+    if (logChannel == undefined) return;
+
+    if (message.guild.id != `438485091824697344`) return;
+
+    logChannel.send(new Discord.MessageEmbed()
+        .setDescription(`:wastebasket: ${messages.size - 1} Messages (Bulk) Deleted\n\`${messages.size - 1} messages deleted\` in channel ${message.channel}`)
         .setColor(`#FF3838`)
         .setTimestamp());
 });

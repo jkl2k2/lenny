@@ -652,6 +652,12 @@ for (const file of commandFiles) {
 
 //#endregion
 
+//#region Client error
+client.on('error', error => {
+    logger.error(chalk.whiteBright.bgRedBright(`CLIENT ERROR\nError name: ${error.name}\nMessage: ${error.message}`));
+});
+//#endregion
+
 //#region Client Ready
 client.on('ready', async () => {
     // Sync with currency database

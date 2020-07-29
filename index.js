@@ -1033,6 +1033,22 @@ client.on('message', message => {
                 .then(() => message.react('🅾️')));
     }
 
+    if (message.author.id == `569277281046888488`) {
+        let rand = Math.floor(Math.random() * (4 - 1) + 1);
+
+        switch (rand) {
+            case 1:
+                return message.channel.send(`https://tenor.com/view/the-room-what-astory-mark-haha-gif-10493980`);
+            case 2:
+                return message.channel.send(`https://tenor.com/view/haha-what-astory-gif-11633875`);
+            case 3:
+                return message.channel.send(`https://tenor.com/view/theroom-himark-what-astory-gif-13403343`);
+            case 4:
+                return message.channel.send(`https://tenor.com/view/laughing-what-astory-gif-10783591`);
+        }
+
+    }
+
     // Return if message from bot
     if (message.author.bot) return;
 

@@ -553,7 +553,7 @@ module.exports = {
         Queues.set(message.guild.id, newQueue);
     },
     getDispatcher: function (message) {
-        if (Dispatchers.get(message.guild.id)) {
+        if (Dispatchers.get(message.guild.id) != undefined) {
             return Dispatchers.get(message.guild.id);
         } else {
             return undefined;

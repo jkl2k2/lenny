@@ -5,7 +5,7 @@ const Queues = index.getQueues();
 module.exports = {
 	name: 'skipall',
 	description: 'Empties the queue and skips the current song',
-	aliases: ['stop', 'sa'],
+	aliases: ['sa'],
 	// usage: '[command]',
 	// cooldown: 5,
 	guildOnly: true,

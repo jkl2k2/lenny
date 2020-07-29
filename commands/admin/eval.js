@@ -10,6 +10,7 @@ const youtube = new YouTube(api);
 const { Users, CurrencyShop } = require('../../dbObjects');
 const { Op } = require('sequelize');
 const currency = index.getCurrencyDB();
+const Dispatchers = index.getDispatchers();
 
 function clean(text) {
 	if (typeof (text) === "string")

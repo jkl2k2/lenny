@@ -481,7 +481,7 @@ async function playMusic(message) {
 //#endregion
 
 //#region Casino status
-async function updateCasinoStats(mainGuild) {
+function updateCasinoStats(mainGuild) {
     var newLeaderboard = new Discord.MessageEmbed()
         .setDescription(`:money_with_wings: **OWO GRAND RESORT & CASINO PROFITS** :money_with_wings:\n\nProfit: **$${currency.getBalance("0")}**\n\n:medal: **Top 10 users by currency**\n\n` + currency.sort((a, b) => b.balance - a.balance)
             .filter(user => client.users.cache.has(user.user_id) && mainGuild.member(client.users.cache.get(user.user_id)))

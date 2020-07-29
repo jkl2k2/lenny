@@ -128,7 +128,7 @@ module.exports = {
 			if (message.member.voice.channel) {
 				message.member.voice.channel.join()
 					.then(connection => {
-						if (index.getDispatcher(message) == undefined || (!connection.speaking && !index.getDispatcher(message).paused)) {
+						if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
 							index.callPlayMusic(message);
 						}
 					})
@@ -176,7 +176,7 @@ module.exports = {
 						if (message.member.voice.channel) {
 							message.member.voice.channel.join()
 								.then(connection => {
-									if (index.getDispatcher() == undefined || (!connection.speaking && !index.getDispatcher().paused)) {
+									if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
 										index.callPlayMusic(message);
 									}
 								})
@@ -249,7 +249,7 @@ module.exports = {
 				if (message.member.voice.channel) {
 					message.member.voice.channel.join()
 						.then(connection => {
-							if (index.getDispatcher() == undefined || (!connection.speaking && !index.getDispatcher().paused)) {
+							if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
 								index.callPlayMusic(message);
 							}
 						})

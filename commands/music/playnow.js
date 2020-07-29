@@ -103,6 +103,7 @@ module.exports = {
 				queue.unshift(newVideo);
 			}
 
+			/*
 			if (await newVideo.getLength() == "0:00") {
 				let buffer = await fetch(newVideo.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
 				let rgb = await colorThief.getColor(buffer);
@@ -124,11 +125,12 @@ module.exports = {
 					.setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar())
 					.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
 			}
+			*/
 
 			if (message.member.voice.channel) {
 				message.member.voice.channel.join()
 					.then(connection => {
-						if (index.getDispatcher(message) == undefined || (!connection.speaking && !index.getDispatcher(message).paused)) {
+						if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
 							index.callPlayMusic(message);
 						} else {
 							index.endDispatcher(message);
@@ -178,7 +180,7 @@ module.exports = {
 						if (message.member.voice.channel) {
 							message.member.voice.channel.join()
 								.then(connection => {
-									if (index.getDispatcher() == undefined || (!connection.speaking && !index.getDispatcher().paused)) {
+									if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
 										index.callPlayMusic(message);
 									}
 								})
@@ -251,7 +253,7 @@ module.exports = {
 				if (message.member.voice.channel) {
 					message.member.voice.channel.join()
 						.then(connection => {
-							if (index.getDispatcher() == undefined || (!connection.speaking && !index.getDispatcher().paused)) {
+							if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
 								index.callPlayMusic(message);
 							}
 						})

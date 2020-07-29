@@ -168,8 +168,10 @@ module.exports = {
 						if (message.member.voice.channel) {
 							message.member.voice.channel.join()
 								.then(connection => {
-									if (index.getDispatcher(message) == undefined) {
+									if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
 										index.callPlayMusic(message);
+									} else {
+										logger.debug(`Connection speaking`);
 									}
 								})
 								.catch(logger.error);
@@ -238,8 +240,10 @@ module.exports = {
 			if (message.member.voice.channel) {
 				message.member.voice.channel.join()
 					.then(connection => {
-						if (index.getDispatcher(message) == undefined) {
+						if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
 							index.callPlayMusic(message);
+						} else {
+							logger.debug(`Connection speaking`);
 						}
 					})
 					.catch(`${logger.error}`);
@@ -313,8 +317,10 @@ module.exports = {
 				if (message.member.voice.channel) {
 					message.member.voice.channel.join()
 						.then(connection => {
-							if (index.getDispatcher(message) == undefined) {
+							if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
 								index.callPlayMusic(message);
+							} else {
+								logger.debug(`Connection speaking`);
 							}
 						})
 						.catch(logger.error);

@@ -833,7 +833,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
         // if message already starred
 
         // check star amount
-        const star = /^\🌟\s([0-9]{1,3})\s\|\s([0-9]{17,20})/.exec(stars.embeds[0].footer.text);
+        const star = /^\⭐\s([0-9]{1,3})\s\|\s([0-9]{17,20})/.exec(stars.embeds[0].footer.text);
 
         // store previous embed
         const foundStar = stars.embeds[0];
@@ -846,7 +846,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
             .addField(`Source`, `[Jump](${message.url})`, true)
             .setAuthor(message.author.username, message.author.avatarURL())
             .setTimestamp()
-            .setFooter(`🌟 ${parseInt(star[1]) + 1} | ${message.id}`)
+            .setFooter(`⭐ ${parseInt(star[1]) + 1} | ${message.id}`)
             .setImage(checkImage(foundStar));
 
         // fetch previous embed's ID
@@ -874,7 +874,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
             .addField(`Source`, `[Jump](${message.url})`, true)
             .setAuthor(message.author.username, message.author.avatarURL())
             .setTimestamp()
-            .setFooter(`🌟 ${reaction.count} | ${message.id}`)
+            .setFooter(`⭐ ${reaction.count} | ${message.id}`)
             .setImage(image);
         await starChannel.send({ embed });
     }
@@ -948,7 +948,7 @@ client.on(`messageReactionRemove`, async reaction => {
         // if message already starred
 
         // check star amount
-        const star = /^\🌟\s([0-9]{1,3})\s\|\s([0-9]{17,20})/.exec(stars.embeds[0].footer.text);
+        const star = /^\⭐\s([0-9]{1,3})\s\|\s([0-9]{17,20})/.exec(stars.embeds[0].footer.text);
 
         // store previous embed
         const foundStar = stars.embeds[0];
@@ -962,7 +962,7 @@ client.on(`messageReactionRemove`, async reaction => {
                 .addField(`Source`, `[Jump](${message.url})`, true)
                 .setAuthor(message.author.username, message.author.avatarURL())
                 .setTimestamp()
-                .setFooter(`🌟 ${parseInt(star[1]) - 1} | ${message.id}`)
+                .setFooter(`⭐ ${parseInt(star[1]) - 1} | ${message.id}`)
                 .setImage(checkImage(foundStar));
 
             // fetch previous embed's ID

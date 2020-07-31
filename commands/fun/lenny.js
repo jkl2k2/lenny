@@ -11,6 +11,7 @@ module.exports = {
 	enabled: true,
 	type: 'fun',
 	execute(message, args) {
+		message.delete();
 		message.channel.send(`( ͡° ͜ʖ ͡°)`);
 	}
 };

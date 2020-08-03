@@ -985,9 +985,11 @@ client.on(`messageReactionRemove`, async reaction => {
 //#region Client on message
 client.on('message', message => {
 
-    if (!clientReady) {
-        return;
-    }
+    // If client is not ready to accept commands or process data
+    if (!clientReady) return;
+
+    // If the message's guild is not available
+    if (!message.guild.available) return;
 
     // Read serverConfig.json
     let serverConfig = JSON.parse(fs.readFileSync(`./config/serverConfig.json`, `utf8`));

@@ -34,8 +34,10 @@ module.exports = {
                 // Option 2
                 return message.channel.send(option2.join(" "));
             }
-        } else {
-            return message.channel.send("Please use the word 'or' to separate the options for now");
-        }
+		} else if (args.length >= 2) {
+			let rand = Math.floor(Math.random() * args.length);
+			
+			return message.channel.send(args[rand]);
+		}
     }
 };

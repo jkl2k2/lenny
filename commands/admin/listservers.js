@@ -6,7 +6,7 @@ const ownerID = config.get(`Users.ownerID`);
 
 module.exports = {
     name: 'listservers',
-    description: 'Template command for easier coding, does nothing',
+    description: 'Lists the servers the bot is currently in',
     // aliases: ['aliases'],
     // args: true,
     // usage: '[command]',

@@ -721,6 +721,15 @@ client.on('ready', async () => {
 });
 //#endregion
 
+//#region Client VC Disconnect -> Reset music data
+client.on(`voiceStateUpdate`, (oldState, newState) => {
+    if (oldState.channel && !newState.channel) {
+        Dispatchers.set(oldState.guild.id, undefined);
+        Queues.set(oldState.guild.id, new Queue());
+    }
+});
+//#endregion
+
 //#region Administrative logging
 
 client.on(`messageDelete`, message => {

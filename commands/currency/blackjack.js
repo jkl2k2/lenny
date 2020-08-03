@@ -540,7 +540,11 @@ module.exports = {
                 .setColor(`#FF3838`));
         }
 
-        var deck = shuffle(createDeck());
+        let deck = createDeck();
+        shuffle(deck);
+        shuffle(deck);
+        shuffle(deck);
+        shuffle(deck);
 
         var playerHand = [drawCard(deck), drawCard(deck)];
         var houseHand = [drawCard(deck), drawCard(deck)];

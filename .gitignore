@@ -6,3 +6,4 @@ downloads/
 logs/
 commands/general/testing.js
 node_modules/
+database.sqlite

@@ -410,7 +410,7 @@ async function playMusic(message) {
 
         // Dispatchers.set(message.guild.id, client.voice.connections.get(message.guild.id).playStream(queue.list[0].getURL()));
 
-        sendDetails(queue.list[0], message.channel);
+        // sendDetails(queue.list[0], message.channel);
 
     } else if (queue.list[0].getType() == "soundcloud") {
         // If SoundCloud

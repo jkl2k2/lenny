@@ -652,12 +652,6 @@ for (const file of commandFiles) {
 
 //#endregion
 
-//#region Client error
-client.on('error', error => {
-    logger.error(chalk.whiteBright.bgRedBright(`CLIENT ERROR\nError name: ${error.name}\nMessage: ${error.message}`));
-});
-//#endregion
-
 //#region Client Ready
 client.on('ready', async () => {
     // Sync with currency database
@@ -731,7 +725,7 @@ client.on(`voiceStateUpdate`, (oldState, newState) => {
 //#endregion
 
 //#region Administrative logging
-
+/*
 client.on(`messageDelete`, message => {
     function getMessageTimestamp(message) {
         if (message.createdAt.getMinutes() < 10) {
@@ -770,7 +764,7 @@ client.on(`messageDeleteBulk`, async messages => {
         .setColor(`#FF3838`)
         .setTimestamp());
 });
-
+*/
 //#endregion
 
 //#region Starboard

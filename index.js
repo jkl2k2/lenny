@@ -456,27 +456,6 @@ async function playMusic(message) {
             Dispatchers.set(message.guild.id, undefined);
         }
     });
-
-    Dispatchers.get(message.guild.id).on("finish", function () {
-        if (queue.repeat) {
-            queue.list.unshift(queue.lastPlayed);
-        }
-        if (path != " ") {
-            fs.unlink(path, (err) => {
-                if (err) {
-                    logger.error(`FAILED to delete file at path ${path}`);
-                    logger.error(err);
-                    return;
-                }
-                logger.info(`Removed file at path ${path}`);
-            });
-        }
-        if (queue.list[0]) {
-            playMusic(message);
-        } else {
-            Dispatchers.set(message.guild.id, undefined);
-        }
-    });
 }
 //#endregion
 

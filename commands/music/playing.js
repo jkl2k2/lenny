@@ -54,27 +54,27 @@ module.exports = {
 		var progressBar = ``;
 
 		if (frac >= 0.9) {
-			progressBar = (`\`<——————————⚫> (${formattedPlaying}/${formattedTotal})\``);
+			progressBar = (`\`<——————————⚪> (${formattedPlaying}/${formattedTotal})\``);
 		} else if (frac >= 0.8) {
-			progressBar = (`\`<—————————⚫—> (${formattedPlaying}/${formattedTotal})\``);
+			progressBar = (`\`<—————————⚪—> (${formattedPlaying}/${formattedTotal})\``);
 		} else if (frac >= 0.7) {
-			progressBar = (`\`<————————⚫——> (${formattedPlaying}/${formattedTotal})\``);
+			progressBar = (`\`<————————⚪——> (${formattedPlaying}/${formattedTotal})\``);
 		} else if (frac >= 0.7) {
-			progressBar = (`\`<———————⚫———> (${formattedPlaying}/${formattedTotal})\``);
+			progressBar = (`\`<———————⚪———> (${formattedPlaying}/${formattedTotal})\``);
 		} else if (frac >= 0.6) {
-			progressBar = (`\`<——————⚫————> (${formattedPlaying}/${formattedTotal})\``);
+			progressBar = (`\`<——————⚪————> (${formattedPlaying}/${formattedTotal})\``);
 		} else if (frac >= 0.5) {
-			progressBar = (`\`<—————⚫—————> (${formattedPlaying}/${formattedTotal})\``);
+			progressBar = (`\`<—————⚪—————> (${formattedPlaying}/${formattedTotal})\``);
 		} else if (frac >= 0.4) {
-			progressBar = (`\`<————⚫——————> (${formattedPlaying}/${formattedTotal})\``);
+			progressBar = (`\`<————⚪——————> (${formattedPlaying}/${formattedTotal})\``);
 		} else if (frac >= 0.3) {
-			progressBar = (`\`<———⚫———————> (${formattedPlaying}/${formattedTotal})\``);
+			progressBar = (`\`<———⚪———————> (${formattedPlaying}/${formattedTotal})\``);
 		} else if (frac >= 0.2) {
-			progressBar = (`\`<——⚫————————> (${formattedPlaying}/${formattedTotal})\``);
+			progressBar = (`\`<——⚪————————> (${formattedPlaying}/${formattedTotal})\``);
 		} else if (frac >= 0.1) {
-			progressBar = (`\`<—⚫—————————> (${formattedPlaying}/${formattedTotal})\``);
+			progressBar = (`\`<—⚪—————————> (${formattedPlaying}/${formattedTotal})\``);
 		} else if (frac >= 0) {
-			progressBar = (`\`<⚫——————————> (${formattedPlaying}/${formattedTotal})\``);
+			progressBar = (`\`<⚪——————————> (${formattedPlaying}/${formattedTotal})\``);
 		} else {
 			logger.warn(chalk.black.bgYellow(`Failed to generate progress bar`));
 		}

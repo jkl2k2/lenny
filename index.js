@@ -977,7 +977,7 @@ client.on('message', message => {
     // Read serverConfig.json
     let serverConfig = JSON.parse(fs.readFileSync(`./config/serverConfig.json`, `utf8`));
 
-    // If server not registered
+    // If server not registered in serverConfig.json
     if (!serverConfig[message.guild.id]) {
         logger.info(chalk.bgWhiteBright.black(`New server registered with serverConfig\nName: "${message.guild.name}"\nID: ${message.guild.id}`));
 

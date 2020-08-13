@@ -274,9 +274,7 @@ module.exports = {
 		async function handleSoundCloud() {
 			const video = youtubedl(args[0], [`--simulate`, `--get-url`]);
 
-			var gInfo;
-
-			var sent = await message.channel.send(new Discord.MessageEmbed()
+			let sent = await message.channel.send(new Discord.MessageEmbed()
 				.setTitle(` `)
 				.addField(`:arrows_counterclockwise: Downloading SoundCloud song`, `[Download in progress...](${args[0]})`)
 				.setColor(`#0083FF`));
@@ -285,9 +283,8 @@ module.exports = {
 				// console.log('Download started');
 				// console.log('filename: ' + info._filename);
 				// console.log('size: ' + info.size);
-				gInfo = info;
 
-				var newSC = new SCSong(args[0], message.member, gInfo);
+				var newSC = new SCSong(args[0], message.member, info);
 
 				if (!Queues.has(message.guild.id)) {
 					let newQueue = index.constructQueue();
@@ -307,7 +304,7 @@ module.exports = {
 					.addField(`Position`, newSC.getPosition(), true)
 					.setThumbnail(newSC.getThumbnail()));
 
-				video.pipe(fs.createWriteStream(`./soundcloud/${gInfo._filename}`));
+				video.pipe(fs.createWriteStream(`./soundcloud/${info._filename}`));
 
 			});
 

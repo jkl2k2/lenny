@@ -2,7 +2,7 @@
 const index = require(`../../index.js`);
 const config = require('config');
 const fs = require('fs');
-const youtubedl = require('youtube-dl');
+const scdl = require(`soundcloud-downloader`);
 const api = config.get(`Bot.api2`);
 const Discord = require(`discord.js`);
 const YouTube = require(`simple-youtube-api`);
@@ -285,7 +285,13 @@ module.exports = {
 		async function handleSoundCloud() {
 			let dispatcher = index.getDispatcher(message);
 
-			const video = youtubedl(args[0], [`--simulate`, `--get-url`]);
+			if (!scdl.isValidUrl(args[0])) {
+				return message.channel.send(new Discord.MessageEmbed()
+					.setDescription(`<:cross:729019052571492434> Sorry, ${message.author.username}, a SoundCloud URL was detected, but it is invalid`)
+					.setColor(`#FF3838`));
+			}
+
+			const sc = scdl.download(args[0]);
 
 			let sent = await message.channel.send(new Discord.MessageEmbed()
 				.setTitle(` `)

@@ -305,7 +305,7 @@ module.exports = {
 			}
 
 			if (dispatcher != undefined || (queue != undefined && queue.list[1])) {
-				sent.edit(new Discord.MessageEmbed()
+				message.channel.send(new Discord.MessageEmbed()
 					.setTitle(` `)
 					.setAuthor(`Queued (#${newSC.getPosition()})`)
 					.setDescription(`**[${newSC.getCleanTitle()}](${newSC.getURL()})**\n[${newSC.getUploader()}](${newSC.getUploaderUrl()})\n\nLength: \`${newSC.getLength()}\``)

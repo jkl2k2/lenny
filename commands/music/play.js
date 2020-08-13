@@ -2,17 +2,17 @@
 const index = require(`../../index.js`);
 const config = require('config');
 const fs = require('fs');
-const youtubedl = require('youtube-dl');
+const scdl = require(`soundcloud-downloader`);
 const api = config.get(`Bot.api2`);
 const Discord = require(`discord.js`);
 const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
-const chalk = require('chalk');
 const logger = index.getLogger();
 const Queues = index.getQueues();
 const fetch = require(`node-fetch`);
 const hex = require(`rgb-hex`);
 const colorThief = require(`colorthief`);
+const prettyMs = require(`pretty-ms`);
 //#endregion
 
 //#region Class declarations
@@ -23,37 +23,55 @@ class SCSong {
 		this.info = info;
 	}
 	getURL() {
-		return this.info.url;
+		return this.info.permalink_url;
 	}
 	getType() {
 		return "soundcloud";
 	}
 	getTitle() {
-		return this.info._filename;
+		return this.info.title;
 	}
 	getCleanTitle() {
-		return this.info._filename.substring(0, (this.info._filename.length) - 14);
+		var unformatted = this.info.title;
+		var formatted = ``;
+
+		for (var i = 0; i < unformatted.length; i++) {
+			if (unformatted.substring(i, i + 1) == `*` || unformatted.substring(i, i + 1) == `_`) {
+				formatted += `\\`;
+				formatted += unformatted.substring(i, i + 1);
+			} else {
+				formatted += unformatted.substring(i, i + 1);
+			}
+		}
+
+		return formatted;
 	}
 	getUploader() {
-		return this.info.uploader;
+		return this.info.user.username;
 	}
 	getChannelName() {
-		return this.info.uploader;
+		return this.info.user.username;
 	}
 	getUploaderUrl() {
-		return this.info.uploader_url;
+		return this.info.user.permalink_url;
+	}
+	getChannelThumbnail() {
+		return this.info.user.avatar_url;
 	}
 	getChannelURL() {
-		return this.info.uploader_url;
+		return this.info.user.permalink_url;
 	}
 	getRequesterName() {
 		return this.requester.user.username;
 	}
+	getRequesterAvatar() {
+		return this.requester.user.avatarURL();
+	}
 	getLength() {
-		return this.info._duration_hms.substring(3, 8);
+		return prettyMs(this.info.duration, { colonNotation: true, secondsDecimalDigits: 0 });
 	}
 	getThumbnail() {
-		return this.info.thumbnail;
+		return this.info.artwork_url;
 	}
 	getPosition() {
 		// let queue = index.getQueue(this.requester.guild.id);
@@ -69,7 +87,7 @@ class SCSong {
 
 module.exports = {
 	name: 'play',
-	description: 'Plays videos from YouTube, either by search or URL',
+	description: 'Plays videos from YouTube or SoundCloud',
 	aliases: ['p'],
 	args: true,
 	usage: '[search term(s)]',
@@ -272,66 +290,55 @@ module.exports = {
 
 		//#region SoundCloud handling
 		async function handleSoundCloud() {
-			soundcloudQueued = true;
+			let dispatcher = index.getDispatcher(message);
 
-			const video = youtubedl(args[0], [`--simulate`, `--get-url`]);
+			if (!scdl.isValidUrl(args[0])) {
+				return message.channel.send(new Discord.MessageEmbed()
+					.setDescription(`<:cross:729019052571492434> Sorry, ${message.author.username}, a SoundCloud URL was detected, but it is invalid`)
+					.setColor(`#FF3838`));
+			}
 
-			var gInfo;
+			const info = await scdl.getInfo(args[0]);
 
-			var sent = await message.channel.send(new Discord.MessageEmbed()
-				.setTitle(` `)
-				.addField(`:arrows_counterclockwise: Downloading SoundCloud song`, `[Download in progress...](${args[0]})`)
-				.setColor(`#0083FF`));
+			var newSC = new SCSong(args[0], message.member, info);
 
-			video.on('info', function (info) {
-				// console.log('Download started');
-				// console.log('filename: ' + info._filename);
-				// console.log('size: ' + info.size);
-				gInfo = info;
+			if (!Queues.has(message.guild.id)) {
+				let newQueue = index.constructQueue();
+				newQueue.push(newSC);
+				index.setQueue(message, newQueue);
+			} else {
+				queue.push(newSC);
+			}
 
-				var newSC = new SCSong(args[0], message.member, gInfo);
-
-				if (!Queues.has(message.guild.id)) {
-					let newQueue = index.constructQueue();
-					newQueue.push(newSC);
-					// Queues.set(message.guild.id, newQueue);
-					index.setQueue(message, newQueue);
-				} else {
-					queue.push(newSC);
-				}
-
-				sent.edit(new Discord.MessageEmbed()
+			if (dispatcher != undefined || (queue != undefined && queue.list[1])) {
+				let buffer = await fetch(newSC.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
+				let rgb = await colorThief.getColor(buffer);
+				message.channel.send(new Discord.MessageEmbed()
 					.setTitle(` `)
-					.setAuthor(`➕ Queued`)
-					.setDescription(`**[${newSC.getCleanTitle()}](${newSC.getURL()})**`)
-					.addField(`Uploader`, `[${newSC.getUploader()}](${newSC.getUploaderUrl()})`, true)
-					.addField(`Length`, newSC.getLength(), true)
-					.addField(`Position`, newSC.getPosition(), true)
-					.setThumbnail(newSC.getThumbnail()));
+					.setAuthor(`Queued (#${newSC.getPosition()})`, newSC.getChannelThumbnail(), newSC.getURL())
+					.setDescription(`**[${newSC.getCleanTitle()}](${newSC.getURL()})**\n[${newSC.getUploader()}](${newSC.getUploaderUrl()})\n\nLength: \`${newSC.getLength()}\``)
+					.setThumbnail(newSC.getThumbnail())
+					.setFooter(`Requested by ${newSC.getRequesterName()}`, newSC.getRequesterAvatar())
+					.setTimestamp()
+					.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
+			}
 
-				video.pipe(fs.createWriteStream(`./soundcloud/${gInfo._filename}`));
-
-			});
-
-			video.on('end', function () {
-				if (message.member.voice.channel) {
-					message.member.voice.channel.join()
-						.then(connection => {
-							if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
-								index.callPlayMusic(message);
-							} else {
-								logger.debug(`Connection speaking`);
-							}
-						})
-						.catch(logger.error);
-				} else {
-					let vcFailEmbed = new Discord.MessageEmbed()
-						.setTitle(`:warning: ${message.author.username}, you are not in a voice channel. Your video has been queued, but I am unable to join you.`)
-						.setColor(`#FF3838`);
-					message.channel.send(vcFailEmbed);
-				}
-			});
-
+			if (message.member.voice.channel) {
+				message.member.voice.channel.join()
+					.then(connection => {
+						if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
+							index.callPlayMusic(message);
+						} else {
+							logger.debug(`Connection speaking`);
+						}
+					})
+					.catch(logger.error);
+			} else {
+				let vcFailEmbed = new Discord.MessageEmbed()
+					.setTitle(`:warning: ${message.author.username}, you are not in a voice channel. Your video has been queued, but I am unable to join you.`)
+					.setColor(`#FF3838`);
+				message.channel.send(vcFailEmbed);
+			}
 		}
 		//#endregion
 

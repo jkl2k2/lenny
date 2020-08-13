@@ -3,6 +3,7 @@ const fs = require('fs');
 const Discord = require('discord.js');
 const config = require('config');
 const ytdl = require('ytdl-core');
+const scdl = require(`soundcloud-downloader`);
 const chalk = require('chalk');
 const winston = require('winston');
 const winstonRotate = require(`winston-daily-rotate-file`);
@@ -370,19 +371,6 @@ async function sendDetails(input, c) {
         lastDetails = musicEmbed;
     }
 }
-
-function sendSCDetails(input, c) {
-    var scMusicEmbed = new Discord.MessageEmbed()
-        .setAuthor(`▶️ Now playing`)
-        .setDescription(`**[${input.getCleanTitle()}](${input.getURL()})**`)
-        .addField(`Uploader`, `[${input.getUploader()}](${input.getUploaderUrl()})`, true)
-        .addField(`Length`, input.getLength(), true)
-        .setThumbnail(input.getThumbnail())
-        .setTimestamp()
-        .setFooter(`Requested by ${input.getRequesterName()}`);
-    c.send(scMusicEmbed);
-    lastDetails = scMusicEmbed;
-}
 //#endregion
 
 //#region Music playing
@@ -416,10 +404,11 @@ async function playMusic(message) {
     } else if (queue.list[0].getType() == "soundcloud") {
         // If SoundCloud
 
-        // Dispatchers.set(message.guild.id, client.voice.connections.get(message.guild.id).playStream(fs.createReadStream(`./soundcloud/${queue.list[0].getTitle()}`)));
-        Dispatchers.set(message.guild.id, client.voice.connections.get(message.guild.id).play(queue.list[0].getURL()));
+        let stream = await scdl.download(queue.list[0].getURL());
 
-        sendSCDetails(queue.list[0], message.channel);
+        Dispatchers.set(message.guild.id, client.voice.connections.get(message.guild.id).play(stream, { bitrate: 384, volume: Queues.get(message.guild.id).volume, passes: 5, fec: true }));
+
+        sendDetails(queue.list[0], message.channel);
 
     } else {
         return message.channel.send("Error assigning dispatcher, object at index 0 not of recognized type");
@@ -427,12 +416,6 @@ async function playMusic(message) {
 
     queue.lastPlayed = queue.list.shift();
     // Queues.get(message.guild.id).shift();
-    var path;
-    if (queue.lastPlayed && queue.lastPlayed.getType() == "soundcloud") {
-        path = `./soundcloud/${queue.lastPlayed.getTitle()}`;
-    } else {
-        path = " ";
-    }
 
     // Reset dispatcher stream delay
     client.voice.connections.get(message.guild.id).player.streamingData.pausedTime = 0;
@@ -440,16 +423,6 @@ async function playMusic(message) {
     Dispatchers.get(message.guild.id).on("close", function () {
         if (queue.repeat) {
             queue.list.unshift(queue.lastPlayed);
-        }
-        if (path != " ") {
-            fs.unlink(path, (err) => {
-                if (err) {
-                    logger.error(`FAILED to delete file at path ${path}`);
-                    logger.error(err);
-                    return;
-                }
-                logger.info(`Removed file at path ${path}`);
-            });
         }
         if (queue.list[0]) {
             playMusic(message);
@@ -990,7 +963,7 @@ client.on('message', message => {
     }
 
     // Reply to nMarkov with gif
-    if (message.author.id == `569277281046888488`) return message.channel.send(`https://tenor.com/view/haha-what-astory-gif-11633875`);
+    if (message.author.id == `569277281046888488` && !beta) return message.channel.send(`https://tenor.com/view/haha-what-astory-gif-11633875`);
 
     // Return if message from bot
     if (message.author.bot) return;

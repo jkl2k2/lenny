@@ -421,7 +421,7 @@ async function playMusic(message) {
 
         Dispatchers.set(message.guild.id, client.voice.connections.get(message.guild.id).play(stream, { bitrate: 384, volume: Queues.get(message.guild.id).volume, passes: 5, fec: true }));
 
-        // sendSCDetails(queue.list[0], message.channel);
+        sendSCDetails(queue.list[0], message.channel);
 
     } else {
         return message.channel.send("Error assigning dispatcher, object at index 0 not of recognized type");
@@ -429,12 +429,6 @@ async function playMusic(message) {
 
     queue.lastPlayed = queue.list.shift();
     // Queues.get(message.guild.id).shift();
-    var path;
-    if (queue.lastPlayed && queue.lastPlayed.getType() == "soundcloud") {
-        path = `./soundcloud/${queue.lastPlayed.getTitle()}`;
-    } else {
-        path = " ";
-    }
 
     // Reset dispatcher stream delay
     client.voice.connections.get(message.guild.id).player.streamingData.pausedTime = 0;
@@ -442,16 +436,6 @@ async function playMusic(message) {
     Dispatchers.get(message.guild.id).on("close", function () {
         if (queue.repeat) {
             queue.list.unshift(queue.lastPlayed);
-        }
-        if (path != " ") {
-            fs.unlink(path, (err) => {
-                if (err) {
-                    logger.error(`FAILED to delete file at path ${path}`);
-                    logger.error(err);
-                    return;
-                }
-                logger.info(`Removed file at path ${path}`);
-            });
         }
         if (queue.list[0]) {
             playMusic(message);

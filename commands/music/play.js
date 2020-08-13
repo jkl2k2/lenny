@@ -69,7 +69,7 @@ class SCSong {
 
 module.exports = {
 	name: 'play',
-	description: 'Plays videos from YouTube, either by search or URL',
+	description: 'Plays videos from YouTube or SoundCloud',
 	aliases: ['p'],
 	args: true,
 	usage: '[search term(s)]',

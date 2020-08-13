@@ -326,7 +326,6 @@ module.exports = {
 					message.channel.send(vcFailEmbed);
 				}
 			});
-
 		}
 		//#endregion
 

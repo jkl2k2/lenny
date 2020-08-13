@@ -22,16 +22,16 @@ class SCSong {
 		this.info = info;
 	}
 	getURL() {
-		return this.info.url;
+		return this.info.permalink_url;
 	}
 	getType() {
 		return "soundcloud";
 	}
 	getTitle() {
-		return this.info._filename;
+		return this.info.title;
 	}
 	getCleanTitle() {
-		var unformatted = this.info._filename.substring(0, (this.info._filename.length) - 14);
+		var unformatted = this.info.title;
 		var formatted = ``;
 
 		for (var i = 0; i < unformatted.length; i++) {
@@ -46,16 +46,16 @@ class SCSong {
 		return formatted;
 	}
 	getUploader() {
-		return this.info.uploader;
+		return this.info.user.username;
 	}
 	getChannelName() {
-		return this.info.uploader;
+		return this.info.user.username;
 	}
 	getUploaderUrl() {
-		return this.info.uploader_url;
+		return this.info.user.permalink_url;
 	}
 	getChannelURL() {
-		return this.info.uploader_url;
+		return this.info.user.permalink_url;
 	}
 	getRequesterName() {
 		return this.requester.user.username;
@@ -291,54 +291,42 @@ module.exports = {
 					.setColor(`#FF3838`));
 			}
 
-			const sc = scdl.download(args[0]);
+			const info = await scdl.getInfo(args[0]);
 
-			let sent = await message.channel.send(new Discord.MessageEmbed()
-				.setTitle(` `)
-				.addField(`:arrows_counterclockwise: Downloading SoundCloud song`, `[Download in progress...](${args[0]})`)
-				.setColor(`#0083FF`));
+			var newSC = new SCSong(args[0], message.member, info);
 
-			video.on('info', function (info) {
-				var newSC = new SCSong(args[0], message.member, info);
+			if (!Queues.has(message.guild.id)) {
+				let newQueue = index.constructQueue();
+				newQueue.push(newSC);
+				index.setQueue(message, newQueue);
+			} else {
+				queue.push(newSC);
+			}
 
-				if (!Queues.has(message.guild.id)) {
-					let newQueue = index.constructQueue();
-					newQueue.push(newSC);
-					index.setQueue(message, newQueue);
-				} else {
-					queue.push(newSC);
-				}
+			if (dispatcher != undefined || (queue != undefined && queue.list[1])) {
+				sent.edit(new Discord.MessageEmbed()
+					.setTitle(` `)
+					.setAuthor(`Queued (#${newSC.getPosition()})`)
+					.setDescription(`**[${newSC.getCleanTitle()}](${newSC.getURL()})**\n[${newSC.getUploader()}](${newSC.getUploaderUrl()})\n\nLength: \`${newSC.getLength()}\``)
+					.setThumbnail(newSC.getThumbnail()));
+			}
 
-				if (dispatcher != undefined || (queue != undefined && queue.list[1])) {
-					sent.edit(new Discord.MessageEmbed()
-						.setTitle(` `)
-						.setAuthor(`Queued (#${newSC.getPosition()})`)
-						.setDescription(`**[${newSC.getCleanTitle()}](${newSC.getURL()})**\n[${newSC.getUploader()}](${newSC.getUploaderUrl()})\n\nLength: \`${newSC.getLength()}\``)
-						.setThumbnail(newSC.getThumbnail()));
-				}
-
-				video.pipe(fs.createWriteStream(`./soundcloud/${info._filename}`));
-
-			});
-
-			video.on('end', function () {
-				if (message.member.voice.channel) {
-					message.member.voice.channel.join()
-						.then(connection => {
-							if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
-								index.callPlayMusic(message);
-							} else {
-								logger.debug(`Connection speaking`);
-							}
-						})
-						.catch(logger.error);
-				} else {
-					let vcFailEmbed = new Discord.MessageEmbed()
-						.setTitle(`:warning: ${message.author.username}, you are not in a voice channel. Your video has been queued, but I am unable to join you.`)
-						.setColor(`#FF3838`);
-					message.channel.send(vcFailEmbed);
-				}
-			});
+			if (message.member.voice.channel) {
+				message.member.voice.channel.join()
+					.then(connection => {
+						if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
+							index.callPlayMusic(message);
+						} else {
+							logger.debug(`Connection speaking`);
+						}
+					})
+					.catch(logger.error);
+			} else {
+				let vcFailEmbed = new Discord.MessageEmbed()
+					.setTitle(`:warning: ${message.author.username}, you are not in a voice channel. Your video has been queued, but I am unable to join you.`)
+					.setColor(`#FF3838`);
+				message.channel.send(vcFailEmbed);
+			}
 		}
 		//#endregion
 

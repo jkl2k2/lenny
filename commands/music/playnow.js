@@ -52,11 +52,17 @@ class SCSong {
 	getUploaderUrl() {
 		return this.info.user.permalink_url;
 	}
+	getChannelThumbnail() {
+		return this.info.user.avatar_url;
+	}
 	getChannelURL() {
 		return this.info.user.permalink_url;
 	}
 	getRequesterName() {
 		return this.requester.user.username;
+	}
+	getRequesterAvatar() {
+		return this.requester.user.avatarURL();
 	}
 	getLength() {
 		return prettyMs(this.info.duration, { colonNotation: true, secondsDecimalDigits: 0 });
@@ -253,11 +259,16 @@ module.exports = {
 			}
 
 			if (dispatcher != undefined || (queue != undefined && queue.list[1])) {
+				let buffer = await fetch(newSC.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
+				let rgb = await colorThief.getColor(buffer);
 				message.channel.send(new Discord.MessageEmbed()
 					.setTitle(` `)
-					.setAuthor(`Queued (#${newSC.getPosition()})`)
+					.setAuthor(`Queued (#${newSC.getPosition()})`, newSC.getChannelThumbnail(), newSC.getChannelURL())
 					.setDescription(`**[${newSC.getCleanTitle()}](${newSC.getURL()})**\n[${newSC.getUploader()}](${newSC.getUploaderUrl()})\n\nLength: \`${newSC.getLength()}\``)
-					.setThumbnail(newSC.getThumbnail()));
+					.setThumbnail(newSC.getThumbnail())
+					.setFooter(`Requested by ${newSC.getRequesterName()}`, newSC.getRequesterAvatar())
+					.setTimestamp()
+					.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
 			}
 
 			if (message.member.voice.channel) {

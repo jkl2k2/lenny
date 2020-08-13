@@ -1,7 +1,4 @@
-const index = require(`../../index.js`);
-const Discord = require(`discord.js`);
 const uwu = require(`uwuifier`);
-// Any 'require'
 
 module.exports = {
     name: 'uwufy',

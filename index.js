@@ -992,7 +992,7 @@ client.on('message', message => {
     }
 
     // Reply to nMarkov with gif
-    if (message.author.id == `569277281046888488`) return message.channel.send(`https://tenor.com/view/haha-what-astory-gif-11633875`);
+    if (message.author.id == `569277281046888488` && !beta) return message.channel.send(`https://tenor.com/view/haha-what-astory-gif-11633875`);
 
     // Return if message from bot
     if (message.author.bot) return;

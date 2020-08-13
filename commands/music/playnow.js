@@ -49,9 +49,6 @@ class SCSong {
 	getChannelName() {
 		return this.info.user.username;
 	}
-	getUploaderUrl() {
-		return this.info.user.permalink_url;
-	}
 	getChannelThumbnail() {
 		return this.info.user.avatar_url;
 	}
@@ -264,7 +261,7 @@ module.exports = {
 				message.channel.send(new Discord.MessageEmbed()
 					.setTitle(` `)
 					.setAuthor(`Queued (#${newSC.getPosition()})`, newSC.getChannelThumbnail(), newSC.getChannelURL())
-					.setDescription(`**[${newSC.getCleanTitle()}](${newSC.getURL()})**\n[${newSC.getUploader()}](${newSC.getUploaderUrl()})\n\nLength: \`${newSC.getLength()}\``)
+					.setDescription(`**[${newSC.getCleanTitle()}](${newSC.getURL()})**\n[${newSC.getUploader()}](${newSC.getChannelURL()})\n\nLength: \`${newSC.getLength()}\``)
 					.setThumbnail(newSC.getThumbnail())
 					.setFooter(`Requested by ${newSC.getRequesterName()}`, newSC.getRequesterAvatar())
 					.setTimestamp()

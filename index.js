@@ -371,19 +371,6 @@ async function sendDetails(input, c) {
         lastDetails = musicEmbed;
     }
 }
-
-function sendSCDetails(input, c) {
-    var scMusicEmbed = new Discord.MessageEmbed()
-        .setAuthor(`▶️ Now playing`)
-        .setDescription(`**[${input.getCleanTitle()}](${input.getURL()})**`)
-        .addField(`Uploader`, `[${input.getUploader()}](${input.getUploaderUrl()})`, true)
-        .addField(`Length`, input.getLength(), true)
-        .setThumbnail(input.getThumbnail())
-        .setTimestamp()
-        .setFooter(`Requested by ${input.getRequesterName()}`);
-    c.send(scMusicEmbed);
-    lastDetails = scMusicEmbed;
-}
 //#endregion
 
 //#region Music playing
@@ -421,7 +408,7 @@ async function playMusic(message) {
 
         Dispatchers.set(message.guild.id, client.voice.connections.get(message.guild.id).play(stream, { bitrate: 384, volume: Queues.get(message.guild.id).volume, passes: 5, fec: true }));
 
-        sendSCDetails(queue.list[0], message.channel);
+        sendDetails(queue.list[0], message.channel);
 
     } else {
         return message.channel.send("Error assigning dispatcher, object at index 0 not of recognized type");

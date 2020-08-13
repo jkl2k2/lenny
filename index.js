@@ -14,6 +14,7 @@ const twitchClient = TwitchClient.withCredentials(config.get(`Bot.TWITCH_CLIENT_
 const hex = require(`rgb-hex`);
 const colorThief = require(`colorthief`);
 const fetch = require(`node-fetch`);
+const beta = config.get(`Bot.beta`);
 //#endregion
 
 //#region Initialize database

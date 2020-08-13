@@ -667,34 +667,44 @@ client.on('ready', async () => {
     }, 15000);
 
     // If beta version of bot
-    if (beta) return sendInitLogMessage();
+    if (beta) {
+        // Mark client as ready to process commands
+        clientReady = true;
 
-    //#region Casino stats
+        // Finish by sending the "Initialized" message in console/logs
+        return sendInitLogMessage();
+    } else {
+        // Define special casino channels
+        var casinoChannel = client.channels.cache.get(`696986079584321566`);
+        var mainGuild = client.guilds.cache.get(`471193210102743040`);
 
-    var casinoChannel = client.channels.cache.get(`696986079584321566`);
-    var mainGuild = client.guilds.cache.get(`471193210102743040`);
+        // Clear out casino channels
+        logger.debug(chalk.black.bgGray(`Clearing leaderboard channel...`));
+        var casinoFetched = await casinoChannel.messages.fetch({ limit: 10 });
+        casinoChannel.bulkDelete(casinoFetched);
 
-    logger.debug(chalk.black.bgGray(`Clearing leaderboard channel...`));
-    var casinoFetched = await casinoChannel.messages.fetch({ limit: 10 });
-    casinoChannel.bulkDelete(casinoFetched);
+        // Send casino stats embed
+        logger.debug(chalk.black.bgGray(`Sending initial leaderboard message...`));
+        casinoStatusMessage = await casinoChannel.send(new Discord.MessageEmbed()
+            .setDescription(`:money_with_wings: **OWO GRAND RESORT & CASINO PROFITS** :money_with_wings:\n\nProfit: **$${currency.getBalance("0")}**\n\n:medal: **Top 10 users by currency**\n\n` + currency.sort((a, b) => b.balance - a.balance)
+                .filter(user => client.users.cache.has(user.user_id) && mainGuild.member(client.users.cache.get(user.user_id)))
+                .first(10)
+                .map((user, position) => `\`${position + 1}.\` **${(client.users.cache.get(user.user_id).username)}**\nBalance: \`$${user.balance}\`\n`)
+                .join('\n'),
+                { code: true })
+            .setColor(`#1b9e56`));
 
-    logger.debug(chalk.black.bgGray(`Sending initial leaderboard message...`));
-    casinoStatusMessage = await casinoChannel.send(new Discord.MessageEmbed()
-        .setDescription(`:money_with_wings: **OWO GRAND RESORT & CASINO PROFITS** :money_with_wings:\n\nProfit: **$${currency.getBalance("0")}**\n\n:medal: **Top 10 users by currency**\n\n` + currency.sort((a, b) => b.balance - a.balance)
-            .filter(user => client.users.cache.has(user.user_id) && mainGuild.member(client.users.cache.get(user.user_id)))
-            .first(10)
-            .map((user, position) => `\`${position + 1}.\` **${(client.users.cache.get(user.user_id).username)}**\nBalance: \`$${user.balance}\`\n`)
-            .join('\n'),
-            { code: true })
-        .setColor(`#1b9e56`));
+        // Set casino stats to update every 10 seconds
+        setInterval(() => {
+            updateCasinoStats(mainGuild);
+        }, 10000);
 
-    setInterval(() => {
-        updateCasinoStats(mainGuild);
-    }, 10000);
+        // Mark client as ready to process commands
+        clientReady = true;
 
-    //#endregion
-
-    clientReady = true;
+        // Finish by sending the "Initialized" message in console/logs
+        return sendInitLogMessage();
+    }
 });
 //#endregion
 

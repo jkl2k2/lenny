@@ -272,8 +272,6 @@ module.exports = {
 
 		//#region SoundCloud handling
 		async function handleSoundCloud() {
-			soundcloudQueued = true;
-
 			const video = youtubedl(args[0], [`--simulate`, `--get-url`]);
 
 			var gInfo;

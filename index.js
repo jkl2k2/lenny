@@ -203,9 +203,6 @@ class SCSong {
 
         return formatted;
     }
-    getUploader() {
-        return this.info.user.username;
-    }
     getChannelName() {
         return this.info.user.username;
     }

@@ -194,7 +194,7 @@ module.exports = {
 				message.channel.send(new Discord.MessageEmbed()
 					.setTitle(` `)
 					.setAuthor(`Queued (#${newSC.getPosition()})`, newSC.getChannelThumbnail(), newSC.getChannelURL())
-					.setDescription(`**[${newSC.getTitle()}](${newSC.getURL()})**\n[${newSC.getUploader()}](${newSC.getChannelURL()})\n\nLength: \`${newSC.getLength()}\``)
+					.setDescription(`**[${newSC.getTitle()}](${newSC.getURL()})**\n[${newSC.getChannelName()}](${newSC.getChannelURL()})\n\nLength: \`${newSC.getLength()}\``)
 					.setThumbnail(newSC.getThumbnail())
 					.setFooter(`Requested by ${newSC.getRequesterName()}`, newSC.getRequesterAvatar())
 					.setTimestamp()

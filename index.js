@@ -416,7 +416,7 @@ async function playMusic(message) {
         // If SoundCloud
 
         // Dispatchers.set(message.guild.id, client.voice.connections.get(message.guild.id).playStream(fs.createReadStream(`./soundcloud/${queue.list[0].getTitle()}`)));
-        Dispatchers.set(message.guild.id, client.voice.connections.get(message.guild.id).play(queue.list[0].getURL()));
+        Dispatchers.set(message.guild.id, client.voice.connections.get(message.guild.id).play(queue.list[0].getURL(), { bitrate: 384, volume: Queues.get(message.guild.id).volume, passes: 5, fec: true }));
 
         sendSCDetails(queue.list[0], message.channel);
 

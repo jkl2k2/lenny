@@ -1,7 +1,6 @@
 //#region Constants and requires
 const index = require(`../../index.js`);
 const config = require('config');
-const fs = require('fs');
 const scdl = require(`soundcloud-downloader`);
 const api = config.get(`Bot.api2`);
 const Discord = require(`discord.js`);
@@ -12,74 +11,6 @@ const Queues = index.getQueues();
 const fetch = require(`node-fetch`);
 const hex = require(`rgb-hex`);
 const colorThief = require(`colorthief`);
-const prettyMs = require(`pretty-ms`);
-//#endregion
-
-//#region Class declarations
-class SCSong {
-	constructor(url, requester, info) {
-		this.url = url;
-		this.requester = requester;
-		this.info = info;
-	}
-	getURL() {
-		return this.info.permalink_url;
-	}
-	getType() {
-		return "soundcloud";
-	}
-	getTitle() {
-		return this.info.title;
-	}
-	getCleanTitle() {
-		var unformatted = this.info.title;
-		var formatted = ``;
-
-		for (var i = 0; i < unformatted.length; i++) {
-			if (unformatted.substring(i, i + 1) == `*` || unformatted.substring(i, i + 1) == `_`) {
-				formatted += `\\`;
-				formatted += unformatted.substring(i, i + 1);
-			} else {
-				formatted += unformatted.substring(i, i + 1);
-			}
-		}
-
-		return formatted;
-	}
-	getUploader() {
-		return this.info.user.username;
-	}
-	getChannelName() {
-		return this.info.user.username;
-	}
-	getChannelThumbnail() {
-		return this.info.user.avatar_url;
-	}
-	getChannelURL() {
-		return this.info.user.permalink_url;
-	}
-	getRequesterName() {
-		return this.requester.user.username;
-	}
-	getRequesterAvatar() {
-		return this.requester.user.avatarURL();
-	}
-	getLength() {
-		return prettyMs(this.info.duration, { colonNotation: true, secondsDecimalDigits: 0 });
-	}
-	getThumbnail() {
-		return this.info.artwork_url;
-	}
-	getPosition() {
-		// let queue = index.getQueue(this.requester.guild.id);
-		let queue = Queues.get(this.requester.guild.id);
-		if (queue.list.indexOf(this) == -1) {
-			return 1;
-		} else {
-			return queue.list.indexOf(this) + 1;
-		}
-	}
-}
 //#endregion
 
 module.exports = {
@@ -297,7 +228,7 @@ module.exports = {
 
 			const info = await scdl.getInfo(args[0]);
 
-			var newSC = new SCSong(args[0], message.member, info);
+			var newSC = index.constructSC(message.member, info);
 
 			if (!Queues.has(message.guild.id)) {
 				let newQueue = index.constructQueue();
@@ -313,7 +244,7 @@ module.exports = {
 				message.channel.send(new Discord.MessageEmbed()
 					.setTitle(` `)
 					.setAuthor(`Queued (#${newSC.getPosition()})`, newSC.getChannelThumbnail(), newSC.getURL())
-					.setDescription(`**[${newSC.getCleanTitle()}](${newSC.getURL()})**\n[${newSC.getUploader()}](${newSC.getChannelURL()})\n\nLength: \`${newSC.getLength()}\``)
+					.setDescription(`**[${newSC.getTitle()}](${newSC.getURL()})**\n[${newSC.getUploader()}](${newSC.getChannelURL()})\n\nLength: \`${newSC.getLength()}\``)
 					.setThumbnail(newSC.getThumbnail())
 					.setFooter(`Requested by ${newSC.getRequesterName()}`, newSC.getRequesterAvatar())
 					.setTimestamp()

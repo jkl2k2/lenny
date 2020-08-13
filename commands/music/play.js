@@ -7,7 +7,6 @@ const api = config.get(`Bot.api2`);
 const Discord = require(`discord.js`);
 const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
-const chalk = require('chalk');
 const logger = index.getLogger();
 const Queues = index.getQueues();
 const fetch = require(`node-fetch`);

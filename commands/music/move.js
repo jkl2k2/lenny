@@ -52,17 +52,17 @@ module.exports = {
                 queue.splice(targetPos, 0, queue.splice(startPos, 1)[0]);
                 if (targetPos == 0) {
                     message.channel.send(new Discord.MessageEmbed()
-                        .setDescription(`<:check:728881238970073090> Moved from position \`#${startPos + 1}\` to \`#${targetPos + 1}\`:\n**[${queue[targetPos].getCleanTitle()}](${queue[targetPos].getURL()})**
+                        .setDescription(`<:check:728881238970073090> Moved from position \`#${startPos + 1}\` to \`#${targetPos + 1}\`:\n**[${queue[targetPos].getTitle()}](${queue[targetPos].getURL()})**
 
                                          It will now play after:
-                                         **[${index.getQueue(message).lastPlayed.getCleanTitle()}](${index.getQueue(message).lastPlayed.getURL()})**`)
+                                         **[${index.getQueue(message).lastPlayed.getTitle()}](${index.getQueue(message).lastPlayed.getURL()})**`)
                         .setColor(`#2EC14E`));
                 } else {
                     message.channel.send(new Discord.MessageEmbed()
-                        .setDescription(`<:check:728881238970073090> Moved from position \`#${startPos + 1}\` to \`#${targetPos + 1}\`:\n**[${queue[targetPos].getCleanTitle()}](${queue[targetPos].getURL()})**
+                        .setDescription(`<:check:728881238970073090> Moved from position \`#${startPos + 1}\` to \`#${targetPos + 1}\`:\n**[${queue[targetPos].getTitle()}](${queue[targetPos].getURL()})**
 
                                          It will now play after:
-                                         **[${queue[targetPos - 1].getCleanTitle()}](${queue[targetPos - 1].getURL()})**`)
+                                         **[${queue[targetPos - 1].getTitle()}](${queue[targetPos - 1].getURL()})**`)
                         .setColor(`#2EC14E`));
                 }
             } else {

@@ -3,13 +3,13 @@ const Discord = require(`discord.js`);
 
 function sendRepeatOn(message) {
     message.channel.send(new Discord.MessageEmbed()
-        .setDescription(`:repeat: **[${index.getQueue(message).lastPlayed.getCleanTitle()}](${index.getQueue(message).lastPlayed.getURL()})** **will** now repeat`)
+        .setDescription(`:repeat: **[${index.getQueue(message).lastPlayed.getTitle()}](${index.getQueue(message).lastPlayed.getURL()})** **will** now repeat`)
         .setColor(`#0083FF`));
 }
 
 function sendRepeatOff(message) {
     message.channel.send(new Discord.MessageEmbed()
-        .setDescription(`:stop_button: **[${index.getQueue(message).lastPlayed.getCleanTitle()}](${index.getQueue(message).lastPlayed.getURL()})** will **no longer** repeat`)
+        .setDescription(`:stop_button: **[${index.getQueue(message).lastPlayed.getTitle()}](${index.getQueue(message).lastPlayed.getURL()})** will **no longer** repeat`)
         .setColor(`#0083FF`));
 }
 

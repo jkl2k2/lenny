@@ -16,11 +16,13 @@ const hex = require(`rgb-hex`);
 const colorThief = require(`colorthief`);
 const fetch = require(`node-fetch`);
 const beta = config.get(`Bot.beta`);
+const prettyMs = require(`pretty-ms`);
 //#endregion
 
 //#region Initialize database
 const { Users, CurrencyShop } = require('./dbObjects');
 const { Op } = require('sequelize');
+const { SSL_OP_COOKIE_EXCHANGE } = require('constants');
 const currency = new Discord.Collection();
 
 Reflect.defineProperty(currency, 'add', {
@@ -71,9 +73,6 @@ class YTVideo {
         }
 
         return formatted;
-    }
-    getCleanTitle() {
-        return this.video.title;
     }
     getURL() {
         return this.video.url;
@@ -178,15 +177,70 @@ class YTVideo {
     }
 }
 
+class SCSong {
+    constructor(requester, info) {
+        this.requester = requester;
+        this.info = info;
+    }
+    getURL() {
+        return this.info.permalink_url;
+    }
+    getType() {
+        return "soundcloud";
+    }
+    getTitle() {
+        var unformatted = this.info.title;
+        var formatted = ``;
+
+        for (var i = 0; i < unformatted.length; i++) {
+            if (unformatted.substring(i, i + 1) == `*` || unformatted.substring(i, i + 1) == `_`) {
+                formatted += `\\`;
+                formatted += unformatted.substring(i, i + 1);
+            } else {
+                formatted += unformatted.substring(i, i + 1);
+            }
+        }
+
+        return formatted;
+    }
+    getChannelName() {
+        return this.info.user.username;
+    }
+    getChannelThumbnail() {
+        return this.info.user.avatar_url;
+    }
+    getChannelURL() {
+        return this.info.user.permalink_url;
+    }
+    getRequesterName() {
+        return this.requester.user.username;
+    }
+    getRequesterAvatar() {
+        return this.requester.user.avatarURL();
+    }
+    getLength() {
+        return prettyMs(this.info.duration, { colonNotation: true, secondsDecimalDigits: 0 });
+    }
+    getThumbnail() {
+        return this.info.artwork_url;
+    }
+    getPosition() {
+        // let queue = index.getQueue(this.requester.guild.id);
+        let queue = Queues.get(this.requester.guild.id);
+        if (queue.list.indexOf(this) == -1) {
+            return 1;
+        } else {
+            return queue.list.indexOf(this) + 1;
+        }
+    }
+}
+
 class TwitchStream extends YTVideo {
     constructor(url, name, requester) {
         super(url, requester);
         this.name = name;
     }
     getTitle() {
-        return this.name;
-    }
-    getCleanTitle() {
         return this.name;
     }
     getURL() {
@@ -474,6 +528,9 @@ module.exports = {
     },
     constructVideo: function (input, member) {
         return new YTVideo(input, member);
+    },
+    constructSC: function (input, member) {
+        return new SCSong(input, member);
     },
     constructTwitch: function (input, name, member) {
         console.log("Constructing Twitch stream");

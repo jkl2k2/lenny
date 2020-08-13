@@ -7,7 +7,7 @@ const colorThief = require(`colorthief`);
 
 async function queueResolver(arr, index) {
 	if (arr[index]) {
-		return `\`${index + 1}.\` **[${arr[index].getCleanTitle()}](${arr[index].getURL()})**\n\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0By: **${arr[index].getChannelName()}**\n\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0Length: \`${await arr[index].getLength()}\``;
+		return `\`${index + 1}.\` **[${arr[index].getTitle()}](${arr[index].getURL()})**\n\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0By: **${arr[index].getChannelName()}**\n\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0Length: \`${await arr[index].getLength()}\``;
 	} else {
 		return " ";
 	}

@@ -279,16 +279,11 @@ module.exports = {
 				.setColor(`#0083FF`));
 
 			video.on('info', function (info) {
-				// console.log('Download started');
-				// console.log('filename: ' + info._filename);
-				// console.log('size: ' + info.size);
-
 				var newSC = new SCSong(args[0], message.member, info);
 
 				if (!Queues.has(message.guild.id)) {
 					let newQueue = index.constructQueue();
 					newQueue.push(newSC);
-					// Queues.set(message.guild.id, newQueue);
 					index.setQueue(message, newQueue);
 				} else {
 					queue.push(newSC);

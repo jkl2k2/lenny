@@ -3,6 +3,7 @@ const fs = require('fs');
 const Discord = require('discord.js');
 const config = require('config');
 const ytdl = require('ytdl-core');
+const scdl = require(`soundcloud-downloader`);
 const chalk = require('chalk');
 const winston = require('winston');
 const winstonRotate = require(`winston-daily-rotate-file`);
@@ -416,10 +417,11 @@ async function playMusic(message) {
     } else if (queue.list[0].getType() == "soundcloud") {
         // If SoundCloud
 
-        // Dispatchers.set(message.guild.id, client.voice.connections.get(message.guild.id).playStream(fs.createReadStream(`./soundcloud/${queue.list[0].getTitle()}`)));
-        Dispatchers.set(message.guild.id, client.voice.connections.get(message.guild.id).play(queue.list[0].getURL(), { bitrate: 384, volume: Queues.get(message.guild.id).volume, passes: 5, fec: true }));
+        let stream = await scdl.download(queue.list[0].getURL());
 
-        sendSCDetails(queue.list[0], message.channel);
+        Dispatchers.set(message.guild.id, client.voice.connections.get(message.guild.id).play(stream, { bitrate: 384, volume: Queues.get(message.guild.id).volume, passes: 5, fec: true }));
+
+        // sendSCDetails(queue.list[0], message.channel);
 
     } else {
         return message.channel.send("Error assigning dispatcher, object at index 0 not of recognized type");

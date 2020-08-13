@@ -634,6 +634,25 @@ for (const file of commandFiles) {
 
 //#region Client Ready
 client.on('ready', async () => {
+    //#region Init log message
+    function sendInitLogMessage() {
+        logger.info(chalk.white.bgCyan(`--------Bot Initialized--------`));
+        if (date.getMinutes() < 10) {
+            if (date.getSeconds() < 10) {
+                logger.info(chalk.white.bgCyan(`Timestamp: ${date.getHours()}:0${date.getMinutes()}:0${date.getSeconds()} - ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`));
+            } else {
+                logger.info(chalk.white.bgCyan(`Timestamp: ${date.getHours()}:0${date.getMinutes()}:${date.getSeconds()} - ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`));
+            }
+        } else if (date.getSeconds() < 10) {
+            logger.info(chalk.white.bgCyan(`Timestamp: ${date.getHours()}:${date.getMinutes()}:0${date.getSeconds()} - ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`));
+        } else {
+            logger.info(chalk.white.bgCyan(`Timestamp: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} - ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`));
+        }
+        // logger.info(chalk.white.bgCyan(`Timestamp: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} - ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`));
+        logger.info(chalk.white.bgCyan.bold(`-------Awaiting Commands-------`));
+    }
+    //#endregion
+
     // Sync with currency database
     logger.debug(chalk.black.bgGray(`Syncing with currency database...`));
     const storedBalances = await Users.findAll();
@@ -641,13 +660,14 @@ client.on('ready', async () => {
 
     let date = new Date();
 
-    // client.user.setActivity(`trash music`, { type: "LISTENING" });
-
     // Randomly select status
     setInterval(() => {
         let index = Math.floor(Math.random() * (activities.length - 1) + 1);
         client.user.setActivity(activities[index].getText(), { type: activities[index].getFormat() });
     }, 15000);
+
+    // If beta version of bot
+    if (beta) return sendInitLogMessage();
 
     //#region Casino stats
 
@@ -672,23 +692,6 @@ client.on('ready', async () => {
         updateCasinoStats(mainGuild);
     }, 10000);
 
-    //#endregion
-
-    //#region Init log message
-    logger.info(chalk.white.bgCyan(`--------Bot Initialized--------`));
-    if (date.getMinutes() < 10) {
-        if (date.getSeconds() < 10) {
-            logger.info(chalk.white.bgCyan(`Timestamp: ${date.getHours()}:0${date.getMinutes()}:0${date.getSeconds()} - ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`));
-        } else {
-            logger.info(chalk.white.bgCyan(`Timestamp: ${date.getHours()}:0${date.getMinutes()}:${date.getSeconds()} - ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`));
-        }
-    } else if (date.getSeconds() < 10) {
-        logger.info(chalk.white.bgCyan(`Timestamp: ${date.getHours()}:${date.getMinutes()}:0${date.getSeconds()} - ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`));
-    } else {
-        logger.info(chalk.white.bgCyan(`Timestamp: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} - ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`));
-    }
-    // logger.info(chalk.white.bgCyan(`Timestamp: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} - ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`));
-    logger.info(chalk.white.bgCyan.bold(`-------Awaiting Commands-------`));
     //#endregion
 
     clientReady = true;

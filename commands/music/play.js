@@ -31,7 +31,19 @@ class SCSong {
 		return this.info._filename;
 	}
 	getCleanTitle() {
-		return this.info._filename.substring(0, (this.info._filename.length) - 14);
+		var unformatted = this.info._filename.substring(0, (this.info._filename.length) - 14);
+		var formatted = ``;
+
+		for (var i = 0; i < unformatted.length; i++) {
+			if (unformatted.substring(i, i + 1) == `*` || unformatted.substring(i, i + 1) == `_`) {
+				formatted += `\\`;
+				formatted += unformatted.substring(i, i + 1);
+			} else {
+				formatted += unformatted.substring(i, i + 1);
+			}
+		}
+
+		return formatted;
 	}
 	getUploader() {
 		return this.info.uploader;
@@ -271,6 +283,8 @@ module.exports = {
 
 		//#region SoundCloud handling
 		async function handleSoundCloud() {
+			let dispatcher = index.getDispatcher(message);
+
 			const video = youtubedl(args[0], [`--simulate`, `--get-url`]);
 
 			let sent = await message.channel.send(new Discord.MessageEmbed()
@@ -289,14 +303,13 @@ module.exports = {
 					queue.push(newSC);
 				}
 
-				sent.edit(new Discord.MessageEmbed()
-					.setTitle(` `)
-					.setAuthor(`➕ Queued`)
-					.setDescription(`**[${newSC.getCleanTitle()}](${newSC.getURL()})**`)
-					.addField(`Uploader`, `[${newSC.getUploader()}](${newSC.getUploaderUrl()})`, true)
-					.addField(`Length`, newSC.getLength(), true)
-					.addField(`Position`, newSC.getPosition(), true)
-					.setThumbnail(newSC.getThumbnail()));
+				if (dispatcher != undefined || (queue != undefined && queue.list[1])) {
+					sent.edit(new Discord.MessageEmbed()
+						.setTitle(` `)
+						.setAuthor(`Queued (#${newSC.getPosition()})`)
+						.setDescription(`**[${newSC.getCleanTitle()}](${newSC.getURL()})**\n[${newSC.getUploader()}](${newSC.getUploaderUrl()})\n\nLength: \`${newSC.getLength()}\``)
+						.setThumbnail(newSC.getThumbnail()));
+				}
 
 				video.pipe(fs.createWriteStream(`./soundcloud/${info._filename}`));
 

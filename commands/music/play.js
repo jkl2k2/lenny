@@ -12,6 +12,7 @@ const Queues = index.getQueues();
 const fetch = require(`node-fetch`);
 const hex = require(`rgb-hex`);
 const colorThief = require(`colorthief`);
+const prettyMs = require(`pretty-ms`);
 //#endregion
 
 //#region Class declarations
@@ -61,10 +62,10 @@ class SCSong {
 		return this.requester.user.username;
 	}
 	getLength() {
-		return this.info._duration_hms.substring(3, 8);
+		return prettyMs(this.info.duration, { colonNotation: true, secondsDecimalDigits: 0 });
 	}
 	getThumbnail() {
-		return this.info.thumbnail;
+		return this.info.artwork_url;
 	}
 	getPosition() {
 		// let queue = index.getQueue(this.requester.guild.id);

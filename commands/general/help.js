@@ -33,7 +33,7 @@ module.exports = {
                 generalHelp.addField(`**Volume control**`, `volume\nmute/unmute`, true);
                 generalHelp.addField(`**Queue control**`, `queue\nremove\nmove\nshuffle\nclear`, true);
                 generalHelp.addField(`**Music information**`, `playing\nnext\nfind\nfindsearch`, true);
-                generalHelp.addField(`**Fun commands**`, `ask\ncool\ncorn\nfookify\nfookifytts\nsay\nlenny\nthesaurize\njoke`, true);
+                generalHelp.addField(`**Fun commands**`, `ask\ncool\ncorn\nfookify\nfookifytts\nsay\nlenny\nthesaurize\njoke\nuwu`, true);
                 generalHelp.addField(`**Admin commands**`, `prefix\nprune\ntoggle\nkick\nban\naddmoney`, true);
                 generalHelp.addField(`**System commands**`, `help\nping`, true);
                 generalHelp.addField(`**Currency commands**`, `balance\ntransfer\nleaderboard`, true);
@@ -44,7 +44,7 @@ module.exports = {
                 generalHelp.addField(`**Volume control**`, `volume\nmute/unmute`, true);
                 generalHelp.addField(`**Queue control**`, `queue\nremove\nmove\nshuffle\nclear`, true);
                 generalHelp.addField(`**Music information**`, `playing\nnext\nfind\nfindsearch`, true);
-                generalHelp.addField(`**Fun commands**`, `ask\nsay\nlenny\nthesaurize\njoke`, true);
+                generalHelp.addField(`**Fun commands**`, `ask\nsay\nlenny\nthesaurize\njoke\nuwu`, true);
                 generalHelp.addField(`**Admin commands**`, `prefix\nprune\ntoggle\nkick\nban\naddmoney`, true);
                 generalHelp.addField(`**System commands**`, `help\nping`, true);
                 generalHelp.addField(`**Currency commands**`, `balance\ntransfer\nleaderboard`, true);

@@ -11,6 +11,7 @@ module.exports = {
 	enabled: true,
 	type: 'fun',
 	execute(message, args) {
+		if (message.guild.id != `471193210102743040`) return;
 		message.channel.send(`Hustle Bones Jul 21, 2018 @ 12:11pm\nJust me and my :two_hearts:daddy:two_hearts:, hanging out I got pretty hungry:eggplant: so I started to pout :disappointed: He asked if I was down :arrow_down:`, { tts: true });
 		message.channel.send(`for something yummy :heart_eyes::eggplant: and I asked what and he said he'd give me his :sweat_drops:cummies!:sweat_drops: Yeah! Yeah!:two_hearts::sweat_drops:`, { tts: true });
 		message.channel.send(`I drink them!:sweat_drops: I slurp them!:sweat_drops: I swallow them whole:sweat_drops:`, { tts: true });

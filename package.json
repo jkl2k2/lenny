@@ -28,7 +28,7 @@
     "chalk": "^3.0.0",
     "colorthief": "^2.3.2",
     "config": "^3.3.1",
-    "discord.js": "^12.2.0",
+    "discord.js": "^12.3.1",
     "erlpack": "github:discordapp/erlpack",
     "ffmpeg-static": "^2.7.0",
     "fluent-ffmpeg": "^2.1.2",

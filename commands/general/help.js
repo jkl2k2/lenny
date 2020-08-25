@@ -16,9 +16,9 @@ module.exports = {
         const { commands } = message.client;
         var client = index.getClient();
 
-        let serverConfig = JSON.parse(fs.readFileSync(`./config/serverConfig.json`, `utf8`));
+        const serverConfig = client.settings.ensure(message.guild.id, client.settings.default);
 
-        let prefix = serverConfig[message.guild.id].prefix;
+        let prefix = serverConfig[`prefix`];
 
         if (!args.length) {
             // Send list of commands
@@ -34,7 +34,7 @@ module.exports = {
                 generalHelp.addField(`**Queue control**`, `queue\nremove\nmove\nshuffle\nclear`, true);
                 generalHelp.addField(`**Music information**`, `playing\nnext\nfind\nfindsearch`, true);
                 generalHelp.addField(`**Fun commands**`, `ask\ncool\ncorn\nfookify\nfookifytts\nsay\nlenny\nthesaurize\njoke\nuwu`, true);
-                generalHelp.addField(`**Admin commands**`, `prefix\nprune\ntoggle\nkick\nban\naddmoney`, true);
+                generalHelp.addField(`**Admin commands**`, `config\nprune\ntoggle\nkick\nban\naddmoney`, true);
                 generalHelp.addField(`**System commands**`, `help\nping`, true);
                 generalHelp.addField(`**Currency commands**`, `balance\ntransfer\nleaderboard`, true);
                 generalHelp.addField(`**Game commands**`, `flip\nblackjack`, true);
@@ -45,7 +45,7 @@ module.exports = {
                 generalHelp.addField(`**Queue control**`, `queue\nremove\nmove\nshuffle\nclear`, true);
                 generalHelp.addField(`**Music information**`, `playing\nnext\nfind\nfindsearch`, true);
                 generalHelp.addField(`**Fun commands**`, `ask\nsay\nlenny\nthesaurize\njoke\nuwu`, true);
-                generalHelp.addField(`**Admin commands**`, `prefix\nprune\ntoggle\nkick\nban\naddmoney`, true);
+                generalHelp.addField(`**Admin commands**`, `config\nprune\ntoggle\nkick\nban\naddmoney`, true);
                 generalHelp.addField(`**System commands**`, `help\nping`, true);
                 generalHelp.addField(`**Currency commands**`, `balance\ntransfer\nleaderboard`, true);
                 generalHelp.addField(`**Game commands**`, `flip\nblackjack`, true);

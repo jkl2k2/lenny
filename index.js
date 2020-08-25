@@ -17,12 +17,12 @@ const colorThief = require(`colorthief`);
 const fetch = require(`node-fetch`);
 const beta = config.get(`Bot.beta`);
 const prettyMs = require(`pretty-ms`);
+const Enmap = require('enmap');
 //#endregion
 
 //#region Initialize database
 const { Users, CurrencyShop } = require('./dbObjects');
 const { Op } = require('sequelize');
-const { SSL_OP_COOKIE_EXCHANGE } = require('constants');
 const currency = new Discord.Collection();
 
 Reflect.defineProperty(currency, 'add', {
@@ -50,6 +50,29 @@ Reflect.defineProperty(currency, 'getBalance', {
 const client = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
 client.commands = new Discord.Collection();
 const cooldowns = new Discord.Collection();
+//#endregion
+
+//#region Initialize enmap
+client.settings = new Enmap({
+    name: "settings",
+    fetchAll: false,
+    autoFetch: true,
+    cloneLevel: 'deep'
+});
+
+const defaultSettings = {
+    prefix: "!",
+    modLogChannel: "mod-log",
+    modRole: "Moderator",
+    adminRole: "Administrator",
+    welcomeChannel: "welcome",
+    welcomeMessage: "Welcome, {{user}}! Enjoy your stay."
+};
+
+client.on(`guildDelete`, guild => {
+    // Remove deleted guild from Enmap
+    client.settings.delete(guild.id);
+});
 //#endregion
 
 //#region Classes
@@ -975,42 +998,7 @@ client.on('message', message => {
     // If the message's guild is not available
     if (!message.guild.available) return;
 
-    // Read serverConfig.json
-    let serverConfig = JSON.parse(fs.readFileSync(`./config/serverConfig.json`, `utf8`));
-
-    // If server not registered in serverConfig.json
-    if (!serverConfig[message.guild.id]) {
-        logger.info(chalk.bgWhiteBright.black(`New server registered with serverConfig\nName: "${message.guild.name}"\nID: ${message.guild.id}`));
-
-        // Register server with default prefix
-        serverConfig[message.guild.id] = {
-            name: message.guild.name,
-            prefix: config.get(`Bot.prefix`)
-        };
-
-        // Write to serverConfig.json
-        fs.writeFile(`./config/serverConfig.json`, JSON.stringify(serverConfig, null, `\t`), err => {
-            if (err) logger.error(err);
-        });
-    }
-
-    // If server name changed
-    if (serverConfig[message.guild.id] && serverConfig[message.guild.id].name != message.guild.name) {
-        logger.info(chalk.bgWhiteBright.black(`Updating server in serverConfig\nPrevious Name: "${serverConfig[message.guild.id].name}"\nNew Name: "${message.guild.name}"\nID: ${message.guild.id}`));
-
-        // Update server config with new name
-        serverConfig[message.guild.id] = {
-            name: message.guild.name,
-            prefix: serverConfig[message.guild.id].prefix
-        };
-
-        // Write to serverConfig.json
-        fs.writeFile(`./config/serverConfig.json`, JSON.stringify(serverConfig, null, `\t`), err => {
-            if (err) logger.error(err);
-        });
-    }
-
-    let prefix = serverConfig[message.guild.id].prefix;
+    let prefix = `!`;
 
     if (message.content.toLowerCase().includes("banana")) {
         message.react('🍌')

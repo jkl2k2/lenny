@@ -60,11 +60,11 @@ client.settings = new Enmap({
     cloneLevel: 'deep'
 });
 
-const defaultSettings = {
+client.settings.default = {
     prefix: "!",
+    modLogEnabled: "false",
     modLogChannel: "mod-log",
-    modRole: "Moderator",
-    adminRole: "Administrator",
+    welcomeEnabled: "false",
     welcomeChannel: "welcome",
     welcomeMessage: "Welcome, {{user}}! Enjoy your stay."
 };
@@ -989,6 +989,75 @@ client.on(`messageReactionRemove`, async reaction => {
 });
 //#endregion
 
+//#region Client on member join
+client.on("guildMemberAdd", member => {
+    // Ensure settings exist
+    client.settings.ensure(member.guild.id, client.settings.default);
+
+    // Get welcome message
+    let welcomeMessage = client.settings.get(member.guild.id, "welcomeMessage");
+
+    // Fill placeholders
+    welcomeMessage = welcomeMessage.replace(`{{user}}`, member.user);
+    welcomeMessage = welcomeMessage.replace(`{{server}}`, member.guild.name);
+
+    // Find welcome channel
+    let channel = member.guild.channels.cache.find(channel => channel.name == client.settings.get(member.guild.id, "welcomeChannel"));
+
+    // Send message
+    channel.send(welcomeMessage);
+});
+//#endregion
+
+//#region Administrative logging
+
+client.on(`messageDelete`, message => {
+    // Check if modlog enabled in guild
+    if (JSON.parse(client.settings.get(message.guild.id, `modLogEnabled`)) != true) return;
+
+    function getMessageTimestamp(message) {
+        if (message.createdAt.getMinutes() < 10) {
+            return `[${message.createdAt.getMonth() + 1}/${message.createdAt.getDate() + 1} @ ${message.createdAt.getHours()}:0${message.createdAt.getMinutes()}]`;
+        } else {
+            return `[${message.createdAt.getMonth() + 1}/${message.createdAt.getDate() + 1} @ ${message.createdAt.getHours()}:${message.createdAt.getMinutes()}]`;
+        }
+    }
+
+    let logChannel = message.guild.channels.cache.find(channel => channel.name == client.settings.get(message.guild.id, `modLogChannel`));
+
+    if (logChannel == undefined) return;
+
+    if (message.guild.id != `438485091824697344`) return;
+
+    logChannel.send(new Discord.MessageEmbed()
+        .setDescription(`:wastebasket: Message Deleted By: **${message.author.tag}** in channel ${message.channel}\n\`\`\`${getMessageTimestamp(message)} ${message.cleanContent}\`\`\``)
+        .setFooter(`ID: ${message.id}`)
+        .setColor(`#FF3838`)
+        .setTimestamp());
+});
+
+client.on(`messageDeleteBulk`, async messages => {
+    let message = messages.array()[0];
+
+    // Check if modlog enabled in guild
+    if (JSON.parse(client.settings.get(message.guild.id, `modLogEnabled`)) != true) return;
+
+    if (message.partial) await message.fetch();
+
+    let logChannel = message.guild.channels.cache.find(channel => channel.name == client.settings.get(message.guild.id, `modLogChannel`));
+
+    if (logChannel == undefined) return;
+
+    if (message.guild.id != `438485091824697344`) return;
+
+    logChannel.send(new Discord.MessageEmbed()
+        .setDescription(`:wastebasket: ${messages.size - 1} Messages (Bulk) Deleted\n\`${messages.size - 1} messages deleted\` in channel ${message.channel}`)
+        .setColor(`#FF3838`)
+        .setTimestamp());
+});
+
+//#endregion
+
 //#region Client on message
 client.on('message', message => {
 
@@ -998,7 +1067,9 @@ client.on('message', message => {
     // If the message's guild is not available
     if (!message.guild.available) return;
 
-    let prefix = `!`;
+    const serverConfig = client.settings.ensure(message.guild.id, client.settings.default);
+
+    let prefix = serverConfig.prefix;
 
     if (message.content.toLowerCase().includes("banana")) {
         message.react('🍌')
@@ -1025,7 +1096,7 @@ client.on('message', message => {
     }
 
     // If message is only bot mention, show prefix
-    if (message.content == "<@!641137495886528513>") {
+    if (message.content == `<@!${client.user.id}>`) {
         return message.channel.send(new Discord.MessageEmbed()
             .setDescription(`:information_source: The prefix for the server \`${message.guild.name}\` is currently \`${prefix}\``)
             .setColor(`#0083FF`));

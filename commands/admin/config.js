@@ -8,9 +8,9 @@ module.exports = {
     name: 'config',
     description: 'Center for server-related functionality',
     // aliases: ['aliases'],
-    // args: true,
-    // usage: '[command]',
-    // altUsage: 'command',
+    args: true,
+    usage: 'view',
+    altUsage: 'set [option] [value]',
     // cooldown: 5,
     guildOnly: true,
     enabled: true,
@@ -26,25 +26,13 @@ module.exports = {
 
         const [key, ...value] = args;
 
-        if (args.length == 0 || action == `view`) {
-            // Display the server config
-            let configProps = Object.keys(serverConfig).map(prop => {
-                return `**${prop}**: \`${serverConfig[prop]}\`\n`;
-            });
-
-            /*
-            // Send as embed
+        if (action == `view`) {
+            // Display server config
             return message.channel.send(new Discord.MessageEmbed()
-                .setDescription(configProps)
-                .setAuthor(`Configuration for ${message.guild.name} (${message.guild.id})`, message.guild.iconURL())
-                .setColor(`#0083FF`));
-            */
-
-            return message.channel.send(new Discord.MessageEmbed()
+                .setAuthor(`Dashboard - ${message.guild.name}\nID: ${message.guild.id}`, message.guild.iconURL())
                 .addField(`General Settings`, `prefix: \`${serverConfig[`prefix`]}\``)
                 .addField(`Mod Log`, `modLogEnabled: \`${serverConfig[`modLogEnabled`]}\`\nmodLogChannel: \`${serverConfig[`modLogChannel`]}\``)
                 .addField(`Welcome Message`, `welcomeEnabled: \`${serverConfig[`welcomeEnabled`]}\`\nwelcomeChannel: \`${serverConfig[`welcomeChannel`]}\`\nwelcomeMessage: \`${serverConfig[`welcomeMessage`]}\``)
-                .setAuthor(`Configuration for ${message.guild.name}\nID: ${message.guild.id}`, message.guild.iconURL())
                 .setColor(`#0083FF`));
 
         } else if (action == `set`) {

@@ -1084,11 +1084,18 @@ client.on('message', message => {
     if (!clientReady) return;
 
     // If the message's guild is not available
-    if (!message.guild.available) return;
+    if (message.guild && !message.guild.available) return;
 
-    const serverConfig = client.settings.ensure(message.guild.id, client.settings.default);
+    let serverConfig;
+    let prefix;
 
-    let prefix = serverConfig.prefix;
+    if (message.guild) {
+        serverConfig = client.settings.ensure(message.guild.id, client.settings.default);
+        prefix = serverConfig[`prefix`];
+    } else {
+        prefix = "!";
+    }
+
 
     if (message.content.toLowerCase().includes("banana")) {
         message.react('🍌')
@@ -1205,7 +1212,7 @@ client.on('message', message => {
     setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
 
     // If command has permission restrictions
-    if (command.restrictions && message.member.id != ownerID) {
+    if (command.restrictions && message.author.id != ownerID) {
         if (command.restrictions.resolvable && command.restrictions.resolvable.length > 0 && !message.member.hasPermission(command.restrictions.resolvable)) {
             return message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`<:cross:729019052571492434> Sorry, ${message.author.username}, you do not have the required permission(s) to use \`${prefix}${command.name}\`\n\nPermissions required:\n\`${command.restrictions.resolvable.join("\n")}\``)

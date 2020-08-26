@@ -16,9 +16,15 @@ module.exports = {
         const { commands } = message.client;
         var client = index.getClient();
 
-        const serverConfig = client.settings.ensure(message.guild.id, client.settings.default);
+        let serverConfig;
+        let prefix;
 
-        let prefix = serverConfig[`prefix`];
+        if (message.guild) {
+            serverConfig = client.settings.ensure(message.guild.id, client.settings.default);
+            prefix = serverConfig[`prefix`];
+        } else {
+            prefix = "!";
+        }
 
         if (!args.length) {
             // Send list of commands
@@ -27,7 +33,7 @@ module.exports = {
 
             generalHelp.setAuthor(`Use ${prefix}help [command name] to get info on a specific command`, client.user.avatarURL());
 
-            if (message.guild.id == "471193210102743040") {
+            if (message.guild && message.guild.id == "471193210102743040") {
                 generalHelp.addField(`**Music playing**`, `play/playnext/playnow\nplaylist\nsearch`, true);
                 generalHelp.addField(`**Playback control**`, `skip/skipall\njoin/leave\npause/resume`, true);
                 generalHelp.addField(`**Volume control**`, `volume\nmute/unmute`, true);

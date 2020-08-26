@@ -32,7 +32,7 @@ module.exports = {
                 .setAuthor(`Dashboard - ${message.guild.name}\nID: ${message.guild.id}`, message.guild.iconURL())
                 .addField(`General Settings`, `prefix: \`${serverConfig[`prefix`]}\``)
                 .addField(`Mod Log`, `modLogEnabled: \`${serverConfig[`modLogEnabled`]}\`\nmodLogChannel: \`${serverConfig[`modLogChannel`]}\``)
-                .addField(`Welcome Message`, `welcomeEnabled: \`${serverConfig[`welcomeEnabled`]}\`\nwelcomeChannel: \`${serverConfig[`welcomeChannel`]}\`\nwelcomeMessage: \`${serverConfig[`welcomeMessage`]}\``)
+                .addField(`Welcome Message`, `welcomeEnabled: \`${serverConfig[`welcomeEnabled`]}\`\nwelcomeChannel: \`${serverConfig[`welcomeChannel`]}\`\nwelcomeMessage: \`${serverConfig[`welcomeMessage`]}\`\ngoodbyeMessage: \`${serverConfig[`goodbyeMessage`]}\``)
                 .setColor(`#0083FF`));
 
         } else if (action == `set`) {

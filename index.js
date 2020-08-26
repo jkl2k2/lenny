@@ -66,7 +66,8 @@ client.settings.default = {
     modLogChannel: "mod-log",
     welcomeEnabled: "false",
     welcomeChannel: "welcome",
-    welcomeMessage: "Welcome, {{user}}! Enjoy your stay."
+    welcomeMessage: "Welcome, {{user}}! Enjoy your stay.",
+    goodbyeMessage: "Goodbye, {{user}}!"
 };
 
 client.on(`guildDelete`, guild => {
@@ -989,7 +990,7 @@ client.on(`messageReactionRemove`, async reaction => {
 });
 //#endregion
 
-//#region Client on member join
+//#region Client on member join/leave
 client.on("guildMemberAdd", member => {
     // Ensure settings exist
     client.settings.ensure(member.guild.id, client.settings.default);
@@ -1006,6 +1007,24 @@ client.on("guildMemberAdd", member => {
 
     // Send message
     channel.send(welcomeMessage);
+});
+
+client.on("guildMemberRemove", member => {
+    // Ensure settings exist
+    client.settings.ensure(member.guild.id, client.settings.default);
+
+    // Get goodbye message
+    let goodbyeMessage = client.settings.get(member.guild.id, "goodbyeMessage");
+
+    // Fill placeholders
+    goodbyeMessage = goodbyeMessage.replace(`{{user}}`, member.user.username);
+    goodbyeMessage = goodbyeMessage.replace(`{{server}}`, member.guild.name);
+
+    // Find welcome channel
+    let channel = member.guild.channels.cache.find(channel => channel.name == client.settings.get(member.guild.id, "welcomeChannel"));
+
+    // Send message
+    channel.send(goodbyeMessage);
 });
 //#endregion
 

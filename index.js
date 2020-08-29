@@ -330,6 +330,9 @@ var repeat = false;
 const Queues = new Discord.Collection();
 const Dispatchers = new Discord.Collection();
 
+const moneyCooldowns = new Discord.Collection();
+const baseMoneyCooldown = 15000;
+
 const token = config.get(`Bot.token`);
 const ownerID = config.get(`Users.ownerID`);
 const jahyID = config.get(`Users.jahyID`);
@@ -1110,15 +1113,32 @@ client.on('message', message => {
     // Return if message from bot
     if (message.author.bot) return;
 
-    // Award money for activity
-    if (message.attachments.array()[0]) {
-        currency.add(message.author.id, Math.floor((message.content.length / 10)) + 10);
-    } else if (message.content.length >= 5) {
-        if (Math.floor(message.content.length / 10) < 1) {
-            currency.add(message.author.id, 1);
-        } else {
-            currency.add(message.author.id, Math.floor((message.content.length / 10)));
+    if (!moneyCooldowns.has(message.author.id)) {
+        // First time - Award money for activity
+        if (message.attachments.array()[0]) {
+            currency.add(message.author.id, Math.floor((message.content.length / 10)) + 10);
+        } else if (message.content.length >= 5) {
+            if (Math.floor(message.content.length / 10) < 1) {
+                currency.add(message.author.id, 1);
+            } else {
+                currency.add(message.author.id, Math.floor((message.content.length / 10)));
+            }
         }
+        moneyCooldowns.set(message.author.id, Date.now());
+    } else if (Date.now() - moneyCooldowns.get(`${message.author.id}`) > baseMoneyCooldown) {
+        // Award money for activity
+        if (message.attachments.array()[0]) {
+            currency.add(message.author.id, Math.floor((message.content.length / 10)) + 10);
+        } else if (message.content.length >= 5) {
+            if (Math.floor(message.content.length / 10) < 1) {
+                currency.add(message.author.id, 1);
+            } else {
+                currency.add(message.author.id, Math.floor((message.content.length / 10)));
+            }
+        }
+        moneyCooldowns.set(message.author.id, Date.now());
+    } else {
+        // No money
     }
 
     // If message is only bot mention, show prefix

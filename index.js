@@ -331,7 +331,7 @@ const Queues = new Discord.Collection();
 const Dispatchers = new Discord.Collection();
 
 const moneyCooldowns = new Discord.Collection();
-const baseMoneyCooldown = 10000;
+const baseMoneyCooldown = 15000;
 
 const token = config.get(`Bot.token`);
 const ownerID = config.get(`Users.ownerID`);

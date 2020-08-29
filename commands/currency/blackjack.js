@@ -132,13 +132,15 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance,
         // House hits natural blackjack
         // Confirmed working
 
+        /*
         currency.add(message.author.id, -bet);
         currency.add("0", bet);
+        */
 
         sent.delete();
 
         message.channel.send(new Discord.MessageEmbed()
-            .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nSorry, ${message.author.username}. You **lost** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**HOUSE HIT NATURAL BLACKJACK**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${showPoints(house)})\n${showHand(house)}`)
+            .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\n${message.author.username}, you technically lost but until an insurance\nsystem is implemented **no money will be deducted**\n\nBalance: **$${currency.getBalance(message.author.id)}**\n\n**HOUSE HIT NATURAL BLACKJACK**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${showPoints(house)})\n${showHand(house)}`)
             .setColor(`#801431`)
             .setThumbnail(message.author.avatarURL()));
 
@@ -361,7 +363,11 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance,
             if (m.content.toLowerCase() == "stay" || m.content.toLowerCase() == "stand") {
                 // sent.delete();
                 updatePoints(house);
-                while (house.points < 17 && house.altPoints < 17) {
+                while (house.points < 17) {
+                    if (house.altPoints >= 17 && house.altPoints <= 21) {
+                        updatePoints(house);
+                        break;
+                    }
                     house.hand.push(drawCard(deck));
                     updatePoints(house);
                 }

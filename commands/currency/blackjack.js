@@ -146,7 +146,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance,
 
     } else {
 
-        const filter = m => m.author.id == message.author.id && (m.content.toLowerCase() == "hit" || m.content.toLowerCase() == "stay" || m.content.toLowerCase() == "stand" || m.content.toLowerCase() == "double" || m.content.toLowerCase() == "cancel" || m.content.toLowerCase().includes("!blackjack") || m.content.toLowerCase().includes("!bj"));
+        const filter = m => m.author.id == message.author.id && (m.content.toLowerCase() == "hit" || m.content.toLowerCase() == "h" || m.content.toLowerCase() == "stay" || m.content.toLowerCase() == "stand" || m.content.toLowerCase() == "s" || m.content.toLowerCase() == "double" || m.content.toLowerCase() == "d" || m.content.toLowerCase() == "cancel" || m.content.toLowerCase().includes("!blackjack") || m.content.toLowerCase().includes("!bj"));
 
         const collector = message.channel.createMessageCollector(filter, { time: 600000, max: 1 });
 
@@ -170,7 +170,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance,
                 return;
             }
 
-            if (m.content.toLowerCase() == "double") {
+            if (m.content.toLowerCase() == "double" || m.content.toLowerCase() == "d") {
 
                 // Check if able to double bet
                 if (originalBalance < bet * 2) {
@@ -326,7 +326,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance,
                 }
             }
 
-            if (m.content.toLowerCase() == "hit") {
+            if (m.content.toLowerCase() == "hit" || m.content.toLowerCase() == "h") {
                 sent.delete();
                 player.hand.push(drawCard(deck));
                 updatePoints(player);
@@ -360,7 +360,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance,
                 }
             }
 
-            if (m.content.toLowerCase() == "stay" || m.content.toLowerCase() == "stand") {
+            if (m.content.toLowerCase() == "stay" || m.content.toLowerCase() == "stand" || m.content.toLowerCase() == "s") {
                 // sent.delete();
                 updatePoints(house);
                 while (house.points < 17) {

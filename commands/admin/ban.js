@@ -25,12 +25,17 @@ module.exports = {
         target.send(theMessage)
             .then(() => {
                 // var kickTarget = client.users.get(target);
-                message.channel.send(`User has been banned.`);
-                return target.ban("User banned with the !ban command");
+                target.ban("User banned with the !ban command")
+				.then(() => {
+					message.channel.send(`User has been banned.`);
+				})
+				.catch(error => {
+					message.channel.send("Failed to ban user (permissions conflict?)");
+				});
             })
             .catch(error => {
-                console.error(`Could not send help DM to ${message.author.tag}.\n`, error);
-                message.channel.send("User has DMs disabled, unable to send message");
+                console.error(`Ban of ${message.author.tag} failed.\n`, error);
+                message.channel.send("Failed to DM user");
             });
     }
 };

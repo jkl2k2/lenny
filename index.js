@@ -1011,6 +1011,10 @@ client.on("guildMemberAdd", member => {
     // Find welcome channel
     let channel = member.guild.channels.cache.find(channel => channel.name == client.settings.get(member.guild.id, "welcomeChannel"));
 
+    if (channel == undefined) {
+        logger.debug(`Welcome messages enabled, but no welcome channel found\nServer Name: ${member.guild.name}\nServer ID: ${member.guild.id}`);
+    }
+
     // Send message
     channel.send(welcomeMessage);
 });
@@ -1031,6 +1035,10 @@ client.on("guildMemberRemove", member => {
 
     // Find welcome channel
     let channel = member.guild.channels.cache.find(channel => channel.name == client.settings.get(member.guild.id, "welcomeChannel"));
+
+    if (channel == undefined) {
+        logger.debug(`Welcome messages enabled, but no welcome channel found\nServer Name: ${member.guild.name}\nServer ID: ${member.guild.id}`);
+    }
 
     // Send message
     channel.send(goodbyeMessage);

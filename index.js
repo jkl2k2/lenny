@@ -998,6 +998,9 @@ client.on("guildMemberAdd", member => {
     // Ensure settings exist
     client.settings.ensure(member.guild.id, client.settings.default);
 
+    // Return if disabled
+    if (JSON.parse(client.settings.get(message.guild.id, `welcomeEnabled`)) != true) return;
+
     // Get welcome message
     let welcomeMessage = client.settings.get(member.guild.id, "welcomeMessage");
 
@@ -1015,6 +1018,9 @@ client.on("guildMemberAdd", member => {
 client.on("guildMemberRemove", member => {
     // Ensure settings exist
     client.settings.ensure(member.guild.id, client.settings.default);
+
+    // Return if disabled
+    if (JSON.parse(client.settings.get(message.guild.id, `welcomeEnabled`)) != true) return;
 
     // Get goodbye message
     let goodbyeMessage = client.settings.get(member.guild.id, "goodbyeMessage");

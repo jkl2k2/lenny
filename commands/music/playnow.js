@@ -10,6 +10,7 @@ const Queues = index.getQueues();
 const fetch = require(`node-fetch`);
 const hex = require(`rgb-hex`);
 const colorThief = require(`colorthief`);
+const client = index.getClient();
 
 module.exports = {
 	name: 'playnow',
@@ -56,35 +57,23 @@ module.exports = {
 				queue.unshift(newVideo);
 			}
 
-			/*
-			if (await newVideo.getLength() == "0:00") {
-				let buffer = await fetch(newVideo.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
-				let rgb = await colorThief.getColor(buffer);
-				message.channel.send(new Discord.MessageEmbed()
-					.setAuthor(`Queued (#${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
-					.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\n[${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\n\`YouTube Livestream\``)
-					.setThumbnail(newVideo.getThumbnail())
-					.setTimestamp()
-					.setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar())
-					.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
-			} else {
-				let buffer = await fetch(newVideo.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
-				let rgb = await colorThief.getColor(buffer);
-				message.channel.send(new Discord.MessageEmbed()
-					.setAuthor(`Queued (#${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
-					.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\n[${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\nLength: \`${await newVideo.getLength()}\``)
-					.setThumbnail(newVideo.getThumbnail())
-					.setTimestamp()
-					.setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar())
-					.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
+			if (!message.member.voice.channel) return logger.warn(`User not in voice channel after playlist processing`);
+
+			if (client.voice.connections.get(message.member.voice.channel)) {
+				// if already in vc
+				let connection = client.voice.connections.get(message.member.voice.channel);
+				if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
+					return index.callPlayMusic(message);
+				} else {
+					index.endDispatcher(message);
+				}
 			}
-			*/
 
 			if (message.member.voice.channel) {
 				message.member.voice.channel.join()
 					.then(connection => {
 						if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
-							index.callPlayMusic(message);
+							return index.callPlayMusic(message);
 						} else {
 							index.endDispatcher(message);
 						}
@@ -130,11 +119,23 @@ module.exports = {
 							.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
 							.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
 
+						if (!message.member.voice.channel) return logger.warn(`User not in voice channel after playlist processing`);
+
+						if (client.voice.connections.get(message.member.voice.channel)) {
+							// if already in vc
+							let connection = client.voice.connections.get(message.member.voice.channel);
+							if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
+								return index.callPlayMusic(message);
+							} else {
+								index.endDispatcher(message);
+							}
+						}
+
 						if (message.member.voice.channel) {
 							message.member.voice.channel.join()
 								.then(connection => {
 									if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
-										index.callPlayMusic(message);
+										return index.callPlayMusic(message);
 									}
 								})
 								.catch(logger.error);
@@ -201,11 +202,23 @@ module.exports = {
 					.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
 			}
 
+			if (!message.member.voice.channel) return logger.warn(`User not in voice channel after playlist processing`);
+
+			if (client.voice.connections.get(message.member.voice.channel)) {
+				// if already in vc
+				let connection = client.voice.connections.get(message.member.voice.channel);
+				if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
+					return index.callPlayMusic(message);
+				} else {
+					index.endDispatcher(message);
+				}
+			}
+
 			if (message.member.voice.channel) {
 				message.member.voice.channel.join()
 					.then(connection => {
 						if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
-							index.callPlayMusic(message);
+							return index.callPlayMusic(message);
 						} else {
 							index.endDispatcher(message);
 						}

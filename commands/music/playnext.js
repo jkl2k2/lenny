@@ -10,6 +10,7 @@ const Queues = index.getQueues();
 const fetch = require(`node-fetch`);
 const hex = require(`rgb-hex`);
 const colorThief = require(`colorthief`);
+const client = index.getClient();
 
 module.exports = {
 	name: 'playnext',
@@ -78,11 +79,21 @@ module.exports = {
 					.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
 			}
 
+			if (!message.member.voice.channel) return logger.warn(`User not in voice channel after playlist processing`);
+
+			if (client.voice.connections.get(message.member.voice.channel)) {
+				// if already in vc
+				let connection = client.voice.connections.get(message.member.voice.channel);
+				if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
+					return index.callPlayMusic(message);
+				}
+			}
+
 			if (message.member.voice.channel) {
 				message.member.voice.channel.join()
 					.then(connection => {
 						if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
-							index.callPlayMusic(message);
+							return index.callPlayMusic(message);
 						}
 					})
 					.catch(`${logger.error}`);
@@ -126,11 +137,21 @@ module.exports = {
 							.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
 							.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
 
+						if (!message.member.voice.channel) return logger.warn(`User not in voice channel after playlist processing`);
+
+						if (client.voice.connections.get(message.member.voice.channel)) {
+							// if already in vc
+							let connection = client.voice.connections.get(message.member.voice.channel);
+							if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
+								return index.callPlayMusic(message);
+							}
+						}
+
 						if (message.member.voice.channel) {
 							message.member.voice.channel.join()
 								.then(connection => {
 									if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
-										index.callPlayMusic(message);
+										return index.callPlayMusic(message);
 									}
 								})
 								.catch(logger.error);
@@ -197,11 +218,21 @@ module.exports = {
 					.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
 			}
 
+			if (!message.member.voice.channel) return logger.warn(`User not in voice channel after playlist processing`);
+
+			if (client.voice.connections.get(message.member.voice.channel)) {
+				// if already in vc
+				let connection = client.voice.connections.get(message.member.voice.channel);
+				if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
+					return index.callPlayMusic(message);
+				}
+			}
+
 			if (message.member.voice.channel) {
 				message.member.voice.channel.join()
 					.then(connection => {
 						if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
-							index.callPlayMusic(message);
+							return index.callPlayMusic(message);
 						} else {
 							logger.debug(`Connection speaking`);
 						}

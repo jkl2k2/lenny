@@ -9,7 +9,7 @@ module.exports = {
     name: 'findvideo',
     description: 'Searches YouTube with the provided search terms, then returns the best match',
     args: true,
-    aliases: ['find'],
+    aliases: ['find', 'yt'],
     usage: '[search term(s)]',
     // cooldown: 5,
     guildOnly: true,

@@ -501,12 +501,12 @@ async function playMusic(message) {
     // Reset dispatcher stream delay
     client.voice.connections.get(message.guild.id).player.streamingData.pausedTime = 0;
 
-    Dispatchers.get(message.guild.id).on("close", function () {
+    Dispatchers.get(message.guild.id).on("close", () => {
         if (queue.repeat) {
             queue.list.unshift(queue.lastPlayed);
         }
         if (queue.list[0]) {
-            playMusic(message);
+            return playMusic(message);
         } else {
             Dispatchers.set(message.guild.id, undefined);
         }

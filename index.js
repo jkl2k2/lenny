@@ -1048,6 +1048,9 @@ client.on("guildMemberRemove", member => {
 //#region Administrative logging
 
 client.on(`messageDelete`, message => {
+    // If message was uncached and therefore null
+    if (message.author == null) return;
+
     // Check if modlog enabled in guild
     if (JSON.parse(client.settings.get(message.guild.id, `modLogEnabled`)) != true) return;
 
@@ -1066,7 +1069,7 @@ client.on(`messageDelete`, message => {
     if (message.guild.id != `438485091824697344`) return;
 
     logChannel.send(new Discord.MessageEmbed()
-        .setDescription(`:wastebasket: Message Deleted By: **${message.author.tag}** in channel ${message.channel}\n\`\`\`${getMessageTimestamp(message)} ${message.cleanContent}\`\`\``)
+        .setDescription(`:wastebasket: Message Deleted By: **${message.author}** in channel ${message.channel}\n\`\`\`${getMessageTimestamp(message)} ${message.cleanContent}\`\`\``)
         .setFooter(`ID: ${message.id}`)
         .setColor(`#FF3838`)
         .setTimestamp());

@@ -168,31 +168,35 @@ module.exports = {
 
 			if (await newVideo.getLength() == "0:00") {
 				if (dispatcher != undefined || (prevQueue != undefined && prevQueue.list[1])) {
-					let buffer = await fetch(newVideo.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
-					let rgb = await colorThief.getColor(buffer);
-					message.channel.send(new Discord.MessageEmbed()
-						.setAuthor(`Queued (#${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
-						.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\n[${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\n\`YouTube Livestream\``)
-						.setThumbnail(newVideo.getThumbnail())
-						.setTimestamp()
-						.setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar())
-						.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
+					fetch(newVideo.getThumbnail())
+						.then(r => r.buffer())
+						.then(buf => `data:image/jpg;base64,` + buf.toString('base64'))
+						.then(formatted => colorThief.getColor(formatted))
+						.then(async rgb => message.channel.send(new Discord.MessageEmbed()
+							.setAuthor(`Queued (#${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
+							.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\n[${newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\n\`YouTube Livestream\``)
+							.setThumbnail(newVideo.getThumbnail())
+							.setTimestamp()
+							.setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar())
+							.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`)));
 				}
 			} else {
 				if (dispatcher != undefined || (prevQueue != undefined && prevQueue.list[1])) {
-					let buffer = await fetch(newVideo.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
-					let rgb = await colorThief.getColor(buffer);
-					message.channel.send(new Discord.MessageEmbed()
-						.setAuthor(`Queued (#${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
-						.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\n[${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\nLength: \`${await newVideo.getLength()}\``)
-						.setThumbnail(newVideo.getThumbnail())
-						.setTimestamp()
-						.setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar())
-						.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
+					fetch(newVideo.getThumbnail())
+						.then(r => r.buffer())
+						.then(buf => `data:image/jpg;base64,` + buf.toString('base64'))
+						.then(formatted => colorThief.getColor(formatted))
+						.then(async rgb => message.channel.send(new Discord.MessageEmbed()
+							.setAuthor(`Queued (#${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
+							.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\n[${newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\nLength: \`${await newVideo.getLength()}\``)
+							.setThumbnail(newVideo.getThumbnail())
+							.setTimestamp()
+							.setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar())
+							.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`)));
 				}
 			}
 
-			if (!message.member.voice.channel) return logger.warn(`User not in voice channel after playlist processing`);
+			if (!message.member.voice.channel) return logger.warn(`User not in voice channel after video processing`);
 
 			if (client.voice.connections.get(message.member.voice.channel)) {
 				// if already in vc
@@ -258,16 +262,17 @@ module.exports = {
 			}
 
 			if (dispatcher != undefined || (queue != undefined && queue.list[1])) {
-				let buffer = await fetch(newSC.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
-				let rgb = await colorThief.getColor(buffer);
-				message.channel.send(new Discord.MessageEmbed()
-					.setTitle(` `)
-					.setAuthor(`Queued (#${newSC.getPosition()})`, newSC.getChannelThumbnail(), newSC.getURL())
-					.setDescription(`**[${newSC.getTitle()}](${newSC.getURL()})**\n[${newSC.getChannelName()}](${newSC.getChannelURL()})\n\nLength: \`${newSC.getLength()}\``)
-					.setThumbnail(newSC.getThumbnail())
-					.setFooter(`Requested by ${newSC.getRequesterName()}`, newSC.getRequesterAvatar())
-					.setTimestamp()
-					.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
+				fetch(newSC.getThumbnail())
+					.then(r => r.buffer())
+					.then(buf => `data:image/jpg;base64,` + buf.toString('base64'))
+					.then(formatted => colorThief.getColor(formatted))
+					.then(async rgb => message.channel.send(new Discord.MessageEmbed()
+						.setAuthor(`Queued (#${newSC.getPosition()})`, newSC.getChannelThumbnail(), newSC.getURL())
+						.setDescription(`**[${newSC.getTitle()}](${newSC.getURL()})**\n[${newSC.getChannelName()}](${newSC.getChannelURL()})\n\nLength: \`${newSC.getLength()}\``)
+						.setThumbnail(newSC.getThumbnail())
+						.setFooter(`Requested by ${newSC.getRequesterName()}`, newSC.getRequesterAvatar())
+						.setTimestamp()
+						.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`)));
 			}
 
 			if (!message.member.voice.channel) return logger.warn(`User not in voice channel after playlist processing`);

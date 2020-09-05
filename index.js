@@ -421,7 +421,7 @@ async function sendDetails(input, c) {
         let rgb = await colorThief.getColor(buffer);
         let musicEmbed = new Discord.MessageEmbed()
             .setAuthor(`Now playing`, await input.getChannelThumbnail())
-            .setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${await input.getChannelName()}](${input.getChannelURL()})\n\n\`YouTube Livestream\``)
+            .setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${input.getChannelName()}](${input.getChannelURL()})\n\n\`YouTube Livestream\``)
             .setThumbnail(input.getThumbnail())
             .setTimestamp()
             .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar())
@@ -443,7 +443,7 @@ async function sendDetails(input, c) {
         let rgb = await colorThief.getColor(buffer);
         let musicEmbed = new Discord.MessageEmbed()
             .setAuthor(`Now playing`, await input.getChannelThumbnail())
-            .setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${await input.getChannelName()}](${input.getChannelURL()})\n\nLength: \`${await input.getLength()}\``)
+            .setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${input.getChannelName()}](${input.getChannelURL()})\n\nLength: \`${await input.getLength()}\``)
             .setThumbnail(input.getThumbnail())
             .setTimestamp()
             .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar())

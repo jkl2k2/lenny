@@ -102,15 +102,13 @@ module.exports = {
 							}
 						}
 
-						// jshint ignore:start
 						processing.edit(new Discord.MessageEmbed()
 							.setAuthor(`➕ Queued playlist`)
 							.setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
-							.setThumbnail(processing.embeds[0].thumbnail?.url)
+							.setThumbnail(processing.embeds[0].thumbnail.url)
 							.setTimestamp()
-							.setFooter(processing.embeds[0].footer?.text)
+							.setFooter(processing.embeds[0].footer.text)
 							.setColor(processing.embeds[0].hexColor));
-						// jshint ignore:end
 
 						if (!message.member.voice.channel) return logger.warn(`User not in voice channel after playlist processing`);
 

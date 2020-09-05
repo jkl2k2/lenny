@@ -1048,6 +1048,9 @@ client.on("guildMemberRemove", member => {
 //#region Administrative logging
 
 client.on(`messageDelete`, message => {
+    // Ensure settings exist
+    client.settings.ensure(member.guild.id, client.settings.default);
+
     // If message was uncached and therefore null
     if (message.author == null) return;
 
@@ -1076,7 +1079,12 @@ client.on(`messageDelete`, message => {
 });
 
 client.on(`messageDeleteBulk`, async messages => {
+    // Ensure settings exist
+    client.settings.ensure(member.guild.id, client.settings.default);
+
     let message = messages.array()[0];
+
+    client.settings.ensure(message.guild.id, `modLogEnabled`);
 
     // Check if modlog enabled in guild
     if (JSON.parse(client.settings.get(message.guild.id, `modLogEnabled`)) != true) return;

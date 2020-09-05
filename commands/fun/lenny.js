@@ -13,5 +13,6 @@ module.exports = {
 	execute(message, args) {
 		message.delete();
 		message.channel.send(`( ͡° ͜ʖ ͡°)`);
+		message.channel.send(`test`);
 	}
 };

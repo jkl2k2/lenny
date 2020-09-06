@@ -1,6 +1,6 @@
 const index = require(`../../index.js`);
 const config = require('config');
-const api = config.get(`Bot.api2`);
+const api = config.get(`Bot.api`);
 const ownerID = config.get(`Users.ownerID`);
 const jahyID = config.get(`Users.jahyID`);
 const Discord = require(`discord.js`);
@@ -47,13 +47,7 @@ module.exports = {
             return;
         }
 
-        var queue = index.getQueue(message);
-
-        if (!Queues.has(message.guild.id)) {
-            let newQueue = new index.constructQueue();
-            index.setQueue(message, newQueue);
-            queue = index.getQueue(message);
-        }
+        var queue = message.guild.music.queue;
 
         youtube.searchPlaylists(args.join(" "))
             .then(async results => {

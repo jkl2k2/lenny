@@ -1,7 +1,7 @@
 const index = require(`../../index.js`);
 const config = require('config');
 const scdl = require(`soundcloud-downloader`);
-const api = config.get(`Bot.api2`);
+const api = config.get(`Bot.api`);
 const Discord = require(`discord.js`);
 const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
@@ -39,23 +39,14 @@ module.exports = {
 				.setColor(`#FF3838`));
 		}
 
-		var queue = index.getQueue(message);
+		var queue = message.guild.music.queue;
 
 		async function process(input) {
 			logger.debug(input.title);
 
 			let newVideo = index.constructVideo(input, message.member);
 
-			// queue.push(newVideo);
-
-			if (!Queues.has(message.guild.id)) {
-				let newQueue = index.constructQueue();
-				newQueue.push(newVideo);
-				// Queues.set(message.guild.id, newQueue);
-				index.setQueue(message, newQueue);
-			} else {
-				queue.unshift(newVideo);
-			}
+			queue.unshift(newVideo);
 
 			if (!message.member.voice.channel) return logger.warn(`User not in voice channel after playlist processing`);
 

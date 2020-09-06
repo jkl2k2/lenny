@@ -8,7 +8,7 @@ const scdl = require(`soundcloud-downloader`);
 const chalk = require('chalk');
 const winston = require('winston');
 const winstonRotate = require(`winston-daily-rotate-file`);
-const api = config.get(`Bot.api2`);
+const api = config.get(`Bot.api`);
 const YouTube = require('simple-youtube-api');
 const youtube = new YouTube(api);
 const TwitchClient = require('twitch').default;
@@ -550,7 +550,7 @@ async function playMusic(message) {
 
     message.guild.music.dispatcher.on("close", () => {
         if (message.guild.music.repeat) {
-            queue.list.unshift(queue.lastPlayed);
+            queue.unshift(queue.lastPlayed);
         }
         if (queue[0]) {
             return playMusic(message);
@@ -558,6 +558,19 @@ async function playMusic(message) {
             message.guild.music.playing = false;
         }
     });
+
+    /*
+    message.guild.music.dispatcher.on("finish", () => {
+        if (message.guild.music.repeat) {
+            queue.unshift(queue.lastPlayed);
+        }
+        if (queue[0]) {
+            return playMusic(message);
+        } else {
+            message.guild.music.playing = false;
+        }
+    });
+    */
 }
 //#endregion
 
@@ -816,15 +829,15 @@ client.on('ready', async () => {
 client.on(`voiceStateUpdate`, (oldState, newState) => {
     if (oldState.channel && !newState.channel) {
         // If was in channel, but is no longer in one
-        Dispatchers.set(oldState.guild.id, undefined);
-        Queues.set(oldState.guild.id, new Queue());
+        oldState.guild.music.queue = [];
+        oldState.guild.music.dispatcher = undefined;
     }
 });
 //#endregion
 
 //#region Starboard
 client.on('messageReactionAdd', async (reaction, user) => {
-    // ready check attachments function 
+    // ready check attachments function
     function extension(reaction, attachment) {
         const imageLink = attachment.split('.');
         const typeOfImage = imageLink[imageLink.length - 1];
@@ -939,7 +952,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
 });
 
 client.on(`messageReactionRemove`, async reaction => {
-    // ready check attachments function 
+    // ready check attachments function
     function extension(reaction, attachment) {
         const imageLink = attachment.split('.');
         const typeOfImage = imageLink[imageLink.length - 1];
@@ -1333,6 +1346,10 @@ client.on('message', message => {
 //#endregion
 
 //#region Login
+process.on(`unhandledRejection`, err => {
+    console.log(err);
+});
+
 logger.debug(chalk.black.bgGray(`Logging in to Discord...`));
 client.login(token);
 //#endregion

@@ -1,15 +1,14 @@
-const index = require(`../../index.js`);
 const Discord = require(`discord.js`);
 
 function sendRepeatOn(message) {
     message.channel.send(new Discord.MessageEmbed()
-        .setDescription(`:repeat: **[${index.getQueue(message).lastPlayed.getTitle()}](${index.getQueue(message).lastPlayed.getURL()})** **will** now repeat`)
+        .setDescription(`:repeat: **[${message.guild.music.lastPlayed.getTitle()}](${message.guild.music.lastPlayed.getURL()})** **will** now repeat`)
         .setColor(`#0083FF`));
 }
 
 function sendRepeatOff(message) {
     message.channel.send(new Discord.MessageEmbed()
-        .setDescription(`:stop_button: **[${index.getQueue(message).lastPlayed.getTitle()}](${index.getQueue(message).lastPlayed.getURL()})** will **no longer** repeat`)
+        .setDescription(`:stop_button: **[${message.guild.music.lastPlayed.getTitle()}](${message.guild.music.lastPlayed.getURL()})** will **no longer** repeat`)
         .setColor(`#0083FF`));
 }
 
@@ -29,14 +28,14 @@ module.exports = {
             .setColor(`#FF3838`));
         */
 
-        var queue = index.getQueue(message);
+        var queue = message.guild.music.queue;
         if (queue == undefined) {
             return message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`:information_source: There is nothing currently playing`)
                 .setColor(`#0083FF`));
         }
 
-        var last = queue.lastPlayed;
+        var last = message.guild.music.lastPlayed;
 
         if (last.getType() == "livestream") {
             return message.channel.send(new Discord.MessageEmbed()
@@ -45,18 +44,18 @@ module.exports = {
         }
 
         if (!args[0]) {
-            if (queue.repeat == true) {
-                queue.repeat = false;
+            if (message.guild.music.repeat == true) {
+                message.guild.music.repeat = false;
                 sendRepeatOff(message);
-            } else if (queue.repeat == false) {
-                queue.repeat = true;
+            } else if (message.guild.music.repeat == false) {
+                message.guild.music.repeat = true;
                 sendRepeatOn(message);
             }
         } else if (args[0] == "on") {
-            queue.repeat = true;
+            message.guild.music.repeat = true;
             sendRepeatOn(message);
         } else if (args[0] == "off") {
-            queue.repeat = false;
+            message.guild.music.repeat = false;
             sendRepeatOff(message);
         }
     }

@@ -14,14 +14,14 @@ module.exports = {
     enabled: true,
     type: 'music',
     execute(message, args) {
-        var queue = index.getQueue(message);
+        var queue = message.guild.music.queue;
 
-        if (queue == undefined) {
+        if (queue == undefined || queue.length == 0) {
             return message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`<:cross:729019052571492434> There is nothing to skip`)
                 .setColor(`#FF3838`));
         } else {
-            queue.list = [];
+            message.guild.music.queue = [];
             return message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`:arrow_double_up: ${message.author.username} cleared the queue`)
                 .setColor(`#0083FF`));

@@ -34,7 +34,7 @@ async function sendEmbed(page, message) {
 }
 
 async function reactionHandler(sent, message, page) {
-	var queue = index.getQueue(message).list;
+	var queue = message.guild.music.queue;
 
 	const filter = (reaction, user) => {
 		return ['◀️', '🔘', '▶️'].includes(reaction.emoji.name) && user.id === message.author.id;

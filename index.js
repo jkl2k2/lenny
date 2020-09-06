@@ -1084,8 +1084,6 @@ client.on(`messageDeleteBulk`, async messages => {
 
     let message = messages.array()[0];
 
-    client.settings.ensure(message.guild.id, `modLogEnabled`);
-
     // Check if modlog enabled in guild
     if (JSON.parse(client.settings.get(message.guild.id, `modLogEnabled`)) != true) return;
 

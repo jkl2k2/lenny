@@ -13,7 +13,7 @@ module.exports = {
     enabled: true,
     type: 'music',
     execute(message, args) {
-        var queue = index.getQueue(message).list;
+        var queue = message.guild.music.queue;
 
         var target = parseInt(args[0]);
 

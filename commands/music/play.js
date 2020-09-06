@@ -7,7 +7,6 @@ const Discord = require(`discord.js`);
 const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
 const logger = index.getLogger();
-const Queues = index.getQueues();
 const fetch = require(`node-fetch`);
 const hex = require(`rgb-hex`);
 const colorThief = require(`colorthief`);
@@ -230,7 +229,7 @@ module.exports = {
 
 		//#region SoundCloud handling
 		async function handleSoundCloud() {
-			let dispatcher = index.getDispatcher(message);
+			const queue = message.guild.music.queue;
 
 			if (!scdl.isValidUrl(args[0])) {
 				return message.channel.send(new Discord.MessageEmbed()
@@ -240,17 +239,12 @@ module.exports = {
 
 			const info = await scdl.getInfo(args[0]);
 
-			var newSC = index.constructSC(message.member, info);
+			const newSC = index.constructSC(message.member, info);
 
-			if (!Queues.has(message.guild.id)) {
-				let newQueue = index.constructQueue();
-				newQueue.push(newSC);
-				index.setQueue(message, newQueue);
-			} else {
-				queue.push(newSC);
-			}
+			queue.push(newSC);
 
-			if (dispatcher != undefined || (queue != undefined && queue.list[1])) {
+			// Skip sending details message if not playing (avoids spam)
+			if (message.guild.music.playing) {
 				fetch(newSC.getThumbnail())
 					.then(r => r.buffer())
 					.then(buf => `data:image/jpg;base64,` + buf.toString('base64'))
@@ -269,7 +263,7 @@ module.exports = {
 			if (client.voice.connections.get(message.member.voice.channel)) {
 				// if already in vc
 				let connection = client.voice.connections.get(message.member.voice.channel);
-				if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
+				if (!message.guild.music.playing) {
 					return index.callPlayMusic(message);
 				}
 			}
@@ -277,7 +271,7 @@ module.exports = {
 			if (message.member.voice.channel) {
 				message.member.voice.channel.join()
 					.then(connection => {
-						if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
+						if (!message.guild.music.playing) {
 							return index.callPlayMusic(message);
 						} else {
 							logger.debug(`Connection speaking`);

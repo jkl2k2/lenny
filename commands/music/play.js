@@ -145,29 +145,20 @@ module.exports = {
 
 		//#region Regular video / livestream handling
 		async function process(input) {
-			// logger.debug(input.title);
+			// Construct a new YTVideo
+			const newVideo = index.constructVideo(input, message.member);
 
-			// let newVideo = index.constructVideo(input, message.member);
-			let newVideo = index.constructVideo(input, message.member);
+			// Easy access to music data
+			let music = message.guild.music;
 
-			// queue.push(newVideo);
+			// Define the music-related variables
+			const queue = music.queue;
 
-			let queue = index.getQueue(message);
-			let prevQueue = index.getQueue(message);
-			let dispatcher = index.getDispatcher(message);
-
-			if (!Queues.has(message.guild.id)) {
-				let newQueue = index.constructQueue();
-				newQueue.push(newVideo);
-				// Queues.set(message.guild.id, newQueue);
-				index.setQueue(message, newQueue);
-				queue = index.getQueue(message);
-			} else {
-				queue.push(newVideo);
-			}
+			// Add new video to queue
+			queue.push(newVideo);
 
 			if (await newVideo.getLength() == "0:00") {
-				if (dispatcher != undefined || (prevQueue != undefined && prevQueue.list[1])) {
+				if (music.playing) {
 					fetch(newVideo.getThumbnail())
 						.then(r => r.buffer())
 						.then(buf => `data:image/jpg;base64,` + buf.toString('base64'))
@@ -181,7 +172,7 @@ module.exports = {
 							.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`)));
 				}
 			} else {
-				if (dispatcher != undefined || (prevQueue != undefined && prevQueue.list[1])) {
+				if (music.playing) {
 					fetch(newVideo.getThumbnail())
 						.then(r => r.buffer())
 						.then(buf => `data:image/jpg;base64,` + buf.toString('base64'))
@@ -200,8 +191,8 @@ module.exports = {
 
 			if (client.voice.connections.get(message.member.voice.channel)) {
 				// if already in vc
-				let connection = client.voice.connections.get(message.member.voice.channel);
-				if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
+				// let connection = client.voice.connections.get(message.member.voice.channel);
+				if (!music.playing /* && !connection.voice.speaking */) {
 					return index.callPlayMusic(message);
 				}
 			}
@@ -209,7 +200,7 @@ module.exports = {
 			if (message.member.voice.channel) {
 				message.member.voice.channel.join()
 					.then(connection => {
-						if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
+						if (!music.playing /* && !connection.voice.speaking */) {
 							return index.callPlayMusic(message);
 						} else {
 							logger.debug(`Connection speaking`);

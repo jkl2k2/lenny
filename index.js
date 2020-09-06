@@ -548,21 +548,10 @@ async function playMusic(message) {
     // Reset dispatcher stream delay
     client.voice.connections.get(message.guild.id).player.streamingData.pausedTime = 0;
 
+    /*
     message.guild.music.dispatcher.on("close", () => {
         if (message.guild.music.repeat) {
-            queue.unshift(queue.lastPlayed);
-        }
-        if (queue[0]) {
-            return playMusic(message);
-        } else {
-            message.guild.music.playing = false;
-        }
-    });
-
-    /*
-    message.guild.music.dispatcher.on("finish", () => {
-        if (message.guild.music.repeat) {
-            queue.unshift(queue.lastPlayed);
+            queue.unshift(message.guild.music.lastPlayed);
         }
         if (queue[0]) {
             return playMusic(message);
@@ -571,6 +560,17 @@ async function playMusic(message) {
         }
     });
     */
+
+    message.guild.music.dispatcher.on("finish", () => {
+        if (message.guild.music.repeat) {
+            queue.unshift(message.guild.music.lastPlayed);
+        }
+        if (queue[0]) {
+            return playMusic(message);
+        } else {
+            message.guild.music.playing = false;
+        }
+    });
 }
 //#endregion
 

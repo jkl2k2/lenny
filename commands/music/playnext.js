@@ -41,41 +41,56 @@ module.exports = {
 
 		var queue = message.guild.music.queue;
 
+		//#region Regular video / livestream handling
 		async function process(input) {
-			logger.debug(input.title);
+			// Construct a new YTVideo
+			const newVideo = index.constructVideo(input, message.member);
 
-			let newVideo = index.constructVideo(input, message.member);
+			// Easy access to music data
+			let music = message.guild.music;
 
+			// Define the music-related variables
+			const queue = music.queue;
+
+			// Add new video to queue
 			queue.unshift(newVideo);
 
 			if (await newVideo.getLength() == "0:00") {
-				let buffer = await fetch(newVideo.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
-				let rgb = await colorThief.getColor(buffer);
-				message.channel.send(new Discord.MessageEmbed()
-					.setAuthor(`Queued (#${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
-					.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\n[${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\n\`YouTube Livestream\``)
-					.setThumbnail(newVideo.getThumbnail())
-					.setTimestamp()
-					.setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar())
-					.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
+				if (music.playing) {
+					fetch(newVideo.getThumbnail())
+						.then(r => r.buffer())
+						.then(buf => `data:image/jpg;base64,` + buf.toString('base64'))
+						.then(formatted => colorThief.getColor(formatted))
+						.then(async rgb => message.channel.send(new Discord.MessageEmbed()
+							.setAuthor(`Queued (#${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
+							.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\n[${newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\n\`YouTube Livestream\``)
+							.setThumbnail(newVideo.getThumbnail())
+							.setTimestamp()
+							.setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar())
+							.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`)));
+				}
 			} else {
-				let buffer = await fetch(newVideo.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
-				let rgb = await colorThief.getColor(buffer);
-				message.channel.send(new Discord.MessageEmbed()
-					.setAuthor(`Queued (#${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
-					.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\n[${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\nLength: \`${await newVideo.getLength()}\``)
-					.setThumbnail(newVideo.getThumbnail())
-					.setTimestamp()
-					.setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar())
-					.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
+				if (music.playing) {
+					fetch(newVideo.getThumbnail())
+						.then(r => r.buffer())
+						.then(buf => `data:image/jpg;base64,` + buf.toString('base64'))
+						.then(formatted => colorThief.getColor(formatted))
+						.then(async rgb => message.channel.send(new Discord.MessageEmbed()
+							.setAuthor(`Queued (#${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
+							.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\n[${newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\nLength: \`${await newVideo.getLength()}\``)
+							.setThumbnail(newVideo.getThumbnail())
+							.setTimestamp()
+							.setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar())
+							.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`)));
+				}
 			}
 
-			if (!message.member.voice.channel) return logger.warn(`User not in voice channel after playlist processing`);
+			if (!message.member.voice.channel) return logger.warn(`User not in voice channel after video processing`);
 
 			if (client.voice.connections.get(message.member.voice.channel)) {
 				// if already in vc
-				let connection = client.voice.connections.get(message.member.voice.channel);
-				if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
+				// let connection = client.voice.connections.get(message.member.voice.channel);
+				if (!music.playing /* && !connection.voice.speaking */) {
 					return index.callPlayMusic(message);
 				}
 			}
@@ -83,79 +98,16 @@ module.exports = {
 			if (message.member.voice.channel) {
 				message.member.voice.channel.join()
 					.then(connection => {
-						if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
+						if (!music.playing /* && !connection.voice.speaking */) {
 							return index.callPlayMusic(message);
+						} else {
+							logger.debug(`Connection speaking`);
 						}
 					})
 					.catch(`${logger.error}`);
 			} else {
 				logger.error("Failed to join voice channel");
 			}
-		}
-
-		async function handlePlaylist() {
-			await youtube.getPlaylist(args[0])
-				.then(async function (playlist) {
-					if (playlist) {
-						var videos = await playlist.getVideos();
-
-						let buffer = await fetch(playlist.thumbnails.default.url).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
-						let rgb = await colorThief.getColor(buffer);
-						var processing = await message.channel.send(new Discord.MessageEmbed()
-							.setAuthor(`🔄 Processing playlist`)
-							.setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
-							.setThumbnail(playlist.thumbnails.default.url)
-							.setTimestamp()
-							.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
-							.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
-
-						for (var i = 0; i < videos.length; i++) {
-							var newVideo = index.constructVideo(videos[i], message.author);
-							if (newVideo.getTitle() == "Private video") {
-								message.channel.send(new Discord.MessageEmbed()
-									.setDescription(":information_source: At least 1 video from the playlist could not be added as it is private")
-									.setColor(`#0083FF`));
-							} else {
-								queue.unshift(newVideo);
-							}
-						}
-
-						processing.edit(new Discord.MessageEmbed()
-							.setAuthor(`➕ Queued playlist`)
-							.setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
-							.setThumbnail(playlist.thumbnails.default.url)
-							.setTimestamp()
-							.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
-							.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
-
-						if (!message.member.voice.channel) return logger.warn(`User not in voice channel after playlist processing`);
-
-						if (client.voice.connections.get(message.member.voice.channel)) {
-							// if already in vc
-							let connection = client.voice.connections.get(message.member.voice.channel);
-							if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
-								return index.callPlayMusic(message);
-							}
-						}
-
-						if (message.member.voice.channel) {
-							message.member.voice.channel.join()
-								.then(connection => {
-									if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
-										return index.callPlayMusic(message);
-									}
-								})
-								.catch(logger.error);
-						} else {
-							logger.warn(`User not in voice channel after playlist processing`);
-						}
-					} else {
-						logger.error(`Playlist not found`);
-						message.channel.send(new Discord.MessageEmbed()
-							.setDescription(`:information_source: YouTube could not find a playlist with that input`)
-							.setColor(`#0083FF`));
-					}
-				});
 		}
 
 		async function handleVideo() {
@@ -174,6 +126,104 @@ module.exports = {
 					});
 			}
 		}
+		//#endregion
+
+		//#region Playlist handling
+		function handlePlaylist() {
+			youtube.getPlaylist(args[0])
+				.then(async playlist => {
+					if (playlist) {
+						let videos = await playlist.getVideos();
+
+						const queue = message.guild.music.queue;
+
+						if (playlist.thumbnails.default) {
+							fetch(playlist.thumbnails.default.url)
+								.then(r => r.buffer())
+								.then(buf => `data:image/jpg;base64,` + buf.toString('base64'))
+								.then(formatted => colorThief.getColor(formatted))
+								.then(async rgb => {
+									message.channel.send(new Discord.MessageEmbed()
+										.setAuthor(`➕ Queued playlist`)
+										.setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
+										.setThumbnail(playlist.thumbnails.default.url)
+										.setTimestamp()
+										.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+										.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
+								});
+						} else if (videos[0].thumbnails.default) {
+							fetch(videos[0].maxRes.url)
+								.then(r => r.buffer())
+								.then(buf => `data:image/jpg;base64,` + buf.toString('base64'))
+								.then(formatted => colorThief.getColor(formatted))
+								.then(async rgb => {
+									message.channel.send(new Discord.MessageEmbed()
+										.setAuthor(`➕ Queued playlist`)
+										.setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
+										.setThumbnail(videos[0].maxRes.url)
+										.setTimestamp()
+										.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+										.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
+								});
+						} else {
+							message.channel.send(new Discord.MessageEmbed()
+								.setAuthor(`➕ Queued playlist`)
+								.setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
+								.setTimestamp()
+								.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL()));
+						}
+
+						// Set up counter for how many private videos are in the playlist
+						let privateCounter = 0;
+
+						// Queue videos
+						for (var i = videos.length - 1; i >= 0; i--) {
+							const newVideo = index.constructVideo(videos[i], message.member);
+							if (newVideo.getTitle() == "Private video") {
+								privateCounter++;
+							} else {
+								queue.unshift(newVideo);
+							}
+						}
+
+						// Show how many videos were private
+						if (privateCounter > 0)
+							message.channel.send(new Discord.MessageEmbed()
+								.setDescription(`:information_source: ${privateCounter} video(s) from the playlist could not be added due to privacy settings`)
+								.setColor(`#0083FF`));
+
+						if (!message.member.voice.channel) return logger.warn(`User not in voice channel after playlist processing`);
+
+						if (client.voice.connections.get(message.member.voice.channel)) {
+							// if already in vc
+							let connection = client.voice.connections.get(message.member.voice.channel);
+							if (!message.guild.music.playing) {
+								return index.callPlayMusic(message);
+							}
+						}
+
+						if (message.member.voice.channel) {
+							message.member.voice.channel.join()
+								.then(connection => {
+									if (!message.guild.music.playing) {
+										return index.callPlayMusic(message);
+									} else {
+										logger.debug(`Connection speaking`);
+									}
+								})
+								.catch(logger.error);
+						} else {
+							logger.warn(`User not in voice channel after playlist processing`);
+						}
+					} else {
+						logger.error(`Playlist not found`);
+						message.channel.send(new Discord.MessageEmbed()
+							.setDescription(`:information_source: YouTube could not find a playlist with that input`)
+							.setColor(`#0083FF`));
+					}
+				});
+		}
+		//#endregion
 
 		async function handleSoundCloud() {
 			let dispatcher = index.getDispatcher(message);

@@ -53,16 +53,14 @@ module.exports = {
 
 						const queue = message.guild.music.queue;
 
-						let processing;
-
 						if (playlist.thumbnails.default) {
 							fetch(playlist.thumbnails.default.url)
 								.then(r => r.buffer())
 								.then(buf => `data:image/jpg;base64,` + buf.toString('base64'))
 								.then(formatted => colorThief.getColor(formatted))
 								.then(async rgb => {
-									processing = await message.channel.send(new Discord.MessageEmbed()
-										.setAuthor(`🔄 Processing playlist`)
+									message.channel.send(new Discord.MessageEmbed()
+										.setAuthor(`➕ Queued playlist`)
 										.setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
 										.setThumbnail(playlist.thumbnails.default.url)
 										.setTimestamp()
@@ -75,8 +73,8 @@ module.exports = {
 								.then(buf => `data:image/jpg;base64,` + buf.toString('base64'))
 								.then(formatted => colorThief.getColor(formatted))
 								.then(async rgb => {
-									processing = await message.channel.send(new Discord.MessageEmbed()
-										.setAuthor(`🔄 Processing playlist`)
+									message.channel.send(new Discord.MessageEmbed()
+										.setAuthor(`➕ Queued playlist`)
 										.setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
 										.setThumbnail(videos[0].maxRes.url)
 										.setTimestamp()
@@ -84,8 +82,8 @@ module.exports = {
 										.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
 								});
 						} else {
-							processing = await message.channel.send(new Discord.MessageEmbed()
-								.setAuthor(`🔄 Processing playlist`)
+							message.channel.send(new Discord.MessageEmbed()
+								.setAuthor(`➕ Queued playlist`)
 								.setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
 								.setTimestamp()
 								.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL()));
@@ -95,23 +93,14 @@ module.exports = {
 						let privateCounter = 0;
 
 						// Queue videos
-						for (var i = 0; i < videos.length; i++) {
+						for (var i = videos.length - 1; i >= 0; i--) {
 							const newVideo = index.constructVideo(videos[i], message.member);
 							if (newVideo.getTitle() == "Private video") {
 								privateCounter++;
 							} else {
-								queue.push(newVideo);
+								queue.unshift(newVideo);
 							}
 						}
-
-						// Edit processing message with queued message
-						processing.edit(new Discord.MessageEmbed()
-							.setAuthor(`➕ Queued playlist`)
-							.setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
-							.setThumbnail(processing.embeds[0].thumbnail.url)
-							.setTimestamp()
-							.setFooter(processing.embeds[0].footer.text)
-							.setColor(processing.embeds[0].hexColor));
 
 						// Show how many videos were private
 						if (privateCounter > 0)

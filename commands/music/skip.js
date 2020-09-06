@@ -11,21 +11,20 @@ module.exports = {
 	enabled: true,
 	type: 'music',
 	execute(message, args) {
-		var dispatcher = index.getDispatcher(message);
 
-		if (dispatcher == undefined || dispatcher.speaking == false) {
+		if (!message.guild.music.playing) {
 			return message.channel.send(new Discord.MessageEmbed()
 				.setDescription(`:information_source: There is nothing to skip`)
 				.setColor(`#0083FF`));
 		}
 
-		var queue = index.getQueue(message);
+		var queue = message.guild.music.queue;
 
-		if (queue.repeat) queue.repeat = false;
+		if (message.guild.music.repeat) message.guild.music.repeat = false;
 
-		if (queue.lastPlayed != undefined && queue.lastPlayed.getTitle() != undefined) {
+		if (message.guild.music.lastPlayed != undefined && message.guild.music.lastPlayed.getTitle() != undefined) {
 			message.channel.send(new Discord.MessageEmbed()
-				.setDescription(`:track_next: ${message.author.username} skipped **[${queue.lastPlayed.getTitle()}](${queue.lastPlayed.getURL()})**`)
+				.setDescription(`:track_next: ${message.author.username} skipped **[${message.guild.music.lastPlayed.getTitle()}](${message.guild.music.lastPlayed.getURL()})**`)
 				.setColor(`#0083FF`));
 		} else {
 			message.channel.send(new Discord.MessageEmbed()
@@ -33,6 +32,6 @@ module.exports = {
 				.setColor(`#0083FF`));
 		}
 
-		index.endDispatcher(message);
+		message.guild.music.dispatcher.end();
 	}
 };

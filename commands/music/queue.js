@@ -22,7 +22,7 @@ function queueOverflowResolver(arr) {
 }
 
 async function sendEmbed(page, message) {
-	var queue = index.getQueue(message).list;
+	let queue = message.guild.music.queue;
 
 	let queueEmbed = new Discord.MessageEmbed()
 
@@ -107,7 +107,7 @@ async function sendDetails(input, c, index) {
 		let rgb = await colorThief.getColor(buffer);
 		let musicEmbed = new Discord.MessageEmbed()
 			.setAuthor(`In queue: video #${index}`, await input.getChannelThumbnail())
-			.setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${await input.getChannelName()}](${input.getChannelURL()})\n\n\`YouTube Livestream\``)
+			.setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${input.getChannelName()}](${input.getChannelURL()})\n\n\`YouTube Livestream\``)
 			.setThumbnail(input.getThumbnail())
 			.setTimestamp()
 			.setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar())
@@ -129,7 +129,7 @@ async function sendDetails(input, c, index) {
 		let rgb = await colorThief.getColor(buffer);
 		let musicEmbed = new Discord.MessageEmbed()
 			.setAuthor(`In queue: video #${index}`, await input.getChannelThumbnail())
-			.setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${await input.getChannelName()}](${input.getChannelURL()})\n\nLength: \`${await input.getLength()}\``)
+			.setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${input.getChannelName()}](${input.getChannelURL()})\n\nLength: \`${await input.getLength()}\``)
 			.setThumbnail(input.getThumbnail())
 			.setTimestamp()
 			.setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar())
@@ -150,15 +150,12 @@ module.exports = {
 	type: 'music',
 	async execute(message, args) {
 
-		var fullQueue = index.getQueue(message);
-		var queue;
+		let queue = message.guild.music.queue;
 
-		if (fullQueue == undefined) {
+		if (queue == undefined || queue.length == 0) {
 			return message.channel.send(new Discord.MessageEmbed()
 				.setDescription(`:information_source: The queue is currently empty`)
 				.setColor(`#0083FF`));
-		} else {
-			queue = fullQueue.list;
 		}
 
 		var page = 0;

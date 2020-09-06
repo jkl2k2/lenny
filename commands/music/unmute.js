@@ -11,8 +11,8 @@ module.exports = {
     enabled: true,
     type: 'music',
     execute(message, args) {
-        var dispatcher = index.getDispatcher(message);
-        var oldVolume = index.getQueue(message).volume;
+        var dispatcher = message.guild.music.dispatcher;
+        var oldVolume = message.guild.music.oldVolume;
 
         if (dispatcher == undefined || dispatcher.speaking == false) {
             return message.channel.send(new Discord.MessageEmbed()
@@ -26,12 +26,10 @@ module.exports = {
             return message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`:loud_sound: Playback unmuted and set to \`${oldVolume * 100}%\``)
                 .setColor(`#0083FF`));
-
         } else {
             return message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`:information_source: The playback is already unmuted`)
                 .setColor(`#0083FF`));
-
         }
     }
 };

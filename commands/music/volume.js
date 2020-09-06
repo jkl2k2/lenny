@@ -49,9 +49,9 @@ module.exports = {
 		}
 
 		volume = args[0];
-		var dispatcher = index.getDispatcher(message);
-		var queue = index.getQueue(message);
-		if (dispatcher == undefined || queue == undefined) {
+		var dispatcher = message.guild.music.dispatcher;
+		var queue = message.guild.music.queue;
+		if (!message.guild.music.playing) {
 			return message.channel.send(new Discord.MessageEmbed()
 				.setDescription(`:information_source: Nothing is currently playing`)
 				.setColor(`#0083FF`));
@@ -61,7 +61,7 @@ module.exports = {
 		var newVolume = volume / 100;
 		if ((volume >= 0 && volume <= 500) || message.author.id == jahyID) {
 			dispatcher.setVolume(newVolume);
-			queue.volume = newVolume;
+			message.guild.music.volume = newVolume;
 			return message.channel.send(new Discord.MessageEmbed()
 				.setDescription(`:loud_sound: ${message.author.username}${decideWording(raisedVolume)} \`${volume}%\``)
 				.setColor(`#0083FF`));

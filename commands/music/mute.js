@@ -11,8 +11,8 @@ module.exports = {
     enabled: true,
     type: 'music',
     execute(message, args) {
-        var dispatcher = index.getDispatcher(message);
-        var oldVolume = index.getQueue(message).volume;
+        var dispatcher = message.guild.music.dispatcher;
+        let oldVolume = message.guild.music.oldVolume;
 
         if (dispatcher == undefined || dispatcher.speaking == false) {
             return message.channel.send(new Discord.MessageEmbed()
@@ -28,6 +28,8 @@ module.exports = {
                 .setColor(`#0083FF`));
 
         } else {
+            message.guild.music.oldVolume = dispatcher.volume;
+
             dispatcher.setVolume(0);
 
             return message.channel.send(new Discord.MessageEmbed()

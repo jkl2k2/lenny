@@ -273,11 +273,11 @@ class SCSong {
     }
     getPosition() {
         // let queue = index.getQueue(this.requester.guild.id);
-        let queue = Queues.get(this.requester.guild.id);
-        if (queue.list.indexOf(this) == -1) {
+        let queue = this.requester.guild.music.queue;
+        if (queue.indexOf(this) == -1) {
             return 1;
         } else {
-            return queue.list.indexOf(this) + 1;
+            return queue.indexOf(this) + 1;
         }
     }
 }

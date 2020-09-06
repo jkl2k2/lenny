@@ -43,7 +43,7 @@ module.exports = {
 				.setColor(`#FF3838`));
 		}
 
-		var queue = index.getQueue(message);
+		let queue = message.guild.music.queue;
 		//#endregion
 
 		//#region Playlist handling

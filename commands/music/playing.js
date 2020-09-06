@@ -13,17 +13,17 @@ module.exports = {
 	enabled: true,
 	type: 'music',
 	async execute(message, args) {
-		var dispatcher = index.getDispatcher(message);
-		var queue = index.getQueue(message);
+		var dispatcher = message.guild.music.dispatcher;
+		var queue = message.guild.music.queue;
 
-		if (dispatcher == undefined || !dispatcher.player.voiceConnection.speaking) {
+		if (!message.guild.music.playing) {
 			var nothingPlaying = new Discord.MessageEmbed()
 				.setDescription(`:information_source: Nothing is currently playing`)
 				.setColor(`#0083FF`);
 			return message.channel.send(nothingPlaying);
 		}
-		var playing = await index.getQueue(message).lastPlayed.getFullVideo();
-		var playingObj = index.getQueue(message).lastPlayed;
+		var playing = await message.guild.music.lastPlayed.getFullVideo();
+		var playingObj = message.guild.music.lastPlayed;
 
 		// var minsToSec = playing.duration.minutes * 60;
 		var total = playing.duration.seconds + (playing.duration.minutes * 60) + (playing.duration.hours * 60 * 60);
@@ -79,7 +79,7 @@ module.exports = {
 			logger.warn(chalk.black.bgYellow(`Failed to generate progress bar`));
 		}
 
-		var embed = index.getPlaying(message);
+		var embed = message.guild.music.lastEmbed;
 
 		if (playingObj.getType() == "video") {
 			if (queue.repeat) {

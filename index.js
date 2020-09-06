@@ -531,7 +531,7 @@ async function playMusic(message) {
         const stream = await scdl.download(queue[0].getURL());
 
         // Set dispatcher
-        message.guild.music.dispatcher = client.voice.connections.get(message.guild.id).play(stream, { bitrate: 384, volume: Queues.get(message.guild.id).volume, passes: 5, fec: true });
+        message.guild.music.dispatcher = client.voice.connections.get(message.guild.id).play(stream, { bitrate: 384, volume: message.guild.music.volume, passes: 5, fec: true });
 
         // Mark server as playing music
         message.guild.music.playing = true;

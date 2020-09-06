@@ -1,4 +1,3 @@
-const index = require(`../../index.js`);
 const Discord = require(`discord.js`);
 
 module.exports = {
@@ -12,17 +11,14 @@ module.exports = {
     enabled: true,
     type: 'music',
     execute(message, args) {
-        var fullQueue = index.getQueue(message);
-        var queue;
+        var queue = message.guild.music.queue;
         var startPos = args[0] - 1;
         var targetPos = args[1] - 1;
 
-        if (fullQueue == undefined) {
+        if (queue == undefined) {
             return message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`<:cross:729019052571492434> The queue is empty`)
                 .setColor(`#FF3838`));
-        } else {
-            queue = fullQueue.list;
         }
 
         if (!args[0]) {
@@ -55,7 +51,7 @@ module.exports = {
                         .setDescription(`<:check:728881238970073090> Moved from position \`#${startPos + 1}\` to \`#${targetPos + 1}\`:\n**[${queue[targetPos].getTitle()}](${queue[targetPos].getURL()})**
 
                                          It will now play after:
-                                         **[${index.getQueue(message).lastPlayed.getTitle()}](${index.getQueue(message).lastPlayed.getURL()})**`)
+                                         **[${message.guild.music.lastPlayed.getTitle()}](${message.guild.music.lastPlayed.getURL()})**`)
                         .setColor(`#2EC14E`));
                 } else {
                     message.channel.send(new Discord.MessageEmbed()

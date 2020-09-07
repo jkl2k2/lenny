@@ -18,8 +18,6 @@ module.exports = {
 				.setColor(`#0083FF`));
 		}
 
-		var queue = message.guild.music.queue;
-
 		if (message.guild.music.repeat) message.guild.music.repeat = false;
 
 		if (message.guild.music.lastPlayed != undefined && message.guild.music.lastPlayed.getTitle() != undefined) {

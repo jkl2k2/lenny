@@ -7,9 +7,6 @@ const Discord = require(`discord.js`);
 const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
 const logger = index.getLogger();
-const fetch = require(`node-fetch`);
-const hex = require(`rgb-hex`);
-const colorThief = require(`colorthief`);
 
 module.exports = {
     name: 'playlist',
@@ -47,7 +44,7 @@ module.exports = {
 
         const client = message.client;
 
-        var queue = message.guild.music.queue;
+        const queue = message.guild.music.queue;
 
         youtube.searchPlaylists(args.join(" "))
             .then(async results => {
@@ -135,28 +132,26 @@ module.exports = {
                     await youtube.getPlaylist(results[parseInt(m.content) - 1].url)
                         .then(async playlist => {
                             if (playlist) {
-                                var videos = await playlist.getVideos();
+                                const videos = await playlist.getVideos();
 
-                                let buffer = await fetch(playlist.thumbnails.default.url).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
-                                let rgb = await colorThief.getColor(buffer);
                                 searchingMessage.edit(new Discord.MessageEmbed()
-                                    .setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`)
+                                    .setColor(`#36393f`)
                                     .setAuthor(`🔄 Processing playlist`)
                                     .setDescription(`**[${playlist.title}](${playlist.url})**\n[${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
                                     .setThumbnail(playlist.thumbnails.default.url)
                                     .setTimestamp()
                                     .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL()));
 
-                                var encounteredPrivate = false;
-                                var privateCounter = 0;
+                                let encounteredPrivate = false;
+                                let privateCounter = 0;
 
-                                for (var video of videos) {
+                                for (const video of videos) {
                                     var newVideo = index.constructVideo(video, message.member);
                                     if (newVideo.getTitle() == "Private video") {
                                         encounteredPrivate = true;
                                         privateCounter++;
                                     } else {
-                                        queue.list.push(newVideo);
+                                        queue.push(newVideo);
                                     }
                                 }
 
@@ -167,7 +162,7 @@ module.exports = {
                                 }
 
                                 searchingMessage.edit(new Discord.MessageEmbed()
-                                    .setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`)
+                                    .setColor(`#36393f`)
                                     .setAuthor(`➕ Queued playlist`)
                                     .setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
                                     .setThumbnail(playlist.thumbnails.default.url)
@@ -179,7 +174,7 @@ module.exports = {
                                 if (client.voice.connections.get(message.member.voice.channel)) {
                                     // if already in vc
                                     let connection = client.voice.connections.get(message.member.voice.channel);
-                                    if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
+                                    if (!message.guild.music.playing) {
                                         return index.callPlayMusic(message);
                                     }
                                 }
@@ -187,7 +182,7 @@ module.exports = {
                                 if (message.member.voice.channel) {
                                     message.member.voice.channel.join()
                                         .then(connection => {
-                                            if (index.getDispatcher(message) == undefined || (!connection.speaking && !index.getDispatcher(message).paused)) {
+                                            if (!message.guild.music.playing) {
                                                 return index.callPlayMusic(message);
                                             }
                                         })

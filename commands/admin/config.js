@@ -1,8 +1,4 @@
-const index = require(`../../index.js`);
 const Discord = require(`discord.js`);
-const config = require(`config`);
-const Enmap = require(`enmap`);
-const client = index.getClient();
 
 module.exports = {
     name: 'config',
@@ -20,6 +16,8 @@ module.exports = {
     },
     type: 'admin',
     execute(message, args) {
+        const client = message.client;
+
         const serverConfig = client.settings.ensure(message.guild.id, client.settings.default);
 
         let action = args.shift();

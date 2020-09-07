@@ -25,7 +25,7 @@ module.exports = {
         message.guild.music.queue = [];
 
         // End dispatcher
-        message.guild.music.dispatcher.destroy();
+        message.guild.music.dispatcher.end();
 
         // Empty dispatcher
         message.guild.music.dispatcher = [];

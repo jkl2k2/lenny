@@ -113,7 +113,7 @@ module.exports = {
 							if (!message.guild.music.speaking) {
 								return index.callPlayMusic(message);
 							} else {
-								return message.guild.music.dispatcher.destroy();
+								return message.guild.music.dispatcher.end();
 							}
 						}
 
@@ -123,7 +123,7 @@ module.exports = {
 									if (!message.guild.music.playing) {
 										return index.callPlayMusic(message);
 									} else {
-										return message.guild.music.dispatcher.destroy();
+										return message.guild.music.dispatcher.end();
 									}
 								})
 								.catch(logger.error);
@@ -192,7 +192,7 @@ module.exports = {
 				if (!music.playing /* && !connection.voice.speaking */) {
 					return index.callPlayMusic(message);
 				} else {
-					return message.guild.music.dispatcher.destroy();
+					return message.guild.music.dispatcher.end();
 				}
 			}
 
@@ -202,7 +202,7 @@ module.exports = {
 						if (!music.playing /* && !connection.voice.speaking */) {
 							return index.callPlayMusic(message);
 						} else {
-							return message.guild.music.dispatcher.destroy();
+							message.guild.music.dispatcher.end();
 						}
 					})
 					.catch(`${logger.error}`);
@@ -264,7 +264,7 @@ module.exports = {
 				if (!message.guild.music.playing) {
 					return index.callPlayMusic(message);
 				} else {
-					return message.guild.music.dispatcher.destroy();
+					return message.guild.music.dispatcher.end();
 				}
 			}
 

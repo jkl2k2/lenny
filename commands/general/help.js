@@ -1,7 +1,4 @@
-const config = require('config');
-const index = require(`../../index.js`);
 const Discord = require(`discord.js`);
-const fs = require(`fs`);
 
 module.exports = {
     name: 'help',
@@ -14,7 +11,7 @@ module.exports = {
     type: 'general',
     execute(message, args) {
         const { commands } = message.client;
-        var client = index.getClient();
+        const client = message.client;
 
         let serverConfig;
         let prefix;

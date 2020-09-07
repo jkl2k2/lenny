@@ -14,7 +14,7 @@ module.exports = {
 		if (!message.guild.music.playing) {
 			return message.channel.send(new Discord.MessageEmbed()
 				.setDescription(`:information_source: There is nothing to skip`)
-				.setColor(`#0083FF`));
+				.setColor(`#36393f`));
 		}
 
 		if (message.guild.music.repeat) message.guild.music.repeat = false;
@@ -22,11 +22,11 @@ module.exports = {
 		if (message.guild.music.lastPlayed != undefined && message.guild.music.lastPlayed.getTitle() != undefined) {
 			message.channel.send(new Discord.MessageEmbed()
 				.setDescription(`:track_next: ${message.author.username} skipped **[${message.guild.music.lastPlayed.getTitle()}](${message.guild.music.lastPlayed.getURL()})**`)
-				.setColor(`#0083FF`));
+				.setColor(`#36393f`));
 		} else {
 			message.channel.send(new Discord.MessageEmbed()
 				.setDescription(`:track_next: ${message.author.username} skipped the current song`)
-				.setColor(`#0083FF`));
+				.setColor(`#36393f`));
 		}
 
 		message.guild.music.dispatcher.end();

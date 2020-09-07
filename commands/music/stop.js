@@ -34,7 +34,7 @@ module.exports = {
 
         message.channel.send(new Discord.MessageEmbed()
             .setDescription(`:stop_button: ${message.author.username} stopped all playback`)
-            .setColor(`#0083FF`));
+            .setColor(`#36393f`));
 
     }
 };

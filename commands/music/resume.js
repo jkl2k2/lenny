@@ -17,7 +17,7 @@ module.exports = {
 			dispatcher.resume();
 			message.channel.send(new Discord.MessageEmbed()
 				.setDescription(`:arrow_forward: ${message.author.username} resumed playback`)
-				.setColor(`#0083FF`));
+				.setColor(`#36393f`));
 		} else {
 			message.channel.send(new Discord.MessageEmbed()
 				.setDescription(`<:cross:729019052571492434> ${message.author.username}, the music is already playing`)

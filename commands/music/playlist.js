@@ -51,7 +51,7 @@ module.exports = {
                 if (!results[0] && !results[1] && !results[2] && !results[3] && !results[4]) {
                     var noPlaylistFound = new Discord.MessageEmbed()
                         .setDescription(`:information_source: Sorry, no playlist could be found with that input`)
-                        .setColor(`#0083FF`);
+                        .setColor(`#36393f`);
                     message.channel.send(noPlaylistFound);
                     return;
                 }
@@ -60,28 +60,28 @@ module.exports = {
                 var searching1 = new Discord.MessageEmbed()
                     .setDescription(`:arrows_counterclockwise: Searching for playlists with "${args.join(" ")}"
                                          Searching: \`<##-------->\``)
-                    .setColor(`#0083FF`);
+                    .setColor(`#36393f`);
                 var searchingMessage = await message.channel.send(searching1);
 
                 var res2 = (await results[1].getVideos()).length;
                 var searching2 = new Discord.MessageEmbed()
                     .setDescription(`:arrows_counterclockwise: Searching for playlists with "${args.join(" ")}"
                                          Searching: \`<####------>\``)
-                    .setColor(`#0083FF`);
+                    .setColor(`#36393f`);
                 searchingMessage.edit(searching2);
 
                 var res3 = (await results[2].getVideos()).length;
                 var searching3 = new Discord.MessageEmbed()
                     .setDescription(`:arrows_counterclockwise: Searching for playlists with "${args.join(" ")}"
                                          Searching: \`<######---->\``)
-                    .setColor(`#0083FF`);
+                    .setColor(`#36393f`);
                 searchingMessage.edit(searching3);
 
                 var res4 = (await results[3].getVideos()).length;
                 var searching4 = new Discord.MessageEmbed()
                     .setDescription(`:arrows_counterclockwise: Searching for playlists with "${args.join(" ")}"
                                          Searching: \`<########-->\``)
-                    .setColor(`#0083FF`);
+                    .setColor(`#36393f`);
                 searchingMessage.edit(searching4);
 
                 var res5 = (await results[4].getVideos()).length;
@@ -89,7 +89,7 @@ module.exports = {
                 var searching5 = new Discord.MessageEmbed()
                     .setDescription(`:arrows_counterclockwise: Searching for playlists with "${args.join(" ")}"
                                          Searching: \`<##########>\``)
-                    .setColor(`#0083FF`);
+                    .setColor(`#36393f`);
                 searchingMessage.edit(searching5);
                 */
 
@@ -126,7 +126,7 @@ module.exports = {
                     if (m.content.toLowerCase() == "cancel") {
                         return searchingMessage.edit(new Discord.MessageEmbed()
                             .setDescription(`:stop_button: Canceled playing from search`)
-                            .setColor(`#0083FF`));
+                            .setColor(`#36393f`));
                     }
 
                     await youtube.getPlaylist(results[parseInt(m.content) - 1].url)
@@ -158,7 +158,7 @@ module.exports = {
                                 if (encounteredPrivate) {
                                     message.channel.send(new Discord.MessageEmbed()
                                         .setDescription(`:information_source: \`${privateCounter}\` video(s) from the playlist could not be added due to privacy settings`)
-                                        .setColor(`#0083FF`));
+                                        .setColor(`#36393f`));
                                 }
 
                                 searchingMessage.edit(new Discord.MessageEmbed()
@@ -202,7 +202,7 @@ module.exports = {
                     /*
                     return searchingMessage.edit(new Discord.MessageEmbed()
                         .setDescription(`:stop_button: Search canceled from inactivity`)
-                        .setColor(`#0083FF`));
+                        .setColor(`#36393f`));
                     */
                 });
             });

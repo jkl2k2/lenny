@@ -19,7 +19,7 @@ module.exports = {
 		if (!message.guild.music.playing) {
 			var nothingPlaying = new Discord.MessageEmbed()
 				.setDescription(`:information_source: Nothing is currently playing`)
-				.setColor(`#0083FF`);
+				.setColor(`#36393f`);
 			return message.channel.send(nothingPlaying);
 		}
 		var playing = await message.guild.music.lastPlayed.getFullVideo();

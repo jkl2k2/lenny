@@ -3,13 +3,13 @@ const Discord = require(`discord.js`);
 function sendRepeatOn(message) {
     message.channel.send(new Discord.MessageEmbed()
         .setDescription(`:repeat: **[${message.guild.music.lastPlayed.getTitle()}](${message.guild.music.lastPlayed.getURL()})** **will** now repeat`)
-        .setColor(`#0083FF`));
+        .setColor(`#36393f`));
 }
 
 function sendRepeatOff(message) {
     message.channel.send(new Discord.MessageEmbed()
         .setDescription(`:stop_button: **[${message.guild.music.lastPlayed.getTitle()}](${message.guild.music.lastPlayed.getURL()})** will **no longer** repeat`)
-        .setColor(`#0083FF`));
+        .setColor(`#36393f`));
 }
 
 module.exports = {
@@ -32,7 +32,7 @@ module.exports = {
         if (queue == undefined) {
             return message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`:information_source: There is nothing currently playing`)
-                .setColor(`#0083FF`));
+                .setColor(`#36393f`));
         }
 
         var last = message.guild.music.lastPlayed;
@@ -40,7 +40,7 @@ module.exports = {
         if (last.getType() == "livestream") {
             return message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`:information_source: Sorry, repeat is force-enabled on livestreams to allow for the bot to reconnect to livestreams when they cut out\n\nIt would only be harmful to disable repeat with a stream playing\n\n**(This unlocks when a normal video is playing)**`)
-                .setColor(`#0083FF`));
+                .setColor(`#36393f`));
         }
 
         if (!args[0]) {

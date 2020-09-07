@@ -23,7 +23,7 @@ module.exports = {
             message.guild.music.queue = [];
             return message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`:arrow_double_up: ${message.author.username} cleared the queue`)
-                .setColor(`#0083FF`));
+                .setColor(`#36393f`));
         }
     }
 };

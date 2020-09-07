@@ -88,7 +88,7 @@ module.exports = {
 						if (privateCounter > 0)
 							message.channel.send(new Discord.MessageEmbed()
 								.setDescription(`:information_source: ${privateCounter} video(s) from the playlist could not be added due to privacy settings`)
-								.setColor(`#0083FF`));
+								.setColor(`#36393f`));
 
 						if (!message.member.voice.channel) return logger.warn(`User not in voice channel after playlist processing`);
 
@@ -119,7 +119,7 @@ module.exports = {
 						logger.error(`Playlist not found`);
 						message.channel.send(new Discord.MessageEmbed()
 							.setDescription(`:information_source: YouTube could not find a playlist with that input`)
-							.setColor(`#0083FF`));
+							.setColor(`#36393f`));
 					}
 				});
 		}
@@ -201,7 +201,7 @@ module.exports = {
 						} else {
 							message.channel.send(new Discord.MessageEmbed()
 								.setDescription(`:information_source: YouTube could not find a video with that input`)
-								.setColor(`#0083FF`));
+								.setColor(`#36393f`));
 						}
 					});
 			}

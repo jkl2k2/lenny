@@ -11,9 +11,6 @@ const winstonRotate = require(`winston-daily-rotate-file`);
 const api = config.get(`Bot.api`);
 const YouTube = require('simple-youtube-api');
 const youtube = new YouTube(api);
-const hex = require(`rgb-hex`);
-const colorThief = require(`colorthief`);
-const fetch = require(`node-fetch`);
 const beta = config.get(`Bot.beta`);
 const prettyMs = require(`pretty-ms`);
 const Enmap = require('enmap');
@@ -1142,7 +1139,7 @@ client.on('message', message => {
     if (message.content == `<@!${client.user.id}>`) {
         return message.channel.send(new Discord.MessageEmbed()
             .setDescription(`:information_source: The prefix for the server \`${message.guild.name}\` is currently \`${prefix}\``)
-            .setColor(`#0083FF`));
+            .setColor(`#36393f`));
     }
 
     // Return if no prefix

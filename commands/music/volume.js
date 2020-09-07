@@ -39,11 +39,11 @@ module.exports = {
 			if (message.guild.music.dispatcher == undefined) {
 				return message.channel.send(new Discord.MessageEmbed()
 					.setDescription(`:loud_sound: Current volume: 100%`)
-					.setColor(`#0083FF`));
+					.setColor(`#36393f`));
 			}
 			return message.channel.send(new Discord.MessageEmbed()
 				.setDescription(`:loud_sound: Current volume: \`${(message.guild.music.volume) * 100}%\``)
-				.setColor(`#0083FF`));
+				.setColor(`#36393f`));
 		}
 
 		volume = args[0];
@@ -51,7 +51,7 @@ module.exports = {
 		if (!message.guild.music.playing) {
 			return message.channel.send(new Discord.MessageEmbed()
 				.setDescription(`:information_source: Nothing is currently playing`)
-				.setColor(`#0083FF`));
+				.setColor(`#36393f`));
 		}
 		raisedVolume = compareVolume(volume, dispatcher);
 
@@ -61,7 +61,7 @@ module.exports = {
 			message.guild.music.volume = newVolume;
 			return message.channel.send(new Discord.MessageEmbed()
 				.setDescription(`:loud_sound: ${message.author.username}${decideWording(raisedVolume)} \`${volume}%\``)
-				.setColor(`#0083FF`));
+				.setColor(`#36393f`));
 		} else {
 			return message.channel.send(new Discord.MessageEmbed()
 				.addField(`<:cross:729019052571492434> Failed to change volume`, `You can't set the volume to that number`)

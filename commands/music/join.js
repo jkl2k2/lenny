@@ -13,12 +13,12 @@ module.exports = {
 		if (message.member.voice.channel) {
 			var sent = await message.channel.send(new Discord.MessageEmbed()
 				.setDescription(`:arrows_counterclockwise: Connecting to \`${message.member.voice.channel.name}\``)
-				.setColor(`#0083FF`));
+				.setColor(`#36393f`));
 			message.member.voice.channel.join()
 				.then(connection => {
 					sent.edit(new Discord.MessageEmbed()
 						.setDescription(`:arrow_right: Connected to \`${connection.channel.name}\``)
-						.setColor(`#0083FF`));
+						.setColor(`#36393f`));
 				});
 		} else {
 			message.channel.send(new Discord.MessageEmbed()

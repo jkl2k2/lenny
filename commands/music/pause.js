@@ -16,7 +16,7 @@ module.exports = {
 			dispatcher.pause();
 			message.channel.send(new Discord.MessageEmbed()
 				.setDescription(`:pause_button: ${message.author.username} paused playback`)
-				.setColor(`#0083FF`));
+				.setColor(`#36393f`));
 		} else {
 			message.channel.send(new Discord.MessageEmbed
 				.setDescription(`<:cross:729019052571492434> ${message.author.username}, the music is already paused`)

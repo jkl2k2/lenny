@@ -35,7 +35,7 @@ module.exports = {
 
             message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`:twisted_rightwards_arrows: ${message.author.username} shuffled ${queue.list.length} songs in queue`)
-                .setColor(`#0083FF`));
+                .setColor(`#36393f`));
         } else {
             message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`<:cross:729019052571492434> Cannot shuffle an empty queue`)

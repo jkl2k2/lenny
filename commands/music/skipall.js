@@ -31,7 +31,7 @@ module.exports = {
 
 		message.channel.send(new Discord.MessageEmbed()
 			.setDescription(`:stop_button: ${message.author.username} skipped all songs`)
-			.setColor(`#0083FF`));
+			.setColor(`#36393f`));
 
 	}
 };

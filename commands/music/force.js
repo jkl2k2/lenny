@@ -13,7 +13,7 @@ module.exports = {
 	execute(message, args) {
 		message.channel.send(new Discord.MessageEmbed()
 			.setDescription(":information_source: Attemping to unstick queue...\n\n**If this doesn't work, completely restart the music system with the \`leave\` command**")
-			.setColor("#0083FF"));
+			.setColor("#36393f"));
 
 		index.callPlayMusic(message);
 	}

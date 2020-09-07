@@ -6,9 +6,6 @@ const Discord = require(`discord.js`);
 const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
 const logger = index.getLogger();
-const fetch = require(`node-fetch`);
-const hex = require(`rgb-hex`);
-const colorThief = require(`colorthief`);
 
 module.exports = {
 	name: 'playnow',
@@ -51,33 +48,21 @@ module.exports = {
 						const queue = message.guild.music.queue;
 
 						if (playlist.thumbnails.default) {
-							fetch(playlist.thumbnails.default.url)
-								.then(r => r.buffer())
-								.then(buf => `data:image/jpg;base64,` + buf.toString('base64'))
-								.then(formatted => colorThief.getColor(formatted))
-								.then(async rgb => {
-									message.channel.send(new Discord.MessageEmbed()
-										.setAuthor(`➕ Queued playlist`)
-										.setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
-										.setThumbnail(playlist.thumbnails.default.url)
-										.setTimestamp()
-										.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
-										.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
-								});
+							message.channel.send(new Discord.MessageEmbed()
+								.setAuthor(`➕ Queued playlist`)
+								.setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
+								.setThumbnail(playlist.thumbnails.default.url)
+								.setTimestamp()
+								.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+								.setColor(`#36393f`));
 						} else if (videos[0].thumbnails.default) {
-							fetch(videos[0].maxRes.url)
-								.then(r => r.buffer())
-								.then(buf => `data:image/jpg;base64,` + buf.toString('base64'))
-								.then(formatted => colorThief.getColor(formatted))
-								.then(async rgb => {
-									message.channel.send(new Discord.MessageEmbed()
-										.setAuthor(`➕ Queued playlist`)
-										.setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
-										.setThumbnail(videos[0].maxRes.url)
-										.setTimestamp()
-										.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
-										.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
-								});
+							message.channel.send(new Discord.MessageEmbed()
+								.setAuthor(`➕ Queued playlist`)
+								.setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
+								.setThumbnail(videos[0].maxRes.url)
+								.setTimestamp()
+								.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+								.setColor(`#36393f`));
 						} else {
 							message.channel.send(new Discord.MessageEmbed()
 								.setAuthor(`➕ Queued playlist`)
@@ -156,31 +141,23 @@ module.exports = {
 
 			if (await newVideo.getLength() == "0:00") {
 				if (music.playing) {
-					fetch(newVideo.getThumbnail())
-						.then(r => r.buffer())
-						.then(buf => `data:image/jpg;base64,` + buf.toString('base64'))
-						.then(formatted => colorThief.getColor(formatted))
-						.then(async rgb => message.channel.send(new Discord.MessageEmbed()
-							.setAuthor(`Queued (#${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
-							.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\n[${newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\n\`YouTube Livestream\``)
-							.setThumbnail(newVideo.getThumbnail())
-							.setTimestamp()
-							.setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar())
-							.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`)));
+					message.channel.send(new Discord.MessageEmbed()
+						.setAuthor(`Queued (#${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
+						.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\n[${newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\n\`YouTube Livestream\``)
+						.setThumbnail(newVideo.getThumbnail())
+						.setTimestamp()
+						.setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar())
+						.setColor(`#36393f`));
 				}
 			} else {
 				if (music.playing) {
-					fetch(newVideo.getThumbnail())
-						.then(r => r.buffer())
-						.then(buf => `data:image/jpg;base64,` + buf.toString('base64'))
-						.then(formatted => colorThief.getColor(formatted))
-						.then(async rgb => message.channel.send(new Discord.MessageEmbed()
-							.setAuthor(`Queued (#${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
-							.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\n[${newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\nLength: \`${await newVideo.getLength()}\``)
-							.setThumbnail(newVideo.getThumbnail())
-							.setTimestamp()
-							.setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar())
-							.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`)));
+					message.channel.send(new Discord.MessageEmbed()
+						.setAuthor(`Queued (#${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
+						.setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\n[${newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\nLength: \`${await newVideo.getLength()}\``)
+						.setThumbnail(newVideo.getThumbnail())
+						.setTimestamp()
+						.setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar())
+						.setColor(`#36393f`));
 				}
 			}
 

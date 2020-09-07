@@ -598,13 +598,6 @@ module.exports = {
     getLogger: function () {
         return logger;
     },
-    getDispatcher: function (message) {
-        if (Dispatchers.get(message.guild.id) != undefined) {
-            return Dispatchers.get(message.guild.id);
-        } else {
-            return undefined;
-        }
-    },
     getStatusChannel: function () {
         return statusChannel;
     },

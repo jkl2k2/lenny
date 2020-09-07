@@ -11,8 +11,8 @@ module.exports = {
     enabled: true,
     type: 'music',
     execute(message, args) {
-        var dispatcher = message.guild.music.dispatcher;
-        var oldVolume = message.guild.music.oldVolume;
+        let dispatcher = message.guild.music.dispatcher;
+        let oldVolume = message.guild.music.oldVolume;
 
         if (dispatcher == undefined || dispatcher.speaking == false) {
             return message.channel.send(new Discord.MessageEmbed()

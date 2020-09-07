@@ -17,8 +17,14 @@ module.exports = {
 			let disconnecting = await message.channel.send(new Discord.MessageEmbed()
 				.setDescription(`:arrows_counterclockwise: Disconnecting from \`${channelName}`)
 				.setColor(`#0083FF`));
-			index.setDispatcher(message, undefined);
-			index.setQueue(message, index.constructQueue());
+
+			// Empty dispatcher
+			message.guild.music.dispatcher = undefined;
+
+			// Empty queue
+			message.guild.music.queue = [];
+
+			// Disconnect
 			client.voice.connections.get(message.guild.id).disconnect();
 
 			disconnecting.edit(new Discord.MessageEmbed()

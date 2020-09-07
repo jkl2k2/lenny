@@ -8,9 +8,6 @@ const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
 const logger = index.getLogger();
 const prefix = config.get(`Bot.prefix`);
-const fetch = require(`node-fetch`);
-const hex = require(`rgb-hex`);
-const colorThief = require(`colorthief`);
 
 module.exports = {
     name: 'search',
@@ -48,37 +45,30 @@ module.exports = {
 
         const client = message.client;
 
-        var queue = index.getQueue(message);
+        const queue = message.guild.music.queue;
 
         async function process(input, searchingMessage) {
-            logger.debug(input.title);
 
             let newVideo = index.constructVideo(input, message.member);
 
             queue.push(newVideo);
 
-            let buffer = await fetch(newVideo.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
-            let rgb = await colorThief.getColor(buffer);
             if (await newVideo.getLength() == "0:00") {
-                let buffer = await fetch(newVideo.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
-                let rgb = await colorThief.getColor(buffer);
                 message.channel.send(new Discord.MessageEmbed()
                     .setAuthor(`Queued (#${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
                     .setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\n[${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\n\`YouTube Livestream\``)
                     .setThumbnail(newVideo.getThumbnail())
                     .setTimestamp()
                     .setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar())
-                    .setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
+                    .setColor(`#36393f`));
             } else {
-                let buffer = await fetch(newVideo.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
-                let rgb = await colorThief.getColor(buffer);
                 message.channel.send(new Discord.MessageEmbed()
                     .setAuthor(`Queued (#${newVideo.getPosition()})`, await newVideo.getChannelThumbnail())
                     .setDescription(`**[${newVideo.getTitle()}](${newVideo.getURL()})**\n[${await newVideo.getChannelName()}](${newVideo.getChannelURL()})\n\nLength: \`${await newVideo.getLength()}\``)
                     .setThumbnail(newVideo.getThumbnail())
                     .setTimestamp()
                     .setFooter(`Requested by ${newVideo.getRequesterName()}`, newVideo.getRequesterAvatar())
-                    .setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
+                    .setColor(`#36393f`));
             }
 
             if (!message.member.voice.channel) return logger.warn(`User not in voice channel after playlist processing`);
@@ -86,7 +76,7 @@ module.exports = {
             if (client.voice.connections.get(message.member.voice.channel)) {
                 // if already in vc
                 let connection = client.voice.connections.get(message.member.voice.channel);
-                if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
+                if (!message.guild.music.playing) {
                     return index.callPlayMusic(message);
                 }
             }
@@ -94,7 +84,7 @@ module.exports = {
             if (message.member.voice.channel) {
                 message.member.voice.channel.join()
                     .then(connection => {
-                        if (index.getDispatcher(message) == undefined || (!connection.speaking && !index.getDispatcher(message).paused)) {
+                        if (!message.guild.music.playing) {
                             return index.callPlayMusic(message);
                         }
                     })
@@ -196,10 +186,8 @@ module.exports = {
                                     if (playlist) {
                                         var videos = await playlist.getVideos();
 
-                                        let buffer = await fetch(playlist.thumbnails.default.url).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
-                                        let rgb = await colorThief.getColor(buffer);
                                         var processing = await message.channel.send(new Discord.MessageEmbed()
-                                            .setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`)
+                                            .setColor(`#36393f`)
                                             .setAuthor(`🔄 Processing playlist`)
                                             .setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
                                             .setThumbnail(playlist.thumbnails.default.url)
@@ -226,7 +214,7 @@ module.exports = {
                                         }
 
                                         processing.edit(new Discord.MessageEmbed()
-                                            .setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`)
+                                            .setColor(`#36393f`)
                                             .setAuthor(`➕ Queued playlist`)
                                             .setDescription(`**[${playlist.title}](${playlist.url})**\nBy: [${playlist.channel.title}](${playlist.channel.url})\nNumber of videos: \`${videos.length}\``)
                                             .setThumbnail(playlist.thumbnails.default.url)
@@ -238,7 +226,7 @@ module.exports = {
                                         if (client.voice.connections.get(message.member.voice.channel)) {
                                             // if already in vc
                                             let connection = client.voice.connections.get(message.member.voice.channel);
-                                            if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
+                                            if (!message.guild.music.playing) {
                                                 return index.callPlayMusic(message);
                                             }
                                         }
@@ -246,7 +234,7 @@ module.exports = {
                                         if (message.member.voice.channel) {
                                             message.member.voice.channel.join()
                                                 .then(connection => {
-                                                    if (index.getDispatcher(message) == undefined || (!connection.speaking && !index.getDispatcher(message).paused)) {
+                                                    if (!message.guild.music.playing) {
                                                         return index.callPlayMusic(message);
                                                     }
                                                 })

@@ -11,7 +11,6 @@ const prefix = config.get(`Bot.prefix`);
 const fetch = require(`node-fetch`);
 const hex = require(`rgb-hex`);
 const colorThief = require(`colorthief`);
-const client = index.getClient();
 
 module.exports = {
     name: 'search',
@@ -46,6 +45,8 @@ module.exports = {
 
             return;
         }
+
+        const client = message.client;
 
         var queue = index.getQueue(message);
 

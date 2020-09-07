@@ -10,7 +10,6 @@ const logger = index.getLogger();
 const fetch = require(`node-fetch`);
 const hex = require(`rgb-hex`);
 const colorThief = require(`colorthief`);
-const client = index.getClient();
 //#endregion
 
 module.exports = {
@@ -41,6 +40,8 @@ module.exports = {
 				.setDescription(`<:cross:729019052571492434> Please include at least one search term or URL`)
 				.setColor(`#FF3838`));
 		}
+
+		const client = message.client;
 		//#endregion
 
 		//#region Playlist handling

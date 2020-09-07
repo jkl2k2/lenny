@@ -1,6 +1,4 @@
 const Discord = require('discord.js');
-const index = require(`../../index.js`);
-var client = index.getClient();
 
 module.exports = {
 	name: 'leave',
@@ -12,6 +10,8 @@ module.exports = {
 	enabled: true,
 	type: 'music',
 	async execute(message, args) {
+		const client = message.client;
+
 		if (client.voice.connections.get(message.guild.id) != undefined) {
 			let channelName = client.voice.connections.get(message.guild.id).channel.name;
 			let disconnecting = await message.channel.send(new Discord.MessageEmbed()

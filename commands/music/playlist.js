@@ -10,7 +10,6 @@ const logger = index.getLogger();
 const fetch = require(`node-fetch`);
 const hex = require(`rgb-hex`);
 const colorThief = require(`colorthief`);
-const client = index.getClient();
 
 module.exports = {
     name: 'playlist',
@@ -45,6 +44,8 @@ module.exports = {
 
             return;
         }
+
+        const client = message.client;
 
         var queue = message.guild.music.queue;
 

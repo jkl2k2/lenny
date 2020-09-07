@@ -9,7 +9,6 @@ const logger = index.getLogger();
 const fetch = require(`node-fetch`);
 const hex = require(`rgb-hex`);
 const colorThief = require(`colorthief`);
-const client = index.getClient();
 
 module.exports = {
 	name: 'playnext',
@@ -38,6 +37,8 @@ module.exports = {
 				.setDescription(`<:cross:729019052571492434> Please include at least one search term or URL`)
 				.setColor(`#FF3838`));
 		}
+
+		const client = message.client;
 		//#endregion
 
 		//#region Regular video / livestream handling
@@ -280,6 +281,7 @@ module.exports = {
 		}
 		//#endregion
 
+		//#region Determine action based on input
 		if (args[0].includes("playlist?list=")) {
 			handlePlaylist();
 		} else if (args[0].includes("soundcloud")) {
@@ -287,5 +289,6 @@ module.exports = {
 		} else {
 			handleVideo();
 		}
+		//#endregion
 	}
 };

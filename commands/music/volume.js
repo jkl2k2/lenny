@@ -1,6 +1,7 @@
 const index = require(`../../index.js`);
 const config = require('config');
 const jahyID = config.get(`Users.jahyID`);
+const ownerID = config.get(`Users.ownerID`);
 const Discord = require(`discord.js`);
 
 function decideWording(input) {
@@ -36,12 +37,10 @@ module.exports = {
 	type: 'music',
 	execute(message, args) {
 		if (!args.length) {
-			if (index.getDispatcher(message) == undefined) {
-				let currentVol = new Discord.MessageEmbed()
+			if (message.guild.music.dispatcher == undefined) {
+				return message.channel.send(new Discord.MessageEmbed()
 					.setDescription(`:loud_sound: Current volume: 100%`)
-					.setColor(`#0083FF`);
-
-				return message.channel.send(currentVol);
+					.setColor(`#0083FF`));
 			}
 			return message.channel.send(new Discord.MessageEmbed()
 				.setDescription(`:loud_sound: Current volume: \`${(index.getDispatcher(message).volume) * 100}%\``)
@@ -49,8 +48,7 @@ module.exports = {
 		}
 
 		volume = args[0];
-		var dispatcher = message.guild.music.dispatcher;
-		var queue = message.guild.music.queue;
+		let dispatcher = message.guild.music.dispatcher;
 		if (!message.guild.music.playing) {
 			return message.channel.send(new Discord.MessageEmbed()
 				.setDescription(`:information_source: Nothing is currently playing`)
@@ -58,8 +56,8 @@ module.exports = {
 		}
 		raisedVolume = compareVolume(volume, dispatcher);
 
-		var newVolume = volume / 100;
-		if ((volume >= 0 && volume <= 500) || message.author.id == jahyID) {
+		let newVolume = volume / 100;
+		if ((volume >= 0 && volume <= 500) || message.author.id == jahyID || message.author.id == ownerID) {
 			dispatcher.setVolume(newVolume);
 			message.guild.music.volume = newVolume;
 			return message.channel.send(new Discord.MessageEmbed()

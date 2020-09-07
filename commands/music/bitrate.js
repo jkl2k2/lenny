@@ -14,7 +14,7 @@ module.exports = {
     enabled: true,
     type: 'music',
     execute(message, args) {
-        var dispatcher = message.guild.music.dispatcher;
+        let dispatcher = message.guild.music.dispatcher;
         if (dispatcher != undefined) {
             dispatcher.setBitrate(args[0]);
             message.channel.send(`Dispatcher bitrate set to ${args[0]}`);

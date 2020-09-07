@@ -139,6 +139,7 @@ module.exports = {
 			// Add new video to queue
 			queue.unshift(newVideo);
 
+			/*
 			if (await newVideo.getLength() == "0:00") {
 				if (music.playing) {
 					message.channel.send(new Discord.MessageEmbed()
@@ -160,6 +161,7 @@ module.exports = {
 						.setColor(`#36393f`));
 				}
 			}
+			*/
 
 			if (!message.member.voice.channel) return logger.warn(`User not in voice channel after video processing`);
 
@@ -223,6 +225,7 @@ module.exports = {
 			queue.unshift(newSC);
 
 			// Skip sending details message if not playing (avoids spam)
+			/*
 			if (message.guild.music.playing) {
 				message.channel.send(new Discord.MessageEmbed()
 					.setAuthor(`Queued (#${newSC.getPosition()})`, newSC.getChannelThumbnail(), newSC.getURL())
@@ -232,6 +235,7 @@ module.exports = {
 					.setTimestamp()
 					.setColor(`#36393f`));
 			}
+			*/
 
 			if (!message.member.voice.channel) return logger.warn(`User not in voice channel after playlist processing`);
 

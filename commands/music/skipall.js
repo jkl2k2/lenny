@@ -13,7 +13,8 @@ module.exports = {
 	type: 'music',
 	execute(message, args) {
 
-		var dispatcher = index.getDispatcher(message);
+		// Define dispatcher;
+		let dispatcher = message.guild.music.dispatcher;
 
 		if (dispatcher == undefined || dispatcher.speaking == false) {
 			return message.channel.send(new Discord.MessageEmbed()
@@ -21,9 +22,14 @@ module.exports = {
 				.setColor(`#FF3838`));
 		}
 
-		index.setQueue(message, index.constructQueue());
-		index.endDispatcher(message);
-		index.setDispatcher(message, undefined);
+		// Empty queue
+		message.guild.music.queue = [];
+
+		// End dispatcher
+		message.guild.music.dispatcher.destroy();
+
+		// Empty dispatcher
+		message.guild.music.dispatcher = undefined;
 
 		message.channel.send(new Discord.MessageEmbed()
 			.setDescription(`:stop_button: ${message.author.username} skipped all songs`)

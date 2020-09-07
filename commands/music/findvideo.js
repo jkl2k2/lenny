@@ -1,7 +1,6 @@
-const index = require(`../../index.js`);
 const Discord = require(`discord.js`);
 const config = require('config');
-const api = config.get(`Bot.api2`);
+const api = config.get(`Bot.api`);
 const YouTube = require('simple-youtube-api');
 const youtube = new YouTube(api);
 

@@ -1,20 +1,16 @@
 //#region Requires
 const fs = require('fs');
 const Discord = require('discord.js');
+const { Structures } = require('discord.js');
 const config = require('config');
 const ytdl = require('ytdl-core');
 const scdl = require(`soundcloud-downloader`);
 const chalk = require('chalk');
 const winston = require('winston');
 const winstonRotate = require(`winston-daily-rotate-file`);
-const api = config.get(`Bot.api2`);
+const api = config.get(`Bot.api`);
 const YouTube = require('simple-youtube-api');
 const youtube = new YouTube(api);
-const TwitchClient = require('twitch').default;
-const twitchClient = TwitchClient.withCredentials(config.get(`Bot.TWITCH_CLIENT_ID`), config.get(`Bot.TWITCH_CLIENT_SECRET`));
-const hex = require(`rgb-hex`);
-const colorThief = require(`colorthief`);
-const fetch = require(`node-fetch`);
 const beta = config.get(`Bot.beta`);
 const prettyMs = require(`pretty-ms`);
 const Enmap = require('enmap');
@@ -47,6 +43,28 @@ Reflect.defineProperty(currency, 'getBalance', {
 //#endregion
 
 //#region Initialize client
+
+// Extend Guild to support music
+Structures.extend('Guild', Guild => {
+    class MusicGuild extends Guild {
+        constructor(client, data) {
+            super(client, data);
+            this.music = {
+                queue: [],
+                lastPlayed: undefined,
+                lastEmbed: undefined,
+                playing: false,
+                paused: false,
+                repeat: false,
+                volume: 1,
+                oldVolume: 1,
+                dispatcher: undefined,
+            };
+        }
+    }
+    return MusicGuild;
+});
+
 const client = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
 client.commands = new Discord.Collection();
 const cooldowns = new Discord.Collection();
@@ -186,11 +204,11 @@ class YTVideo {
     }
     getPosition() {
         // let queue = index.getQueue(this.requester.guild.id);
-        let queue = Queues.get(this.requester.guild.id);
-        if (queue.list.indexOf(this) == -1) {
+        let queue = this.requester.guild.music.queue;
+        if (queue.indexOf(this) == -1) {
             return 1;
         } else {
-            return queue.list.indexOf(this) + 1;
+            return queue.indexOf(this) + 1;
         }
     }
     getVideo() {
@@ -250,11 +268,11 @@ class SCSong {
     }
     getPosition() {
         // let queue = index.getQueue(this.requester.guild.id);
-        let queue = Queues.get(this.requester.guild.id);
-        if (queue.list.indexOf(this) == -1) {
+        let queue = this.requester.guild.music.queue;
+        if (queue.indexOf(this) == -1) {
             return 1;
         } else {
-            return queue.list.indexOf(this) + 1;
+            return queue.indexOf(this) + 1;
         }
     }
 }
@@ -338,8 +356,6 @@ const ownerID = config.get(`Users.ownerID`);
 const jahyID = config.get(`Users.jahyID`);
 const fookID = config.get(`Users.fookID`);
 
-var lastDetails;
-
 var statusChannel;
 var statusMessage;
 var casinoStatusMessage;
@@ -417,39 +433,31 @@ const activities = [
 //#region Music info message sending
 async function sendDetails(input, c) {
     if (input.getType() == "livestream") {
-        let buffer = await fetch(input.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
-        let rgb = await colorThief.getColor(buffer);
+        // Construct embed
         let musicEmbed = new Discord.MessageEmbed()
             .setAuthor(`Now playing`, await input.getChannelThumbnail())
-            .setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${await input.getChannelName()}](${input.getChannelURL()})\n\n\`YouTube Livestream\``)
+            .setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${input.getChannelName()}](${input.getChannelURL()})\n\n\`YouTube Livestream\``)
             .setThumbnail(input.getThumbnail())
             .setTimestamp()
             .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar())
-            .setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`);
+            .setColor(`#36393f`);
+        // Send message
         c.send(musicEmbed);
-        lastDetails = musicEmbed;
-    } else if (input.getType() == "twitch") {
-        let channel = await twitchClient.helix.users.getUserByName(input.getTitle());
-        let musicEmbed = new Discord.MessageEmbed()
-            .setAuthor(`Now playing`, channel.profilePictureUrl)
-            .setDescription(`**[${channel.displayName}](www.twitch.tv/${channel.displayName})**\n\n\`Twitch Livestream\``)
-            .setThumbnail(channel.profilePictureUrl)
-            .setTimestamp()
-            .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar());
-        c.send(musicEmbed);
-        lastDeatils = musicEmbed;
+        // Set last embed
+        input.getRequester().guild.music.lastEmbed = musicEmbed;
     } else {
-        let buffer = await fetch(input.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
-        let rgb = await colorThief.getColor(buffer);
+        // Construct embed
         let musicEmbed = new Discord.MessageEmbed()
             .setAuthor(`Now playing`, await input.getChannelThumbnail())
-            .setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${await input.getChannelName()}](${input.getChannelURL()})\n\nLength: \`${await input.getLength()}\``)
+            .setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${input.getChannelName()}](${input.getChannelURL()})\n\nLength: \`${await input.getLength()}\``)
             .setThumbnail(input.getThumbnail())
             .setTimestamp()
             .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar())
-            .setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`);
+            .setColor(`#36393f`);
+        // Send message
         c.send(musicEmbed);
-        lastDetails = musicEmbed;
+        // Set last embed
+        input.getRequester().guild.music.lastEmbed = musicEmbed;
     }
 }
 //#endregion
@@ -457,58 +465,83 @@ async function sendDetails(input, c) {
 //#region Music playing
 async function playMusic(message) {
 
-    var queue = Queues.get(message.guild.id);
+    const queue = message.guild.music.queue;
 
-    if (queue.list == undefined) return logger.debug("playMusic() called, but queue undefined");
-    if (queue.list[0] == undefined) return logger.debug("playMusic() called, but queue[0] is undefined");
+    if (queue == undefined) return logger.debug("playMusic() called, but queue undefined");
+    if (queue[0] == undefined) return logger.debug("playMusic() called, but queue[0] is undefined");
 
-    if (queue.list[0].getType() == "video" || queue.list[0].getType() == "livestream") {
+    if (queue[0].getType() == "video" || queue[0].getType() == "livestream") {
         // If regular video
 
-        var input = ytdl(queue.list[0].getURL(), { quality: "highestaudio" });
+        // Download YouTube video
+        const input = ytdl(queue[0].getURL(), { quality: "highestaudio" });
 
-        Dispatchers.set(message.guild.id, client.voice.connections.get(message.guild.id).play(input, { bitrate: 384, volume: Queues.get(message.guild.id).volume, passes: 5, fec: true }));
+        // Set dispatcher
+        message.guild.music.dispatcher = client.voice.connections.get(message.guild.id).play(input, { bitrate: 384, volume: message.guild.music.volume, passes: 5, fec: true });
 
-        if (!queue.repeat) sendDetails(queue.list[0], message.channel);
+        // Mark server as playing music
+        message.guild.music.playing = true;
 
-        if (queue.list[0].getType() == "livestream") {
-            queue.repeat = true;
+        // If not repeating, send music details (avoids spam)
+        if (!message.guild.music.repeat) sendDetails(queue[0], message.channel);
+
+        // If playing a livestream, auto-reconnect using repeat
+        if (queue[0].getType() == "livestream") {
+            message.guild.music.repeat = true;
         }
 
-    } else if (queue.list[0].getType() == "twitch") {
+    } else if (queue[0].getType() == "twitch") {
         // If Twitch
 
         // Dispatchers.set(message.guild.id, client.voice.connections.get(message.guild.id).playStream(queue.list[0].getURL()));
 
         // sendDetails(queue.list[0], message.channel);
 
-    } else if (queue.list[0].getType() == "soundcloud") {
+    } else if (queue[0].getType() == "soundcloud") {
         // If SoundCloud
 
-        let stream = await scdl.download(queue.list[0].getURL());
+        // Download SoundCloud song
+        const stream = await scdl.download(queue[0].getURL());
 
-        Dispatchers.set(message.guild.id, client.voice.connections.get(message.guild.id).play(stream, { bitrate: 384, volume: Queues.get(message.guild.id).volume, passes: 5, fec: true }));
+        // Set dispatcher
+        message.guild.music.dispatcher = client.voice.connections.get(message.guild.id).play(stream, { bitrate: 384, volume: message.guild.music.volume, passes: 5, fec: true });
 
-        sendDetails(queue.list[0], message.channel);
+        // Mark server as playing music
+        message.guild.music.playing = true;
+
+        // If not repeating, send music details (avoids spam)
+        if (!message.guild.music.repeat) sendDetails(queue[0], message.channel);
 
     } else {
         return message.channel.send("Error assigning dispatcher, object at index 0 not of recognized type");
     }
 
-    queue.lastPlayed = queue.list.shift();
-    // Queues.get(message.guild.id).shift();
+    message.guild.music.lastPlayed = queue.shift();
 
     // Reset dispatcher stream delay
     client.voice.connections.get(message.guild.id).player.streamingData.pausedTime = 0;
 
-    Dispatchers.get(message.guild.id).on("close", () => {
-        if (queue.repeat) {
-            queue.list.unshift(queue.lastPlayed);
+    /*
+    message.guild.music.dispatcher.on("close", () => {
+        if (message.guild.music.repeat) {
+            queue.unshift(message.guild.music.lastPlayed);
         }
-        if (queue.list[0]) {
+        if (queue[0]) {
             return playMusic(message);
         } else {
-            Dispatchers.set(message.guild.id, undefined);
+            message.guild.music.playing = false;
+        }
+    });
+    */
+
+    message.guild.music.dispatcher.on("finish", () => {
+        if (message.guild.music.repeat) {
+            queue.unshift(message.guild.music.lastPlayed);
+        }
+        if (queue[0]) {
+            return playMusic(message);
+        } else {
+            message.guild.music.playing = false;
         }
     });
 }
@@ -550,24 +583,11 @@ async function updateAdminDashboard() {
 
 //#region Exports
 module.exports = {
-    constructQueue: function () {
-        return new Queue();
-    },
     constructVideo: function (input, member) {
         return new YTVideo(input, member);
     },
     constructSC: function (input, member) {
         return new SCSong(input, member);
-    },
-    constructTwitch: function (input, name, member) {
-        console.log("Constructing Twitch stream");
-        return new TwitchStream(input, name, member);
-    },
-    getTwitchClient: function () {
-        return twitchClient;
-    },
-    getQueues: function () {
-        return Queues;
     },
     getCurrencyDB: function () {
         return currency;
@@ -575,63 +595,14 @@ module.exports = {
     getLogger: function () {
         return logger;
     },
-    getQueue: function (message) {
-        if (Queues.has(message)) {
-            return Queues.get(message);
-
-        } else if (Queues.has(message.guild.id)) {
-            return Queues.get(message.guild.id);
-
-        } else {
-            return undefined;
-        }
-    },
-    setQueue: function (message, newQueue) {
-        Queues.set(message.guild.id, newQueue);
-    },
-    getDispatcher: function (message) {
-        if (Dispatchers.get(message.guild.id) != undefined) {
-            return Dispatchers.get(message.guild.id);
-        } else {
-            return undefined;
-        }
-    },
-    getDispatchers: function () {
-        return Dispatchers;
-    },
-    getClient: function () {
-        return client;
-    },
-    getPlaying: function (message) {
-        let dispatcher = Dispatchers.get(message.guild.id);
-        if (dispatcher && dispatcher.speaking) {
-            return lastDetails;
-        } else {
-            return new Discord.MessageEmbed()
-                .setDescription(`:information_source: Nothing is currently playing`)
-                .setColor(`#0083FF`);
-        }
-    },
-    getRepeat: function () {
-        return repeat;
-    },
     getStatusChannel: function () {
         return statusChannel;
     },
     getStatusMessage: function () {
         return statusMessage;
     },
-    setDispatcher: function (message, newDispatcher) {
-        Dispatchers.set(message.guild.id, newDispatcher);
-    },
-    endDispatcher: function (message) {
-        Dispatchers.get(message.guild.id).destroy();
-    },
     callPlayMusic: function (message) {
         playMusic(message);
-    },
-    setRepeat: function (toSet) {
-        repeat = toSet;
     }
 };
 //#endregion
@@ -769,15 +740,15 @@ client.on('ready', async () => {
 client.on(`voiceStateUpdate`, (oldState, newState) => {
     if (oldState.channel && !newState.channel) {
         // If was in channel, but is no longer in one
-        Dispatchers.set(oldState.guild.id, undefined);
-        Queues.set(oldState.guild.id, new Queue());
+        oldState.guild.music.queue = [];
+        oldState.guild.music.dispatcher = undefined;
     }
 });
 //#endregion
 
 //#region Starboard
 client.on('messageReactionAdd', async (reaction, user) => {
-    // ready check attachments function 
+    // ready check attachments function
     function extension(reaction, attachment) {
         const imageLink = attachment.split('.');
         const typeOfImage = imageLink[imageLink.length - 1];
@@ -892,7 +863,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
 });
 
 client.on(`messageReactionRemove`, async reaction => {
-    // ready check attachments function 
+    // ready check attachments function
     function extension(reaction, attachment) {
         const imageLink = attachment.split('.');
         const typeOfImage = imageLink[imageLink.length - 1];
@@ -1168,7 +1139,7 @@ client.on('message', message => {
     if (message.content == `<@!${client.user.id}>`) {
         return message.channel.send(new Discord.MessageEmbed()
             .setDescription(`:information_source: The prefix for the server \`${message.guild.name}\` is currently \`${prefix}\``)
-            .setColor(`#0083FF`));
+            .setColor(`#36393f`));
     }
 
     // Return if no prefix
@@ -1286,6 +1257,10 @@ client.on('message', message => {
 //#endregion
 
 //#region Login
+process.on(`unhandledRejection`, err => {
+    console.log(err);
+});
+
 logger.debug(chalk.black.bgGray(`Logging in to Discord...`));
 client.login(token);
 //#endregion

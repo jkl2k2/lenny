@@ -1,6 +1,6 @@
 //const index = require(`../../index.js`);
-const Discord = require(`discord.js`);
-const config = require(`config`);
+// const Discord = require(`discord.js`);
+// const config = require(`config`);
 // Any 'require'
 
 module.exports = {

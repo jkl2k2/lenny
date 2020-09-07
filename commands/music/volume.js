@@ -1,6 +1,6 @@
-const index = require(`../../index.js`);
 const config = require('config');
 const jahyID = config.get(`Users.jahyID`);
+const ownerID = config.get(`Users.ownerID`);
 const Discord = require(`discord.js`);
 
 function decideWording(input) {
@@ -36,35 +36,32 @@ module.exports = {
 	type: 'music',
 	execute(message, args) {
 		if (!args.length) {
-			if (index.getDispatcher(message) == undefined) {
-				let currentVol = new Discord.MessageEmbed()
+			if (message.guild.music.dispatcher == undefined) {
+				return message.channel.send(new Discord.MessageEmbed()
 					.setDescription(`:loud_sound: Current volume: 100%`)
-					.setColor(`#0083FF`);
-
-				return message.channel.send(currentVol);
+					.setColor(`#36393f`));
 			}
 			return message.channel.send(new Discord.MessageEmbed()
-				.setDescription(`:loud_sound: Current volume: \`${(index.getDispatcher(message).volume) * 100}%\``)
-				.setColor(`#0083FF`));
+				.setDescription(`:loud_sound: Current volume: \`${(message.guild.music.volume) * 100}%\``)
+				.setColor(`#36393f`));
 		}
 
 		volume = args[0];
-		var dispatcher = index.getDispatcher(message);
-		var queue = index.getQueue(message);
-		if (dispatcher == undefined || queue == undefined) {
+		let dispatcher = message.guild.music.dispatcher;
+		if (!message.guild.music.playing) {
 			return message.channel.send(new Discord.MessageEmbed()
 				.setDescription(`:information_source: Nothing is currently playing`)
-				.setColor(`#0083FF`));
+				.setColor(`#36393f`));
 		}
 		raisedVolume = compareVolume(volume, dispatcher);
 
-		var newVolume = volume / 100;
-		if ((volume >= 0 && volume <= 500) || message.author.id == jahyID) {
+		let newVolume = volume / 100;
+		if ((volume >= 0 && volume <= 500) || message.author.id == jahyID || message.author.id == ownerID) {
 			dispatcher.setVolume(newVolume);
-			queue.volume = newVolume;
+			message.guild.music.volume = newVolume;
 			return message.channel.send(new Discord.MessageEmbed()
 				.setDescription(`:loud_sound: ${message.author.username}${decideWording(raisedVolume)} \`${volume}%\``)
-				.setColor(`#0083FF`));
+				.setColor(`#36393f`));
 		} else {
 			return message.channel.send(new Discord.MessageEmbed()
 				.addField(`<:cross:729019052571492434> Failed to change volume`, `You can't set the volume to that number`)

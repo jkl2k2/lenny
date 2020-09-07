@@ -1,8 +1,3 @@
-const index = require(`../../index.js`);
-const Discord = require(`discord.js`);
-const fs = require(`fs`);
-// Any 'require'
-
 module.exports = {
     name: 'unxbox',
     description: 'NOT XBOX LIVE',
@@ -15,7 +10,7 @@ module.exports = {
     enabled: true,
     type: 'music',
     execute(message, args) {
-        var dispatcher = index.getDispatcher(message);
+        let dispatcher = message.guild.music.dispatcher;
         if (dispatcher != undefined) {
             dispatcher.setBitrate(384);
             message.channel.send("ur dad", {

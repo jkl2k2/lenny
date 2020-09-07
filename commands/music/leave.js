@@ -1,6 +1,4 @@
 const Discord = require('discord.js');
-const index = require(`../../index.js`);
-var client = index.getClient();
 
 module.exports = {
 	name: 'leave',
@@ -12,18 +10,26 @@ module.exports = {
 	enabled: true,
 	type: 'music',
 	async execute(message, args) {
+		const client = message.client;
+
 		if (client.voice.connections.get(message.guild.id) != undefined) {
 			let channelName = client.voice.connections.get(message.guild.id).channel.name;
 			let disconnecting = await message.channel.send(new Discord.MessageEmbed()
 				.setDescription(`:arrows_counterclockwise: Disconnecting from \`${channelName}`)
-				.setColor(`#0083FF`));
-			index.setDispatcher(message, undefined);
-			index.setQueue(message, index.constructQueue());
+				.setColor(`#36393f`));
+
+			// Empty dispatcher
+			message.guild.music.dispatcher = undefined;
+
+			// Empty queue
+			message.guild.music.queue = [];
+
+			// Disconnect
 			client.voice.connections.get(message.guild.id).disconnect();
 
 			disconnecting.edit(new Discord.MessageEmbed()
 				.setDescription(`:arrow_left: Disconnected from \`${channelName}\``)
-				.setColor(`#0083FF`));
+				.setColor(`#36393f`));
 		} else {
 			message.channel.send(new Discord.MessageEmbed()
 				.setDescription(`<:cross:729019052571492434> I'm not in a voice channel`)

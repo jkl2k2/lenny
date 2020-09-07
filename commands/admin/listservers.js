@@ -1,7 +1,5 @@
-const index = require(`../../index.js`);
 const Discord = require(`discord.js`);
 const config = require(`config`);
-const client = index.getClient();
 const ownerID = config.get(`Users.ownerID`);
 
 module.exports = {
@@ -20,9 +18,10 @@ module.exports = {
     },
     type: 'admin',
     execute(message, args) {
-        var count = 0;
-        var msg = "";
-        for (var server of client.guilds.cache.array()) {
+        const client = message.client;
+        let count = 0;
+        let msg = "";
+        for (const server of client.guilds.cache.array()) {
             msg += server.name;
             msg += "\n";
             count++;

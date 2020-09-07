@@ -1,9 +1,5 @@
-const index = require(`../../index.js`);
 const Discord = require(`discord.js`);
 const config = require(`config`);
-const fetch = require(`node-fetch`);
-const hex = require(`rgb-hex`);
-const colorThief = require(`colorthief`);
 
 async function queueResolver(arr, index) {
 	if (arr[index]) {
@@ -22,19 +18,19 @@ function queueOverflowResolver(arr) {
 }
 
 async function sendEmbed(page, message) {
-	var queue = index.getQueue(message).list;
+	let queue = message.guild.music.queue;
 
 	let queueEmbed = new Discord.MessageEmbed()
 
 		// .setDescription(`${queueResolver(parsedQueue, 0)}\n\n${queueResolver(parsedQueue, 1)}\n\n${queueResolver(parsedQueue, 2)}\n\n${queueResolver(parsedQueue, 3)}\n\n${queueResolver(parsedQueue, 4)}\n\n${queueOverflowResolver(parsedQueue)}`)
 		.setDescription(`${await queueResolver(queue, 0 + page * 5)}\n\n${await queueResolver(queue, 1 + page * 5)}\n\n${await queueResolver(queue, 2 + page * 5)}\n\n${await queueResolver(queue, 3 + page * 5)}\n\n${await queueResolver(queue, 4 + page * 5)}\n\n${await queueOverflowResolver(queue)}`)
 		.setAuthor(`Current queue - Page ${page + 1}`, message.guild.iconURL())
-		.setColor(`#0083FF`);
+		.setColor(`#36393f`);
 	return await message.channel.send(queueEmbed);
 }
 
 async function reactionHandler(sent, message, page) {
-	var queue = index.getQueue(message).list;
+	var queue = message.guild.music.queue;
 
 	const filter = (reaction, user) => {
 		return ['◀️', '🔘', '▶️'].includes(reaction.emoji.name) && user.id === message.author.id;
@@ -93,7 +89,7 @@ async function reactionHandler(sent, message, page) {
 				// .setDescription(`${queueResolver(parsedQueue, 0)}\n\n${queueResolver(parsedQueue, 1)}\n\n${queueResolver(parsedQueue, 2)}\n\n${queueResolver(parsedQueue, 3)}\n\n${queueResolver(parsedQueue, 4)}\n\n${queueOverflowResolver(parsedQueue)}`)
 				.setDescription(`${await queueResolver(queue, 0 + page * 5)}\n\n${await queueResolver(queue, 1 + page * 5)}\n\n${await queueResolver(queue, 2 + page * 5)}\n\n${await queueResolver(queue, 3 + page * 5)}\n\n${await queueResolver(queue, 4 + page * 5)}\n\n${queueOverflowResolver(queue)}`)
 				.setAuthor(`Current queue - Page ${page + 1}`, message.guild.iconURL())
-				.setColor(`#0083FF`);
+				.setColor(`#36393f`);
 			*/
 			// .setFooter(`Controls cleared due to inactivity`);
 			// sent.edit(noControlQueue);
@@ -101,43 +97,37 @@ async function reactionHandler(sent, message, page) {
 		});
 }
 
-async function sendDetails(input, c, index) {
+//#region Music info message sending
+async function sendDetails(input, c) {
 	if (input.getType() == "livestream") {
-		let buffer = await fetch(input.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
-		let rgb = await colorThief.getColor(buffer);
+		// Construct embed
 		let musicEmbed = new Discord.MessageEmbed()
-			.setAuthor(`In queue: video #${index}`, await input.getChannelThumbnail())
-			.setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${await input.getChannelName()}](${input.getChannelURL()})\n\n\`YouTube Livestream\``)
+			.setAuthor(`Now playing`, await input.getChannelThumbnail())
+			.setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${input.getChannelName()}](${input.getChannelURL()})\n\n\`YouTube Livestream\``)
 			.setThumbnail(input.getThumbnail())
 			.setTimestamp()
 			.setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar())
-			.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`);
+			.setColor(`#36393f`);
+		// Send message
 		c.send(musicEmbed);
-		lastDetails = musicEmbed;
-	} else if (input.getType() == "twitch") {
-		let channel = await twitchClient.helix.users.getUserByName(input.getTitle());
-		let musicEmbed = new Discord.MessageEmbed()
-			.setAuthor(`In queue: video #${index}`, channel.profilePictureUrl)
-			.setDescription(`**[${channel.displayName}](www.twitch.tv/${channel.displayName})**\n\n\`Twitch Livestream\``)
-			.setThumbnail(channel.profilePictureUrl)
-			.setTimestamp()
-			.setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar());
-		c.send(musicEmbed);
-		lastDeatils = musicEmbed;
+		// Set last embed
+		input.getRequester().guild.music.lastEmbed = musicEmbed;
 	} else {
-		let buffer = await fetch(input.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
-		let rgb = await colorThief.getColor(buffer);
+		// Construct embed
 		let musicEmbed = new Discord.MessageEmbed()
-			.setAuthor(`In queue: video #${index}`, await input.getChannelThumbnail())
-			.setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${await input.getChannelName()}](${input.getChannelURL()})\n\nLength: \`${await input.getLength()}\``)
+			.setAuthor(`Now playing`, await input.getChannelThumbnail())
+			.setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${input.getChannelName()}](${input.getChannelURL()})\n\nLength: \`${await input.getLength()}\``)
 			.setThumbnail(input.getThumbnail())
 			.setTimestamp()
 			.setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar())
-			.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`);
+			.setColor(`#36393f`);
+		// Send message
 		c.send(musicEmbed);
-		lastDetails = musicEmbed;
+		// Set last embed
+		input.getRequester().guild.music.lastEmbed = musicEmbed;
 	}
 }
+//#endregion
 
 module.exports = {
 	name: 'queue',
@@ -150,15 +140,12 @@ module.exports = {
 	type: 'music',
 	async execute(message, args) {
 
-		var fullQueue = index.getQueue(message);
-		var queue;
+		let queue = message.guild.music.queue;
 
-		if (fullQueue == undefined) {
+		if (queue == undefined || queue.length == 0) {
 			return message.channel.send(new Discord.MessageEmbed()
 				.setDescription(`:information_source: The queue is currently empty`)
-				.setColor(`#0083FF`));
-		} else {
-			queue = fullQueue.list;
+				.setColor(`#36393f`));
 		}
 
 		var page = 0;
@@ -172,7 +159,7 @@ module.exports = {
 		if (queue == undefined || queue.length == 0) {
 			message.channel.send(new Discord.MessageEmbed()
 				.setDescription(`:information_source: The queue is currently empty`)
-				.setColor(`#0083FF`));
+				.setColor(`#36393f`));
 		} else {
 			if (args[0] && queue[reqIndex]) {
 				sendDetails(queue[reqIndex], message.channel, args[0]);

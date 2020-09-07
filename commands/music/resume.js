@@ -11,23 +11,17 @@ module.exports = {
 	enabled: true,
 	type: 'music',
 	execute(message, args) {
-		// index.resumeMusic(message);
-
-		var dispatcher = index.getDispatcher(message);
+		let dispatcher = message.guild.music.dispatcher;
 
 		if (dispatcher != undefined && dispatcher.paused == true) {
 			dispatcher.resume();
-			let resumeEmbed = new Discord.MessageEmbed()
-
+			message.channel.send(new Discord.MessageEmbed()
 				.setDescription(`:arrow_forward: ${message.author.username} resumed playback`)
-				.setColor(`#0083FF`);
-			message.channel.send(resumeEmbed);
+				.setColor(`#36393f`));
 		} else {
-			let resumeFailEmbed = new Discord.MessageEmbed()
-
+			message.channel.send(new Discord.MessageEmbed()
 				.setDescription(`<:cross:729019052571492434> ${message.author.username}, the music is already playing`)
-				.setColor(`#FF3838`);
-			message.channel.send(resumeFailEmbed);
+				.setColor(`#FF3838`));
 		}
 	}
 };

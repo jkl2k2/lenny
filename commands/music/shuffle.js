@@ -1,10 +1,9 @@
 const index = require(`../../index.js`);
 const Discord = require(`discord.js`);
-const Queues = index.getQueues();
 
 // Fisher-Yates Shuffle
 function shuffle(array) {
-    var currentIndex = array.length, temporaryValue, randomIndex;
+    let currentIndex = array.length, temporaryValue, randomIndex;
 
     while (0 !== currentIndex) {
 
@@ -29,14 +28,14 @@ module.exports = {
     enabled: true,
     type: 'music',
     execute(message, args) {
-        var queue = index.getQueue(message);
+        let queue = message.guild.music.queue;
 
         if (queue.list.length > 0) {
-            var shuffled = shuffle(queue.list);
+            shuffle(queue.list);
 
             message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`:twisted_rightwards_arrows: ${message.author.username} shuffled ${queue.list.length} songs in queue`)
-                .setColor(`#0083FF`));
+                .setColor(`#36393f`));
         } else {
             message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`<:cross:729019052571492434> Cannot shuffle an empty queue`)

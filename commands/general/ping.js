@@ -13,13 +13,13 @@ module.exports = {
 		const m = await message.channel.send(new Discord.MessageEmbed()
 			.addField(`:clock3: Message Edit Latency`, `\`Testing...\``)
 			.addField(`:heartbeat: Discord API Ping`, `\`Testing...\``)
-			.setColor(`#0083FF`));
+			.setColor(`#36393f`));
 
 		var frontendLatency = (m.createdTimestamp - message.createdTimestamp);
 		var roundedPing = Math.round(message.client.ws.ping);
 
 		m.edit(new Discord.MessageEmbed()
-			.setColor(`#0083FF`)
+			.setColor(`#36393f`)
 			.addField(`:clock3: Message Edit Latency`, `\`${frontendLatency}ms\``)
 			.addField(`:heartbeat: Discord API Ping`, `\`${roundedPing}ms\``));
 	},

@@ -1,12 +1,11 @@
 const index = require(`../../index.js`);
 const config = require('config');
-const api = config.get(`Bot.api2`);
+const api = config.get(`Bot.api`);
 const ownerID = config.get(`Users.ownerID`);
 const jahyID = config.get(`Users.jahyID`);
 const Discord = require(`discord.js`);
 const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
-const logger = index.getLogger();
 
 module.exports = {
     name: 'findsearch',
@@ -37,7 +36,7 @@ module.exports = {
                     if (!results[0] && !results[1] && !results[2] && !results[3] && !results[4]) {
                         var noPlaylistFound = new Discord.MessageEmbed()
                             .setDescription(`:information_source: Sorry, no playlist could be found with that input`)
-                            .setColor(`#0083FF`);
+                            .setColor(`#36393f`);
                         message.channel.send(noPlaylistFound);
                         return;
                     }
@@ -46,35 +45,35 @@ module.exports = {
                     var searching1 = new Discord.MessageEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for playlists with "${args.join(" ").substring(9)}"
                                          Searching: \`<##-------->\``)
-                        .setColor(`#0083FF`);
+                        .setColor(`#36393f`);
                     var searchingMessage = await message.channel.send(searching1);
 
                     var res2 = (await results[1].getVideos()).length;
                     var searching2 = new Discord.MessageEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for playlists with "${args.join(" ").substring(9)}"
                                          Searching: \`<####------>\``)
-                        .setColor(`#0083FF`);
+                        .setColor(`#36393f`);
                     searchingMessage.edit(searching2);
 
                     var res3 = (await results[2].getVideos()).length;
                     var searching3 = new Discord.MessageEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for playlists with "${args.join(" ").substring(9)}"
                                          Searching: \`<######---->\``)
-                        .setColor(`#0083FF`);
+                        .setColor(`#36393f`);
                     searchingMessage.edit(searching3);
 
                     var res4 = (await results[3].getVideos()).length;
                     var searching4 = new Discord.MessageEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for playlists with "${args.join(" ").substring(9)}"
                                          Searching: \`<########-->\``)
-                        .setColor(`#0083FF`);
+                        .setColor(`#36393f`);
                     searchingMessage.edit(searching4);
 
                     var res5 = (await results[4].getVideos()).length;
                     var searching5 = new Discord.MessageEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for playlists with "${args.join(" ").substring(9)}"
                                          Searching: \`<##########>\``)
-                        .setColor(`#0083FF`);
+                        .setColor(`#36393f`);
                     searchingMessage.edit(searching5);
 
                     var resultsEmbed = new Discord.MessageEmbed()
@@ -110,7 +109,7 @@ module.exports = {
                         if (m.content.toLowerCase() == "cancel") {
                             let cancelEmbed = new Discord.MessageEmbed()
                                 .setDescription(`:stop_button: Canceled playing from search`)
-                                .setColor(`#0083FF`);
+                                .setColor(`#36393f`);
                             message.channel.send(cancelEmbed);
                             return;
                         }
@@ -135,7 +134,7 @@ module.exports = {
                     if (!results[0] && !results[1] && !results[2] && !results[3] && !results[4]) {
                         var noVideoFound = new Discord.MessageEmbed()
                             .setDescription(`:information_source: Sorry, no video could be found with that input`)
-                            .setColor(`#0083FF`);
+                            .setColor(`#36393f`);
                         message.channel.send(noVideoFound);
                         return;
                     }
@@ -144,35 +143,35 @@ module.exports = {
                     var searching1 = new Discord.MessageEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<##-------->\``)
-                        .setColor(`#0083FF`);
+                        .setColor(`#36393f`);
                     var searchingMessage = await message.channel.send(searching1);
 
                     var res2 = index.constructVideo(await results[1].fetch(), message.author);
                     var searching2 = new Discord.MessageEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<####------>\``)
-                        .setColor(`#0083FF`);
+                        .setColor(`#36393f`);
                     searchingMessage.edit(searching2);
 
                     var res3 = index.constructVideo(await results[2].fetch(), message.author);
                     var searching3 = new Discord.MessageEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<######---->\``)
-                        .setColor(`#0083FF`);
+                        .setColor(`#36393f`);
                     searchingMessage.edit(searching3);
 
                     var res4 = index.constructVideo(await results[3].fetch(), message.author);
                     var searching4 = new Discord.MessageEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<########-->\``)
-                        .setColor(`#0083FF`);
+                        .setColor(`#36393f`);
                     searchingMessage.edit(searching4);
 
                     var res5 = index.constructVideo(await results[4].fetch(), message.author);
                     var searching5 = new Discord.MessageEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<##########>\``)
-                        .setColor(`#0083FF`);
+                        .setColor(`#36393f`);
                     searchingMessage.edit(searching5);
 
                     var resultsEmbed = new Discord.MessageEmbed()
@@ -208,7 +207,7 @@ module.exports = {
                         if (m.content.toLowerCase() == "cancel") {
                             let cancelEmbed = new Discord.MessageEmbed()
                                 .setDescription(`:stop_button: Canceled playing from search`)
-                                .setColor(`#0083FF`);
+                                .setColor(`#36393f`);
                             message.channel.send(cancelEmbed);
                             return;
                         }

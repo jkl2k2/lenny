@@ -436,53 +436,31 @@ const activities = [
 //#region Music info message sending
 async function sendDetails(input, c) {
     if (input.getType() == "livestream") {
-        await fetch(input.getThumbnail())
-            .then(r => r.buffer())
-            .then(buf => `data:image/jpg;base64,` + buf.toString('base64'))
-            .then(formatted => colorThief.getColor(formatted))
-            .then(async rgb => {
-                // Construct embed
-                let musicEmbed = new Discord.MessageEmbed()
-                    .setAuthor(`Now playing`, await input.getChannelThumbnail())
-                    .setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${input.getChannelName()}](${input.getChannelURL()})\n\n\`YouTube Livestream\``)
-                    .setThumbnail(input.getThumbnail())
-                    .setTimestamp()
-                    .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar())
-                    .setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`);
-                // Send message
-                c.send(musicEmbed);
-                // Set last embed
-                input.getRequester().guild.music.lastEmbed = musicEmbed;
-            });
-    } else if (input.getType() == "twitch") {
-        let channel = await twitchClient.helix.users.getUserByName(input.getTitle());
+        // Construct embed
         let musicEmbed = new Discord.MessageEmbed()
-            .setAuthor(`Now playing`, channel.profilePictureUrl)
-            .setDescription(`**[${channel.displayName}](www.twitch.tv/${channel.displayName})**\n\n\`Twitch Livestream\``)
-            .setThumbnail(channel.profilePictureUrl)
+            .setAuthor(`Now playing`, await input.getChannelThumbnail())
+            .setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${input.getChannelName()}](${input.getChannelURL()})\n\n\`YouTube Livestream\``)
+            .setThumbnail(input.getThumbnail())
             .setTimestamp()
-            .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar());
+            .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar())
+            .setColor(`#36393f`);
+        // Send message
         c.send(musicEmbed);
-        lastDeatils = musicEmbed;
+        // Set last embed
+        input.getRequester().guild.music.lastEmbed = musicEmbed;
     } else {
-        fetch(input.getThumbnail())
-            .then(r => r.buffer())
-            .then(buf => `data:image/jpg;base64,` + buf.toString('base64'))
-            .then(formatted => colorThief.getColor(formatted))
-            .then(async rgb => {
-                // Construct embed
-                let musicEmbed = new Discord.MessageEmbed()
-                    .setAuthor(`Now playing`, await input.getChannelThumbnail())
-                    .setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${input.getChannelName()}](${input.getChannelURL()})\n\nLength: \`${await input.getLength()}\``)
-                    .setThumbnail(input.getThumbnail())
-                    .setTimestamp()
-                    .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar())
-                    .setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`);
-                // Send message
-                c.send(musicEmbed);
-                // Set last embed
-                input.getRequester().guild.music.lastEmbed = musicEmbed;
-            });
+        // Construct embed
+        let musicEmbed = new Discord.MessageEmbed()
+            .setAuthor(`Now playing`, await input.getChannelThumbnail())
+            .setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${input.getChannelName()}](${input.getChannelURL()})\n\nLength: \`${await input.getLength()}\``)
+            .setThumbnail(input.getThumbnail())
+            .setTimestamp()
+            .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar())
+            .setColor(`#36393f`);
+        // Send message
+        c.send(musicEmbed);
+        // Set last embed
+        input.getRequester().guild.music.lastEmbed = musicEmbed;
     }
 }
 //#endregion

@@ -226,17 +226,13 @@ module.exports = {
 
 			// Skip sending details message if not playing (avoids spam)
 			if (message.guild.music.playing) {
-				fetch(newSC.getThumbnail())
-					.then(r => r.buffer())
-					.then(buf => `data:image/jpg;base64,` + buf.toString('base64'))
-					.then(formatted => colorThief.getColor(formatted))
-					.then(async rgb => message.channel.send(new Discord.MessageEmbed()
-						.setAuthor(`Queued (#${newSC.getPosition()})`, newSC.getChannelThumbnail(), newSC.getURL())
-						.setDescription(`**[${newSC.getTitle()}](${newSC.getURL()})**\n[${newSC.getChannelName()}](${newSC.getChannelURL()})\n\nLength: \`${newSC.getLength()}\``)
-						.setThumbnail(newSC.getThumbnail())
-						.setFooter(`Requested by ${newSC.getRequesterName()}`, newSC.getRequesterAvatar())
-						.setTimestamp()
-						.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`)));
+				message.channel.send(new Discord.MessageEmbed()
+					.setAuthor(`Queued (#${newSC.getPosition()})`, newSC.getChannelThumbnail(), newSC.getURL())
+					.setDescription(`**[${newSC.getTitle()}](${newSC.getURL()})**\n[${newSC.getChannelName()}](${newSC.getChannelURL()})\n\nLength: \`${newSC.getLength()}\``)
+					.setThumbnail(newSC.getThumbnail())
+					.setFooter(`Requested by ${newSC.getRequesterName()}`, newSC.getRequesterAvatar())
+					.setTimestamp()
+					.setColor(`#36393f`));
 			}
 
 			if (!message.member.voice.channel) return logger.warn(`User not in voice channel after playlist processing`);

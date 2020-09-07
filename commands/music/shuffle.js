@@ -1,6 +1,5 @@
 const index = require(`../../index.js`);
 const Discord = require(`discord.js`);
-const Queues = index.getQueues();
 
 // Fisher-Yates Shuffle
 function shuffle(array) {
@@ -29,7 +28,7 @@ module.exports = {
     enabled: true,
     type: 'music',
     execute(message, args) {
-        let queue = index.getQueue(message);
+        let queue = message.guild.music.queue;
 
         if (queue.list.length > 0) {
             shuffle(queue.list);

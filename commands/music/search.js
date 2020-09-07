@@ -8,7 +8,6 @@ const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
 const logger = index.getLogger();
 const prefix = config.get(`Bot.prefix`);
-const Queues = index.getQueues();
 const fetch = require(`node-fetch`);
 const hex = require(`rgb-hex`);
 const colorThief = require(`colorthief`);
@@ -55,13 +54,7 @@ module.exports = {
 
             let newVideo = index.constructVideo(input, message.member);
 
-            if (!Queues.has(message.guild.id)) {
-                let newQueue = index.constructQueue();
-                newQueue.push(newVideo);
-                index.setQueue(message, newQueue);
-            } else {
-                queue.push(newVideo);
-            }
+            queue.push(newVideo);
 
             let buffer = await fetch(newVideo.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
             let rgb = await colorThief.getColor(buffer);

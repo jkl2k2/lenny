@@ -1,4 +1,3 @@
-const index = require(`../../index.js`);
 const Discord = require(`discord.js`);
 
 module.exports = {
@@ -11,23 +10,17 @@ module.exports = {
 	enabled: true,
 	type: 'music',
 	execute(message, args) {
-		// index.pauseMusic(message);
-
-		var dispatcher = index.getDispatcher(message);
+		let dispatcher = message.guild.music.dispatcher;
 
 		if (dispatcher != undefined && dispatcher.paused == false) {
 			dispatcher.pause();
-			let pauseEmbed = new Discord.MessageEmbed()
-
+			message.channel.send(new Discord.MessageEmbed()
 				.setDescription(`:pause_button: ${message.author.username} paused playback`)
-				.setColor(`#0083FF`);
-			message.channel.send(pauseEmbed);
+				.setColor(`#0083FF`));
 		} else {
-			let pauseFailEmbed = new Discord.MessageEmbed()
-
+			message.channel.send(new Discord.MessageEmbed
 				.setDescription(`<:cross:729019052571492434> ${message.author.username}, the music is already paused`)
-				.setColor(`#FF3838`);
-			message.channel.send(pauseFailEmbed);
+				.setColor(`#FF3838`));
 		}
 	}
 };

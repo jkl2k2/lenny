@@ -1,6 +1,4 @@
-const index = require(`../../index.js`);
 const Discord = require(`discord.js`);
-const Queues = index.getQueues();
 const fetch = require(`node-fetch`);
 const hex = require(`rgb-hex`);
 const colorThief = require(`colorthief`);

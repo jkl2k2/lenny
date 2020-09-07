@@ -1,7 +1,3 @@
-const index = require(`../../index.js`);
-const Discord = require(`discord.js`);
-// Any 'require'
-
 module.exports = {
     name: 'bitrate',
     description: 'Sets bitrate of dispatcher',

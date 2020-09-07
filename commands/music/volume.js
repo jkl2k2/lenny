@@ -1,4 +1,3 @@
-const index = require(`../../index.js`);
 const config = require('config');
 const jahyID = config.get(`Users.jahyID`);
 const ownerID = config.get(`Users.ownerID`);
@@ -43,7 +42,7 @@ module.exports = {
 					.setColor(`#0083FF`));
 			}
 			return message.channel.send(new Discord.MessageEmbed()
-				.setDescription(`:loud_sound: Current volume: \`${(index.getDispatcher(message).volume) * 100}%\``)
+				.setDescription(`:loud_sound: Current volume: \`${(message.guild.music.volume) * 100}%\``)
 				.setColor(`#0083FF`));
 		}
 

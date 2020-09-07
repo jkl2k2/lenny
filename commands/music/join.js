@@ -1,5 +1,4 @@
 const Discord = require('discord.js');
-const index = require(`../../index.js`);
 
 module.exports = {
 	name: 'join',

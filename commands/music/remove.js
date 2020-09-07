@@ -1,6 +1,4 @@
-const index = require(`../../index.js`);
 const Discord = require(`discord.js`);
-const logger = index.getLogger();
 
 module.exports = {
     name: 'remove',

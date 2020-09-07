@@ -6,7 +6,6 @@ const jahyID = config.get(`Users.jahyID`);
 const Discord = require(`discord.js`);
 const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
-const logger = index.getLogger();
 
 module.exports = {
     name: 'findsearch',

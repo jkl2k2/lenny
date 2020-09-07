@@ -1,6 +1,4 @@
-const index = require(`../../index.js`);
 const Discord = require(`discord.js`);
-const Queues = index.getQueues();
 
 module.exports = {
 	name: 'skipall',

@@ -1,6 +1,4 @@
-const index = require(`../../index.js`);
 const Discord = require(`discord.js`);
-const client = index.getClient();
 
 module.exports = {
     name: 'stop',
@@ -12,6 +10,8 @@ module.exports = {
     enabled: true,
     type: 'music',
     execute(message, args) {
+
+        const client = message.client;
 
         let dispatcher = message.guild.music.dispatcher;
 

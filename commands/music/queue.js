@@ -1,4 +1,3 @@
-const index = require(`../../index.js`);
 const Discord = require(`discord.js`);
 const config = require(`config`);
 const fetch = require(`node-fetch`);

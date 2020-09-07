@@ -23,6 +23,7 @@ module.exports = {
 	enabled: true,
 	type: 'music',
 	execute(message, args) {
+		//#region Error handling and other necessary setup
 		if (!message.member.voice.channel) {
 			// If member not in VC
 			return message.channel.send(new Discord.MessageEmbed()
@@ -38,8 +39,7 @@ module.exports = {
 				.setDescription(`<:cross:729019052571492434> Please include at least one search term or URL`)
 				.setColor(`#FF3838`));
 		}
-
-		var queue = message.guild.music.queue;
+		//#endregion
 
 		//#region Regular video / livestream handling
 		async function process(input) {
@@ -225,8 +225,9 @@ module.exports = {
 		}
 		//#endregion
 
+		//#region SoundCloud handling
 		async function handleSoundCloud() {
-			let dispatcher = index.getDispatcher(message);
+			const queue = message.guild.music.queue;
 
 			if (!scdl.isValidUrl(args[0])) {
 				return message.channel.send(new Discord.MessageEmbed()
@@ -236,27 +237,23 @@ module.exports = {
 
 			const info = await scdl.getInfo(args[0]);
 
-			var newSC = index.constructSC(message.member, info);
+			const newSC = index.constructSC(message.member, info);
 
-			if (!Queues.has(message.guild.id)) {
-				let newQueue = index.constructQueue();
-				newQueue.push(newSC);
-				index.setQueue(message, newQueue);
-			} else {
-				queue.unshift(newSC);
-			}
+			queue.unshift(newSC);
 
-			if (dispatcher != undefined || (queue != undefined && queue.list[1])) {
-				let buffer = await fetch(newSC.getThumbnail()).then(r => r.buffer()).then(buf => `data:image/jpg;base64,` + buf.toString('base64'));
-				let rgb = await colorThief.getColor(buffer);
-				message.channel.send(new Discord.MessageEmbed()
-					.setTitle(` `)
-					.setAuthor(`Queued (#${newSC.getPosition()})`, newSC.getChannelThumbnail(), newSC.getChannelURL())
-					.setDescription(`**[${newSC.getTitle()}](${newSC.getURL()})**\n[${newSC.getChannelName()}](${newSC.getChannelURL()})\n\nLength: \`${newSC.getLength()}\``)
-					.setThumbnail(newSC.getThumbnail())
-					.setFooter(`Requested by ${newSC.getRequesterName()}`, newSC.getRequesterAvatar())
-					.setTimestamp()
-					.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`));
+			// Skip sending details message if not playing (avoids spam)
+			if (message.guild.music.playing) {
+				fetch(newSC.getThumbnail())
+					.then(r => r.buffer())
+					.then(buf => `data:image/jpg;base64,` + buf.toString('base64'))
+					.then(formatted => colorThief.getColor(formatted))
+					.then(async rgb => message.channel.send(new Discord.MessageEmbed()
+						.setAuthor(`Queued (#${newSC.getPosition()})`, newSC.getChannelThumbnail(), newSC.getURL())
+						.setDescription(`**[${newSC.getTitle()}](${newSC.getURL()})**\n[${newSC.getChannelName()}](${newSC.getChannelURL()})\n\nLength: \`${newSC.getLength()}\``)
+						.setThumbnail(newSC.getThumbnail())
+						.setFooter(`Requested by ${newSC.getRequesterName()}`, newSC.getRequesterAvatar())
+						.setTimestamp()
+						.setColor(`#${hex(rgb[0], rgb[1], rgb[2])}`)));
 			}
 
 			if (!message.member.voice.channel) return logger.warn(`User not in voice channel after playlist processing`);
@@ -264,7 +261,7 @@ module.exports = {
 			if (client.voice.connections.get(message.member.voice.channel)) {
 				// if already in vc
 				let connection = client.voice.connections.get(message.member.voice.channel);
-				if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
+				if (!message.guild.music.playing) {
 					return index.callPlayMusic(message);
 				}
 			}
@@ -272,7 +269,7 @@ module.exports = {
 			if (message.member.voice.channel) {
 				message.member.voice.channel.join()
 					.then(connection => {
-						if (index.getDispatcher(message) == undefined && !connection.voice.speaking) {
+						if (!message.guild.music.playing) {
 							return index.callPlayMusic(message);
 						} else {
 							logger.debug(`Connection speaking`);
@@ -286,6 +283,7 @@ module.exports = {
 				message.channel.send(vcFailEmbed);
 			}
 		}
+		//#endregion
 
 		if (args[0].includes("playlist?list=")) {
 			handlePlaylist();

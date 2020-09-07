@@ -1,16 +1,8 @@
 const index = require(`../../index.js`);
 const config = require(`config`);
 const ownerID = config.get(`Users.ownerID`);
-const fs = require('fs');
-const scdl = require('soundcloud-downloader');
-const api = config.get(`Bot.api`);
 const Discord = require(`discord.js`);
-const YouTube = require(`simple-youtube-api`);
-const youtube = new YouTube(api);
-const { Users, CurrencyShop } = require('../../dbObjects');
-const { Op } = require('sequelize');
 const currency = index.getCurrencyDB();
-const Dispatchers = index.getDispatchers();
 
 function clean(text) {
 	if (typeof (text) === "string")
@@ -28,7 +20,7 @@ module.exports = {
 	// guildOnly: true,
 	enabled: true,
 	restrictions: {
-		id: [config.get(`Users.ownerID`)],
+		id: [ownerID],
 	},
 	type: 'admin',
 	async execute(message, args) {

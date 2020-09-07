@@ -1,7 +1,3 @@
-const index = require(`../../index.js`);
-const Discord = require(`discord.js`);
-const client = index.getClient();
-
 module.exports = {
     name: 'kick',
     description: 'Kicks a user from the server and DMs them a glorious paragraph',
@@ -23,14 +19,13 @@ module.exports = {
 
         target.send(theMessage)
             .then(() => {
-                // var kickTarget = client.users.get(target);
                 target.kick("User kicked with the !kick command")
-				.then(() => {
-					message.channel.send(`User has been kicked.`);
-				})
-				.catch(error => {
-					message.channel.send("Failed to kick user (permissions conflict?)");
-				});
+                    .then(() => {
+                        message.channel.send(`User has been kicked.`);
+                    })
+                    .catch(error => {
+                        message.channel.send("Failed to kick user (permissions conflict?)");
+                    });
             })
             .catch(error => {
                 console.error(`Kick of ${message.author.tag} failed.\n`, error);

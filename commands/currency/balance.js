@@ -1,10 +1,6 @@
 const index = require(`../../index.js`);
 const Discord = require(`discord.js`);
-const { Users, CurrencyShop } = require('../../dbObjects');
-const { Op } = require('sequelize');
 const currency = index.getCurrencyDB();
-const client = index.getClient();
-const logger = index.getLogger();
 
 module.exports = {
     name: 'balance',
@@ -17,6 +13,8 @@ module.exports = {
     enabled: true,
     type: 'currency',
     execute(message, args) {
+        const client = message.client;
+
         const target = message.mentions.users.first() || message.author;
 
         if (message.guild) {

@@ -1,9 +1,6 @@
 const index = require(`../../index.js`);
 const Discord = require(`discord.js`);
-const { Users, CurrencyShop } = require('../../dbObjects');
-const { Op } = require('sequelize');
 const currency = index.getCurrencyDB();
-const client = index.getClient();
 
 module.exports = {
     name: 'leaderboard',
@@ -16,6 +13,7 @@ module.exports = {
     enabled: true,
     type: 'currency',
     execute(message, args) {
+        const client = message.client;
         return message.channel.send(new Discord.MessageEmbed()
             .setDescription(`:medal: **Top 10 users by currency**\n\n` + currency.sort((a, b) => b.balance - a.balance)
                 .filter(user => client.users.cache.has(user.user_id) && message.guild.member(client.users.cache.get(user.user_id)))

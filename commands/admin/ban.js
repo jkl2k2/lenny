@@ -1,7 +1,4 @@
 const index = require(`../../index.js`);
-const Discord = require(`discord.js`);
-const client = index.getClient();
-const config = require(`config`);
 
 module.exports = {
     name: 'ban',
@@ -24,14 +21,13 @@ module.exports = {
 
         target.send(theMessage)
             .then(() => {
-                // var kickTarget = client.users.get(target);
                 target.ban("User banned with the !ban command")
-				.then(() => {
-					message.channel.send(`User has been banned.`);
-				})
-				.catch(error => {
-					message.channel.send("Failed to ban user (permissions conflict?)");
-				});
+                    .then(() => {
+                        message.channel.send(`User has been banned.`);
+                    })
+                    .catch(error => {
+                        message.channel.send("Failed to ban user (permissions conflict?)");
+                    });
             })
             .catch(error => {
                 console.error(`Ban of ${message.author.tag} failed.\n`, error);

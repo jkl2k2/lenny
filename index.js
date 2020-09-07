@@ -608,44 +608,17 @@ async function updateAdminDashboard() {
 
 //#region Exports
 module.exports = {
-    constructQueue: function () {
-        return new Queue();
-    },
     constructVideo: function (input, member) {
         return new YTVideo(input, member);
     },
     constructSC: function (input, member) {
         return new SCSong(input, member);
     },
-    constructTwitch: function (input, name, member) {
-        console.log("Constructing Twitch stream");
-        return new TwitchStream(input, name, member);
-    },
-    getTwitchClient: function () {
-        return twitchClient;
-    },
-    getQueues: function () {
-        return Queues;
-    },
     getCurrencyDB: function () {
         return currency;
     },
     getLogger: function () {
         return logger;
-    },
-    getQueue: function (message) {
-        if (Queues.has(message)) {
-            return Queues.get(message);
-
-        } else if (Queues.has(message.guild.id)) {
-            return Queues.get(message.guild.id);
-
-        } else {
-            return undefined;
-        }
-    },
-    setQueue: function (message, newQueue) {
-        Queues.set(message.guild.id, newQueue);
     },
     getDispatcher: function (message) {
         if (Dispatchers.get(message.guild.id) != undefined) {
@@ -654,42 +627,14 @@ module.exports = {
             return undefined;
         }
     },
-    getDispatchers: function () {
-        return Dispatchers;
-    },
-    getClient: function () {
-        return client;
-    },
-    getPlaying: function (message) {
-        let dispatcher = Dispatchers.get(message.guild.id);
-        if (dispatcher && dispatcher.speaking) {
-            return lastDetails;
-        } else {
-            return new Discord.MessageEmbed()
-                .setDescription(`:information_source: Nothing is currently playing`)
-                .setColor(`#0083FF`);
-        }
-    },
-    getRepeat: function () {
-        return repeat;
-    },
     getStatusChannel: function () {
         return statusChannel;
     },
     getStatusMessage: function () {
         return statusMessage;
     },
-    setDispatcher: function (message, newDispatcher) {
-        Dispatchers.set(message.guild.id, newDispatcher);
-    },
-    endDispatcher: function (message) {
-        Dispatchers.get(message.guild.id).destroy();
-    },
     callPlayMusic: function (message) {
         playMusic(message);
-    },
-    setRepeat: function (toSet) {
-        repeat = toSet;
     }
 };
 //#endregion

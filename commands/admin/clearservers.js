@@ -1,7 +1,5 @@
-const index = require(`../../index.js`);
 const Discord = require(`discord.js`);
 const config = require(`config`);
-const client = index.getClient();
 const ownerID = config.get(`Users.ownerID`);
 
 module.exports = {
@@ -20,11 +18,12 @@ module.exports = {
     },
     type: 'admin',
     async execute(message, args) {
-        var count1 = 0;
-        var count2 = 0;
-        var msg = "";
-        var msg2 = "";
-        for (var server of client.guilds.cache.array()) {
+        const client = message.client;
+        let count1 = 0;
+        let count2 = 0;
+        let msg = "";
+        let msg2 = "";
+        for (const server of client.guilds.cache.array()) {
             if (server.id == "471193210102743040" || server.id == "438485091824697344" || server.id == "593318966202597383") {
                 msg += server.name;
                 msg += "\n";

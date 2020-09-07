@@ -14,7 +14,7 @@ module.exports = {
     enabled: true,
     type: 'music',
     execute(message, args) {
-        var queue = message.guild.music.queue;
+        let queue = message.guild.music.queue;
 
         if (queue == undefined || queue.length == 0) {
             return message.channel.send(new Discord.MessageEmbed()

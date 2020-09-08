@@ -102,7 +102,7 @@ async function sendDetails(input, c) {
 	if (input.getType() == "livestream") {
 		// Construct embed
 		let musicEmbed = new Discord.MessageEmbed()
-			.setAuthor(`Now playing`, await input.getChannelThumbnail())
+			.setAuthor(`In queue - Video #${input.getPosition()}`, await input.getChannelThumbnail())
 			.setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${input.getChannelName()}](${input.getChannelURL()})\n\n\`YouTube Livestream\``)
 			.setThumbnail(input.getThumbnail())
 			.setTimestamp()
@@ -115,7 +115,7 @@ async function sendDetails(input, c) {
 	} else {
 		// Construct embed
 		let musicEmbed = new Discord.MessageEmbed()
-			.setAuthor(`Now playing`, await input.getChannelThumbnail())
+			.setAuthor(`In queue - Video #${input.getPosition()}`, await input.getChannelThumbnail())
 			.setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${input.getChannelName()}](${input.getChannelURL()})\n\nLength: \`${await input.getLength()}\``)
 			.setThumbnail(input.getThumbnail())
 			.setTimestamp()

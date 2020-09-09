@@ -8,7 +8,7 @@ const scdl = require(`soundcloud-downloader`);
 const chalk = require('chalk');
 const winston = require('winston');
 const winstonRotate = require(`winston-daily-rotate-file`);
-const api = config.get(`Bot.api`);
+const api = config.get(`Bot.api2`);
 const YouTube = require('simple-youtube-api');
 const youtube = new YouTube(api);
 const beta = config.get(`Bot.beta`);
@@ -253,6 +253,9 @@ class SCSong {
     }
     getChannelURL() {
         return this.info.user.permalink_url;
+    }
+    getRequester() {
+        return this.requester;
     }
     getRequesterName() {
         return this.requester.user.username;

@@ -2,7 +2,7 @@
 const index = require(`../../index.js`);
 const config = require('config');
 const scdl = require(`soundcloud-downloader`);
-const api = config.get(`Bot.api`);
+const api = config.get(`Bot.api2`);
 const Discord = require(`discord.js`);
 const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);

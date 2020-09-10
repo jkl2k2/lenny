@@ -18,13 +18,15 @@ module.exports = {
 				.setDescription(`:arrows_counterclockwise: Disconnecting from \`${channelName}`)
 				.setColor(`#36393f`));
 
-			// Empty dispatcher
-			message.guild.music.dispatcher = undefined;
-
 			// Empty queue
 			message.guild.music.queue = [];
 
-			// Disconnect
+			// End dispatcher
+			message.guild.music.dispatcher.end();
+
+			// Empty dispatcher
+			message.guild.music.dispatcher = undefined;
+
 			client.voice.connections.get(message.guild.id).disconnect();
 
 			disconnecting.edit(new Discord.MessageEmbed()

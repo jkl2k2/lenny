@@ -30,7 +30,11 @@ module.exports = {
         // Empty dispatcher
         message.guild.music.dispatcher = undefined;
 
+        // Disconnect from VC
         client.voice.connections.get(message.guild.id).disconnect();
+
+        // Reset playing
+        message.guild.music.playing = false;
 
         message.channel.send(new Discord.MessageEmbed()
             .setDescription(`:stop_button: ${message.author.username} stopped all playback`)

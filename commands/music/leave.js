@@ -27,7 +27,11 @@ module.exports = {
 			// Empty dispatcher
 			message.guild.music.dispatcher = undefined;
 
+			// Disconnect from VC
 			client.voice.connections.get(message.guild.id).disconnect();
+
+			// Reset playing
+			message.guild.music.playing = false;
 
 			disconnecting.edit(new Discord.MessageEmbed()
 				.setDescription(`:arrow_left: Disconnected from \`${channelName}\``)

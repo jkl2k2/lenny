@@ -28,7 +28,7 @@ module.exports = {
         message.guild.music.dispatcher.end();
 
         // Empty dispatcher
-        message.guild.music.dispatcher = [];
+        message.guild.music.dispatcher = undefined;
 
         client.voice.connections.get(message.guild.id).disconnect();
 

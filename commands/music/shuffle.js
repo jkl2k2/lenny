@@ -34,7 +34,7 @@ module.exports = {
             shuffle(queue.list);
 
             message.channel.send(new Discord.MessageEmbed()
-                .setDescription(`:twisted_rightwards_arrows: ${message.author.username} shuffled ${queue.list.length} songs in queue`)
+                .setDescription(`:twisted_rightwards_arrows: ${message.author.username} shuffled ${queue.length} songs in queue`)
                 .setColor(`#36393f`));
         } else {
             message.channel.send(new Discord.MessageEmbed()

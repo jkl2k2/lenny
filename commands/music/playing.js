@@ -83,15 +83,15 @@ module.exports = {
 
 		if (playingObj.getType() == "video") {
 			if (queue.repeat) {
-				embed.setDescription(`**[${playingObj.getTitle()}](${playingObj.getURL()})**\nBy: [${await playingObj.getChannelName()}](${playingObj.getChannelURL()})\n\n${progressBar}\n\n\`🔁 Repeat enabled\``);
+				embed.setDescription(`**[${playingObj.getTitle()}](${playingObj.getURL()})**\n[${await playingObj.getChannelName()}](${playingObj.getChannelURL()})\n\n${progressBar}\n\n\`🔁 Repeat enabled\``);
 			} else {
-				embed.setDescription(`**[${playingObj.getTitle()}](${playingObj.getURL()})**\nBy: [${await playingObj.getChannelName()}](${playingObj.getChannelURL()})\n\n${progressBar}`);
+				embed.setDescription(`**[${playingObj.getTitle()}](${playingObj.getURL()})**\n[${await playingObj.getChannelName()}](${playingObj.getChannelURL()})\n\n${progressBar}`);
 			}
 		} else if (playingObj.getType() == "livestream") {
 			if (queue.repeat) {
-				embed.setDescription(`**[${playingObj.getTitle()}](${playingObj.getURL()})**\nBy: [${await playingObj.getChannelName()}](${playingObj.getChannelURL()})\n\n\`Time elapsed: ${formattedPlaying}\`\n\n\`🔁 Reconnect enabled\``);
+				embed.setDescription(`**[${playingObj.getTitle()}](${playingObj.getURL()})**\n[${await playingObj.getChannelName()}](${playingObj.getChannelURL()})\n\n\`Time elapsed: ${formattedPlaying}\`\n\n\`🔁 Reconnect enabled\``);
 			} else {
-				embed.setDescription(`**[${playingObj.getTitle()}](${playingObj.getURL()})**\nBy: [${await playingObj.getChannelName()}](${playingObj.getChannelURL()})\n\n\`Time elapsed: ${formattedPlaying}\`\n\n\`🔁 Reconnect disabled\`\n\`⚠️ Repeat should be on\`\n\`   for livestreams    \``);
+				embed.setDescription(`**[${playingObj.getTitle()}](${playingObj.getURL()})**\n[${await playingObj.getChannelName()}](${playingObj.getChannelURL()})\n\n\`Time elapsed: ${formattedPlaying}\`\n\n\`🔁 Reconnect disabled\`\n\`⚠️ Repeat should be on\`\n\`   for livestreams    \``);
 			}
 		}
 

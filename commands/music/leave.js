@@ -15,14 +15,16 @@ module.exports = {
 		if (client.voice.connections.get(message.guild.id) != undefined) {
 			let channelName = client.voice.connections.get(message.guild.id).channel.name;
 			let disconnecting = await message.channel.send(new Discord.MessageEmbed()
-				.setDescription(`:arrows_counterclockwise: Disconnecting from \`${channelName}`)
+				.setDescription(`:arrows_counterclockwise: Disconnecting from \`${channelName}\``)
 				.setColor(`#36393f`));
 
 			// Empty queue
 			message.guild.music.queue = [];
 
 			// End dispatcher
-			message.guild.music.dispatcher.end();
+			if (message.guild.music.dispatcher != undefined) {
+				message.guild.music.dispatcher.end();
+			}
 
 			// Empty dispatcher
 			message.guild.music.dispatcher = undefined;

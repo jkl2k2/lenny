@@ -30,7 +30,7 @@ module.exports = {
     execute(message, args) {
         let queue = message.guild.music.queue;
 
-        if (queue.list.length > 0) {
+        if (queue.length > 0) {
             shuffle(queue.list);
 
             message.channel.send(new Discord.MessageEmbed()

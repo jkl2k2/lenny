@@ -31,7 +31,7 @@ module.exports = {
         let queue = message.guild.music.queue;
 
         if (queue.length > 0) {
-            shuffle(queue.list);
+            shuffle(queue);
 
             message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`:twisted_rightwards_arrows: ${message.author.username} shuffled ${queue.length} songs in queue`)

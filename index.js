@@ -95,207 +95,6 @@ client.on(`guildDelete`, guild => {
 //#endregion
 
 //#region Classes
-class YTVideo {
-    constructor(video, requester) {
-        this.video = video;
-        this.requester = requester;
-    }
-    getTitle() {
-        var unformatted = this.video.title;
-        var formatted = ``;
-
-        for (var i = 0; i < unformatted.length; i++) {
-            if (unformatted.substring(i, i + 1) == `*` || unformatted.substring(i, i + 1) == `_`) {
-                formatted += `\\`;
-                formatted += unformatted.substring(i, i + 1);
-                // i++;
-            } else {
-                formatted += unformatted.substring(i, i + 1);
-            }
-        }
-
-        return formatted;
-    }
-    getURL() {
-        return this.video.url;
-    }
-    getRequester() {
-        return this.requester;
-    }
-    getRequesterName() {
-        return this.requester.user.username;
-    }
-    getRequesterAvatar() {
-        return this.requester.user.avatarURL();
-    }
-    getType() {
-        if (!this.video.duration) {
-            return "video";
-        } else if (this.video.duration.hours == 0 && this.video.duration.minutes == 0 && this.video.duration.seconds == 0) {
-            return "livestream";
-        } else {
-            return "video";
-        }
-    }
-    getThumbnail() {
-        if (this.video.maxRes) {
-            return this.video.maxRes.url;
-        } else {
-            return ``;
-        }
-    }
-    async getChannelThumbnail() {
-        let fullChannel = await this.video.channel.fetch();
-        return fullChannel.thumbnails.default.url;
-    }
-    getChannelName() {
-        return this.video.channel.title;
-    }
-    getChannelURL() {
-        return this.video.channel.url;
-    }
-    async getLength() {
-        if ((!this.video.duration) || this.video.duration.hours == 0 && this.video.duration.minutes == 0 && this.video.duration.seconds == 0) {
-            var fullVideo = await youtube.getVideo(this.video.url);
-            if (fullVideo.duration.hours == 0) {
-                if (fullVideo.duration.seconds < 10) {
-                    return `${fullVideo.duration.minutes}:0${fullVideo.duration.seconds}`;
-                } else {
-                    return `${fullVideo.duration.minutes}:${fullVideo.duration.seconds}`;
-                }
-            } else {
-                if (fullVideo.duration.seconds < 10) {
-                    if (fullVideo.duration.minutes < 10) {
-                        return `${fullVideo.duration.hours}:0${fullVideo.duration.minutes}:0${fullVideo.duration.seconds}`;
-                    } else {
-                        return `${fullVideo.duration.hours}:${fullVideo.duration.minutes}:0${fullVideo.duration.seconds}`;
-                    }
-                } else {
-                    if (fullVideo.duration.minutes < 10) {
-                        return `${fullVideo.duration.hours}:0${fullVideo.duration.minutes}:${fullVideo.duration.seconds}`;
-                    } else {
-                        return `${fullVideo.duration.hours}:${fullVideo.duration.minutes}:${fullVideo.duration.seconds}`;
-                    }
-                }
-            }
-        }
-
-        if (this.video.duration.hours == 0) {
-            if (this.video.duration.seconds < 10) {
-                return `${this.video.duration.minutes}:0${this.video.duration.seconds}`;
-            } else {
-                return `${this.video.duration.minutes}:${this.video.duration.seconds}`;
-            }
-        } else {
-            if (this.video.duration.seconds < 10) {
-                if (this.video.duration.minutes < 10) {
-                    return `${this.video.duration.hours}:0${this.video.duration.minutes}:0${this.video.duration.seconds}`;
-                } else {
-                    return `${this.video.duration.hours}:${this.video.duration.minutes}:0${this.video.duration.seconds}`;
-                }
-            } else {
-                if (this.video.duration.minutes < 10) {
-                    return `${this.video.duration.hours}:0${this.video.duration.minutes}:${this.video.duration.seconds}`;
-                } else {
-                    return `${this.video.duration.hours}:${this.video.duration.minutes}:${this.video.duration.seconds}`;
-                }
-            }
-        }
-    }
-    getPosition() {
-        // let queue = index.getQueue(this.requester.guild.id);
-        let queue = this.requester.guild.music.queue;
-        if (queue.indexOf(this) == -1) {
-            return 1;
-        } else {
-            return queue.indexOf(this) + 1;
-        }
-    }
-    getVideo() {
-        return this.video;
-    }
-    async getFullVideo() {
-        return await youtube.getVideo(this.video.url);
-    }
-}
-
-class SCSong {
-    constructor(requester, info) {
-        this.requester = requester;
-        this.info = info;
-    }
-    getURL() {
-        return this.info.permalink_url;
-    }
-    getType() {
-        return "soundcloud";
-    }
-    getTitle() {
-        var unformatted = this.info.title;
-        var formatted = ``;
-
-        for (var i = 0; i < unformatted.length; i++) {
-            if (unformatted.substring(i, i + 1) == `*` || unformatted.substring(i, i + 1) == `_`) {
-                formatted += `\\`;
-                formatted += unformatted.substring(i, i + 1);
-            } else {
-                formatted += unformatted.substring(i, i + 1);
-            }
-        }
-
-        return formatted;
-    }
-    getChannelName() {
-        return this.info.user.username;
-    }
-    getChannelThumbnail() {
-        return this.info.user.avatar_url;
-    }
-    getChannelURL() {
-        return this.info.user.permalink_url;
-    }
-    getRequester() {
-        return this.requester;
-    }
-    getRequesterName() {
-        return this.requester.user.username;
-    }
-    getRequesterAvatar() {
-        return this.requester.user.avatarURL();
-    }
-    getLength() {
-        return prettyMs(this.info.duration, { colonNotation: true, secondsDecimalDigits: 0 });
-    }
-    getThumbnail() {
-        return this.info.artwork_url;
-    }
-    getPosition() {
-        // let queue = index.getQueue(this.requester.guild.id);
-        let queue = this.requester.guild.music.queue;
-        if (queue.indexOf(this) == -1) {
-            return 1;
-        } else {
-            return queue.indexOf(this) + 1;
-        }
-    }
-}
-
-class TwitchStream extends YTVideo {
-    constructor(url, name, requester) {
-        super(url, requester);
-        this.name = name;
-    }
-    getTitle() {
-        return this.name;
-    }
-    getURL() {
-        return this.url;
-    }
-    getType() {
-        return "twitch";
-    }
-}
-
 class Command {
     constructor(command, folder) {
         this.command = command;
@@ -306,25 +105,6 @@ class Command {
     }
     getCommand() {
         return this.command;
-    }
-}
-
-class Queue {
-    constructor() {
-        this.list = [];
-        this.repeat = false;
-        this.volume = 1;
-        this.oldVolume = 1;
-        this.lastPlayed = undefined;
-    }
-    push(input) {
-        this.list.push(input);
-    }
-    unshift(input) {
-        this.list.unshift(input);
-    }
-    setLastPlayed(input) {
-        this.lastPlayed = input;
     }
 }
 
@@ -346,11 +126,6 @@ class Activity {
 
 var clientReady = false;
 
-var repeat = false;
-
-const Queues = new Discord.Collection();
-const Dispatchers = new Discord.Collection();
-
 const moneyCooldowns = new Discord.Collection();
 const baseMoneyCooldown = 15000;
 
@@ -359,12 +134,8 @@ const ownerID = config.get(`Users.ownerID`);
 const jahyID = config.get(`Users.jahyID`);
 const fookID = config.get(`Users.fookID`);
 
-var statusChannel;
-var statusMessage;
 var casinoStatusMessage;
 
-var adminStatusChannel;
-var adminStatusMessage;
 //#endregion
 
 //#region Winston logger
@@ -433,123 +204,6 @@ const activities = [
 ];
 //#endregion
 
-//#region Music info message sending
-async function sendDetails(input, c) {
-    if (input.getType() == "livestream") {
-        // Construct embed
-        let musicEmbed = new Discord.MessageEmbed()
-            .setAuthor(`Now playing`, await input.getChannelThumbnail())
-            .setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${input.getChannelName()}](${input.getChannelURL()})\n\n\`YouTube Livestream\``)
-            .setThumbnail(input.getThumbnail())
-            .setTimestamp()
-            .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar())
-            .setColor(`#36393f`);
-        // Send message
-        c.send(musicEmbed);
-        // Set last embed
-        input.getRequester().guild.music.lastEmbed = musicEmbed;
-    } else {
-        // Construct embed
-        let musicEmbed = new Discord.MessageEmbed()
-            .setAuthor(`Now playing`, await input.getChannelThumbnail())
-            .setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${input.getChannelName()}](${input.getChannelURL()})\n\nLength: \`${await input.getLength()}\``)
-            .setThumbnail(input.getThumbnail())
-            .setTimestamp()
-            .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar())
-            .setColor(`#36393f`);
-        // Send message
-        c.send(musicEmbed);
-        // Set last embed
-        input.getRequester().guild.music.lastEmbed = musicEmbed;
-    }
-}
-//#endregion
-
-//#region Music playing
-async function playMusic(message) {
-
-    const queue = message.guild.music.queue;
-
-    if (queue == undefined) return logger.debug("playMusic() called, but queue undefined");
-    if (queue[0] == undefined) return logger.debug("playMusic() called, but queue[0] is undefined");
-
-    if (queue[0].getType() == "video" || queue[0].getType() == "livestream") {
-        // If regular video
-
-        // Download YouTube video
-        const input = ytdl(queue[0].getURL(), { quality: "highestaudio" });
-
-        // Set dispatcher
-        message.guild.music.dispatcher = client.voice.connections.get(message.guild.id).play(input, { bitrate: 384, volume: message.guild.music.volume, passes: 5, fec: true });
-
-        // Mark server as playing music
-        message.guild.music.playing = true;
-
-        // If not repeating, send music details (avoids spam)
-        if (!message.guild.music.repeat) sendDetails(queue[0], message.channel);
-
-        // If playing a livestream, auto-reconnect using repeat
-        if (queue[0].getType() == "livestream") {
-            message.guild.music.repeat = true;
-        }
-
-    } else if (queue[0].getType() == "twitch") {
-        // If Twitch
-
-        // Dispatchers.set(message.guild.id, client.voice.connections.get(message.guild.id).playStream(queue.list[0].getURL()));
-
-        // sendDetails(queue.list[0], message.channel);
-
-    } else if (queue[0].getType() == "soundcloud") {
-        // If SoundCloud
-
-        // Download SoundCloud song
-        const stream = await scdl.download(queue[0].getURL());
-
-        // Set dispatcher
-        message.guild.music.dispatcher = client.voice.connections.get(message.guild.id).play(stream, { bitrate: 384, volume: message.guild.music.volume, passes: 5, fec: true });
-
-        // Mark server as playing music
-        message.guild.music.playing = true;
-
-        // If not repeating, send music details (avoids spam)
-        if (!message.guild.music.repeat) sendDetails(queue[0], message.channel);
-
-    } else {
-        return message.channel.send("Error assigning dispatcher, object at index 0 not of recognized type");
-    }
-
-    message.guild.music.lastPlayed = queue.shift();
-
-    // Reset dispatcher stream delay
-    client.voice.connections.get(message.guild.id).player.streamingData.pausedTime = 0;
-
-    /*
-    message.guild.music.dispatcher.on("close", () => {
-        if (message.guild.music.repeat) {
-            queue.unshift(message.guild.music.lastPlayed);
-        }
-        if (queue[0]) {
-            return playMusic(message);
-        } else {
-            message.guild.music.playing = false;
-        }
-    });
-    */
-
-    message.guild.music.dispatcher.on("finish", () => {
-        if (message.guild.music.repeat) {
-            queue.unshift(message.guild.music.lastPlayed);
-        }
-        if (queue[0]) {
-            return playMusic(message);
-        } else {
-            message.guild.music.playing = false;
-        }
-    });
-}
-//#endregion
-
 //#region Casino status
 function updateCasinoStats(mainGuild) {
     var newLeaderboard = new Discord.MessageEmbed()
@@ -573,39 +227,15 @@ function formatDate() {
         return `${date.getMonth()}/${date.getDate()}/${date.getFullYear()} - ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
     }
 }
-
-async function updateAdminDashboard() {
-    var heartbeatPing = Math.round(client.ping);
-
-    var newMessage = new Discord.MessageEmbed()
-        .setDescription(`:clock3: Websocket Ping: **${heartbeatPing}ms**`)
-        .setFooter(`Updated ${formatDate()}`);
-    adminStatusMessage.edit(newMessage);
-}
 //#endregion
 
 //#region Exports
 module.exports = {
-    constructVideo: function (input, member) {
-        return new YTVideo(input, member);
-    },
-    constructSC: function (input, member) {
-        return new SCSong(input, member);
-    },
     getCurrencyDB: function () {
         return currency;
     },
     getLogger: function () {
         return logger;
-    },
-    getStatusChannel: function () {
-        return statusChannel;
-    },
-    getStatusMessage: function () {
-        return statusMessage;
-    },
-    callPlayMusic: function (message) {
-        playMusic(message);
     }
 };
 //#endregion
@@ -688,6 +318,7 @@ client.on('ready', async () => {
     logger.debug(chalk.black.bgGray(`Syncing with currency database...`));
     const storedBalances = await Users.findAll();
     storedBalances.forEach(b => currency.set(b.user_id, b));
+    client.currency = currency;
 
     let date = new Date();
 

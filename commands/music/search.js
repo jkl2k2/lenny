@@ -1,4 +1,5 @@
 const index = require(`../../index.js`);
+const musicConstructor = require(`../../modules/musicConstructor.js`);
 const config = require('config');
 const api = config.get(`Bot.api2`);
 const ownerID = config.get(`Users.ownerID`);
@@ -49,7 +50,7 @@ module.exports = {
 
         async function process(input, searchingMessage) {
 
-            let newVideo = index.constructVideo(input, message.member);
+            let newVideo = musicConstructor.constructVideo(input, message.member);
 
             queue.push(newVideo);
 
@@ -198,7 +199,7 @@ module.exports = {
                                         var privateCounter = 0;
 
                                         for (var video of videos) {
-                                            var newVideo = index.constructVideo(video, message.member);
+                                            var newVideo = musicConstructor.constructVideo(video, message.member);
                                             if (newVideo.getTitle() == "Private video") {
                                                 encounteredPrivate = true;
                                                 privateCounter++;
@@ -269,35 +270,35 @@ module.exports = {
                         return;
                     }
 
-                    var res1 = index.constructVideo(await results[0].fetch(), message.member);
+                    var res1 = musicConstructor.constructVideo(await results[0].fetch(), message.member);
                     var searching1 = new Discord.MessageEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<##-------->\``)
                         .setColor(`#36393f`);
                     var searchingMessage = await message.channel.send(searching1);
 
-                    var res2 = index.constructVideo(await results[1].fetch(), message.member);
+                    var res2 = musicConstructor.constructVideo(await results[1].fetch(), message.member);
                     var searching2 = new Discord.MessageEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<####------>\``)
                         .setColor(`#36393f`);
                     searchingMessage.edit(searching2);
 
-                    var res3 = index.constructVideo(await results[2].fetch(), message.member);
+                    var res3 = musicConstructor.constructVideo(await results[2].fetch(), message.member);
                     var searching3 = new Discord.MessageEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<######---->\``)
                         .setColor(`#36393f`);
                     searchingMessage.edit(searching3);
 
-                    var res4 = index.constructVideo(await results[3].fetch(), message.member);
+                    var res4 = musicConstructor.constructVideo(await results[3].fetch(), message.member);
                     var searching4 = new Discord.MessageEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"
                                      Searching: \`<########-->\``)
                         .setColor(`#36393f`);
                     searchingMessage.edit(searching4);
 
-                    var res5 = index.constructVideo(await results[4].fetch(), message.member);
+                    var res5 = musicConstructor.constructVideo(await results[4].fetch(), message.member);
                     /*
                     var searching5 = new Discord.MessageEmbed()
                         .setDescription(`:arrows_counterclockwise: Searching for videos with "${args.join(" ")}"

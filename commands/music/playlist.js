@@ -1,4 +1,5 @@
 const index = require(`../../index.js`);
+const musicConstructor = require(`../../modules/musicConstructor.js`);
 const config = require('config');
 const api = config.get(`Bot.api2`);
 const ownerID = config.get(`Users.ownerID`);
@@ -146,7 +147,7 @@ module.exports = {
                                 let privateCounter = 0;
 
                                 for (const video of videos) {
-                                    var newVideo = index.constructVideo(video, message.member);
+                                    var newVideo = musicConstructor.constructVideo(video, message.member);
                                     if (newVideo.getTitle() == "Private video") {
                                         encounteredPrivate = true;
                                         privateCounter++;

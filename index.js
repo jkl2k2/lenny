@@ -346,11 +346,6 @@ class Activity {
 
 var clientReady = false;
 
-var repeat = false;
-
-const Queues = new Discord.Collection();
-const Dispatchers = new Discord.Collection();
-
 const moneyCooldowns = new Discord.Collection();
 const baseMoneyCooldown = 15000;
 
@@ -359,12 +354,8 @@ const ownerID = config.get(`Users.ownerID`);
 const jahyID = config.get(`Users.jahyID`);
 const fookID = config.get(`Users.fookID`);
 
-var statusChannel;
-var statusMessage;
 var casinoStatusMessage;
 
-var adminStatusChannel;
-var adminStatusMessage;
 //#endregion
 
 //#region Winston logger
@@ -573,36 +564,15 @@ function formatDate() {
         return `${date.getMonth()}/${date.getDate()}/${date.getFullYear()} - ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
     }
 }
-
-async function updateAdminDashboard() {
-    var heartbeatPing = Math.round(client.ping);
-
-    var newMessage = new Discord.MessageEmbed()
-        .setDescription(`:clock3: Websocket Ping: **${heartbeatPing}ms**`)
-        .setFooter(`Updated ${formatDate()}`);
-    adminStatusMessage.edit(newMessage);
-}
 //#endregion
 
 //#region Exports
 module.exports = {
-    constructVideo: function (input, member) {
-        return new YTVideo(input, member);
-    },
-    constructSC: function (input, member) {
-        return new SCSong(input, member);
-    },
     getCurrencyDB: function () {
         return currency;
     },
     getLogger: function () {
         return logger;
-    },
-    getStatusChannel: function () {
-        return statusChannel;
-    },
-    getStatusMessage: function () {
-        return statusMessage;
     },
     callPlayMusic: function (message) {
         playMusic(message);

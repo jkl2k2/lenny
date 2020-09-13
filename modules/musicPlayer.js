@@ -1,7 +1,9 @@
 //#region Requires
+const index = require(`../index.js`);
 const ytdl = require('ytdl-core');
 const scdl = require(`soundcloud-downloader`);
 const { MessageEmbed } = require(`discord.js`);
+const logger = index.getLogger();
 //#endregion
 
 //#region sendDetails

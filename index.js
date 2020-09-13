@@ -3,16 +3,10 @@ const fs = require('fs');
 const Discord = require('discord.js');
 const { Structures } = require('discord.js');
 const config = require('config');
-const ytdl = require('ytdl-core');
-const scdl = require(`soundcloud-downloader`);
 const chalk = require('chalk');
 const winston = require('winston');
 const winstonRotate = require(`winston-daily-rotate-file`);
-const api = config.get(`Bot.api2`);
-const YouTube = require('simple-youtube-api');
-const youtube = new YouTube(api);
 const beta = config.get(`Bot.beta`);
-const prettyMs = require(`pretty-ms`);
 const Enmap = require('enmap');
 //#endregion
 

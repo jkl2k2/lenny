@@ -1,4 +1,4 @@
-const index = require(`../../index.js`);
+const player = require(`../../modules/musicPlayer`);
 const Discord = require(`discord.js`);
 
 module.exports = {
@@ -15,6 +15,6 @@ module.exports = {
 			.setDescription(":information_source: Attemping to unstick queue...\n\n**If this doesn't work, completely restart the music system with the \`leave\` command**")
 			.setColor("#36393f"));
 
-		index.callPlayMusic(message);
+		player.play(message);
 	}
 };

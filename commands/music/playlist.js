@@ -1,5 +1,6 @@
 const index = require(`../../index.js`);
 const musicConstructor = require(`../../modules/musicConstructor.js`);
+const player = require(`../../modules/musicPlayer`);
 const config = require('config');
 const api = config.get(`Bot.api2`);
 const ownerID = config.get(`Users.ownerID`);
@@ -176,7 +177,7 @@ module.exports = {
                                     // if already in vc
                                     let connection = client.voice.connections.get(message.member.voice.channel);
                                     if (!message.guild.music.playing) {
-                                        return index.callPlayMusic(message);
+                                        return player.play(message);
                                     }
                                 }
 
@@ -184,7 +185,7 @@ module.exports = {
                                     message.member.voice.channel.join()
                                         .then(connection => {
                                             if (!message.guild.music.playing) {
-                                                return index.callPlayMusic(message);
+                                                return player.play(message);
                                             }
                                         })
                                         .catch(logger.error);

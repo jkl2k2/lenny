@@ -850,6 +850,8 @@ client.on('messageReactionAdd', async (reaction, user) => {
         } else if (image == '' && message.embeds.length > 0 && message.embeds[0].thumbnail) {
             // if embed has thumbnail
             image = message.embeds[0].thumbnail.url;
+        } else if (message.author.id == `569277281046888488`) {
+            image = `https://tenor.com/view/haha-what-astory-gif-11633875`;
         }
 
         const embed = new Discord.MessageEmbed()
@@ -1103,9 +1105,6 @@ client.on('message', message => {
             .then(() => (message.react('🇼'))
                 .then(() => message.react('🅾️')));
     }
-
-    // Reply to nMarkov with gif
-    if (message.author.id == `569277281046888488` && !beta) return message.channel.send(`https://tenor.com/view/haha-what-astory-gif-11633875`);
 
     // Return if message from bot
     if (message.author.bot) return;

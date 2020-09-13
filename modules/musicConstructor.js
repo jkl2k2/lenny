@@ -1,3 +1,8 @@
+const config = require(`config`);
+const api = config.get(`Bot.api`);
+const YouTube = require(`simple-youtube-api`);
+const youtube = new YouTube(api);
+
 // #region YTVideo
 class YTVideo {
     constructor(video, requester) {

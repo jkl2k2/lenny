@@ -1,4 +1,6 @@
 const index = require(`../../index.js`);
+const musicConstructor = require(`../../modules/musicConstructor.js`);
+const player = require(`../../modules/musicPlayer`);
 const config = require('config');
 const scdl = require(`soundcloud-downloader`);
 const api = config.get(`Bot.api2`);
@@ -76,7 +78,7 @@ module.exports = {
 
 						// Queue videos
 						for (var i = videos.length - 1; i >= 0; i--) {
-							const newVideo = index.constructVideo(videos[i], message.member);
+							const newVideo = musicConstructor.constructVideo(videos[i], message.member);
 							if (newVideo.getTitle() == "Private video") {
 								privateCounter++;
 							} else {
@@ -96,7 +98,7 @@ module.exports = {
 							// if already in vc
 							let connection = client.voice.connections.get(message.member.voice.channel);
 							if (!message.guild.music.speaking) {
-								return index.callPlayMusic(message);
+								return player.play(message);
 							} else {
 								return message.guild.music.dispatcher.end();
 							}
@@ -106,7 +108,7 @@ module.exports = {
 							message.member.voice.channel.join()
 								.then(connection => {
 									if (!message.guild.music.playing) {
-										return index.callPlayMusic(message);
+										return player.play(message);
 									} else {
 										return message.guild.music.dispatcher.end();
 									}
@@ -128,7 +130,7 @@ module.exports = {
 		//#region Regular video / livestream handling
 		async function process(input) {
 			// Construct a new YTVideo
-			const newVideo = index.constructVideo(input, message.member);
+			const newVideo = musicConstructor.constructVideo(input, message.member);
 
 			// Easy access to music data
 			let music = message.guild.music;
@@ -169,7 +171,7 @@ module.exports = {
 				// if already in vc
 				// let connection = client.voice.connections.get(message.member.voice.channel);
 				if (!music.playing /* && !connection.voice.speaking */) {
-					return index.callPlayMusic(message);
+					return player.play(message);
 				} else {
 					return message.guild.music.dispatcher.end();
 				}
@@ -179,7 +181,7 @@ module.exports = {
 				message.member.voice.channel.join()
 					.then(connection => {
 						if (!music.playing /* && !connection.voice.speaking */) {
-							return index.callPlayMusic(message);
+							return player.play(message);
 						} else {
 							message.guild.music.dispatcher.end();
 						}
@@ -220,7 +222,7 @@ module.exports = {
 
 			const info = await scdl.getInfo(args[0]);
 
-			const newSC = index.constructSC(message.member, info);
+			const newSC = musicConstructor.constructSC(message.member, info);
 
 			queue.unshift(newSC);
 
@@ -243,7 +245,7 @@ module.exports = {
 				// if already in vc
 				let connection = client.voice.connections.get(message.member.voice.channel);
 				if (!message.guild.music.playing) {
-					return index.callPlayMusic(message);
+					return player.play(message);
 				} else {
 					return message.guild.music.dispatcher.end();
 				}
@@ -253,7 +255,7 @@ module.exports = {
 				message.member.voice.channel.join()
 					.then(connection => {
 						if (!message.guild.music.playing) {
-							return index.callPlayMusic(message);
+							return player.play(message);
 						} else {
 							logger.debug(`Connection speaking`);
 						}

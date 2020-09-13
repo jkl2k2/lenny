@@ -2,6 +2,7 @@ const config = require(`config`);
 const api = config.get(`Bot.api`);
 const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
+const prettyMs = require(`pretty-ms`);
 
 // #region YTVideo
 class YTVideo {

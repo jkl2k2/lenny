@@ -3,7 +3,7 @@ const Discord = require('discord.js');
 module.exports = {
 	name: 'leave',
 	description: `Leaves the user's voice channel, clearing the queue and anything that was playing`,
-	aliases: ['l', 'disconnect'],
+	aliases: ['l', 'disconnect', 'dc'],
 	// usage: '[usage]',
 	// cooldown: seconds,
 	guildOnly: true,

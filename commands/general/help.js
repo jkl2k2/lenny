@@ -28,6 +28,7 @@ module.exports = {
             prefix = "!";
         }
 
+        /*
         // If no arguments provided
         if (!args.length) {
             // Show help directory
@@ -80,6 +81,13 @@ module.exports = {
                 .addField(`move`, `Moves a song's position in the queue`)
                 .addField(`force`, `Unstick a frozen player`)
                 .addField(`find/yt`, `Search for a YouTube video and send a link to the first result`));
+        }
+        */
+        if (!args.length) {
+            return message.channel.send(new MessageEmbed()
+                .setAuthor(`Lenny`, client.user.avatarURL())
+                .setDescription(`[Click here](https://jkl2k2.gitbook.io/lenny/) for command help and usage`)
+                .setFooter(`You can still use !help (command) to view in Discord`))
         }
 
         const name = args[0].toLowerCase();

@@ -1,6 +1,6 @@
 # Table of contents
 
-* [Main Page](README.md)
+* [Lenny](README.md)
 
 ## Command Groups
 

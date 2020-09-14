@@ -8,6 +8,8 @@
   * [help](commands/general/help.md)
   * [ping](commands/general/ping.md)
 * [📋 Administrative](commands/admin/README.md)
+  * [config](commands/admin/config.md)
+  * [prefix](commands/admin/prefix.md)
   * [kick](commands/admin/kick.md)
   * [ban](commands/admin/ban.md)
 

@@ -190,11 +190,9 @@ const logger = winston.createLogger({
 //#region ClientUser activities
 const activities = [
     new Activity("Sege", "PLAYING"),
-    new Activity("my PC melt", "WATCHING"),
-    new Activity("your private convos", "WATCHING"),
+    new Activity("my server melt", "WATCHING"),
+    new Activity(`${client.users.cache.size} users`, "WATCHING"),
     new Activity("trash music", "LISTENING"),
-    new Activity("Russian spies", "LISTENING"),
-    new Activity("Minecraft", "PLAYING")
 ];
 //#endregion
 

@@ -187,15 +187,6 @@ const logger = winston.createLogger({
 });
 //#endregion
 
-//#region ClientUser activities
-const activities = [
-    new Activity("Sege", "PLAYING"),
-    new Activity("my server melt", "WATCHING"),
-    new Activity(`${client.users.cache.size} users`, "WATCHING"),
-    new Activity("trash music", "LISTENING"),
-];
-//#endregion
-
 //#region Casino status
 function updateCasinoStats(mainGuild) {
     var newLeaderboard = new Discord.MessageEmbed()
@@ -316,6 +307,13 @@ client.on('ready', async () => {
 
     // Randomly select status
     setInterval(() => {
+        const activities = [
+            new Activity("Sege", "PLAYING"),
+            new Activity("my server melt", "WATCHING"),
+            new Activity(`${client.users.cache.size} users`, "WATCHING"),
+            new Activity("trash music", "LISTENING"),
+        ];
+
         let index = Math.floor(Math.random() * (activities.length - 1) + 1);
         client.user.setActivity(activities[index].getText(), { type: activities[index].getFormat() });
     }, 15000);

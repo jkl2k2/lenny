@@ -1,5 +1,7 @@
 ---
-description: Discord.js v12
+description: >-
+  A multipurpose Discord bot utilizing discord.js, node.js, and Google Cloud
+  Platform
 ---
 
 # Lenny

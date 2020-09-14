@@ -2,7 +2,7 @@
 description: 'Change settings, (currently limited) server moderation'
 ---
 
-# Administrative
+# 📋 Administrative
 
 * `kick`
   * **Description:** Kick a tagged user from the server

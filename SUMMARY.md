@@ -2,8 +2,10 @@
 
 * [Lenny](README.md)
 
-## Command Groups
+## ℹ️ Command Help
 
-* [General](command-groups/general.md)
-* [Administrative](command-groups/admin.md)
+* [🌐 General](command-help/general/README.md)
+  * [help](command-help/general/help.md)
+  * [ping](command-help/general/ping.md)
+* [📋 Administrative](command-help/admin.md)
 

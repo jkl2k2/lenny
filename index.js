@@ -476,7 +476,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
             // if embed has thumbnail
             image = message.embeds[0].thumbnail.url;
         } else if (message.author.id == `569277281046888488`) {
-            image = `https://tenor.com/view/haha-what-astory-gif-11633875`;
+            image = `https://media1.tenor.com/images/be572fb0d07b6291065afb591eb1f714/tenor.gif`;
         }
 
         const embed = new Discord.MessageEmbed()

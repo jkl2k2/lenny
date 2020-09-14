@@ -2,10 +2,12 @@
 
 * [Lenny](README.md)
 
-## ℹ️ Command Help
+## ℹ️ Command Help <a id="commands"></a>
 
-* [🌐 General](command-help/general/README.md)
-  * [help](command-help/general/help.md)
-  * [ping](command-help/general/ping.md)
-* [📋 Administrative](command-help/admin.md)
+* [🌐 General](commands/general/README.md)
+  * [help](commands/general/help.md)
+  * [ping](commands/general/ping.md)
+* [📋 Administrative](commands/admin/README.md)
+  * [kick](commands/admin/kick.md)
+  * [ban](commands/admin/ban.md)
 

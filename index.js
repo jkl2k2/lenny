@@ -8,6 +8,7 @@ const winston = require('winston');
 const winstonRotate = require(`winston-daily-rotate-file`);
 const beta = config.get(`Bot.beta`);
 const Enmap = require('enmap');
+const prettyMs = require(`pretty-ms`);
 //#endregion
 
 //#region Initialize database
@@ -309,7 +310,7 @@ client.on('ready', async () => {
     setInterval(() => {
         const activities = [
             new Activity("Sege", "PLAYING"),
-            new Activity("my server melt", "WATCHING"),
+            new Activity(`uptime ${prettyMs(process.uptime() * 1000, { colonNotation: true, secondsDecimalDigits: 0 })}`, "PLAYING"),
             new Activity(`${client.users.cache.size} users`, "WATCHING"),
             new Activity("trash music", "LISTENING"),
         ];

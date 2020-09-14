@@ -310,7 +310,7 @@ client.on('ready', async () => {
     setInterval(() => {
         const activities = [
             new Activity("Sege", "PLAYING"),
-            new Activity(`uptime ${prettyMs(process.uptime() * 1000, { colonNotation: true, secondsDecimalDigits: 0 })}`, "PLAYING"),
+            new Activity(`my uptime: ${prettyMs(process.uptime() * 1000, { colonNotation: true, secondsDecimalDigits: 0 })}`, "WATCHING"),
             new Activity(`${client.users.cache.size} users`, "WATCHING"),
             new Activity("trash music", "LISTENING"),
         ];

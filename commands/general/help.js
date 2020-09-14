@@ -86,8 +86,9 @@ module.exports = {
         if (!args.length) {
             return message.channel.send(new MessageEmbed()
                 .setAuthor(`Lenny`, client.user.avatarURL())
-                .setDescription(`[Click here](https://jkl2k2.gitbook.io/lenny/) for command help and usage`)
-                .setFooter(`You can still use !help (command) to view in Discord`))
+                .setDescription(`**[Visit my GitBook](https://jkl2k2.gitbook.io/lenny/) for command help and usage**`)
+                .setFooter(`You can still use !help (command) to view in Discord`)
+                .setColor(`#36393f`));
         }
 
         const name = args[0].toLowerCase();

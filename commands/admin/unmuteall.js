@@ -3,7 +3,7 @@ const Discord = require(`discord.js`);
 module.exports = {
     name: 'unmuteall',
     description: 'Unmutes everyone in a voice chat',
-    aliases: ['ua'],
+    aliases: ['ua', 'u'],
     // args: true,
     // usage: '[command]',
     // altUsage: 'command',

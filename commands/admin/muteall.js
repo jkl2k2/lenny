@@ -3,7 +3,7 @@ const Discord = require(`discord.js`);
 module.exports = {
     name: 'muteall',
     description: 'Mutes everyone in a voice chat',
-    aliases: ['ma'],
+    aliases: ['ma', 'm'],
     // args: true,
     // usage: '[command]',
     // altUsage: 'command',

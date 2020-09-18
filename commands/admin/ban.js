@@ -1,8 +1,6 @@
-const index = require(`../../index.js`);
-
 module.exports = {
     name: 'ban',
-    description: 'Bans a user from the server and DMs them a glorious paragraph',
+    description: 'Bans a user from the server',
     // aliases: ['aliases'],
     args: true,
     usage: '[user to kick]',
@@ -19,19 +17,30 @@ module.exports = {
 
         const target = message.mentions.members.first();
 
-        target.send(theMessage)
-            .then(() => {
-                target.ban("User banned with the !ban command")
-                    .then(() => {
-                        message.channel.send(`User has been banned.`);
-                    })
-                    .catch(error => {
-                        message.channel.send("Failed to ban user (permissions conflict?)");
-                    });
-            })
-            .catch(error => {
-                console.error(`Ban of ${message.author.tag} failed.\n`, error);
-                message.channel.send("Failed to DM user");
-            });
+        if (message.guild.id == `471193210102743040`) {
+            target.send(theMessage)
+                .then(() => {
+                    target.ban(`User banned with the !ban command by ${message.author.tag}`)
+                        .then(() => {
+                            message.channel.send(`User has been banned.`);
+                        })
+                        .catch(error => {
+                            message.channel.send("Failed to ban user (permissions conflict?)");
+                        });
+                })
+                .catch(error => {
+                    console.error(`Ban of ${target.tag} failed.\n`, error);
+                    message.channel.send("Failed to DM user");
+                });
+        } else {
+            target.ban(`User banned with the !ban command by ${message.author.tag}`)
+                .then(() => {
+                    message.channel.send(`User ${target.tag} has been banned.`);
+                })
+                .catch(error => {
+                    message.channel.send(`Failed to ban user ${target.tag} (permissions conflict?)`);
+                });
+        }
+
     }
 };

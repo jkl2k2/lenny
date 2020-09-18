@@ -851,7 +851,7 @@ client.on('message', message => {
 
     // If command has permission restrictions
     if (command.restrictions && message.author.id != ownerID) {
-        if (command.restrictions.resolvable && command.restrictions.resolvable.length > 0 && !message.member.hasPermission(command.restrictions.resolvable) && !message.member.hasPermission(`ADMINISTRATOR`)) {
+        if (command.restrictions.resolvable && command.restrictions.resolvable.length > 0 && !message.member.hasPermission(command.restrictions.resolvable)) {
             return message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`<:cross:729019052571492434> Sorry, ${message.author.username}, you do not have the required permission(s) to use \`${prefix}${command.name}\`\n\nPermissions required:\n\`${command.restrictions.resolvable.join("\n")}\``)
                 .setColor(`#FF3838`));

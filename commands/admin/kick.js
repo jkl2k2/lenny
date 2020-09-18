@@ -17,29 +17,19 @@ module.exports = {
 
         const target = message.mentions.members.first();
 
-        if (message.guild.id == `471193210102743040`) {
-            target.send(theMessage)
-                .then(() => {
-                    target.kick(`User kicked by ${message.author.tag}`)
-                        .then(() => {
-                            message.channel.send(`User ${target.tag} has been kicked.`);
-                        })
-                        .catch(error => {
-                            message.channel.send(`Failed to kick user ${target.tag} (permissions conflict?)`);
-                        });
-                })
-                .catch(error => {
-                    console.error(`Kick of ${target.tag} failed.\n`, error);
-                    message.channel.send("Failed to DM user");
-                });
-        } else {
-            target.kick(`User kicked by ${message.author.tag}`)
-                .then(() => {
-                    message.channel.send(`User ${target.tag} kicked.`);
-                })
-                .catch(error => {
-                    message.channel.send(`Failed to kick user ${target.tag} (permissions conflict?)`);
-                });
-        }
+        target.send(theMessage)
+            .then(() => {
+                target.kick("User kicked with the !kick command")
+                    .then(() => {
+                        message.channel.send(`User has been kicked.`);
+                    })
+                    .catch(error => {
+                        message.channel.send("Failed to kick user (permissions conflict?)");
+                    });
+            })
+            .catch(error => {
+                console.error(`Kick of ${message.author.tag} failed.\n`, error);
+                message.channel.send("Failed to DM user");
+            });
     }
 };

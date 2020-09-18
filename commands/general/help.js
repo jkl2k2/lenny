@@ -1,4 +1,4 @@
-const { MessageEmbed } = require(`discord.js`);
+const Discord = require(`discord.js`);
 
 module.exports = {
     name: 'help',
@@ -10,17 +10,12 @@ module.exports = {
     enabled: true,
     type: 'general',
     execute(message, args) {
-        // Gather all available commands
         const { commands } = message.client;
-
-        // Get client
         const client = message.client;
 
-        // Ready for assigning
         let serverConfig;
         let prefix;
 
-        // Determine prefix
         if (message.guild) {
             serverConfig = client.settings.ensure(message.guild.id, client.settings.default);
             prefix = serverConfig[`prefix`];
@@ -28,79 +23,50 @@ module.exports = {
             prefix = "!";
         }
 
-        /*
-        // If no arguments provided
         if (!args.length) {
-            // Show help directory
-            return message.channel.send(new MessageEmbed()
-                .setAuthor(`Use ${prefix}help [category] to view commands!`, client.user.avatarURL())
-                .addField(`:information_source: General`, `\`Typical util stuff\``)
-                .addField(`:clipboard: Admin`, `\`Configure the bot\``)
-                .addField(`:tada: Fun`, `\`Just for fun\``)
-                .addField(`:headphones: Music`, `\`Listen with friends!\``)
-                .addField(`:game_die: Casino`, `\`Feeling lucky?\``));
-        } else if (args[0].toLowerCase() == `general`) {
-            return message.channel.send(new MessageEmbed()
-                .setAuthor(`You are viewing: General\nUse ${prefix}help [command] to view a specific command!`, client.user.avatarURL())
-                .addField(`help`, `View help for commands`)
-                .addField(`ping`, `Display the bot's ping`));
-        } else if (args[0].toLowerCase() == `admin`) {
-            return message.channel.send(new MessageEmbed()
-                .setAuthor(`You are viewing: Admin\nUse ${prefix}help [command] to view a specific command!`, client.user.avatarURL())
-                .addField(`kick`, `Kicks a tagged user`)
-                .addField(`ban`, `Bans a tagged user`)
-                .addField(`config`, `Configure server settings`)
-                .addField(`prune`, `Remove up to 100 messages from a channel`));
-        } else if (args[0].toLowerCase() == `fun`) {
-            return message.channel.send(new MessageEmbed()
-                .setAuthor(`You are viewing: Fun\nUse ${prefix}help [command] to view a specific command!`, client.user.avatarURL())
-                .addField(`ask`, `Ask a yes or no question!`)
-                .addField(`choose`, `Separate options with commas`)
-                .addField(`lenny`, `( ͡° ͜ʖ ͡°)`)
-                .addField(`uwu`, `Uwuify text ~w~`)
-                .addField(`thesaurize`, `Pass your message through a thesaurus`));
-        } else if (args[0].toLowerCase() == `music`) {
-            return message.channel.send(new MessageEmbed()
-                .setAuthor(`You are viewing: Music\nUse ${prefix}help [command] to view a specific command!`, client.user.avatarURL())
-                .addField(`play`, `Play a YouTube or SoundCloud song`)
-                .addField(`playnext`, `Queues a song to play immediately next`)
-                .addField(`playnow`, `Immediately skips and plays a song`)
-                .addField(`playlist`, `Searches for 5 YouTube playlists`)
-                .addField(`search`, `Searches for 5 YouTube videos`)
-                .addField(`skip/skipall`, `Skips the current song`)
-                .addField(`clear`, `Clears the queue`)
-                .addField(`join/leave/stop`, `Joins/leaves a voice channel`)
-                .addField(`pause/resume`, `Pauses/resumes playback`)
-                .addField(`mute/unmute`, `Mutes/unmutes the audio`)
-                .addField(`volume`, `Set playback volume`)
-                .addField(`queue`, `View the server's music queue`)
-                .addField(`playing`, `See what is currently playing`)
-                .addField(`next`, `See what is coming up next`)
-                .addField(`remove`, `Remove a song from the queue`)
-                .addField(`repeat`, `Enable/disable looping of the current song`)
-                .addField(`move`, `Moves a song's position in the queue`)
-                .addField(`force`, `Unstick a frozen player`)
-                .addField(`find/yt`, `Search for a YouTube video and send a link to the first result`));
-        }
-        */
-        if (!args.length) {
-            return message.channel.send(new MessageEmbed()
-                .setAuthor(`Lenny`, client.user.avatarURL())
-                .setDescription(`**[Visit my GitBook](https://jkl2k2.gitbook.io/lenny/) for command help and usage**`)
-                .setFooter(`You can still use !help (command) to view in Discord`)
-                .setColor(`#36393f`));
+            // Send list of commands
+
+            var generalHelp = new Discord.MessageEmbed();
+
+            generalHelp.setAuthor(`Use ${prefix}help [command name] to get info on a specific command`, client.user.avatarURL());
+
+            if (message.guild && message.guild.id == "471193210102743040") {
+                generalHelp.addField(`**Music playing**`, `play/playnext/playnow\nplaylist\nsearch`, true);
+                generalHelp.addField(`**Playback control**`, `skip/skipall\njoin/leave\npause/resume`, true);
+                generalHelp.addField(`**Volume control**`, `volume\nmute/unmute`, true);
+                generalHelp.addField(`**Queue control**`, `queue\nremove\nmove\nshuffle\nclear`, true);
+                generalHelp.addField(`**Music information**`, `playing\nnext\nfind\nfindsearch`, true);
+                generalHelp.addField(`**Fun commands**`, `ask\ncool\ncorn\nfookify\nfookifytts\nsay\nlenny\nthesaurize\njoke\nuwu`, true);
+                generalHelp.addField(`**Admin commands**`, `config\nprune\ntoggle\nkick\nban\naddmoney`, true);
+                generalHelp.addField(`**System commands**`, `help\nping`, true);
+                generalHelp.addField(`**Currency commands**`, `balance\ntransfer\nleaderboard`, true);
+                generalHelp.addField(`**Game commands**`, `flip\nblackjack`, true);
+            } else {
+                generalHelp.addField(`**Music playing**`, `play/playnext/playnow\nplaylist\nsearch`, true);
+                generalHelp.addField(`**Playback control**`, `skip/skipall\njoin/leave\npause/resume`, true);
+                generalHelp.addField(`**Volume control**`, `volume\nmute/unmute`, true);
+                generalHelp.addField(`**Queue control**`, `queue\nremove\nmove\nshuffle\nclear`, true);
+                generalHelp.addField(`**Music information**`, `playing\nnext\nfind\nfindsearch`, true);
+                generalHelp.addField(`**Fun commands**`, `ask\nsay\nlenny\nthesaurize\njoke\nuwu`, true);
+                generalHelp.addField(`**Admin commands**`, `config\nprune\ntoggle\nkick\nban\naddmoney`, true);
+                generalHelp.addField(`**System commands**`, `help\nping`, true);
+                generalHelp.addField(`**Currency commands**`, `balance\ntransfer\nleaderboard`, true);
+                generalHelp.addField(`**Game commands**`, `flip\nblackjack`, true);
+            }
+
+            return message.channel.send(generalHelp);
         }
 
         const name = args[0].toLowerCase();
         const command = commands.get(name) || commands.find(c => c.aliases && c.aliases.includes(name));
 
         if (!command) {
-            return message.channel.send(new MessageEmbed()
+            return message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`<:cross:729019052571492434> Sorry, \`${prefix}${name}\` is not a valid command`)
                 .setColor(`#FF3838`));
         }
 
-        var commandHelp = new MessageEmbed();
+        var commandHelp = new Discord.MessageEmbed();
 
         if (name != command.name) {
             commandHelp.setDescription(`*(Redirected from ${prefix}${name})*`);

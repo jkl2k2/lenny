@@ -7,7 +7,7 @@ const logger = index.getLogger();
 //#endregion
 
 //#region sendDetails
-async function sendDetails(input, c) {
+const sendDetails = async (input, c) => {
     if (input.getType() == "livestream") {
         // Construct embed
         let musicEmbed = new MessageEmbed()
@@ -35,12 +35,12 @@ async function sendDetails(input, c) {
         // Set last embed
         input.getRequester().guild.music.lastEmbed = musicEmbed;
     }
-}
+};
+
 //#endregion
 
 //#region play
-async function play(message) {
-
+const play = message => {
     const client = message.client;
 
     const queue = message.guild.music.queue;
@@ -79,17 +79,17 @@ async function play(message) {
         // If SoundCloud
 
         // Download SoundCloud song
-        const stream = await scdl.download(queue[0].getURL());
+        scdl.download(queue[0].getURL())
+            .then(stream => {
+                // Set dispatcher
+                message.guild.music.dispatcher = client.voice.connections.get(message.guild.id).play(stream, { bitrate: 384, volume: message.guild.music.volume, passes: 5, fec: true });
 
-        // Set dispatcher
-        message.guild.music.dispatcher = client.voice.connections.get(message.guild.id).play(stream, { bitrate: 384, volume: message.guild.music.volume, passes: 5, fec: true });
+                // Mark server as playing music
+                message.guild.music.playing = true;
 
-        // Mark server as playing music
-        message.guild.music.playing = true;
-
-        // If not repeating, send music details (avoids spam)
-        if (!message.guild.music.repeat) sendDetails(queue[0], message.channel);
-
+                // If not repeating, send music details (avoids spam)
+                if (!message.guild.music.repeat) sendDetails(queue[0], message.channel);
+            });
     } else {
         return message.channel.send("Error assigning dispatcher, object at index 0 not of recognized type");
     }
@@ -122,7 +122,8 @@ async function play(message) {
             message.guild.music.playing = false;
         }
     });
-}
+};
+
 //#endregion
 
 //#region Exports

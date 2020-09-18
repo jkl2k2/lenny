@@ -9,7 +9,7 @@ module.exports = {
     guildOnly: true,
     enabled: true,
     restrictions: {
-        resolvable: ['ADMINISTRATOR'],
+        resolvable: ['KICK_MEMBERS'],
     },
     type: 'admin',
     execute(message, args) {

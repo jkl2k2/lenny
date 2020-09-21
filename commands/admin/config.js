@@ -11,7 +11,7 @@ module.exports = {
     guildOnly: true,
     enabled: true,
     restrictions: {
-        resolvable: [`ADMINISTRATOR`],
+        resolvable: [`MANAGE_GUILD`],
         id: [],
     },
     type: 'admin',

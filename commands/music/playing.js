@@ -82,13 +82,13 @@ module.exports = {
 		var embed = message.guild.music.lastEmbed;
 
 		if (playingObj.getType() == "video") {
-			if (queue.repeat) {
+			if (message.guild.music.repeat) {
 				embed.setDescription(`**[${playingObj.getTitle()}](${playingObj.getURL()})**\n[${await playingObj.getChannelName()}](${playingObj.getChannelURL()})\n\n${progressBar}\n\n\`🔁 Repeat enabled\``);
 			} else {
 				embed.setDescription(`**[${playingObj.getTitle()}](${playingObj.getURL()})**\n[${await playingObj.getChannelName()}](${playingObj.getChannelURL()})\n\n${progressBar}`);
 			}
 		} else if (playingObj.getType() == "livestream") {
-			if (queue.repeat) {
+			if (message.guild.music.repeat) {
 				embed.setDescription(`**[${playingObj.getTitle()}](${playingObj.getURL()})**\n[${await playingObj.getChannelName()}](${playingObj.getChannelURL()})\n\n\`Time elapsed: ${formattedPlaying}\`\n\n\`🔁 Reconnect enabled\``);
 			} else {
 				embed.setDescription(`**[${playingObj.getTitle()}](${playingObj.getURL()})**\n[${await playingObj.getChannelName()}](${playingObj.getChannelURL()})\n\n\`Time elapsed: ${formattedPlaying}\`\n\n\`🔁 Reconnect disabled\`\n\`⚠️ Repeat should be on\`\n\`   for livestreams    \``);

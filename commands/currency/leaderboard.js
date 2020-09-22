@@ -5,7 +5,7 @@ const currency = index.getCurrencyDB();
 module.exports = {
     name: 'leaderboard',
     description: 'Shows the top 10 users sorted by current balance for the server',
-    // aliases: ['aliases'],
+    aliases: ['board'],
     // args: true,
     // usage: '[command]',
     cooldown: 5,

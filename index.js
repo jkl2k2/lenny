@@ -73,6 +73,13 @@ client.settings = new Enmap({
     cloneLevel: 'deep'
 });
 
+client.stats = new Enmap({
+    name: "stats",
+    fetchAll: false,
+    autoFetch: true,
+    cloneLevel: 'deep'
+});
+
 client.settings.default = {
     prefix: "!",
     modLogEnabled: "false",
@@ -81,6 +88,11 @@ client.settings.default = {
     welcomeChannel: "welcome",
     welcomeMessage: "Welcome, {{user}}! Enjoy your stay.",
     goodbyeMessage: "Goodbye, {{user}}!"
+};
+
+client.stats.default = {
+    commandCount: 0,
+    musicTime: 0
 };
 
 client.on(`guildDelete`, guild => {
@@ -119,7 +131,7 @@ class Activity {
 
 //#region Globals/Constants/Variables/etc.
 
-var clientReady = false;
+let clientReady = false;
 
 const moneyCooldowns = new Discord.Collection();
 const baseMoneyCooldown = 15000;
@@ -129,7 +141,9 @@ const ownerID = config.get(`Users.ownerID`);
 const jahyID = config.get(`Users.jahyID`);
 const fookID = config.get(`Users.fookID`);
 
-var casinoStatusMessage;
+let casinoStatusMessage;
+
+let activitySelectionIndex = 0;
 
 //#endregion
 
@@ -308,15 +322,32 @@ client.on('ready', async () => {
 
     // Randomly select status
     setInterval(() => {
+
+        let totalMusicTimeMs = 0;
+        let totalCommandCount = 0;
+
+        for (const guild of client.guilds.cache.array()) {
+            // Ensure serverStats exist
+            const serverStats = client.stats.ensure(guild.id, client.stats.default);
+            totalMusicTimeMs += serverStats[`musicTime`];
+            totalCommandCount += serverStats[`commandCount`];
+        }
+
         const activities = [
-            new Activity("Sege", "PLAYING"),
-            new Activity(`uptime: ${prettyMs(process.uptime() * 1000, { colonNotation: true, secondsDecimalDigits: 0 })}`, "WATCHING"),
+            new Activity(`${totalCommandCount} commands execute`, "WATCHING"),
+            new Activity(`after ${prettyMs(process.uptime() * 1000, { compact: true, verbose: true })} uptime`, "PLAYING"),
             new Activity(`with ${client.users.cache.size} users`, "PLAYING"),
-            new Activity("trash music", "LISTENING"),
+            new Activity(`${prettyMs(totalMusicTimeMs, { compact: true, verbose: true })} of music`, "LISTENING"),
         ];
 
-        let index = Math.floor(Math.random() * (activities.length - 1) + 1);
-        client.user.setActivity(activities[index].getText(), { type: activities[index].getFormat() });
+        // let index = Math.floor(Math.random() * (activities.length - 1) + 1);
+        if (activitySelectionIndex < activities.length - 1) {
+            activitySelectionIndex++;
+        } else {
+            activitySelectionIndex = 0;
+        }
+
+        client.user.setActivity(activities[activitySelectionIndex].getText(), { type: activities[activitySelectionIndex].getFormat() });
     }, 15000);
 
     // If beta version of bot
@@ -785,6 +816,12 @@ client.on('message', message => {
         // return logger.info(`${chalk.black.bgWhite(`${message.author.username} -> `)}${chalk.black.bgWhiteBright(`!${commandName}`)}${chalk.black.bgWhite(` ` + argsShifted.join(` `))}${chalk.whiteBright.bgRedBright(`Not valid command`)}`);
         return;
     }
+
+    // Ensure server stats exists
+    const serverStats = client.stats.ensure(message.guild.id, client.stats.default);
+
+    // Add to command counter
+    client.stats.set(message.guild.id, serverStats[`commandCount`] + 1, `commandCount`);
 
     // Return if command is disabled
     if (!command.enabled && (message.author.id != ownerID && message.author.id != jahyID && message.author.id != fookID)) {

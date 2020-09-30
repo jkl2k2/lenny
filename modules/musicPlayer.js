@@ -113,6 +113,13 @@ const play = message => {
     */
 
     message.guild.music.dispatcher.on("finish", () => {
+        // Add time playing to server stats
+        const serverStats = client.stats.ensure(message.guild.id, client.stats.default);
+
+        if (message.guild.dispatcher != undefined && message.guild.dispatcher.streamTime != undefined) {
+            client.stats.set(message.guild.id, serverStats[`musicTime`] + message.guild.music.dispatcher.streamTime, `musicTime`);
+        }
+
         if (message.guild.music.repeat) {
             queue.unshift(message.guild.music.lastPlayed);
         }

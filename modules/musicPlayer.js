@@ -116,7 +116,7 @@ const play = message => {
         // Add time playing to server stats
         const serverStats = client.stats.ensure(message.guild.id, client.stats.default);
 
-        if (message.guild.dispatcher != undefined && message.guild.dispatcher.streamTime != undefined) {
+        if (message.guild.music.dispatcher != undefined && message.guild.music.dispatcher.streamTime != undefined) {
             client.stats.set(message.guild.id, serverStats[`musicTime`] + message.guild.music.dispatcher.streamTime, `musicTime`);
         }
 

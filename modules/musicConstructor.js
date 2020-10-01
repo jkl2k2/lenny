@@ -3,6 +3,7 @@ const api = config.get(`Bot.api`);
 const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
 const prettyMs = require(`pretty-ms`);
+const iheart = require(`iheart`);
 
 // #region YTVideo
 class YTVideo {
@@ -193,6 +194,67 @@ class SCSong {
 }
 //#endregion
 
+//#region RadioStation
+class RadioStation {
+    constructor(station, requester) {
+        this.station = station;
+        this.requester = requester;
+    }
+    getStation() {
+        return this.station;
+    }
+    getTitle() {
+        var unformatted = this.station.name;
+        var formatted = ``;
+
+        for (var i = 0; i < unformatted.length; i++) {
+            if (unformatted.substring(i, i + 1) == `*` || unformatted.substring(i, i + 1) == `_`) {
+                formatted += `\\`;
+                formatted += unformatted.substring(i, i + 1);
+                // i++;
+            } else {
+                formatted += unformatted.substring(i, i + 1);
+            }
+        }
+
+        return formatted;
+    }
+    getURL() {
+        iheart.streamURL(this.station)
+            .then(stream => {
+                return stream;
+            });
+    }
+    getRequester() {
+        return this.requester;
+    }
+    getRequesterName() {
+        return this.requester.user.username;
+    }
+    getRequesterAvatar() {
+        return this.requester.user.avatarURL();
+    }
+    getType() {
+        return `radio`;
+    }
+    getThumbnail() {
+        return this.station.logo || this.station.newlogo || `https://images.squarespace-cdn.com/content/v1/54becebee4b05d09416fe7e4/1475621818576-WDFS5E94KQTCUOKQQFMS/ke17ZwdGBToddI8pDm48kPatQlumu_Sh_yEKNNtje2NZw-zPPgdn4jUwVcJE1ZvWhcwhEtWJXoshNdA9f1qD7aXK0t8ahyzoOLFEHArbPTIvsJ8ZBSuac1iGVlJVssK0Dume1Xhlc5QUWr24itNJvQ/iHR_primary_Darkjpg?format=300w`;
+    }
+    async getChannelThumbnail() {
+        return `https://images.squarespace-cdn.com/content/v1/54becebee4b05d09416fe7e4/1475621818576-WDFS5E94KQTCUOKQQFMS/ke17ZwdGBToddI8pDm48kPatQlumu_Sh_yEKNNtje2NZw-zPPgdn4jUwVcJE1ZvWhcwhEtWJXoshNdA9f1qD7aXK0t8ahyzoOLFEHArbPTIvsJ8ZBSuac1iGVlJVssK0Dume1Xhlc5QUWr24itNJvQ/iHR_primary_Darkjpg?format=300w`;
+    }
+    getChannelName() {
+        return `iHeartRadio`;
+    }
+    getChannelURL() {
+        return `https://www.iheart.com/`;
+    }
+    getLength() {
+        return `indefinite`;
+    }
+}
+//#endregion
+
 //#region Exports
 exports.constructVideo = (input, member) => {
     return new YTVideo(input, member);
@@ -200,5 +262,9 @@ exports.constructVideo = (input, member) => {
 
 exports.constructSC = (input, member) => {
     return new SCSong(input, member);
+};
+
+exports.constructRadio = (input, member) => {
+    return new RadioStation(input, member);
 };
 //#endregion

@@ -2,15 +2,29 @@
 const index = require(`../index.js`);
 const ytdl = require('ytdl-core');
 const scdl = require(`soundcloud-downloader`);
-const { MessageEmbed } = require(`discord.js`);
+const Discord = require(`discord.js`);
 const logger = index.getLogger();
+const iheart = require(`iheart`);
 //#endregion
 
 //#region sendDetails
 const sendDetails = async (input, c) => {
-    if (input.getType() == "livestream") {
+    if (input.getType() == "radio") {
         // Construct embed
-        let musicEmbed = new MessageEmbed()
+        let musicEmbed = new Discord.MessageEmbed()
+            .setAuthor(`Now playing`, await input.getChannelThumbnail())
+            .setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${input.getChannelName()}](${input.getChannelURL()})\n\n\`Radio Station\``)
+            .setThumbnail(input.getThumbnail())
+            .setTimestamp()
+            .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar())
+            .setColor(`#36393f`);
+        // Send message
+        c.send(musicEmbed);
+        // Set last embed
+        input.getRequester().guild.music.lastEmbed = musicEmbed;
+    } else if (input.getType() == "livestream") {
+        // Construct embed
+        let musicEmbed = new Discord.MessageEmbed()
             .setAuthor(`Now playing`, await input.getChannelThumbnail())
             .setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${input.getChannelName()}](${input.getChannelURL()})\n\n\`YouTube Livestream\``)
             .setThumbnail(input.getThumbnail())
@@ -23,7 +37,7 @@ const sendDetails = async (input, c) => {
         input.getRequester().guild.music.lastEmbed = musicEmbed;
     } else {
         // Construct embed
-        let musicEmbed = new MessageEmbed()
+        let musicEmbed = new Discord.MessageEmbed()
             .setAuthor(`Now playing`, await input.getChannelThumbnail())
             .setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${input.getChannelName()}](${input.getChannelURL()})\n\nLength: \`${await input.getLength()}\``)
             .setThumbnail(input.getThumbnail())
@@ -40,7 +54,7 @@ const sendDetails = async (input, c) => {
 //#endregion
 
 //#region play
-const play = message => {
+const play = async message => {
     const client = message.client;
 
     const queue = message.guild.music.queue;
@@ -90,6 +104,24 @@ const play = message => {
                 // If not repeating, send music details (avoids spam)
                 if (!message.guild.music.repeat) sendDetails(queue[0], message.channel);
             });
+    } else if (queue[0].getType() == "radio") {
+        // If radio station
+
+        // Get stream URL
+        const input = await iheart.streamURL(queue[0].getStation());
+
+        // Set dispatcher
+        message.guild.music.dispatcher = client.voice.connections.get(message.guild.id).play(input, { bitrate: 384, volume: message.guild.music.volume, passes: 5, fec: true });
+
+        // Mark server as playing music
+        message.guild.music.playing = true;
+
+        // If not repeating, send music details (avoids spam)
+        if (!message.guild.music.repeat) sendDetails(queue[0], message.channel);
+
+        // Auto-reconnect to station using repeat
+        message.guild.music.repeat = true;
+
     } else {
         return message.channel.send("Error assigning dispatcher, object at index 0 not of recognized type");
     }

@@ -1,6 +1,6 @@
 const index = require(`../../index.js`);
 const { MessageEmbed } = require(`discord.js`);
-// const iheart = require(`iheart`);
+const iheart = require(`iheart`);
 const musicConstructor = require(`../../modules/musicConstructor`);
 const player = require(`../../modules/musicPlayer`);
 const logger = index.getLogger();

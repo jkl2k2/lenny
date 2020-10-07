@@ -3,7 +3,7 @@ const api = config.get(`Bot.api`);
 const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
 const prettyMs = require(`pretty-ms`);
-// const iheart = require(`iheart`);
+const iheart = require(`iheart`);
 
 // #region YTVideo
 class YTVideo {

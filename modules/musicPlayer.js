@@ -4,7 +4,7 @@ const ytdl = require('ytdl-core');
 const scdl = require(`soundcloud-downloader`);
 const Discord = require(`discord.js`);
 const logger = index.getLogger();
-const iheart = require(`iheart`);
+// const iheart = require(`iheart`);
 //#endregion
 
 //#region sendDetails

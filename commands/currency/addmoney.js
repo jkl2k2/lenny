@@ -23,16 +23,17 @@ module.exports = {
     type: 'currency',
     execute(message, args) {
 
-        const currentAmount = 1000000000000000;
         const transferAmount = args.find(arg => !/<@!?\d+>/g.test(arg));
         const transferTarget = message.mentions.users.first();
 
         if (!transferAmount || isNaN(transferAmount)) return message.channel.send(new Discord.MessageEmbed()
             .setDescription(`<:cross:729019052571492434> Sorry ${message.author.username}, that's an invalid amount.`)
             .setColor(`#FF3838`));
+        /*
         if (transferAmount > currentAmount) return message.channel.send(new Discord.MessageEmbed()
             .setDescription(`<:cross:729019052571492434> Sorry ${message.author.username}, you only have **$${currentAmount}**.`)
             .setColor(`#FF3838`));
+        */
         /*
         if (transferAmount <= 0) return message.channel.send(new Discord.MessageEmbed()
             .setDescription(`<:cross:729019052571492434> Please enter an amount greater than zero, ${message.author.username}.`)

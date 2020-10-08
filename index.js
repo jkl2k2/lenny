@@ -334,10 +334,11 @@ client.on('ready', async () => {
         }
 
         const activities = [
-            new Activity(`${totalCommandCount} commands execute`, "WATCHING"),
-            new Activity(`after ${prettyMs(process.uptime() * 1000, { compact: true, verbose: true })} uptime`, "PLAYING"),
-            new Activity(`with ${client.users.cache.size} users`, "PLAYING"),
-            new Activity(`${prettyMs(totalMusicTimeMs, { compact: true, verbose: true })} of music`, "LISTENING"),
+            new Activity(`${totalCommandCount} commands execute`, `WATCHING`),
+            new Activity(`after ${prettyMs(process.uptime() * 1000, { compact: true, verbose: true })} uptime`, `PLAYING`),
+            new Activity(`with ${client.users.cache.size} users`, `PLAYING`),
+            new Activity(`${prettyMs(totalMusicTimeMs, { compact: true, verbose: true })} of music`, `LISTENING`),
+            new Activity(`$${currency.getBalance(`0`)} in casino profits flow`, `WATCHING`)
         ];
 
         // let index = Math.floor(Math.random() * (activities.length - 1) + 1);

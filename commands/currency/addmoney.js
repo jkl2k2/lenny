@@ -29,6 +29,10 @@ module.exports = {
         if (!transferAmount || isNaN(transferAmount)) return message.channel.send(new Discord.MessageEmbed()
             .setDescription(`<:cross:729019052571492434> Sorry ${message.author.username}, that's an invalid amount.`)
             .setColor(`#FF3838`));
+        if (!transferTarget) return message.channel.send(new Discord.MessageEmbed()
+            .setDescription(`<:cross:729019052571492434> Please include a target`)
+            .setColor(`#FF3838`));
+
         /*
         if (transferAmount > currentAmount) return message.channel.send(new Discord.MessageEmbed()
             .setDescription(`<:cross:729019052571492434> Sorry ${message.author.username}, you only have **$${currentAmount}**.`)

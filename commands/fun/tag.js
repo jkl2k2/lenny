@@ -247,7 +247,7 @@ module.exports = {
             const tag = await Tags.findOne({ where: { name: args[0], guild_id: message.guild.id } });
 
             // Permissions check
-            if (message.member.hasPermission(`MANAGE_MESSAGES`) || message.member.hasPermission(`ADMINISTRATOR`) || message.author.id == tag.author_id) {
+            if (!message.member.hasPermission(`MANAGE_MESSAGES`) && !message.member.hasPermission(`ADMINISTRATOR`) && message.author.id != tag.author_id) {
                 return message.channel.send(new MessageEmbed()
                     .setDescription(`<:cross:729019052571492434> Sorry, ${message.author.username}, you do not have permission to delete that tag`)
                     .setColor(`#FF3838`));

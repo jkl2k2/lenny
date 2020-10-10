@@ -26,6 +26,7 @@ module.exports = {
 
         return message.channel.send(new MessageEmbed()
             .setAuthor(`Tags in ${message.guild.name}`, message.guild.iconURL())
-            .setDescription(tagString));
+            .setDescription(tagString)
+            .setColor(`#36393f`));
     }
 };

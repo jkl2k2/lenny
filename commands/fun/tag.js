@@ -114,7 +114,7 @@ module.exports = {
                                         id: `${name.content}-${Math.floor(Math.random() * (999999999999999))}`,
                                         name: name.content,
                                         description: body.content || imageBody,
-                                        author_username: message.author.username,
+                                        author_username: message.author.tag,
                                         author_id: message.author.id,
                                         guild_id: message.guild.id
                                     });
@@ -171,7 +171,7 @@ module.exports = {
                             id: `${name}-${Math.floor(Math.random() * (999999999999999))}`,
                             name: name,
                             description: imageBody,
-                            author_username: message.author.username,
+                            author_username: message.author.tag,
                             author_id: message.author.id,
                             guild_id: message.guild.id
                         });
@@ -236,7 +236,7 @@ module.exports = {
                                 id: `${name}-${Math.floor(Math.random() * (999999999999999))}`,
                                 name: name,
                                 description: body.content || imageBody,
-                                author_username: message.author.username,
+                                author_username: message.author.tag,
                                 author_id: message.author.id,
                                 guild_id: message.guild.id
                             });
@@ -299,7 +299,7 @@ module.exports = {
                         id: `${name}-${Math.floor(Math.random() * (999999999999999))}`,
                         name: name,
                         description: body.content || imageBody,
-                        author_username: message.author.username,
+                        author_username: message.author.tag,
                         author_id: message.author.id,
                         guild_id: message.guild.id
                     });
@@ -386,6 +386,18 @@ module.exports = {
                 .setAuthor(`Tags in ${message.guild.name}`, message.guild.iconURL())
                 .setDescription(tagString)
                 .setColor(`#36393f`));
+        }
+
+        if (args[0] == `info`) {
+            const tag = await Tags.findOne({ where: { name: args[1], guild_id: message.guild.id } });
+            if (tag) {
+                return message.channel.send(new MessageEmbed()
+                    .setDescription(`\`Name:\` ${tag.name}\n\`ID:\` ${tag.id}\n\`Body:\` ${tag.description}\n\`Author username:\` ${tag.author_username}\n\`Author ID:\` ${tag.author_id}\n\`Guild ID:\` ${tag.guild_id}`)
+                    .setColor(`#36393f`));
+            }
+            return message.channel.send(new MessageEmbed()
+                .setDescription(`<:cross:729019052571492434> Could not find tag \`${args[1]}\``)
+                .setColor(`#FF3838`));
         }
 
         // If looking for a tag

@@ -2,6 +2,15 @@ const index = require(`../../index`);
 const { MessageEmbed } = require(`discord.js`);
 const Tags = index.getTags();
 
+// Check attachments function
+function extension(attachment) {
+    const imageLink = attachment.split('.');
+    const typeOfImage = imageLink[imageLink.length - 1];
+    const image = /(jpg|jpeg|png|gif)/gi.test(typeOfImage);
+    if (!image) return '';
+    return attachment;
+}
+
 module.exports = {
     name: 'tag',
     description: 'Hub for all tag-related actions',
@@ -78,6 +87,17 @@ module.exports = {
                                     .setColor(`#FF3838`));
                             } else {
                                 // Body successfully acquired
+
+                                // Check if body has anything attached
+                                let image = body.attachments.size > 0 ? extension(body.attachments.array()[0].url) : '';
+
+                                let imageBody = '';
+
+                                // If image exists, get its URL
+                                if (image.length > 0) {
+                                    imageBody = extension(image);
+                                }
+
                                 const tagList = await Tags.findAll({ attributes: ['name', 'guild_id'] });
 
                                 const uniqueCheck = element => element.name != name && element.guild_id != message.guild.id;
@@ -93,7 +113,7 @@ module.exports = {
                                     const tag = await Tags.create({
                                         id: `${name.content}-${Math.floor(Math.random() * (999999999999999))}`,
                                         name: name.content,
-                                        description: body.content,
+                                        description: body.content || imageBody,
                                         author_username: message.author.username,
                                         author_id: message.author.id,
                                         guild_id: message.guild.id
@@ -133,6 +153,43 @@ module.exports = {
                 // Define name
                 let name = args[1];
 
+                // Check if image attached
+                let image = message.attachments.size > 0 ? extension(message.attachments.array()[0].url) : '';
+
+                let imageBody = '';
+
+                // If image exists, get its URL
+                if (image.length > 0) {
+                    imageBody = extension(image);
+                }
+
+                // If image exists, skip asking for the body
+                if (imageBody) {
+                    // Create tag
+                    try {
+                        const tag = await Tags.create({
+                            id: `${name}-${Math.floor(Math.random() * (999999999999999))}`,
+                            name: name,
+                            description: imageBody,
+                            author_username: message.author.username,
+                            author_id: message.author.id,
+                            guild_id: message.guild.id
+                        });
+
+                        console.log(`Name: ${tag.name}\nID: ${tag.id}\nDescription: ${tag.description}\nAuthor username: ${tag.author_username}\nAuthor ID: ${tag.author_id}\nGuild ID: ${tag.guild_id}`);
+
+                        // Respond with success
+                        return message.channel.send(new MessageEmbed()
+                            .setDescription(`<:check:728881238970073090> Successfully created tag \`${tag.name}\``)
+                            .setFooter(`Creator: ${message.author.tag}`, message.author.avatarURL())
+                            .setColor(`#2EC14E`));
+                    }
+                    catch (e) {
+                        message.channel.send('Something went wrong with adding a tag.');
+                        console.error(e);
+                    }
+                }
+
                 // Ask for tag body
                 message.channel.send(new MessageEmbed()
                     .setDescription(`What would you like the body of the tag to be?`)
@@ -152,6 +209,17 @@ module.exports = {
                             .setColor(`#FF3838`));
                     } else {
                         // Body successfully acquired
+
+                        // Check if body has anything attached
+                        let image = body.attachments.size > 0 ? extension(body.attachments.array()[0].url) : '';
+
+                        let imageBody = '';
+
+                        // If image exists, get its URL
+                        if (image.length > 0) {
+                            imageBody = extension(image);
+                        }
+
                         const tagList = await Tags.findAll({ attributes: ['name', 'guild_id'] });
 
                         const uniqueCheck = element => element.name != name && element.guild_id != message.guild.id;
@@ -167,7 +235,7 @@ module.exports = {
                             const tag = await Tags.create({
                                 id: `${name}-${Math.floor(Math.random() * (999999999999999))}`,
                                 name: name,
-                                description: body.content,
+                                description: body.content || imageBody,
                                 author_username: message.author.username,
                                 author_id: message.author.id,
                                 guild_id: message.guild.id
@@ -205,6 +273,16 @@ module.exports = {
                 // Use remaining elements in array as body
                 let body = args.join(" ");
 
+                // Check if body has anything attached
+                let image = body.attachments.size > 0 ? extension(body.attachments.array()[0].url) : '';
+
+                let imageBody = '';
+
+                // If image exists, get its URL
+                if (image.length > 0) {
+                    imageBody = extension(image);
+                }
+
                 const tagList = await Tags.findAll({ attributes: ['name', 'guild_id'] });
 
                 const uniqueCheck = element => element.name != name && element.guild_id != message.guild.id;
@@ -220,7 +298,7 @@ module.exports = {
                     const tag = await Tags.create({
                         id: `${name}-${Math.floor(Math.random() * (999999999999999))}`,
                         name: name,
-                        description: body,
+                        description: body.content || imageBody,
                         author_username: message.author.username,
                         author_id: message.author.id,
                         guild_id: message.guild.id

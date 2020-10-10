@@ -274,7 +274,7 @@ module.exports = {
                 let body = args.join(" ");
 
                 // Check if body has anything attached
-                let image = body.attachments.size > 0 ? extension(body.attachments.array()[0].url) : '';
+                let image = message.attachments.size > 0 ? extension(message.attachments.array()[0].url) : '';
 
                 let imageBody = '';
 
@@ -282,6 +282,8 @@ module.exports = {
                 if (image.length > 0) {
                     imageBody = extension(image);
                 }
+
+                console.log(imageBody);
 
                 const tagList = await Tags.findAll({ attributes: ['name', 'guild_id'] });
 
@@ -298,7 +300,7 @@ module.exports = {
                     const tag = await Tags.create({
                         id: `${name}-${Math.floor(Math.random() * (999999999999999))}`,
                         name: name,
-                        description: body.content || imageBody,
+                        description: body || imageBody,
                         author_username: message.author.tag,
                         author_id: message.author.id,
                         guild_id: message.guild.id
@@ -392,7 +394,8 @@ module.exports = {
             const tag = await Tags.findOne({ where: { name: args[1], guild_id: message.guild.id } });
             if (tag) {
                 return message.channel.send(new MessageEmbed()
-                    .setDescription(`\`Name:\` ${tag.name}\n\`ID:\` ${tag.id}\n\`Body:\` ${tag.description}\n\`Author username:\` ${tag.author_username}\n\`Author ID:\` ${tag.author_id}\n\`Guild ID:\` ${tag.guild_id}`)
+                    .setAuthor(`Tag info`)
+                    .setDescription(`\`Name:\` ${tag.name}\n\`ID:\` ${tag.id}\n\`Body:\` ${tag.description}\n\`Author username:\` ${tag.author_username}\n\`Author ID:\` ${tag.author_id}\n\`Guild ID:\` ${tag.guild_id}\n\`Times used:\` ${tag.usage_count}`)
                     .setColor(`#36393f`));
             }
             return message.channel.send(new MessageEmbed()

@@ -98,7 +98,7 @@ module.exports = {
                                 const tagList = await Tags.findAll({ attributes: ['name', 'guild_id'] });
 
                                 for (const tag of tagList) {
-                                    if (tag.name.toString().trim() == name.toString().trim() && tag.guild_id == message.guild.id) {
+                                    if (tag.name.toString().trim() == name.toString().trim() && tag.guild_id.toString().trim() == message.guild.id.toString().trim()) {
                                         return message.channel.send(new MessageEmbed()
                                             .setDescription(`<:cross:729019052571492434> Sorry, \`${name}\` already exists`)
                                             .setColor(`#FF3838`));
@@ -214,7 +214,7 @@ module.exports = {
                         const tagList = await Tags.findAll({ attributes: ['name', 'guild_id'] });
 
                         for (const tag of tagList) {
-                            if (tag.name.toString().trim() == name.toString().trim() && tag.guild_id == message.guild.id) {
+                            if (tag.name.toString().trim() == name.toString().trim() && tag.guild_id.toString().trim() == message.guild.id.toString().trim()) {
                                 return message.channel.send(new MessageEmbed()
                                     .setDescription(`<:cross:729019052571492434> Sorry, \`${name}\` already exists`)
                                     .setColor(`#FF3838`));
@@ -276,7 +276,7 @@ module.exports = {
                 const tagList = await Tags.findAll({ attributes: ['name', 'guild_id'] });
 
                 for (const tag of tagList) {
-                    if (tag.name.toString().trim() == name.toString().trim() && tag.guild_id == message.guild.id) {
+                    if (tag.name.toString().trim() == name.toString().trim() && tag.guild_id.toString().trim() == message.guild.id.toString().trim()) {
                         return message.channel.send(new MessageEmbed()
                             .setDescription(`<:cross:729019052571492434> Sorry, \`${name}\` already exists`)
                             .setColor(`#FF3838`));
@@ -310,7 +310,7 @@ module.exports = {
         }
 
         // If deleting a tag
-        if (args[0] == `delete`) {
+        if (args[0] == `delete` || args[0] == `remove`) {
             // Find tag
             const tag = await Tags.findOne({ where: { name: args[0], guild_id: message.guild.id } });
 

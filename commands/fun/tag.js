@@ -104,7 +104,7 @@ module.exports = {
                                     // Respond with success
                                     return message.channel.send(new MessageEmbed()
                                         .setDescription(`<:check:728881238970073090> Successfully created tag \`${tag.name}\``)
-                                        .setFooter(`Creator: ${message.author.tag}`)
+                                        .setFooter(`Creator: ${message.author.tag}`, message.author.avatarURL())
                                         .setColor(`#2EC14E`));
                                 }
                                 catch (e) {
@@ -178,7 +178,7 @@ module.exports = {
                             // Respond with success
                             return message.channel.send(new MessageEmbed()
                                 .setDescription(`<:check:728881238970073090> Successfully created tag \`${tag.name}\``)
-                                .setFooter(`Creator: ${message.author.tag}`)
+                                .setFooter(`Creator: ${message.author.tag}`, message.author.avatarURL())
                                 .setColor(`#2EC14E`));
                         }
                         catch (e) {
@@ -231,7 +231,7 @@ module.exports = {
                     // Respond with success
                     return message.channel.send(new MessageEmbed()
                         .setDescription(`<:check:728881238970073090> Successfully created tag \`${tag.name}\``)
-                        .setFooter(`Creator: ${message.author.tag}`)
+                        .setFooter(`Creator: ${message.author.tag}`, message.author.avatarURL())
                         .setColor(`#2EC14E`));
                 }
                 catch (e) {
@@ -265,10 +265,38 @@ module.exports = {
         }
 
         // If editing a tag
-        // TODO
+        if (args[0] == `edit`) {
+
+            // Remove keyword
+            args.shift();
+
+            // Extract name
+            let name = args.shift();
+
+            // Use remaining elements in array as body
+            let body = args.join(" ");
+
+            // Find tag
+            const tag = await Tags.findOne({ where: { name: name, guild_id: message.guild.id } });
+
+            // Permissions check
+            if (!message.member.hasPermission(`MANAGE_MESSAGES`) && !message.member.hasPermission(`ADMINISTRATOR`) && message.author.id != tag.author_id) {
+                return message.channel.send(new MessageEmbed()
+                    .setDescription(`<:cross:729019052571492434> Sorry, ${message.author.username}, you do not have permission to delete that tag`)
+                    .setColor(`#FF3838`));
+            }
+
+            const affectedRows = await Tags.update({ description: body }, { where: { name: name } });
+            if (affectedRows > 0) {
+                // Respond with success
+                return message.channel.send(new MessageEmbed()
+                    .setDescription(`<:check:728881238970073090> Successfully edited tag \`${tag.name}\``)
+                    .setFooter(`Editor: ${message.author.tag}`, message.author.avatarURL())
+                    .setColor(`#2EC14E`));
+            }
+        }
 
         // If looking for a tag
-        //#region Find tag
         if (args[0] != `create` && args[0] != `delete` && args[0] != `edit`) {
             const tag = await Tags.findOne({ where: { name: args[0], guild_id: message.guild.id } });
             if (tag) {
@@ -279,6 +307,5 @@ module.exports = {
                 .setDescription(`<:cross:729019052571492434> Could not find tag \`${args[0]}\``)
                 .setColor(`#FF3838`));
         }
-        //#endregion
     }
 };

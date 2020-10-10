@@ -13,8 +13,41 @@ const prettyMs = require(`pretty-ms`);
 
 //#region Initialize database
 const { Users, CurrencyShop } = require('./dbObjects');
-const { Op } = require('sequelize');
 const currency = new Discord.Collection();
+
+const Sequelize = require('sequelize');
+
+// Define sequelize database
+const sequelize = new Sequelize('database', 'user', 'password', {
+    host: 'localhost',
+    dialect: 'sqlite',
+    logging: false,
+    storage: 'database.sqlite',
+});
+
+// Define model for tag system
+const Tags = sequelize.define('tags', {
+    id: {
+        primaryKey: true,
+        type: Sequelize.TEXT,
+        unique: true,
+    },
+    name: {
+        type: Sequelize.STRING,
+        allowNull: false,
+    },
+    description: Sequelize.TEXT,
+    author_username: Sequelize.STRING,
+    author_id: Sequelize.TEXT,
+    guild_id: Sequelize.TEXT,
+    usage_count: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0,
+        allowNull: false,
+    },
+});
+
+module.Tags = Tags;
 
 Reflect.defineProperty(currency, 'add', {
     value: async function add(id, amount) {
@@ -41,7 +74,7 @@ Reflect.defineProperty(currency, 'getBalance', {
 
 // Extend Guild to support music
 Structures.extend('Guild', Guild => {
-    class MusicGuild extends Guild {
+    class ExtendedGuild extends Guild {
         constructor(client, data) {
             super(client, data);
             this.music = {
@@ -57,7 +90,7 @@ Structures.extend('Guild', Guild => {
             };
         }
     }
-    return MusicGuild;
+    return ExtendedGuild;
 });
 
 const client = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
@@ -98,6 +131,7 @@ client.stats.default = {
 client.on(`guildDelete`, guild => {
     // Remove deleted guild from Enmap
     client.settings.delete(guild.id);
+    client.tags.delete(guild.id);
 });
 //#endregion
 
@@ -234,6 +268,9 @@ module.exports = {
     },
     getLogger: function () {
         return logger;
+    },
+    getTags: function () {
+        return Tags;
     }
 };
 //#endregion
@@ -317,6 +354,9 @@ client.on('ready', async () => {
     const storedBalances = await Users.findAll();
     storedBalances.forEach(b => currency.set(b.user_id, b));
     client.currency = currency;
+
+    // Sync with tag database
+    Tags.sync();
 
     let date = new Date();
 

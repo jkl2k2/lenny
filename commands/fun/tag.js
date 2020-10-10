@@ -50,8 +50,8 @@ module.exports = {
             if (!args[1]) {
                 // If name and tag body missing
                 message.channel.send(new MessageEmbed()
-                    .setDescription(`What would you like to name the tag?\nKeep in mind all tag names must have no spaces`)
-                    .setFooter(`Or type 'cancel' to stop`)
+                    .setDescription(`:label: What would you like to name the tag?\n\n*Keep in mind all tag names must have no spaces*`)
+                    .setFooter(`Type 'cancel' to stop`)
                     .setColor(`#36393f`));
 
                 // Listen for response to get tag name
@@ -70,8 +70,8 @@ module.exports = {
 
                         // Ask for tag body
                         message.channel.send(new MessageEmbed()
-                            .setDescription(`What would you like the body of the tag to be?`)
-                            .setFooter(`Or type 'cancel' to stop`)
+                            .setDescription(`:scroll: What would you like the body of the tag to be?`)
+                            .setFooter(`Type 'cancel' to stop`)
                             .setColor(`#36393f`));
 
                         // Listen for response to get tag body
@@ -192,8 +192,8 @@ module.exports = {
 
                 // Ask for tag body
                 message.channel.send(new MessageEmbed()
-                    .setDescription(`What would you like the body of the tag to be?`)
-                    .setFooter(`Or type 'cancel' to stop`)
+                    .setDescription(`:scroll: What would you like the body of the tag to be?`)
+                    .setFooter(`Type 'cancel' to stop`)
                     .setColor(`#36393f`));
 
                 // Listen for response to get tag body

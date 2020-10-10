@@ -41,8 +41,7 @@ module.exports = {
                 .addField(`${serverConfig[`prefix`]}tag create [name]`, `Create a tag`)
                 .addField(`${serverConfig[`prefix`]}tag edit [name]`, `Edit a tag`)
                 .addField(`${serverConfig[`prefix`]}tag delete [name]`, `Delete a tag`)
-                .addField(`${serverConfig[`prefix`]}tag list`, `List all tags`)
-                .addField(`${serverConfig[`prefix`]}tag info`, `Shows info on a specific tag`));
+                .addField(`${serverConfig[`prefix`]}tag list`, `List all tags`));
         }
 
         // If creating a tag
@@ -89,24 +88,21 @@ module.exports = {
                             } else {
                                 // Body successfully acquired
 
-                                // Check if body has anything attached
-                                let image = body.attachments.size > 0 ? extension(body.attachments.array()[0].url) : '';
-
                                 let imageBody = '';
 
                                 // If image exists, get its URL
-                                if (image.length > 0) {
-                                    imageBody = extension(image);
+                                if (body.attachments.array()[0]) {
+                                    imageBody = body.attachments.array()[0].url;
                                 }
 
                                 const tagList = await Tags.findAll({ attributes: ['name', 'guild_id'] });
 
-                                const uniqueCheck = element => element.name != name && element.guild_id != message.guild.id;
-
-                                if (!tagList.some(uniqueCheck) && tagList.length > 0) {
-                                    return message.channel.send(new MessageEmbed()
-                                        .setDescription(`<:cross:729019052571492434> Sorry, \`${name}\` already exists`)
-                                        .setColor(`#FF3838`));
+                                for (const tag of tagList) {
+                                    if (tag.name.toString().trim() == name.toString().trim() && tag.guild_id == message.guild.id) {
+                                        return message.channel.send(new MessageEmbed()
+                                            .setDescription(`<:cross:729019052571492434> Sorry, \`${name}\` already exists`)
+                                            .setColor(`#FF3838`));
+                                    }
                                 }
 
                                 // Create tag
@@ -120,7 +116,7 @@ module.exports = {
                                         guild_id: message.guild.id
                                     });
 
-                                    console.log(`Name: ${tag.name}\nID: ${tag.id}\nDescription: ${tag.description}\nAuthor username: ${tag.author_username}\nAuthor ID: ${tag.author_id}\nGuild ID: ${tag.guild_id}`);
+                                    // console.log(`Name: ${tag.name}\nID: ${tag.id}\nDescription: ${tag.description}\nAuthor username: ${tag.author_username}\nAuthor ID: ${tag.author_id}\nGuild ID: ${tag.guild_id}`);
 
                                     // Respond with success
                                     return message.channel.send(new MessageEmbed()
@@ -154,14 +150,11 @@ module.exports = {
                 // Define name
                 let name = args[1];
 
-                // Check if image attached
-                let image = message.attachments.size > 0 ? extension(message.attachments.array()[0].url) : '';
-
                 let imageBody = '';
 
                 // If image exists, get its URL
-                if (image.length > 0) {
-                    imageBody = extension(image);
+                if (message.attachments.array()[0]) {
+                    imageBody = message.attachments.array()[0].url;
                 }
 
                 // If image exists, skip asking for the body
@@ -177,7 +170,7 @@ module.exports = {
                             guild_id: message.guild.id
                         });
 
-                        console.log(`Name: ${tag.name}\nID: ${tag.id}\nDescription: ${tag.description}\nAuthor username: ${tag.author_username}\nAuthor ID: ${tag.author_id}\nGuild ID: ${tag.guild_id}`);
+                        // console.log(`Name: ${tag.name}\nID: ${tag.id}\nDescription: ${tag.description}\nAuthor username: ${tag.author_username}\nAuthor ID: ${tag.author_id}\nGuild ID: ${tag.guild_id}`);
 
                         // Respond with success
                         return message.channel.send(new MessageEmbed()
@@ -211,24 +204,21 @@ module.exports = {
                     } else {
                         // Body successfully acquired
 
-                        // Check if body has anything attached
-                        let image = body.attachments.size > 0 ? extension(body.attachments.array()[0].url) : '';
-
                         let imageBody = '';
 
                         // If image exists, get its URL
-                        if (image.length > 0) {
-                            imageBody = extension(image);
+                        if (body.attachments.array()[0]) {
+                            imageBody = body.attachments.array()[0].url;
                         }
 
                         const tagList = await Tags.findAll({ attributes: ['name', 'guild_id'] });
 
-                        const uniqueCheck = element => element.name != name && element.guild_id != message.guild.id;
-
-                        if (!tagList.some(uniqueCheck) && tagList.length > 0) {
-                            return message.channel.send(new MessageEmbed()
-                                .setDescription(`<:cross:729019052571492434> Sorry, \`${name}\` already exists`)
-                                .setColor(`#FF3838`));
+                        for (const tag of tagList) {
+                            if (tag.name.toString().trim() == name.toString().trim() && tag.guild_id == message.guild.id) {
+                                return message.channel.send(new MessageEmbed()
+                                    .setDescription(`<:cross:729019052571492434> Sorry, \`${name}\` already exists`)
+                                    .setColor(`#FF3838`));
+                            }
                         }
 
                         // Create tag
@@ -242,7 +232,7 @@ module.exports = {
                                 guild_id: message.guild.id
                             });
 
-                            console.log(`Name: ${tag.name}\nID: ${tag.id}\nDescription: ${tag.description}\nAuthor username: ${tag.author_username}\nAuthor ID: ${tag.author_id}\nGuild ID: ${tag.guild_id}`);
+                            // console.log(`Name: ${tag.name}\nID: ${tag.id}\nDescription: ${tag.description}\nAuthor username: ${tag.author_username}\nAuthor ID: ${tag.author_id}\nGuild ID: ${tag.guild_id}`);
 
                             // Respond with success
                             return message.channel.send(new MessageEmbed()
@@ -274,26 +264,23 @@ module.exports = {
                 // Use remaining elements in array as body
                 let body = args.join(" ");
 
-                // Check if body has anything attached
-                let image = message.attachments.size > 0 ? extension(message.attachments.array()[0].url) : '';
-
                 let imageBody = '';
 
                 // If image exists, get its URL
-                if (image.length > 0) {
-                    imageBody = extension(image);
+                if (message.attachments.array()[0]) {
+                    imageBody = message.attachments.array()[0].url;
                 }
 
                 console.log(imageBody);
 
                 const tagList = await Tags.findAll({ attributes: ['name', 'guild_id'] });
 
-                const uniqueCheck = element => element.name != name && element.guild_id != message.guild.id;
-
-                if (!tagList.some(uniqueCheck) && tagList.length > 0) {
-                    return message.channel.send(new MessageEmbed()
-                        .setDescription(`<:cross:729019052571492434> Sorry, \`${name}\` already exists`)
-                        .setColor(`#FF3838`));
+                for (const tag of tagList) {
+                    if (tag.name.toString().trim() == name.toString().trim() && tag.guild_id == message.guild.id) {
+                        return message.channel.send(new MessageEmbed()
+                            .setDescription(`<:cross:729019052571492434> Sorry, \`${name}\` already exists`)
+                            .setColor(`#FF3838`));
+                    }
                 }
 
                 // Create tag
@@ -307,7 +294,7 @@ module.exports = {
                         guild_id: message.guild.id
                     });
 
-                    console.log(`Name: ${tag.name}\nID: ${tag.id}\nDescription: ${tag.description}\nAuthor username: ${tag.author_username}\nAuthor ID: ${tag.author_id}\nGuild ID: ${tag.guild_id}`);
+                    // console.log(`Name: ${tag.name}\nID: ${tag.id}\nDescription: ${tag.description}\nAuthor username: ${tag.author_username}\nAuthor ID: ${tag.author_id}\nGuild ID: ${tag.guild_id}`);
 
                     // Respond with success
                     return message.channel.send(new MessageEmbed()

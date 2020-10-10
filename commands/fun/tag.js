@@ -296,6 +296,19 @@ module.exports = {
             }
         }
 
+        // If displaying tag list
+        if (args[0] == `list`) {
+            // Fetch all tags
+            const tagList = await Tags.findAll({ attributes: ['name', 'guild_id'] });
+
+            // Map tags
+            const tagString = tagList.filter(tag => tag.guild_id == message.guild.id).map(t => t.name).join(', ') || 'There are no tags in this server';
+
+            return message.channel.send(new MessageEmbed()
+                .setAuthor(`Tags in ${message.guild.name}`, message.guild.iconURL())
+                .setDescription(tagString));
+        }
+
         // If looking for a tag
         if (args[0] != `create` && args[0] != `delete` && args[0] != `edit`) {
             const tag = await Tags.findOne({ where: { name: args[0], guild_id: message.guild.id } });

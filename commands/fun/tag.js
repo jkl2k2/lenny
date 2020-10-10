@@ -41,7 +41,8 @@ module.exports = {
                 .addField(`${serverConfig[`prefix`]}tag create [name]`, `Create a tag`)
                 .addField(`${serverConfig[`prefix`]}tag edit [name]`, `Edit a tag`)
                 .addField(`${serverConfig[`prefix`]}tag delete [name]`, `Delete a tag`)
-                .addField(`${serverConfig[`prefix`]}tag list`, `List all tags`));
+                .addField(`${serverConfig[`prefix`]}tag list`, `List all tags`)
+                .addField(`${serverConfig[`prefix`]}tag info`, `Shows info on a specific tag`));
         }
 
         // If creating a tag

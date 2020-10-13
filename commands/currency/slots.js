@@ -127,7 +127,7 @@ module.exports = {
                             currency.add(message.author.id, bet * 100);
 
                             // Deduct from casino
-                            currency.add(`0`, -bet * 100);
+                            currency.add(`0`, bet * 100);
 
                             // Edit 
                             m.edit(new MessageEmbed()
@@ -155,7 +155,7 @@ module.exports = {
                             currency.add(message.author.id, bet * 3);
 
                             // Deduct from casino
-                            currency.add(`0`, -bet * 3);
+                            currency.add(`0`, bet * 3);
 
                             // Edit 
                             m.edit(new MessageEmbed()

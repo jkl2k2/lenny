@@ -172,7 +172,7 @@ module.exports = {
                             // Pay 100x
                             currency.add(message.author.id, bet * 100);
 
-                            // Deduct from casino
+                            // Add to casino jackpot anyway
                             currency.add(`0`, bet * 100);
 
                             // Edit 
@@ -198,11 +198,11 @@ module.exports = {
                         } else if (rolls[3].value == rolls[4].value || rolls[3].value == rolls[5].value || rolls[4].value == rolls[5].value) {
                             // Two matches
 
-                            // Pay 3x
-                            currency.add(message.author.id, bet * 3);
+                            // Pay 4x
+                            currency.add(message.author.id, bet * 4);
 
-                            // Deduct from casino
-                            currency.add(`0`, bet * 3);
+                            // Add to casino jackpot anyway
+                            currency.add(`0`, bet * 4);
 
                             // Edit 
                             m.edit(new MessageEmbed()

@@ -20,6 +20,9 @@ module.exports = {
         const transferAmount = args.find(arg => !/<@!?\d+>/g.test(arg));
         const transferTarget = message.mentions.users.first();
 
+        if (!transferTarget) return message.channel.send(new Discord.MessageEmbed()
+            .setDescription(`<:cross:729019052571492434> Please enter a recipient.`)
+            .setColor(`#FF3838`));
         if (transferTarget.bot) return message.channel.send(new Discord.MessageEmbed()
             .setDescription(`<:cross:729019052571492434> Sorry ${message.author.username}, bots cannot hold money.`)
             .setColor(`#FF3838`));

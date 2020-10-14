@@ -3,7 +3,7 @@ const { MessageEmbed } = require(`discord.js`);
 const currency = index.getCurrencyDB();
 
 function rand() {
-    const symbols = [`:green_apple:`, `:apple:`, `:pear:`, `:tangerine:`, `:lemon:`, `:banana:`, `:watermelon:`, `:grapes:`, `:blueberries:`, `:strawberry:`, `:melon:`, `:cherries:`, `:peach:`, `:mango:`, `:pineapple:`, `:coconut:`, `:kiwi:`, `:tomato:`, `:eggplant:`, `:seven:`];
+    const symbols = [`:green_apple:`, `:apple:`, `:pear:`, `:tangerine:`, `:lemon:`, `:banana:`, `:watermelon:`, `:grapes:`, `:blueberries:`, `:seven:`];
 
     const rand = Math.floor(Math.random() * (symbols.length - 1));
 
@@ -43,15 +43,58 @@ module.exports = {
         if (!args[0]) {
             return message.channel.send(new MessageEmbed()
                 .setAuthor(`🎰 Slots!`)
-                .setDescription(`**Total of 20 symbols (mostly fruits/vegetables)**\nAll fruits pay the same: \`3x\` for two in a row and \`100x\` for 3 in a row\n\n**BUT sevens exist as well**\nGetting three sevens in a row awards the \`JACKPOT\` (currently \`$${currency.getBalance(`0`)}\`)`)
+                .setDescription(`**Total of 10 symbols (mostly fruits/vegetables)**\nAll fruits pay the same: \`3x\` for two in a row and \`100x\` for 3 in a row\n\n**BUT sevens exist as well**\nGetting three sevens in a row awards the \`JACKPOT\` (currently \`$${currency.getBalance(`0`)}\`)`)
                 .setColor(`#801431`));
         }
-
-        let rolls = generateSpins();
 
         const bet = args[0];
 
         const previousBalance = currency.getBalance(message.author.id);
+
+        if (args[0] == "coosin" || args[0] == "collin" || args[0] == "cucino") {
+            return message.channel.send(new Discord.MessageEmbed()
+                .setDescription(`<:cross:729019052571492434> Sorry, we do not accept trash as a currency for betting.`)
+                .setColor(`#FF3838`));
+        }
+
+        if (isNaN(args[0])) {
+            return message.channel.send(new MessageEmbed()
+                .setDescription(`<:cross:729019052571492434> Please input a number to bet`)
+                .setColor(`#FF3838`));
+        }
+
+        if (parseInt(args[0]) == 0) {
+            return message.channel.send(new MessageEmbed()
+                .setDescription(`<:cross:729019052571492434> Please bet more than $0`)
+                .setColor(`#FF3838`));
+        }
+
+        if (parseInt((args[0]) < 1 && parseInt(args[0]) > 0) || (Math.floor(args[0]) != args[0])) {
+            return message.channel.send(new MessageEmbed()
+                .setDescription(`<:cross:729019052571492434> Please input a whole number, not a decimal`)
+                .setColor(`#FF3838`));
+        }
+
+        if (parseInt(args[0]) < 0) {
+            return message.channel.send(new MessageEmbed()
+                .setDescription(`<:cross:729019052571492434> Please input a positive number`)
+                .setColor(`#FF3838`));
+        }
+
+        if (previousBalance < args[0]) {
+            return message.channel.send(new MessageEmbed()
+                .setDescription("<:cross:729019052571492434> Sorry, you do not have enough money to bet that amount")
+                .setColor(`#FF3838`));
+        }
+
+        if (bet < 5) {
+            return message.channel.send(new MessageEmbed()
+                .setAuthor(`🎰 Slots!`)
+                .setDescription(`:warning: Sorry, for now please bet at least $5`)
+                .setColor(`#801431`));
+        }
+
+        let rolls = generateSpins();
 
         // Initial message
         message.channel.send(new MessageEmbed()
@@ -64,7 +107,8 @@ module.exports = {
             ${rolls[3].symbol} │ ${rolls[4].symbol} │ ${rolls[5].symbol}\xa0\xa0\xa0\xa0:arrow_left:
             
             ${rolls[6].symbol} │ ${rolls[7].symbol} │ ${rolls[8].symbol}`)
-            .setColor(`#801431`))
+            .setColor(`#801431`)
+            .setThumbnail(message.author.avatarURL()))
             .then(m => {
                 // Continue "spinning"
                 setTimeout(() => {
@@ -81,6 +125,7 @@ module.exports = {
             
                         ${rolls[6].symbol} │ ${rolls[7].symbol} │ ${rolls[8].symbol}`)
                         .setColor(`#801431`)
+                        .setThumbnail(message.author.avatarURL())
                     );
 
                     // Final landing spot
@@ -118,6 +163,7 @@ module.exports = {
                             Previous balance: \`$${previousBalance}\`
                             Current balance: \xa0\xa0\`$${currency.getBalance(message.author.id)}\``)
                                 .setColor(`#801431`)
+                                .setThumbnail(message.author.avatarURL())
                             );
 
                         } else if (rolls[3].value == rolls[4].value && rolls[3].value == rolls[5].value) {
@@ -146,6 +192,7 @@ module.exports = {
                             Previous balance: \`$${previousBalance}\`
                             Current balance: \xa0\xa0\`$${currency.getBalance(message.author.id)}\``)
                                 .setColor(`#801431`)
+                                .setThumbnail(message.author.avatarURL())
                             );
 
                         } else if (rolls[3].value == rolls[4].value || rolls[3].value == rolls[5].value || rolls[4].value == rolls[5].value) {
@@ -174,6 +221,7 @@ module.exports = {
                             Previous balance: \`$${previousBalance}\`
                             Current balance: \xa0\xa0\`$${currency.getBalance(message.author.id)}\``)
                                 .setColor(`#801431`)
+                                .setThumbnail(message.author.avatarURL())
                             );
                         } else {
                             // Loss
@@ -201,6 +249,7 @@ module.exports = {
                             Previous balance: \`$${previousBalance}\`
                             Current balance: \xa0\xa0\`$${currency.getBalance(message.author.id)}\``)
                                 .setColor(`#801431`)
+                                .setThumbnail(message.author.avatarURL())
                             );
                         }
                     }, 750);

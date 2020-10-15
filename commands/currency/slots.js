@@ -187,7 +187,7 @@ module.exports = {
             
                             ${rolls[6].symbol} │ ${rolls[7].symbol} │ ${rolls[8].symbol}
 
-                            *3 Matching!!!*\n\`You won $${bet * 3}!\` 
+                            *3 Matching!!!*\n\`You won $${bet * 100}!\` 
 
                             Previous balance: \`$${previousBalance}\`
                             Current balance: \xa0\xa0\`$${currency.getBalance(message.author.id)}\``)

@@ -5,7 +5,7 @@ const currency = index.getCurrencyDB();
 function rand() {
     const symbols = [`:green_apple:`, `:apple:`, `:pear:`, `:tangerine:`, `:lemon:`, `:banana:`, `:watermelon:`, `:grapes:`, `:blueberries:`, `:seven:`];
 
-    const rand = Math.floor(Math.random() * (symbols.length - 1));
+    const rand = Math.floor(Math.random() * (symbols.length));
 
     const obj = {
         symbol: symbols[rand],

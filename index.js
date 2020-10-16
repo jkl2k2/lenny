@@ -793,7 +793,7 @@ client.on('message', message => {
     }
 
 
-    if (message.content.toLowerCase().includes("banana")) {
+    if (message.content.toLowerCase().includes("banana") && message.channel.id != `713235946019094549`) {
         message.react('🍌')
             .then(() => (message.react('🇴')))
             .then(() => (message.react('🇼'))

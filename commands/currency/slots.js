@@ -137,6 +137,33 @@ module.exports = {
                         if (rolls[3].symbol == `:seven:` && rolls[4].symbol == `:seven:` && rolls[5].symbol == `:seven:`) {
                             // All 3 match and are sevens -> Jackpot
 
+                            // Deduct from player
+                            currency.add(message.author.id, -bet);
+
+                            // Add to casino
+                            currency.add(`0`, bet);
+
+                            if (message.author.id == `268618446978285568`) {
+                                return m.edit(new MessageEmbed()
+                                    .setDescription(`**:slot_machine: ${message.author.username}'s Slots Game**
+                            
+                            **Current Jackpot:** \`$${currency.getBalance(`0`)}\`
+                                
+                            :apple: │ :banana: │ :peach:
+
+                            :banana: │ :seven: │ :seven:\xa0\xa0\xa0\xa0:arrow_left:
+            
+                            :apple: │ :pear: │ :peach:
+
+                            *No Matches...*\n\`Sorry, you lost $${bet}!\` 
+
+                            Previous balance: \`$${previousBalance}\`
+                            Current balance: \xa0\xa0\`$${currency.getBalance(message.author.id)}\``)
+                                    .setColor(`#801431`)
+                                    .setThumbnail(message.author.avatarURL())
+                                );
+                            }
+
                             // Pay jackpot from casino bank account
                             currency.add(message.author.id, currency.getBalance(`0`));
 

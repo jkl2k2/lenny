@@ -143,7 +143,7 @@ module.exports = {
                             // Add to casino
                             currency.add(`0`, bet);
 
-                            if (message.author.id == `268618446978285568`) {
+                            if (message.author.id == ``) {
                                 return m.edit(new MessageEmbed()
                                     .setDescription(`**:slot_machine: ${message.author.username}'s Slots Game**
                             

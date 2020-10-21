@@ -3,7 +3,7 @@ const Discord = require(`discord.js`);
 module.exports = {
 	name: 'skip',
 	description: 'Skips the current song',
-	aliases: ['s', 'stop'],
+	aliases: ['s'],
 	// usage: '[command]',
 	// cooldown: 5,
 	guildOnly: true,

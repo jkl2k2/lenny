@@ -6,5 +6,5 @@ description: >-
 
 # Lenny
 
-![](.assets/logo2.png)
+![](https://github.com/jkl2k2/lenny/blob/master/assets/logo2.png?raw=true)
 

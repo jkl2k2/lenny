@@ -11,7 +11,7 @@ module.exports = {
     aliases: ['find', 'yt'],
     usage: '[search term(s)]',
     // cooldown: 5,
-    guildOnly: true,
+    // guildOnly: true,
     enabled: true,
     type: 'music',
     async execute(message, args) {

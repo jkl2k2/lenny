@@ -167,6 +167,8 @@ module.exports = {
         // Cooldown
         commandHelp.addField(`**Cooldown**`, `${command.cooldown || 3} second(s)`);
 
+        commandHelp.setColor(`#36393f`);
+
         message.channel.send(commandHelp);
     },
 };

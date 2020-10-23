@@ -1,4 +1,4 @@
-//const index = require(`../../index.js`);
+// const index = require(`../../index.js`);
 // const Discord = require(`discord.js`);
 // const config = require(`config`);
 // Any 'require'

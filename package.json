@@ -33,6 +33,7 @@
     "erlpack": "github:discordapp/erlpack",
     "ffmpeg-static": "^2.7.0",
     "fluent-ffmpeg": "^2.1.2",
+    "genius-lyrics-api": "^3.0.3",
     "give-me-a-joke": "^0.2.5",
     "google-images": "^2.1.0",
     "iheart": "^3.1.1",

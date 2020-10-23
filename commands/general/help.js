@@ -38,7 +38,7 @@ module.exports = {
                 .addField(`:globe_with_meridians: General`, `\`Typical util stuff\``, true)
                 .addField(`:clipboard: Admin`, `\`Configure the bot\``, true)
                 .addField(`:tada: Fun`, `\`Just for fun\``, true)
-                .addField(`:headphones: Music`, `\`Listen with friends!\``, true)
+                .addField(`:headphones: Music`, `\`Listen with friends\``, true)
                 .addField(`:game_die: Currency`, `\`Feeling lucky?\``, true)
                 .setColor(`#36393f`));
         } else if (args[0].toLowerCase() == `general`) {

@@ -28,45 +28,56 @@ module.exports = {
             prefix = "!";
         }
 
-        /*
+
         // If no arguments provided
         if (!args.length) {
             // Show help directory
             return message.channel.send(new MessageEmbed()
-                .setAuthor(`Use ${prefix}help [category] to view commands!`, client.user.avatarURL())
-                .addField(`:information_source: General`, `\`Typical util stuff\``)
-                .addField(`:clipboard: Admin`, `\`Configure the bot\``)
-                .addField(`:tada: Fun`, `\`Just for fun\``)
-                .addField(`:headphones: Music`, `\`Listen with friends!\``)
-                .addField(`:game_die: Casino`, `\`Feeling lucky?\``));
+                .setAuthor(`Use ${prefix}help [category] to view commands`, client.user.avatarURL())
+                .setDescription(`**You can also [visit my GitBook](https://jkl2k2.gitbook.io/lenny/) for help**`)
+                .addField(`:globe_with_meridians: General`, `\`Typical util stuff\``, true)
+                .addField(`:clipboard: Admin`, `\`Configure the bot\``, true)
+                .addField(`:tada: Fun`, `\`Just for fun\``, true)
+                .addField(`:headphones: Music`, `\`Listen with friends!\``, true)
+                .addField(`:game_die: Currency`, `\`Feeling lucky?\``, true)
+                .setColor(`#36393f`));
         } else if (args[0].toLowerCase() == `general`) {
             return message.channel.send(new MessageEmbed()
-                .setAuthor(`You are viewing: General\nUse ${prefix}help [command] to view a specific command!`, client.user.avatarURL())
+                .setAuthor(`Category: General`, client.user.avatarURL(), `https://jkl2k2.gitbook.io/lenny/commands/command-groups/general`)
+                .setDescription(`[Link to help docs](https://jkl2k2.gitbook.io/lenny/commands/command-groups/general)**\n\nUse \`${prefix}help [command]\` to view a specific command**`)
                 .addField(`help`, `View help for commands`)
-                .addField(`ping`, `Display the bot's ping`));
+                .addField(`ping`, `Display the bot's ping`)
+                .setColor(`#36393f`));
         } else if (args[0].toLowerCase() == `admin`) {
             return message.channel.send(new MessageEmbed()
-                .setAuthor(`You are viewing: Admin\nUse ${prefix}help [command] to view a specific command!`, client.user.avatarURL())
+                .setAuthor(`Category: Admin`, client.user.avatarURL(), `https://jkl2k2.gitbook.io/lenny/commands/command-groups/admin`)
+                .setDescription(`[Link to help docs](https://jkl2k2.gitbook.io/lenny/commands/command-groups/admin)**\n\nUse \`${prefix}help [command]\` to view a specific command**`)
                 .addField(`kick`, `Kicks a tagged user`)
                 .addField(`ban`, `Bans a tagged user`)
                 .addField(`config`, `Configure server settings`)
-                .addField(`prune`, `Remove up to 100 messages from a channel`));
+                .addField(`prune`, `Remove up to 100 messages from a channel`)
+                .setColor(`#36393f`));
         } else if (args[0].toLowerCase() == `fun`) {
             return message.channel.send(new MessageEmbed()
-                .setAuthor(`You are viewing: Fun\nUse ${prefix}help [command] to view a specific command!`, client.user.avatarURL())
+                .setAuthor(`Category: Fun`, client.user.avatarURL(), `https://jkl2k2.gitbook.io/lenny/commands/command-groups/fun`)
+                .setDescription(`[Link to help docs](https://jkl2k2.gitbook.io/lenny/commands/command-groups/fun)**\n\nUse \`${prefix}help [command]\` to view a specific command**`)
                 .addField(`ask`, `Ask a yes or no question!`)
                 .addField(`choose`, `Separate options with commas`)
                 .addField(`lenny`, `( ͡° ͜ʖ ͡°)`)
                 .addField(`uwu`, `Uwuify text ~w~`)
-                .addField(`thesaurize`, `Pass your message through a thesaurus`));
+                .addField(`thesaurize`, `Pass your message through a thesaurus`)
+                .addField(`tag/tags`, `Create/view tags`)
+                .setColor(`#36393f`));
         } else if (args[0].toLowerCase() == `music`) {
             return message.channel.send(new MessageEmbed()
-                .setAuthor(`You are viewing: Music\nUse ${prefix}help [command] to view a specific command!`, client.user.avatarURL())
+                .setAuthor(`Category: Music`, client.user.avatarURL(), `https://jkl2k2.gitbook.io/lenny/commands/command-groups/music`)
+                .setDescription(`[Link to help docs](https://jkl2k2.gitbook.io/lenny/commands/command-groups/music)**\n\nUse \`${prefix}help [command]\` to view a specific command**`)
                 .addField(`play`, `Play a YouTube or SoundCloud song`)
                 .addField(`playnext`, `Queues a song to play immediately next`)
                 .addField(`playnow`, `Immediately skips and plays a song`)
                 .addField(`playlist`, `Searches for 5 YouTube playlists`)
                 .addField(`search`, `Searches for 5 YouTube videos`)
+                .addField(`radio`, `Searches using iHeartRadio`)
                 .addField(`skip/skipall`, `Skips the current song`)
                 .addField(`clear`, `Clears the queue`)
                 .addField(`join/leave/stop`, `Joins/leaves a voice channel`)
@@ -80,9 +91,22 @@ module.exports = {
                 .addField(`repeat`, `Enable/disable looping of the current song`)
                 .addField(`move`, `Moves a song's position in the queue`)
                 .addField(`force`, `Unstick a frozen player`)
-                .addField(`find/yt`, `Search for a YouTube video and send a link to the first result`));
+                .addField(`find/yt`, `Search for a YouTube video and send a link to the first result`)
+                .setColor(`#36393f`));
+        } else if (args[0].toLowerCase() == `currency`) {
+            return message.channel.send(new MessageEmbed()
+                .setAuthor(`Category: Currency`, client.user.avatarURL(), `https://jkl2k2.gitbook.io/lenny/commands/command-groups/currency`)
+                .setDescription(`[Link to help docs](https://jkl2k2.gitbook.io/lenny/commands/command-groups/currency)**\n\nUse \`${prefix}help [command]\` to view a specific command**`)
+                .addField(`balance`, `Displays your current wallet`)
+                .addField(`transfer`, `Give money to another user`)
+                .addField(`leaderboard`, `Show the top 10 richest users in the server`)
+                .addField(`blackjack`, `Play a game of blackjack`)
+                .addField(`flip`, `Bet on a coin flip`)
+                .addField(`slots`, `Play a slot machine`)
+                .setColor(`#36393f`));
         }
-        */
+
+        /*
         if (!args.length) {
             return message.channel.send(new MessageEmbed()
                 .setAuthor(`Lenny`, client.user.avatarURL())
@@ -90,6 +114,7 @@ module.exports = {
                 .setFooter(`You can still use !help (command) to view in Discord`)
                 .setColor(`#36393f`));
         }
+        */
 
         const name = args[0].toLowerCase();
         const command = commands.get(name) || commands.find(c => c.aliases && c.aliases.includes(name));

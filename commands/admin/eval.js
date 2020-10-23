@@ -31,6 +31,8 @@ module.exports = {
 			if (typeof evaled !== "string")
 				evaled = require("util").inspect(evaled);
 
+			console.log(clean(evaled));
+
 			message.channel.send(clean(evaled), { code: "xl" });
 		} catch (err) {
 			message.channel.send(`\`ERROR\` \`\`\`xl\n${clean(err)}\n\`\`\``);

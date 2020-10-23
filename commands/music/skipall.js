@@ -27,7 +27,7 @@ module.exports = {
 		message.guild.music.dispatcher.end();
 
 		// Empty dispatcher
-		message.guild.music.dispatcher = undefined;
+		// message.guild.music.dispatcher = undefined;
 
 		message.channel.send(new Discord.MessageEmbed()
 			.setDescription(`:stop_button: ${message.author.username} skipped all songs`)

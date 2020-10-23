@@ -47,7 +47,8 @@ module.exports = {
 
         genius.searchSong(options).then(songs => {
             if (songs == null) return message.channel.send(new MessageEmbed()
-                .setDescription(`No results found`));
+                .setDescription(`<:cross:729019052571492434> No results found`)
+                .setColor(`#FF3838`));
 
             let result = songs[0];
 

@@ -7,9 +7,9 @@ module.exports = {
     name: 'lyrics',
     description: 'Find the lyrics to a certain song',
     // aliases: ['aliases'],
-    // args: true,
-    // usage: '[command]',
-    // altUsage: 'command',
+    args: true,
+    usage: '[song title]',
+    altUsage: '"[song title]" by [song artist]',
     // cooldown: 5,
     // guildOnly: true,
     enabled: true,
@@ -19,20 +19,29 @@ module.exports = {
     },
     type: 'music',
     async execute(message, args) {
-        if (!args[0] && !message.guild) return console.log(`Not in guild and no args`);
-
         let title;
+        let artist;
 
-        if (!args[0] && message.guild.music.lastPlayed) {
-            title = message.guild.music.lastPlayed.getTitle();
+        const argsFull = args.join(` `);
+
+        if (argsFull.indexOf(`"`) != -1 && argsFull.indexOf(`"`, argsFull.indexOf(`"`) + 1) != -1 && argsFull.indexOf(`by`) != -1) {
+            title = argsFull.substring(argsFull.indexOf(`"`) + 1, argsFull.indexOf(`"`, argsFull.indexOf(`"`) + 1));
+
+            artist = argsFull.substring(argsFull.indexOf(`by `) + 3);
+        } else if (argsFull.indexOf(`by`) != -1) {
+            title = argsFull.substring(0, argsFull.indexOf(`by`));
+
+            artist = argsFull.substring(argsFull.indexOf(`by `) + 3);
         } else {
-            title = args.join(` `);
+            title = argsFull;
         }
+
+        console.log(`Title: ${title}\nArtist: ${artist}`);
 
         const options = {
             apiKey: geniusAPI,
             title: title,
-            artist: ``,
+            artist: artist || ``,
             optimizeQuery: false
         };
 

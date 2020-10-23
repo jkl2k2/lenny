@@ -19,20 +19,28 @@ module.exports = {
     },
     type: 'music',
     async execute(message, args) {
-        // if (!args[0] && !message.guild) return;
+        if (!args[0] && !message.guild) return console.log(`Not in guild and no args`);
+
+        let title;
+
+        if (!args[0] && message.guild.music.lastPlayed) {
+            title = message.guild.music.lastPlayed.getTitle();
+        } else {
+            title = args.join(` `);
+        }
 
         const options = {
             apiKey: geniusAPI,
-            title: args.join(` `),
+            title: title,
             artist: ``,
             optimizeQuery: false
         };
 
         genius.searchSong(options).then(songs => {
-            let result = songs[0];
-
-            if (result == null) return message.channel.send(new MessageEmbed()
+            if (songs == null) return message.channel.send(new MessageEmbed()
                 .setDescription(`No results found`));
+
+            let result = songs[0];
 
             genius.getLyrics(options).then(async lyrics => {
                 try {

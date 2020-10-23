@@ -17,7 +17,7 @@ module.exports = {
         return message.channel.send(new Discord.MessageEmbed()
             .setTitle(`:medal: Top 10 richest users`)
             .setDescription(`\u200b`)
-            .addField(`:desktop: ${message.guild.name}'s Leaderboard`, currency.sort((a, b) => b.balance - a.balance)
+            .addField(`:desktop: This Server's Leaderboard`, currency.sort((a, b) => b.balance - a.balance)
                 .filter(user => client.users.cache.has(user.user_id) && message.guild.member(client.users.cache.get(user.user_id)))
                 .first(10)
                 .map((user, position) => `\`${position + 1}.\` **${(client.users.cache.get(user.user_id).username)}**\nBalance: \`$${user.balance}\`\n`)

@@ -439,6 +439,7 @@ client.on(`voiceStateUpdate`, (oldState, newState) => {
         // If was in channel, but is no longer in one
         oldState.guild.music.queue = [];
         oldState.guild.music.dispatcher = undefined;
+        oldState.guild.music.playing = false;
     }
 });
 //#endregion

@@ -128,6 +128,17 @@ client.stats.default = {
     musicTime: 0
 };
 
+client.userCasinoPity = new Enmap({
+    name: "userCasinoPity",
+    fetchAll: false,
+    autoFetch: true,
+    cloneLevel: 'deep'
+});
+
+client.userCasinoPity.default = {
+    losingStreak: 0
+};
+
 client.on(`guildDelete`, guild => {
     // Remove deleted guild from Enmap
     client.settings.delete(guild.id);

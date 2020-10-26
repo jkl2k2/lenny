@@ -3,7 +3,7 @@ const { MessageEmbed } = require(`discord.js`);
 const currency = index.getCurrencyDB();
 
 function rand() {
-    const symbols = [`:green_apple:`, `:apple:`, `:pear:`, `:tangerine:`, `:lemon:`, `:banana:`, `:watermelon:`, `:grapes:`, `:blueberries:`, `:seven:`];
+    const symbols = [`:green_apple:`, `:apple:`, `:pear:`, `:tangerine:`, `:lemon:`, `:banana:`, `:watermelon:`, `:grapes:`, `:blueberries:`, `:seven:`, `:strawberry:`, `:melon:`, `:cherries:`, `:peach:`, `:mango:`, `:pineapple:`, `:coconut:`, `:kiwi:`, `:tomato:`, `:eggplant:`];
 
     const rand = Math.floor(Math.random() * (symbols.length));
 
@@ -167,9 +167,6 @@ module.exports = {
                             // Pay jackpot from casino bank account
                             currency.add(message.author.id, currency.getBalance(`0`));
 
-                            // Deduct from casino
-                            currency.add(`0`, -currency.getBalance(`0`));
-
                             // Edit 
                             m.edit(new MessageEmbed()
                                 .setDescription(`**:slot_machine: ${message.author.username}'s Slots Game**
@@ -192,6 +189,9 @@ module.exports = {
                                 .setColor(`#801431`)
                                 .setThumbnail(message.author.avatarURL())
                             );
+
+                            // Deduct from casino
+                            currency.add(`0`, -currency.getBalance(`0`));
 
                         } else if (rolls[3].value == rolls[4].value && rolls[3].value == rolls[5].value) {
                             // All 3 match but not sevens

@@ -1,5 +1,5 @@
 @echo off
 
-node index.js --no-deprecation
+npm install --production && node index.js --no-deprecation
 
 pause

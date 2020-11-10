@@ -22,9 +22,11 @@ module.exports = {
     execute(message, args) {
         if (message.channel.id == "471193210102743042") return;
 
-        let rand = Math.round(generator.random_incl());
+        const client = message.client;
 
-        var originalBalance = currency.getBalance(message.author.id);
+        let originalBalance = currency.getBalance(message.author.id);
+
+        const userCasinoPity = client.userCasinoPity.ensure(message.author.id, client.userCasinoPity.default);
 
         let bet;
         let sideArg;
@@ -53,6 +55,16 @@ module.exports = {
             // default to heads
             side = "heads";
         }
+
+        let rand = 0;
+
+        if (side == "heads") {
+            rand = Math.round(generator.random_incl() + (userCasinoPity[`losingStreak`] * 0.05));
+        } else {
+            rand = Math.round(generator.random_incl() - (userCasinoPity[`losingStreak`] * 0.05));
+        }
+
+        // // console.log(rand);
 
         if (bet == "coosin" || bet == "collin" || bet == "cucino") {
             return message.channel.send(new Discord.MessageEmbed()
@@ -103,6 +115,11 @@ module.exports = {
                 // Deduct from casino profits
                 currency.add("0", -parseInt(bet));
 
+                // Add to userCasinoPity losingStreak
+                client.userCasinoPity.set(message.author.id, 0, `losingStreak`);
+
+                // console.log(userCasinoPity[`losingStreak`]);
+
                 // Win message
                 message.channel.send(new Discord.MessageEmbed()
                     .setDescription(`:game_die: You flipped: \`Heads\`\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**`)
@@ -115,6 +132,11 @@ module.exports = {
 
                 // Add to casino profits
                 currency.add("0", parseInt(bet));
+
+                // Add to userCasinoPity losingStreak
+                client.userCasinoPity.set(message.author.id, userCasinoPity[`losingStreak`] + 1, `losingStreak`);
+
+                // console.log(userCasinoPity[`losingStreak`]);
 
                 // Loss message
                 message.channel.send(new Discord.MessageEmbed()
@@ -132,6 +154,11 @@ module.exports = {
                 // Add to casino profits
                 currency.add("0", parseInt(bet));
 
+                // Add to userCasinoPity losingStreak
+                client.userCasinoPity.set(message.author.id, userCasinoPity[`losingStreak`] + 1, `losingStreak`);
+
+                // console.log(userCasinoPity[`losingStreak`]);
+
                 // Loss message
                 message.channel.send(new Discord.MessageEmbed()
                     .setDescription(`:game_die: You flipped: \`Tails\`\n\nSorry, ${message.author.username}! You **lost** your bet of **$${bet}**.\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**`)
@@ -144,6 +171,11 @@ module.exports = {
 
                 // Deduct from casino profits
                 currency.add("0", -parseInt(bet));
+
+                // Add to userCasinoPity losingStreak
+                client.userCasinoPity.set(message.author.id, 0, `losingStreak`);
+
+                // console.log(userCasinoPity[`losingStreak`]);
 
                 // Win message
                 message.channel.send(new Discord.MessageEmbed()

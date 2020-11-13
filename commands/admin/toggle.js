@@ -14,7 +14,8 @@ module.exports = {
     // guildOnly: true,
     enabled: true,
     restrictions: {
-        resolvable: ["ADMINISTRATOR"],
+        // resolvable: ["ADMINISTRATOR"],
+        id: [`125109015632936960`, `245002786343878657`]
     },
     type: 'admin',
     execute(message, args) {

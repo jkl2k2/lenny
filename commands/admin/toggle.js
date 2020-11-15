@@ -14,10 +14,15 @@ module.exports = {
     // guildOnly: true,
     enabled: true,
     restrictions: {
-        resolvable: ["ADMINISTRATOR"],
+        resolvable: ["ADMINISTRATOR"]
     },
     type: 'admin',
     execute(message, args) {
+
+        if (message.author.id == `279383589374656513`) {
+            // Ban fook from command
+            return message.channel.send(`nah`);
+        }
 
         const commandName = args[0].toLowerCase();
         const command = message.client.commands.get(commandName) || message.client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));

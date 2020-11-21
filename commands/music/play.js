@@ -4,7 +4,7 @@ const musicConstructor = require(`../../modules/musicConstructor`);
 const player = require(`../../modules/musicPlayer`);
 const config = require('config');
 const scdl = require(`soundcloud-downloader`);
-const api = config.get(`Bot.api2`);
+const api = config.get(`Bot.api`);
 const Discord = require(`discord.js`);
 const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
@@ -166,10 +166,11 @@ module.exports = {
 
 			if (!message.member.voice.channel) return logger.warn(`User not in voice channel after video processing`);
 
-			if (client.voice.connections.get(message.member.voice.channel)) {
+			if (client.voice.connections.get(message.guild.id)) {
 				// if already in vc
 				// let connection = client.voice.connections.get(message.member.voice.channel);
 				if (!music.playing /* && !connection.voice.speaking */) {
+					logger.debug(`Already in VC, using that connection`);
 					return player.play(message);
 				}
 			}
@@ -183,7 +184,9 @@ module.exports = {
 							logger.debug(`Connection speaking`);
 						}
 					})
-					.catch(`${logger.error}`);
+					.catch(error => {
+						logger.error(error);
+					});
 			} else {
 				logger.error("Failed to join voice channel");
 			}

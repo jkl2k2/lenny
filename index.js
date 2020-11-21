@@ -241,7 +241,7 @@ const logger = winston.createLogger({
                 // winston.format.printf(log => `[${log.level.toUpperCase()}] - ${log.message}`),
                 winston.format.simple()
             ),
-            level: `info`
+            level: `debug`
         })
     ]
 });
@@ -448,6 +448,7 @@ client.on('ready', async () => {
 client.on(`voiceStateUpdate`, (oldState, newState) => {
     if (oldState.channel && !newState.channel) {
         // If was in channel, but is no longer in one
+        logger.debug(`Left a voice channel, resetting music`);
         oldState.guild.music.queue = [];
         oldState.guild.music.dispatcher = undefined;
         oldState.guild.music.playing = false;

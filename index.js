@@ -446,7 +446,7 @@ client.on('ready', async () => {
 
 //#region Client VC Disconnect -> Reset music data
 client.on(`voiceStateUpdate`, (oldState, newState) => {
-    if (oldState.channel && !newState.channel) {
+    if (!client.voice.connections.get(newState.guild.id)) {
         // If was in channel, but is no longer in one
         logger.debug(`Left a voice channel, resetting music`);
         oldState.guild.music.queue = [];

@@ -31,7 +31,7 @@
     "discord.js": "^12.4.1",
     "enmap": "^5.8.2",
     "erlpack": "github:discordapp/erlpack",
-    "ffmpeg-static": "^2.7.0",
+    "ffmpeg-static": "^4.2.7",
     "fluent-ffmpeg": "^2.1.2",
     "genius-lyrics-api": "^3.0.3",
     "give-me-a-joke": "^0.2.5",
@@ -54,7 +54,7 @@
     "uwuifier": "^1.1.0",
     "winston": "^3.3.3",
     "winston-daily-rotate-file": "^4.5.0",
-    "ytdl-core": "^4.0.4",
+    "ytdl-core": "^4.0.5",
     "zlib-sync": "^0.1.7"
   }
 }

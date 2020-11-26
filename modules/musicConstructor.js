@@ -1,5 +1,5 @@
 const config = require(`config`);
-const api = config.get(`Bot.api`);
+const api = config.get(`Bot.api2`);
 const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
 const prettyMs = require(`pretty-ms`);

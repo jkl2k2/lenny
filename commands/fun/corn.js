@@ -2,7 +2,7 @@ const index = require(`../../index.js`);
 const Discord = require(`discord.js`);
 const config = require(`config`);
 const CSE_ID = config.get(`Bot.CSE_ID`);
-const api = config.get(`Bot.api`);
+const api = config.get(`Bot.api2`);
 const GoogleImages = require(`google-images`);
 const images = new GoogleImages(CSE_ID, api);
 

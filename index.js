@@ -62,10 +62,14 @@ Reflect.defineProperty(currency, 'add', {
     },
 });
 
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+}
+
 Reflect.defineProperty(currency, 'getBalance', {
     value: function getBalance(id) {
         const user = currency.get(id);
-        return user ? user.balance : 0;
+        return user ? numberWithCommas(user.balance) : 0;
     },
 });
 //#endregion

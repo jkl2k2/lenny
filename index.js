@@ -69,7 +69,7 @@ function numberWithCommas(x) {
 Reflect.defineProperty(currency, 'getBalance', {
     value: function getBalance(id) {
         const user = currency.get(id);
-        return user ? numberWithCommas(user.balance) : 0;
+        return user ? user.balance : 0;
     },
 });
 //#endregion

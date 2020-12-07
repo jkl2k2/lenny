@@ -450,6 +450,7 @@ client.on('ready', async () => {
 
 //#region Client VC Disconnect -> Reset music data
 client.on(`voiceStateUpdate`, (oldState, newState) => {
+    /*
     if (!client.voice.connections.get(newState.guild.id)) {
         // If was in channel, but is no longer in one
         logger.debug(`Left a voice channel, resetting music`);
@@ -457,6 +458,7 @@ client.on(`voiceStateUpdate`, (oldState, newState) => {
         oldState.guild.music.dispatcher = undefined;
         oldState.guild.music.playing = false;
     }
+    */
 });
 //#endregion
 

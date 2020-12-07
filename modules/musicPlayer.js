@@ -145,6 +145,7 @@ const play = async message => {
     // Reset dispatcher stream delay
     client.voice.connections.get(message.guild.id).player.streamingData.pausedTime = 0;
 
+    /*
     message.guild.music.dispatcher.on("close", async () => {
         logger.debug(`Dispatcher fired "close" event`);
 
@@ -169,11 +170,11 @@ const play = async message => {
             message.guild.music.dispatcher = undefined;
         }
     });
+    */
 
     message.guild.music.dispatcher.on("finish", async () => {
         logger.debug(`Dispatcher fired "finish" event`);
 
-        /*
         // Add time playing to server stats
         const serverStats = client.stats.ensure(message.guild.id, client.stats.default);
 
@@ -194,7 +195,6 @@ const play = async message => {
             message.guild.music.playing = false;
             message.guild.music.dispatcher = undefined;
         }
-        */
     });
 
 };

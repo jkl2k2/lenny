@@ -28,7 +28,7 @@
     "canvas": "^2.6.1",
     "chalk": "^3.0.0",
     "config": "^3.3.2",
-    "discord.js": "^12.4.1",
+    "discord.js": "^12.5.1",
     "enmap": "^5.8.2",
     "erlpack": "github:discordapp/erlpack",
     "ffmpeg-static": "^4.2.7",

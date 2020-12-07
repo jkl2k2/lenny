@@ -123,7 +123,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance,
         sent.delete();
 
         message.channel.send(new Discord.MessageEmbed()
-            .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\n${message.author.username}, I returned your bet of **$${bet}**\n\n**Got two aces, but my medicore programming only has aces count as 11, so in the meantime I've returned your money**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${showPoints(house)})\n${showHand(house)}`)
+            .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\n${message.author.username}, I returned your bet of **$${bet}**\n\n**Got two aces, but my mediocre programming only has aces count as 11, so in the meantime I've returned your money**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${showPoints(house)})\n${showHand(house)}`)
             .setColor(`#801431`)
             .setThumbnail(message.author.avatarURL()));
 

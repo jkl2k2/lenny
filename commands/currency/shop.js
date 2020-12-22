@@ -14,6 +14,7 @@ module.exports = {
     enabled: true,
     type: 'currency',
     async execute(message, args) {
+        return;
         const items = await CurrencyShop.findAll();
         return message.channel.send(items.map(item => `${item.name}: ${item.cost}💰`).join('\n'), { code: true });
     }

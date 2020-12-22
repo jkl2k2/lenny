@@ -67,7 +67,9 @@ module.exports = {
                             .setColor(`#2EC14E`));
 
                     } else if (userResponse == `n` || userResponse == `no`) {
-                        return message.channel.send(`Canceled upgrade.`);
+                        return message.channel.send(new MessageEmbed()
+                            .setDescription(`:information_source: Canceled badge upgrade`)
+                            .setColor(`#0083FF`));
                     }
                 });
                 collector.on('end', collected => {

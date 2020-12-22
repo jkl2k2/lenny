@@ -38,10 +38,10 @@ function levelToRank(level) {
 
 module.exports = {
     name: 'badge',
-    description: 'Buy badges and get perks',
+    description: 'Buy badges and (eventually) get perks. Use **!badge upgrade** to increase your rank.',
     aliases: ['badges'],
     // args: true,
-    // usage: '[command]',
+    usage: '[optional: upgrade]',
     // altUsage: 'command',
     // cooldown: 5,
     // guildOnly: true,

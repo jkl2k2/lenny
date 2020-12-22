@@ -99,6 +99,7 @@ module.exports = {
                 .setDescription(`[Link to help docs](https://jkl2k2.gitbook.io/lenny/commands/command-groups/currency)**\n\nUse \`${prefix}help [command]\` to view a specific command**`)
                 .addField(`balance`, `Displays your current wallet`)
                 .addField(`transfer`, `Give money to another user`)
+                .addField(`badge`, `Use money to upgrade badges`)
                 .addField(`leaderboard`, `Show the top 10 richest users in the server`)
                 .addField(`blackjack`, `Play a game of blackjack`)
                 .addField(`flip`, `Bet on a coin flip`)

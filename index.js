@@ -132,15 +132,17 @@ client.stats.default = {
     musicTime: 0
 };
 
-client.userCasinoPity = new Enmap({
-    name: "userCasinoPity",
+client.casinoUser = new Enmap({
+    name: "casinoUser",
     fetchAll: false,
     autoFetch: true,
     cloneLevel: 'deep'
 });
 
-client.userCasinoPity.default = {
-    losingStreak: 0
+client.casinoUser.default = {
+    losingStreak: 0,
+    badgeLevel: 0,
+    prestigeLevel: 0
 };
 
 client.on(`guildDelete`, guild => {

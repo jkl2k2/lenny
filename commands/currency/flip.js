@@ -26,7 +26,7 @@ module.exports = {
 
         let originalBalance = currency.getBalance(message.author.id);
 
-        const userCasinoPity = client.userCasinoPity.ensure(message.author.id, client.userCasinoPity.default);
+        const casinoUser = client.casinoUser.ensure(message.author.id, client.casinoUser.default);
 
         let bet;
         let sideArg;
@@ -59,9 +59,9 @@ module.exports = {
         let rand = 0;
 
         if (side == "heads") {
-            rand = Math.round(generator.random_incl() + (userCasinoPity[`losingStreak`] * 0.05));
+            rand = Math.round(generator.random_incl() + (casinoUser[`losingStreak`] * 0.05));
         } else {
-            rand = Math.round(generator.random_incl() - (userCasinoPity[`losingStreak`] * 0.05));
+            rand = Math.round(generator.random_incl() - (casinoUser[`losingStreak`] * 0.05));
         }
 
         // // console.log(rand);
@@ -115,10 +115,10 @@ module.exports = {
                 // Deduct from casino profits
                 currency.add("0", -parseInt(bet));
 
-                // Add to userCasinoPity losingStreak
-                client.userCasinoPity.set(message.author.id, 0, `losingStreak`);
+                // Add to casinoUser losingStreak
+                client.casinoUser.set(message.author.id, 0, `losingStreak`);
 
-                // console.log(userCasinoPity[`losingStreak`]);
+                // console.log(casinoUser[`losingStreak`]);
 
                 // Win message
                 message.channel.send(new Discord.MessageEmbed()
@@ -133,10 +133,10 @@ module.exports = {
                 // Add to casino profits
                 currency.add("0", parseInt(bet));
 
-                // Add to userCasinoPity losingStreak
-                client.userCasinoPity.set(message.author.id, userCasinoPity[`losingStreak`] + 1, `losingStreak`);
+                // Add to casinoUser losingStreak
+                client.casinoUser.set(message.author.id, casinoUser[`losingStreak`] + 1, `losingStreak`);
 
-                // console.log(userCasinoPity[`losingStreak`]);
+                // console.log(casinoUser[`losingStreak`]);
 
                 // Loss message
                 message.channel.send(new Discord.MessageEmbed()
@@ -154,10 +154,10 @@ module.exports = {
                 // Add to casino profits
                 currency.add("0", parseInt(bet));
 
-                // Add to userCasinoPity losingStreak
-                client.userCasinoPity.set(message.author.id, userCasinoPity[`losingStreak`] + 1, `losingStreak`);
+                // Add to casinoUser losingStreak
+                client.casinoUser.set(message.author.id, casinoUser[`losingStreak`] + 1, `losingStreak`);
 
-                // console.log(userCasinoPity[`losingStreak`]);
+                // console.log(casinoUser[`losingStreak`]);
 
                 // Loss message
                 message.channel.send(new Discord.MessageEmbed()
@@ -172,10 +172,10 @@ module.exports = {
                 // Deduct from casino profits
                 currency.add("0", -parseInt(bet));
 
-                // Add to userCasinoPity losingStreak
-                client.userCasinoPity.set(message.author.id, 0, `losingStreak`);
+                // Add to casinoUser losingStreak
+                client.casinoUser.set(message.author.id, 0, `losingStreak`);
 
-                // console.log(userCasinoPity[`losingStreak`]);
+                // console.log(casinoUser[`losingStreak`]);
 
                 // Win message
                 message.channel.send(new Discord.MessageEmbed()

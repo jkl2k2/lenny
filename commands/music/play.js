@@ -166,7 +166,7 @@ module.exports = {
 
 			if (!message.member.voice.channel) return logger.warn(`User not in voice channel after video processing`);
 
-			if (client.voice.connections.get(message.guild.id)) {
+			if (client.voice.connections.get(message.guild.id) && false) {
 				// if already in vc
 				// let connection = client.voice.connections.get(message.member.voice.channel);
 				if (!music.playing /* && !connection.voice.speaking */) {

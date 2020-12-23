@@ -106,7 +106,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance,
         // Player hits natural blackjack
 
         currency.add(message.author.id, bet);
-        currency.add("0", -bet);
+        // currency.add("0", -bet);
 
         sent.delete();
 
@@ -134,7 +134,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance,
 
         /*
         currency.add(message.author.id, -bet);
-        currency.add("0", bet);
+        // currency.add("0", bet);
         */
 
         sent.delete();
@@ -193,7 +193,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance,
                     // Player bust
 
                     currency.add(message.author.id, -bet);
-                    currency.add("0", bet);
+                    // currency.add("0", bet);
 
                     return message.channel.send(new Discord.MessageEmbed()
                         .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nSorry, ${message.author.username}. You **lost** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**YOU WENT OVER 21**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${showPoints(house)})\n${showHand(house)}`)
@@ -205,7 +205,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance,
                     // Player hits blackjack
 
                     currency.add(message.author.id, bet);
-                    currency.add("0", -bet);
+                    // currency.add("0", -bet);
 
                     return message.channel.send(new Discord.MessageEmbed()
                         .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**YOU HIT BLACKJACK**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${showPoints(house)})\n${showHand(house)}`)
@@ -225,7 +225,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance,
                     // Confirmed working
 
                     currency.add(message.author.id, bet);
-                    currency.add("0", -bet);
+                    // currency.add("0", -bet);
 
                     return message.channel.send(new Discord.MessageEmbed()
                         .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**HOUSE BUST**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${showPoints(house)})\n${showHand(house)}`)
@@ -238,7 +238,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance,
                     // Confirmed working
 
                     currency.add(message.author.id, -bet);
-                    currency.add("0", bet);
+                    // currency.add("0", bet);
 
                     return message.channel.send(new Discord.MessageEmbed()
                         .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nSorry, ${message.author.username}. You **lost** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**HOUSE HIT BLACKJACK**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${showPoints(house)})\n${showHand(house)}`)
@@ -262,7 +262,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance,
                         // Confirmed working?
 
                         currency.add(message.author.id, bet);
-                        currency.add("0", -bet);
+                        // currency.add("0", -bet);
 
                         return message.channel.send(new Discord.MessageEmbed()
                             .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**YOU'RE CLOSER TO 21**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${showPoints(house)})\n${showHand(house)}`)
@@ -275,7 +275,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance,
                         // Confirmed working?
 
                         currency.add(message.author.id, -bet);
-                        currency.add("0", bet);
+                        // currency.add("0", bet);
 
                         return message.channel.send(new Discord.MessageEmbed()
                             .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nSorry, ${message.author.username}. You **lost** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**HOUSE CLOSER TO 21**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${showPoints(house)})\n${showHand(house)}`)
@@ -293,7 +293,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance,
                         // House alt score causes win
 
                         currency.add(message.author.id, -bet);
-                        currency.add("0", bet);
+                        // currency.add("0", bet);
 
                         return message.channel.send(new Discord.MessageEmbed()
                             .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nSorry, ${message.author.username}. You **lost** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**HOUSE CLOSER TO 21**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${showPoints(house)})\n${showHand(house)}`)
@@ -306,7 +306,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance,
                         // Confirmed working?
 
                         currency.add(message.author.id, bet);
-                        currency.add("0", -bet);
+                        // currency.add("0", -bet);
 
                         return message.channel.send(new Discord.MessageEmbed()
                             .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**YOU'RE CLOSER TO 21**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${showPoints(house)})\n${showHand(house)}`)
@@ -320,7 +320,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance,
                     // Catch
 
                     currency.add(message.author.id, bet);
-                    currency.add("0", -bet);
+                    // currency.add("0", -bet);
 
                     return message.channel.send(`Hey ${message.author.username}, this is a catch-all statement that you should never see. But, since apparently you ARE seeing this and cat is utterly incompetent at programming and somehow managed to screw up checking points for a simple blackjack game, I'll just pretend you won your bet of **$${bet}**.\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\nHELLO THIS IS CAT FROM 1:47 AM. I HAVE BEEN HUNTING THE CAUSE OF THIS FOR THE PAST 45 MINUTES AND I CAN'T FIND IT PLEASE @ ME WHEN THIS HAPPENS SO I CAN ANALYZE YOUR GAME'S RESULTS THANKS.`);
                 }
@@ -336,7 +336,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance,
                     // Player bust
 
                     currency.add(message.author.id, -bet);
-                    currency.add("0", bet);
+                    // currency.add("0", bet);
 
                     message.channel.send(new Discord.MessageEmbed()
                         .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nSorry, ${message.author.username}. You **lost** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**YOU WENT OVER 21**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${showPoints(house)})\n${showHand(house)}`)
@@ -348,7 +348,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance,
                     // Player hits blackjack
 
                     currency.add(message.author.id, bet);
-                    currency.add("0", -bet);
+                    // currency.add("0", -bet);
 
                     return message.channel.send(new Discord.MessageEmbed()
                         .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**YOU HIT BLACKJACK**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${showPoints(house)})\n${showHand(house)}`)
@@ -377,7 +377,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance,
                     // Confirmed working
 
                     currency.add(message.author.id, bet);
-                    currency.add("0", -bet);
+                    // currency.add("0", -bet);
 
                     return message.channel.send(new Discord.MessageEmbed()
                         .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**HOUSE BUST**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${showPoints(house)})\n${showHand(house)}`)
@@ -390,7 +390,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance,
                     // Confirmed working
 
                     currency.add(message.author.id, -bet);
-                    currency.add("0", bet);
+                    // currency.add("0", bet);
 
                     return message.channel.send(new Discord.MessageEmbed()
                         .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nSorry, ${message.author.username}. You **lost** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**HOUSE HIT BLACKJACK**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${showPoints(house)})\n${showHand(house)}`)
@@ -414,7 +414,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance,
                         // Confirmed working?
 
                         currency.add(message.author.id, bet);
-                        currency.add("0", -bet);
+                        // currency.add("0", -bet);
 
                         return message.channel.send(new Discord.MessageEmbed()
                             .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**YOU'RE CLOSER TO 21**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${showPoints(house)})\n${showHand(house)}`)
@@ -427,7 +427,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance,
                         // Confirmed working?
 
                         currency.add(message.author.id, -bet);
-                        currency.add("0", bet);
+                        // currency.add("0", bet);
 
                         return message.channel.send(new Discord.MessageEmbed()
                             .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nSorry, ${message.author.username}. You **lost** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**HOUSE CLOSER TO 21**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${showPoints(house)})\n${showHand(house)}`)
@@ -445,7 +445,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance,
                         // House alt score causes win
 
                         currency.add(message.author.id, -bet);
-                        currency.add("0", bet);
+                        // currency.add("0", bet);
 
                         return message.channel.send(new Discord.MessageEmbed()
                             .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nSorry, ${message.author.username}. You **lost** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**HOUSE CLOSER TO 21**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${showPoints(house)})\n${showHand(house)}`)
@@ -458,7 +458,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance,
                         // Confirmed working?
 
                         currency.add(message.author.id, bet);
-                        currency.add("0", -bet);
+                        // currency.add("0", -bet);
 
                         return message.channel.send(new Discord.MessageEmbed()
                             .setDescription(`:game_die: **${message.author.username}'s Blackjack Game**\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\n**YOU'RE CLOSER TO 21**\n\n__Your hand__ (${showPoints(player)})\n${showHand(player)}\n\n__House hand__ (${showPoints(house)})\n${showHand(house)}`)
@@ -472,7 +472,7 @@ async function awaitResponse(message, player, house, deck, bet, originalBalance,
                     // Catch
 
                     currency.add(message.author.id, bet);
-                    currency.add("0", -bet);
+                    // currency.add("0", -bet);
 
                     return message.channel.send(`Hey ${message.author.username}, this is a catch-all statement that you should never see. But, since apparently you ARE seeing this and cat is utterly incompetent at programming and somehow managed to screw up checking points for a simple blackjack game, I'll just pretend you won your bet of **$${bet}**.\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**\n\nHELLO THIS IS CAT FROM 1:47 AM. I HAVE BEEN HUNTING THE CAUSE OF THIS FOR THE PAST 45 MINUTES AND I CAN'T FIND IT PLEASE @ ME WHEN THIS HAPPENS SO I CAN ANALYZE YOUR GAME'S RESULTS THANKS.`);
                 }

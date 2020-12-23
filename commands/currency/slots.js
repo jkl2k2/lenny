@@ -44,7 +44,7 @@ module.exports = {
         if (!args[0]) {
             return message.channel.send(new MessageEmbed()
                 .setAuthor(`🎰 Slots!`)
-                .setDescription(`**Total of 20 symbols (mostly fruits/vegetables)**\nAll fruits pay the same: \`4x\` for two in a row and \`100x\` for 3 in a row\n\n**BUT sevens exist as well**\nGetting three sevens in a row awards the \`JACKPOT\` (currently \`$${currency.getBalance(`0`)}\`)`)
+                .setDescription(`**Total of 10 symbols (mostly fruits/vegetables)**\nAll fruits pay the same: \`4x\` for two in a row and \`100x\` for 3 in a row\n\n**BUT sevens exist as well**\nGetting three sevens in a row awards the \`JACKPOT\` (currently \`$${currency.getBalance(`0`)}\`)`)
                 .setColor(`#801431`));
         }
 

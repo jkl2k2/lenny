@@ -38,7 +38,7 @@ function levelToRank(level) {
 
 module.exports = {
     name: 'badge',
-    description: 'Buy badges and get perks',
+    description: 'Buy badges and get perks. Use !badge upgrade to rank up once or use !badge max to go as high as possible.',
     aliases: ['badges'],
     // args: true,
     // usage: '[command]',
@@ -62,6 +62,7 @@ module.exports = {
                 .addField(`Badge rank`, `\`${levelToRank(casinoUser[`badgeLevel`])}\``, true)
                 // .addField(`Prestige level`, `\`Prestige ${casinoUser[`prestigeLevel`]}\``, true)
                 .addField(`Next rank`, `\`${levelToRank(casinoUser[`badgeLevel`] + 1)}\` (**$${readableNum(Math.pow(10, 4 + casinoUser[`badgeLevel`]))}**)`)
+                .setDescription(`*Use \`!badge upgrade\` or \`!badge max\` to rank up*`)
                 .setColor(`#36393f`));
         } else if (args[0] == `upgrade`) {
             // If user wants to upgrade

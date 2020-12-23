@@ -102,6 +102,15 @@ module.exports = {
                 .setColor(`#FF3838`));
         }
 
+        let getBonus = false;
+        let getSaved = false;
+
+        if (Math.random() < (0.05 * casinoUser[`badgeLevel`]))
+            getBonus = true;
+
+        if (Math.random() < (0.03 * casinoUser[`badgeLevel`]))
+            getSaved = true;
+
         // 1 is heads
         // 0 is tails
         if (rand == 1) {
@@ -113,7 +122,7 @@ module.exports = {
                 currency.add(message.author.id, parseInt(bet));
 
                 // Deduct from casino profits
-                currency.add("0", -parseInt(bet));
+                // currency.add("0", -parseInt(bet));
 
                 // Add to casinoUser losingStreak
                 client.casinoUser.set(message.author.id, 0, `losingStreak`);
@@ -121,9 +130,19 @@ module.exports = {
                 // console.log(casinoUser[`losingStreak`]);
 
                 // Win message
-                message.channel.send(new Discord.MessageEmbed()
-                    .setDescription(`:game_die: You flipped: \`Heads\`\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**`)
-                    .setColor(`#801431`));
+                if (getBonus) {
+                    // Add bonus
+                    currency.add(message.author.id, parseInt(Math.ceil(bet / 4)));
+
+                    // Bonus win message
+                    message.channel.send(new Discord.MessageEmbed()
+                        .setDescription(`:game_die: You flipped: \`Heads\`\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\n:tada: **BONUS!** Won an extra **$${Math.ceil(bet / 4)}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**`)
+                        .setColor(`#801431`));
+                } else {
+                    message.channel.send(new Discord.MessageEmbed()
+                        .setDescription(`:game_die: You flipped: \`Heads\`\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**`)
+                        .setColor(`#801431`));
+                }
             } else {
                 // Loss
 
@@ -131,7 +150,7 @@ module.exports = {
                 currency.add(message.author.id, -parseInt(bet));
 
                 // Add to casino profits
-                currency.add("0", parseInt(bet));
+                // currency.add("0", parseInt(bet));
 
                 // Add to casinoUser losingStreak
                 client.casinoUser.set(message.author.id, casinoUser[`losingStreak`] + 1, `losingStreak`);
@@ -139,9 +158,20 @@ module.exports = {
                 // console.log(casinoUser[`losingStreak`]);
 
                 // Loss message
-                message.channel.send(new Discord.MessageEmbed()
-                    .setDescription(`:game_die: You flipped: \`Heads\`\n\nSorry, ${message.author.username}! You **lost** your bet of **$${bet}**.\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**`)
-                    .setColor(`#801431`));
+                if (getSaved) {
+                    // Refund loss
+                    currency.add(message.author.id, parseInt(bet));
+
+                    message.channel.send(new Discord.MessageEmbed()
+                        .setDescription(`:game_die: You flipped: \`Heads\`\n\nSorry, ${message.author.username}! You **lost** your bet of **$${bet}**.\n\n:angel: **You've been saved!** Your loss has been refunded.\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**`)
+                        .setColor(`#801431`));
+                } else {
+                    // Refund loss
+                    message.channel.send(new Discord.MessageEmbed()
+                        .setDescription(`:game_die: You flipped: \`Heads\`\n\nSorry, ${message.author.username}! You **lost** your bet of **$${bet}**.\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**`)
+                        .setColor(`#801431`));
+                }
+
             }
         } else {
             // Tails
@@ -152,7 +182,7 @@ module.exports = {
                 currency.add(message.author.id, -parseInt(bet));
 
                 // Add to casino profits
-                currency.add("0", parseInt(bet));
+                // currency.add("0", parseInt(bet));
 
                 // Add to casinoUser losingStreak
                 client.casinoUser.set(message.author.id, casinoUser[`losingStreak`] + 1, `losingStreak`);
@@ -160,9 +190,19 @@ module.exports = {
                 // console.log(casinoUser[`losingStreak`]);
 
                 // Loss message
-                message.channel.send(new Discord.MessageEmbed()
-                    .setDescription(`:game_die: You flipped: \`Tails\`\n\nSorry, ${message.author.username}! You **lost** your bet of **$${bet}**.\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**`)
-                    .setColor(`#801431`));
+                if (getSaved) {
+                    // Refund loss
+                    currency.add(message.author.id, parseInt(bet));
+
+                    message.channel.send(new Discord.MessageEmbed()
+                        .setDescription(`:game_die: You flipped: \`Tails\`\n\nSorry, ${message.author.username}! You **lost** your bet of **$${bet}**.\n\n:angel: **You've been saved!** Your loss has been refunded.\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**`)
+                        .setColor(`#801431`));
+                } else {
+                    // Refund loss
+                    message.channel.send(new Discord.MessageEmbed()
+                        .setDescription(`:game_die: You flipped: \`Tails\`\n\nSorry, ${message.author.username}! You **lost** your bet of **$${bet}**.\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**`)
+                        .setColor(`#801431`));
+                }
             } else {
                 // Win
 
@@ -170,7 +210,7 @@ module.exports = {
                 currency.add(message.author.id, parseInt(bet));
 
                 // Deduct from casino profits
-                currency.add("0", -parseInt(bet));
+                // currency.add("0", -parseInt(bet));
 
                 // Add to casinoUser losingStreak
                 client.casinoUser.set(message.author.id, 0, `losingStreak`);
@@ -178,9 +218,19 @@ module.exports = {
                 // console.log(casinoUser[`losingStreak`]);
 
                 // Win message
-                message.channel.send(new Discord.MessageEmbed()
-                    .setDescription(`:game_die: You flipped: \`Tails\`\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**`)
-                    .setColor(`#801431`));
+                if (getBonus) {
+                    // Add bonus
+                    currency.add(message.author.id, parseInt(Math.ceil(bet / 4)));
+
+                    // Bonus win message
+                    message.channel.send(new Discord.MessageEmbed()
+                        .setDescription(`:game_die: You flipped: \`Tails\`\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\n:tada: **BONUS!** Won an extra **$${Math.ceil(bet / 4)}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**`)
+                        .setColor(`#801431`));
+                } else {
+                    message.channel.send(new Discord.MessageEmbed()
+                        .setDescription(`:game_die: You flipped: \`Tails\`\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**`)
+                        .setColor(`#801431`));
+                }
             }
         }
     }

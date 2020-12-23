@@ -14,6 +14,7 @@ module.exports = {
     enabled: true,
     type: 'currency',
     async execute(message, args) {
+        /*
         const item = await CurrencyShop.findOne({ where: { name: { [Op.like]: args } } });
         if (!item) return message.channel.send(`That item doesn't exist.`);
         if (item.cost > currency.getBalance(message.author.id)) {
@@ -25,5 +26,6 @@ module.exports = {
         await user.addItem(item);
 
         message.channel.send(`You've bought: ${item.name}.`);
+        */
     }
 };

@@ -129,7 +129,7 @@ module.exports = {
             if (currency.getBalance(message.author.id) >= totalCost) {
                 // Show upgrade info
                 message.channel.send(new MessageEmbed()
-                    .setDescription(`<:check:728881238970073090> You can afford to upgrade your badge **${upgradeCount - 4} times** to \`${levelToRank(casinoUser[`badgeLevel`] + (upgradeCount - 4))}\` for \`$${readableNum(totalCost)}\`\n\nCurrent balance: \`$${readableNum(currency.getBalance(message.author.id))}\`\nBalance after: \`$${readableNum(currency.getBalance(message.author.id) - totalCost)}\`\n\nWould you like to upgrade? **(Y/N)**`)
+                    .setDescription(`<:check:728881238970073090> You can afford to upgrade your badge **${upgradeCount - 8} times** to \`${levelToRank(casinoUser[`badgeLevel`] + (upgradeCount - 8))}\` for \`$${readableNum(totalCost)}\`\n\nCurrent balance: \`$${readableNum(currency.getBalance(message.author.id))}\`\nBalance after: \`$${readableNum(currency.getBalance(message.author.id) - totalCost)}\`\n\nWould you like to upgrade? **(Y/N)**`)
                     .setColor(`#2EC14E`));
 
                 // Listen for response
@@ -148,11 +148,11 @@ module.exports = {
                         currency.add(message.author.id, -totalCost);
 
                         // Increase badge level
-                        client.casinoUser.set(message.author.id, casinoUser[`badgeLevel`] + (upgradeCount - 4), `badgeLevel`);
+                        client.casinoUser.set(message.author.id, casinoUser[`badgeLevel`] + (upgradeCount - 8), `badgeLevel`);
 
                         // Show confirmation of upgrade
                         return message.channel.send(new MessageEmbed()
-                            .setDescription(`:tada: You have now reached \`${levelToRank(casinoUser[`badgeLevel`] + (upgradeCount - 4))}\`!\n\nPrevious balance: \`$${readableNum(oldBalance)}\`\nNew balance: \`$${readableNum(currency.getBalance(message.author.id))}\`\n\nNext up is \`${levelToRank(casinoUser[`badgeLevel`] + 1 + (upgradeCount - 4))}\` (\`$${readableNum(Math.pow(10, casinoUser[`badgeLevel`] + upgradeCount))}\`)`)
+                            .setDescription(`:tada: You have now reached \`${levelToRank(casinoUser[`badgeLevel`] + (upgradeCount - 8))}\`!\n\nPrevious balance: \`$${readableNum(oldBalance)}\`\nNew balance: \`$${readableNum(currency.getBalance(message.author.id))}\`\n\nNext up is \`${levelToRank(casinoUser[`badgeLevel`] + 1 + (upgradeCount - 8))}\` (\`$${readableNum(Math.pow(10, casinoUser[`badgeLevel`] + upgradeCount))}\`)`)
                             .setColor(`#2EC14E`));
 
                     } else if (userResponse == `n` || userResponse == `no`) {

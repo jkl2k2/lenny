@@ -41,7 +41,7 @@ module.exports = {
     description: 'Buy badges and get perks. Use !badge upgrade to rank up once or use !badge max to go as high as possible.',
     aliases: ['badges'],
     // args: true,
-    // usage: '[command]',
+    usage: '[optional: upgrade]',
     // altUsage: 'command',
     // cooldown: 5,
     // guildOnly: true,

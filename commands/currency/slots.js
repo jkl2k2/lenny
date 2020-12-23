@@ -3,7 +3,8 @@ const { MessageEmbed } = require(`discord.js`);
 const currency = index.getCurrencyDB();
 
 function rand() {
-    const symbols = [`:green_apple:`, `:apple:`, `:pear:`, `:tangerine:`, `:lemon:`, `:banana:`, `:watermelon:`, `:grapes:`, `:blueberries:`, `:seven:`, `:strawberry:`, `:melon:`, `:cherries:`, `:peach:`, `:mango:`, `:pineapple:`, `:coconut:`, `:kiwi:`, `:tomato:`, `:eggplant:`];
+    // const symbols = [`:green_apple:`, `:apple:`, `:pear:`, `:tangerine:`, `:lemon:`, `:banana:`, `:watermelon:`, `:grapes:`, `:blueberries:`, `:seven:`, `:strawberry:`, `:melon:`, `:cherries:`, `:peach:`, `:mango:`, `:pineapple:`, `:coconut:`, `:kiwi:`, `:tomato:`, `:eggplant:`];
+    const symbols = [`:green_apple:`, `:apple:`, `:pear:`, `:tangerine:`, `:lemon:`, `:banana:`, `:watermelon:`, `:grapes:`, `:blueberries:`, `:seven:`];
 
     const rand = Math.floor(Math.random() * (symbols.length));
 

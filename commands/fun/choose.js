@@ -8,17 +8,17 @@ module.exports = {
     description: 'Chooses between two options',
     // aliases: ['aliases'],
     args: true,
-    usage: '[option 1] or [option 2]',
+    usage: '[option 1] [option 2] [...]',
     // altUsage: 'command',
     // cooldown: 5,
     // guildOnly: true,
     enabled: true,
-	/*
-	restrictions: {
-		resolvable: [],
-		id: [],
-	},
-	*/
+    /*
+    restrictions: {
+        resolvable: [],
+        id: [],
+    },
+    */
     type: 'fun',
     execute(message, args) {
         if (args.indexOf("or") != -1) {
@@ -34,10 +34,10 @@ module.exports = {
                 // Option 2
                 return message.channel.send(option2.join(" "));
             }
-		} else if (args.length >= 2) {
-			let rand = Math.floor(Math.random() * args.length);
-			
-			return message.channel.send(args[rand]);
-		}
+        } else if (args.length >= 2) {
+            let rand = Math.floor(Math.random() * args.length);
+
+            return message.channel.send(args[rand]);
+        }
     }
 };

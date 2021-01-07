@@ -6,7 +6,7 @@ const config = require(`config`);
 module.exports = {
     name: 'choose',
     description: 'Chooses between two options',
-    // aliases: ['aliases'],
+    aliases: ['conch', 'pick'],
     args: true,
     usage: '[option 1] [option 2] [...]',
     // altUsage: 'command',

@@ -55,11 +55,7 @@
     "uwuifier": "^1.1.0",
     "winston": "^3.3.3",
     "winston-daily-rotate-file": "^4.5.0",
-<<<<<<< HEAD
     "ytdl-core": "^4.4.1",
-=======
-    "ytdl-core": "^4.3.1",
->>>>>>> 3c89a65ae02d43fd8df5e1d1f301de6cef8aa4d5
     "zlib-sync": "^0.1.7"
   }
 }

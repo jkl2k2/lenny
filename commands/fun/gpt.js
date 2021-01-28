@@ -5,7 +5,7 @@ const { MessageEmbed } = require(`discord.js`);
 
 module.exports = {
     name: 'gpt',
-    description: 'GPT-2 text completion. Processing takes about 30 seconds. Not every response will be good.',
+    description: 'GPT2 text completion. Processing takes about 30 seconds. Not every response will be good.',
     aliases: ['gpt2'],
     args: true,
     usage: '[text prompt]',

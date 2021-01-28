@@ -27,8 +27,6 @@ function reactionHandler(sent, message, args) {
 
                 const outList = await booste.gpt2(GPTKEY, args.join(` `), 30, 0.8, 30 + args.length);
 
-                console.log(outList.join(` `));
-
                 newSent.edit(new MessageEmbed()
                     .setAuthor(`Response to ${message.author.username}`, message.author.avatarURL())
                     .setDescription(`**${args.join(` `)}** ${outList.join(` `)}`)

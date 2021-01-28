@@ -67,6 +67,7 @@ module.exports = {
                 .addField(`uwu`, `Uwuify text ~w~`)
                 .addField(`thesaurize`, `Pass your message through a thesaurus`)
                 .addField(`tag/tags`, `Create/view tags`)
+                .addField(`gpt`, `Have the bot complete your sentence`)
                 .setColor(`#36393f`));
         } else if (args[0].toLowerCase() == `music`) {
             return message.channel.send(new MessageEmbed()

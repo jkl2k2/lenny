@@ -107,14 +107,14 @@ const play = async message => {
         // Download SoundCloud song
         scdl.download(queue[0].getURL())
             .then(stream => {
+                // If not repeating, send music details (avoids spam)
+                if (!message.guild.music.repeat) sendDetails(queue[0], message.channel);
+
                 // Set dispatcher
                 message.guild.music.dispatcher = client.voice.connections.get(message.guild.id).play(stream, { bitrate: 384, volume: message.guild.music.volume, passes: 5, fec: true });
 
                 // Mark server as playing music
                 message.guild.music.playing = true;
-
-                // If not repeating, send music details (avoids spam)
-                if (!message.guild.music.repeat) sendDetails(queue[0], message.channel);
             });
     } else if (queue[0].getType() == "radio") {
         // If radio station

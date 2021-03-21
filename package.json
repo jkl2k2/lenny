@@ -32,8 +32,6 @@
     "discord.js": "^12.5.1",
     "enmap": "^5.8.2",
     "erlpack": "github:discordapp/erlpack",
-    "ffmpeg-static": "^4.2.7",
-    "fluent-ffmpeg": "^2.1.2",
     "genius-lyrics-api": "^3.0.3",
     "give-me-a-joke": "^0.2.5",
     "google-images": "^2.1.0",

@@ -137,10 +137,12 @@ module.exports = {
                     // Bonus win message
                     message.channel.send(new Discord.MessageEmbed()
                         .setDescription(`:game_die: You flipped: \`Heads\`\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\n:tada: **BONUS!** Won an extra **$${Math.ceil(bet / 4)}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**`)
+                        .setThumbnail(message.author.avatarURL())
                         .setColor(`#801431`));
                 } else {
                     message.channel.send(new Discord.MessageEmbed()
                         .setDescription(`:game_die: You flipped: \`Heads\`\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**`)
+                        .setThumbnail(message.author.avatarURL())
                         .setColor(`#801431`));
                 }
             } else {
@@ -164,11 +166,13 @@ module.exports = {
 
                     message.channel.send(new Discord.MessageEmbed()
                         .setDescription(`:game_die: You flipped: \`Heads\`\n\nSorry, ${message.author.username}! You **lost** your bet of **$${bet}**.\n\n:angel: **You've been saved!** Your loss has been refunded.\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**`)
+                        .setThumbnail(message.author.avatarURL())
                         .setColor(`#801431`));
                 } else {
                     // Refund loss
                     message.channel.send(new Discord.MessageEmbed()
                         .setDescription(`:game_die: You flipped: \`Heads\`\n\nSorry, ${message.author.username}! You **lost** your bet of **$${bet}**.\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**`)
+                        .setThumbnail(message.author.avatarURL())
                         .setColor(`#801431`));
                 }
 
@@ -196,11 +200,13 @@ module.exports = {
 
                     message.channel.send(new Discord.MessageEmbed()
                         .setDescription(`:game_die: You flipped: \`Tails\`\n\nSorry, ${message.author.username}! You **lost** your bet of **$${bet}**.\n\n:angel: **You've been saved!** Your loss has been refunded.\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**`)
+                        .setThumbnail(message.author.avatarURL())
                         .setColor(`#801431`));
                 } else {
                     // Refund loss
                     message.channel.send(new Discord.MessageEmbed()
                         .setDescription(`:game_die: You flipped: \`Tails\`\n\nSorry, ${message.author.username}! You **lost** your bet of **$${bet}**.\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**`)
+                        .setThumbnail(message.author.avatarURL())
                         .setColor(`#801431`));
                 }
             } else {
@@ -225,10 +231,12 @@ module.exports = {
                     // Bonus win message
                     message.channel.send(new Discord.MessageEmbed()
                         .setDescription(`:game_die: You flipped: \`Tails\`\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\n:tada: **BONUS!** Won an extra **$${Math.ceil(bet / 4)}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**`)
+                        .setThumbnail(message.author.avatarURL())
                         .setColor(`#801431`));
                 } else {
                     message.channel.send(new Discord.MessageEmbed()
                         .setDescription(`:game_die: You flipped: \`Tails\`\n\nCongrats, ${message.author.username}! You **won** your bet of **$${bet}**!\n\nPrevious balance: **$${originalBalance}**\nNew balance: **$${currency.getBalance(message.author.id)}**`)
+                        .setThumbnail(message.author.avatarURL())
                         .setColor(`#801431`));
                 }
             }

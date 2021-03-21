@@ -26,7 +26,7 @@ module.exports = {
 
             for (var i = 0; i < list.length; i++) {
                 var id = list[i].user_id;
-                if (message.author.id == id) {
+                if (target.id == id) {
                     rank = i + 1;
                 }
             }

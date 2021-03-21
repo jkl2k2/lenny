@@ -813,12 +813,24 @@ client.on('message', message => {
         prefix = "!";
     }
 
+    if (message.content.toLowerCase().includes(`no cap`)) {
+        message.react('<:nocap:816621845229994014>');
+    } else if (message.content.toLowerCase().includes(`cap`)) {
+        message.react('🧢');
+    }
+
+    if (message.content.toLowerCase().includes(`amogus`))
+        message.react('<:amogus:814325340289761300>');
 
     if (message.content.toLowerCase().includes("banana") && message.channel.id != `713235946019094549`) {
         message.react('🍌')
             .then(() => (message.react('🇴')))
             .then(() => (message.react('🇼'))
                 .then(() => message.react('🅾️')));
+    }
+
+    if (message.guild.id == `717141100766298203` && message.content.includes(`:PandaSad:`)) {
+        return message.delete();
     }
 
     // Return if message from bot

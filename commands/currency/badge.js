@@ -1,6 +1,5 @@
 const index = require(`../../index.js`);
 const { MessageEmbed } = require(`discord.js`);
-const { sub } = require("ffmpeg-static");
 const currency = index.getCurrencyDB();
 
 function readableNum(number) {

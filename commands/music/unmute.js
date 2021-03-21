@@ -22,6 +22,8 @@ module.exports = {
         if (dispatcher.volume == 0) {
             dispatcher.setVolume(oldVolume);
 
+            message.guild.music.volume = oldVolume;
+
             return message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`:loud_sound: Playback unmuted and set to \`${oldVolume * 100}%\``)
                 .setColor(`#36393f`));

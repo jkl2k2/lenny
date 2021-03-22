@@ -1,3 +1,5 @@
+/* esversion: 8 */
+
 //#region Constants and requires
 const index = require(`../index.js`);
 const musicConstructor = require(`./musicConstructor`);

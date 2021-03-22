@@ -211,6 +211,8 @@ const queue = async (message, args, type) => {
     async function handleSoundCloud() {
         const queue = message.guild.music.queue;
 
+        const music = message.guild.music;
+
         if (!scdl.isValidUrl(args[0])) {
             return message.channel.send(new Discord.MessageEmbed()
                 .setDescription(`<:cross:729019052571492434> Sorry, ${message.author.username}, a SoundCloud URL was detected, but it is invalid`)
@@ -221,10 +223,15 @@ const queue = async (message, args, type) => {
 
         const newSC = musicConstructor.constructSC(message.member, info);
 
-        queue.push(newSC);
+        // Add new song to queue
+        if (type == `play`) {
+            queue.push(newSC);
+        } else if (type == `playnext` || type == `playnow`) {
+            queue.unshift(newSC);
+        }
 
         // Skip sending details message if not playing (avoids spam)
-        if (message.guild.music.playing) {
+        if (type != `playnow` && message.guild.music.playing) {
             message.channel.send(new Discord.MessageEmbed()
                 .setAuthor(`Queued (#${newSC.getPosition()})`, newSC.getChannelThumbnail(), newSC.getURL())
                 .setDescription(`**[${newSC.getTitle()}](${newSC.getURL()})**\n[${newSC.getChannelName()}](${newSC.getChannelURL()})\n\nLength: \`${newSC.getLength()}\``)
@@ -236,6 +243,7 @@ const queue = async (message, args, type) => {
 
         if (!message.member.voice.channel) return logger.warn(`User not in voice channel after playlist processing`);
 
+        /*
         if (client.voice.connections.get(message.member.voice.channel)) {
             // if already in vc
             let connection = client.voice.connections.get(message.member.voice.channel);
@@ -243,22 +251,25 @@ const queue = async (message, args, type) => {
                 return player.play(message);
             }
         }
+        */
 
         if (message.member.voice.channel) {
             message.member.voice.channel.join()
                 .then(connection => {
-                    if (!message.guild.music.playing) {
+                    if (!music.playing /* && !connection.voice.speaking */) {
                         return player.play(message);
+                    } else if (type == `playnow`) {
+                        // If type is playnow, then end the dispatcher to immediately skip
+                        message.guild.music.dispatcher.end();
                     } else {
                         logger.debug(`Connection speaking`);
                     }
                 })
-                .catch(logger.error);
+                .catch(error => {
+                    logger.error(error);
+                });
         } else {
-            let vcFailEmbed = new Discord.MessageEmbed()
-                .setTitle(`:warning: ${message.author.username}, you are not in a voice channel. Your video has been queued, but I am unable to join you.`)
-                .setColor(`#FF3838`);
-            message.channel.send(vcFailEmbed);
+            logger.error("Failed to join voice channel");
         }
     }
     //#endregion

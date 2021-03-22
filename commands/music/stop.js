@@ -38,6 +38,9 @@ module.exports = {
         // Reset playing
         message.guild.music.playing = false;
 
+        // Reset volume to 100%
+        message.guild.music.volume = 1;
+
         message.channel.send(new Discord.MessageEmbed()
             .setDescription(`:stop_button: ${message.author.username} stopped all playback`)
             .setColor(`#36393f`));

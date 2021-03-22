@@ -35,6 +35,9 @@ module.exports = {
 			// Reset playing
 			message.guild.music.playing = false;
 
+			// Reset volume to 100%
+			message.guild.music.volume = 1;
+
 			disconnecting.edit(new Discord.MessageEmbed()
 				.setDescription(`:arrow_left: Disconnected from \`${channelName}\``)
 				.setColor(`#36393f`));

@@ -9,6 +9,13 @@ const iheart = require(`iheart`);
 
 //#region sendDetails
 const sendDetails = async (input, c) => {
+    if (!input) {
+        logger.warn(`Failed to send info regarding song. Input undefined.`);
+        return c.send(new Discord.MessageEmbed()
+            .setDescription(`<:cross:729019052571492434> Failed to get info on currently playing song.`)
+            .setColor(`#FF3838`));
+    }
+
     if (input.getType() == "radio") {
         // Construct embed
         let musicEmbed = new Discord.MessageEmbed()

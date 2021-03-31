@@ -829,7 +829,7 @@ client.on('message', message => {
                 .then(() => message.react('🅾️')));
     }
 
-    if (message.guild.id == `717141100766298203` && message.content.includes(`:PandaSad:`)) {
+    if (message.guild.id == `717141100766298203` && (message.content.includes(`:PandaSad:`) || message.content.includes(`:Panda:`) || message.content.includes(`:paanda:`))) {
         return message.delete();
     }
 

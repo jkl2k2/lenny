@@ -9,13 +9,6 @@ const iheart = require(`iheart`);
 
 //#region sendDetails
 const sendDetails = async (input, c) => {
-    if (!input) {
-        logger.warn(`Failed to send info regarding song. Input undefined.`);
-        return c.send(new Discord.MessageEmbed()
-            .setDescription(`<:cross:729019052571492434> Failed to get info on currently playing song.`)
-            .setColor(`#FF3838`));
-    }
-
     if (input.getType() == "radio") {
         // Construct embed
         let musicEmbed = new Discord.MessageEmbed()
@@ -115,7 +108,7 @@ const play = async message => {
         scdl.download(queue[0].getURL())
             .then(stream => {
                 // If not repeating, send music details (avoids spam)
-                if (!message.guild.music.repeat) sendDetails(queue[0] || message.guild.music.lastPlayed, message.channel);
+                if (!message.guild.music.repeat) sendDetails(queue[0], message.channel);
 
                 // Set dispatcher
                 message.guild.music.dispatcher = client.voice.connections.get(message.guild.id).play(stream, { bitrate: 384, volume: message.guild.music.volume, passes: 5, fec: true });

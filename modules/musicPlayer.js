@@ -77,7 +77,11 @@ const play = async message => {
         logger.debug(`Input is a regular video`);
 
         // Download YouTube video
-        const input = ytdl(queue[0].getURL());
+        const input = ytdl(queue[0].getURL(), {
+            filter: `audio`,
+            quality: `highestaudio`,
+            highWaterMark: 1 << 25
+        });
 
         if (input) {
             logger.debug(`YTDL output is NOT undefined`);

@@ -87,14 +87,6 @@ const queue = async (message, args, type) => {
 
                     if (!message.member.voice.channel) return logger.warn(`User not in voice channel after playlist processing`);
 
-                    if (client.voice.connections.get(message.member.voice.channel)) {
-                        // if already in vc
-                        let connection = client.voice.connections.get(message.member.voice.channel);
-                        if (!message.guild.music.playing) {
-                            return player.play(message);
-                        }
-                    }
-
                     if (message.member.voice.channel) {
                         message.member.voice.channel.join()
                             .then(connection => {
@@ -160,25 +152,16 @@ const queue = async (message, args, type) => {
 
         if (!message.member.voice.channel) return logger.warn(`User not in voice channel after video processing`);
 
-        if (client.voice.connections.get(message.guild.id) && false) {
-            // if already in vc
-            // let connection = client.voice.connections.get(message.member.voice.channel);
-            if (!music.playing /* && !connection.voice.speaking */) {
-                logger.debug(`Already in VC, using that connection`);
-                return player.play(message);
-            }
-        }
-
         if (message.member.voice.channel) {
             message.member.voice.channel.join()
-                .then(connection => {
-                    if (!music.playing /* && !connection.voice.speaking */) {
+                .then(() => {
+                    if (!music.playing) {
                         return player.play(message);
                     } else if (type == `playnow`) {
                         // If type is playnow, then end the dispatcher to immediately skip
-                        message.guild.music.dispatcher.end();
+                        return message.guild.music.dispatcher.end();
                     } else {
-                        logger.debug(`Connection speaking`);
+                        return logger.debug(`Connection speaking`);
                     }
                 })
                 .catch(error => {

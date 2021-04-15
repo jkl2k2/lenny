@@ -86,7 +86,7 @@ const play = async message => {
         }
 
         // Set dispatcher
-        message.guild.music.dispatcher = client.voice.connections.get(message.guild.id).play(input, { bitrate: 128, volume: message.guild.music.volume, passes: 5, fec: true });
+        message.guild.music.dispatcher = client.voice.connections.get(message.guild.id).play(input, { volume: message.guild.music.volume });
 
         // Mark server as playing music
         message.guild.music.playing = true;

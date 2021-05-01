@@ -5,8 +5,11 @@ class PingCommand extends Command {
     constructor() {
         super(`ping`, {
             aliases: [`ping`, `test`],
-            category: `general`
+            category: `general`,
+            description: `Displays the Discord websocket heartbeat ping`,
+            ratelimit: 2
         });
+
     }
 
     exec(message) {

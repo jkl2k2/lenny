@@ -11,7 +11,8 @@ class ReloadCommand extends Command {
                 }
             ],
             ownerOnly: true,
-            category: `owner`
+            category: `owner`,
+            description: `Reloads a command module`
         });
     }
 

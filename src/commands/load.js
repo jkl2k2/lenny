@@ -11,7 +11,8 @@ class LoadCommand extends Command {
                 }
             ],
             ownerOnly: true,
-            category: `owner`
+            category: `owner`,
+            description: `Loads a command module`
         });
     }
 

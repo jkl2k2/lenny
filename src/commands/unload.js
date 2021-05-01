@@ -11,7 +11,8 @@ class UnloadCommand extends Command {
                 }
             ],
             ownerOnly: true,
-            category: `owner`
+            category: `owner`,
+            description: `Unloads a command module`
         });
     }
 

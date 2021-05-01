@@ -1,10 +1,7 @@
 .vscode/
 config/default.json
 config/serverConfig.json
-soundcloud/
-downloads/
 logs/
-commands/general/testing.js
 node_modules/
 database.sqlite
 data/

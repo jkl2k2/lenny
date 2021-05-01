@@ -28,6 +28,8 @@
     "dotenv": "^8.2.0",
     "libsodium-wrappers": "^0.7.9",
     "sequelize": "^6.6.2",
-    "sqlite": "^4.0.21"
+    "simple-youtube-api": "^5.2.1",
+    "sqlite": "^4.0.21",
+    "ytdl-core": "^4.5.0"
   }
 }

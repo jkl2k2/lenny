@@ -4,6 +4,7 @@ const Akairo = require(`./akairo`);
 const { Structures } = require(`discord.js`);
 const winston = require(`winston`);
 const winstonRotate = require(`winston-daily-rotate-file`);
+const Enmap = require(`enmap`);
 
 // Throw if dotenv error
 if (result.error) throw result.error;
@@ -63,7 +64,7 @@ global.logger = winston.createLogger({
 });
 //#endregion
 
-// Extend Guild to support music
+//#region Extend Guild to support music
 Structures.extend('Guild', Guild => {
     class ExtendedGuild extends Guild {
         constructor(client, data) {
@@ -83,9 +84,60 @@ Structures.extend('Guild', Guild => {
     }
     return ExtendedGuild;
 });
+//#endregion
 
 // Create client
 const client = new Akairo();
+
+//#region Initialize enmap
+client.settings = new Enmap({
+    name: "settings",
+    fetchAll: false,
+    autoFetch: true,
+    cloneLevel: 'deep'
+});
+
+client.stats = new Enmap({
+    name: "stats",
+    fetchAll: false,
+    autoFetch: true,
+    cloneLevel: 'deep'
+});
+
+client.settings.default = {
+    prefix: "!",
+    modLogEnabled: "false",
+    modLogChannel: "mod-log",
+    welcomeEnabled: "false",
+    welcomeChannel: "welcome",
+    welcomeMessage: "Welcome, {{user}}! Enjoy your stay.",
+    goodbyeMessage: "Goodbye, {{user}}!"
+};
+
+client.stats.default = {
+    commandCount: 0,
+    musicTime: 0
+};
+
+client.casinoUser = new Enmap({
+    name: "casinoUser",
+    fetchAll: false,
+    autoFetch: true,
+    cloneLevel: 'deep'
+});
+
+client.casinoUser.default = {
+    losingStreak: 0,
+    badgeLevel: 0,
+    prestigeLevel: 0
+};
+
+client.on(`guildDelete`, guild => {
+    // Remove deleted guild from Enmap
+    client.settings.delete(guild.id);
+    client.tags.delete(guild.id);
+});
+//#endregion
 
 // Log in
 client.login(process.env.TOKEN);

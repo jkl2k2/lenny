@@ -13,7 +13,7 @@ class SkipAllCommand extends Command {
 
     exec(message) {
         // Define dispatcher;
-        let dispatcher = message.guild.music.dispatcher;
+        const dispatcher = message.guild.music.dispatcher;
 
         if (dispatcher == undefined || dispatcher.speaking == false) {
             return message.channel.send(new MessageEmbed()

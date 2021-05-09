@@ -53,7 +53,7 @@ class VolumeCommand extends Command {
         }
 
         volume = args[0];
-        let dispatcher = message.guild.music.dispatcher;
+        const dispatcher = message.guild.music.dispatcher;
         if (!message.guild.music.playing) {
             return message.channel.send(new MessageEmbed()
                 .setDescription(`:information_source: Nothing is currently playing`)

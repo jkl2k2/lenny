@@ -12,7 +12,7 @@ class PauseCommand extends Command {
     }
 
     exec(message) {
-        let dispatcher = message.guild.music.dispatcher;
+        const dispatcher = message.guild.music.dispatcher;
 
         if (dispatcher != undefined && dispatcher.paused == false) {
             dispatcher.pause();

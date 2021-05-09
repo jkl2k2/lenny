@@ -12,8 +12,8 @@ class MuteCommand extends Command {
     }
 
     exec(message) {
-        let dispatcher = message.guild.music.dispatcher;
-        let oldVolume = message.guild.music.oldVolume;
+        const dispatcher = message.guild.music.dispatcher;
+        const oldVolume = message.guild.music.oldVolume;
 
         if (dispatcher == undefined || dispatcher.speaking == false) {
             return message.channel.send(new MessageEmbed()

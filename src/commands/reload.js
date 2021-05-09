@@ -18,7 +18,15 @@ class ReloadCommand extends Command {
 
     exec(message, args) {
         // "this" refers to the command object
-        this.handler.reload(args.commandID);
+        try {
+            this.handler.reload(args.commandID);
+        } catch (err) {
+            console.error(err.message);
+            return message.channel.send(new MessageEmbed()
+                .setDescription(`<:cross:729019052571492434> Error reloading command module \`${args.commandID}\`\n\`\`\`${err}\`\`\``)
+                .setColor(`#36393f`));
+        }
+
         return message.channel.send(new MessageEmbed()
             .setDescription(`:arrows_counterclockwise: Reloaded command module \`${args.commandID}\``)
             .setColor(`#36393f`));

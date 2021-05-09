@@ -23,6 +23,7 @@
   "homepage": "https://github.com/jkl2k2/L-Bot-Rewrite#readme",
   "dependencies": {
     "@discordjs/opus": "^0.5.0",
+    "chalk": "^4.1.1",
     "discord-akairo": "^8.1.0",
     "discord.js": "^12.5.3",
     "dotenv": "^8.2.0",
@@ -30,6 +31,8 @@
     "sequelize": "^6.6.2",
     "simple-youtube-api": "^5.2.1",
     "sqlite": "^4.0.21",
+    "winston": "^3.3.3",
+    "winston-daily-rotate-file": "^4.5.5",
     "ytdl-core": "^4.5.0"
   }
 }

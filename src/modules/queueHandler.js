@@ -67,7 +67,7 @@ const queue = async (message, args, type) => {
                             .setDescription(`:information_source: ${privateCounter} video(s) from the playlist could not be added due to privacy settings`)
                             .setColor(`#36393f`));
 
-                    if (!message.member.voice.channel) return console.warn(`User not in voice channel after playlist processing`);
+                    if (!message.member.voice.channel) return global.logger.warn(`User not in voice channel after playlist processing`);
 
                     if (message.member.voice.channel) {
                         message.member.voice.channel.join()
@@ -75,15 +75,15 @@ const queue = async (message, args, type) => {
                                 if (!message.guild.music.playing) {
                                     return player.play(message);
                                 } else {
-                                    console.debug(`Connection speaking`);
+                                    global.logger.debug(`Connection speaking`);
                                 }
                             })
-                            .catch(console.error);
+                            .catch(global.logger.error);
                     } else {
-                        console.warn(`User not in voice channel after playlist processing`);
+                        global.logger.warn(`User not in voice channel after playlist processing`);
                     }
                 } else {
-                    console.error(`Playlist not found`);
+                    global.logger.error(`Playlist not found`);
                     message.channel.send(new MessageEmbed()
                         .setDescription(`:information_source: YouTube could not find a playlist with that input`)
                         .setColor(`#36393f`));
@@ -132,7 +132,7 @@ const queue = async (message, args, type) => {
             }
         }
 
-        if (!message.member.voice.channel) return console.warn(`User not in voice channel after video processing`);
+        if (!message.member.voice.channel) return global.logger.warn(`User not in voice channel after video processing`);
 
         if (message.member.voice.channel) {
             message.member.voice.channel.join()
@@ -143,14 +143,14 @@ const queue = async (message, args, type) => {
                         // If type is playnow, then end the dispatcher to immediately skip
                         return message.guild.music.dispatcher.end();
                     } else {
-                        return console.debug(`Connection speaking`);
+                        return global.logger.debug(`Connection speaking`);
                     }
                 })
                 .catch(error => {
-                    console.error(error);
+                    global.logger.error(error);
                 });
         } else {
-            console.error("Failed to join voice channel");
+            global.logger.error("Failed to join voice channel");
         }
     }
 

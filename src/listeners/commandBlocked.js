@@ -9,7 +9,7 @@ class CommandBlockedListener extends Listener {
     }
 
     exec(message, command, reason) {
-        console.log(`User "${message.author.tag}" was blocked from using command "${command.id}" because of reason "${reason}"`);
+        global.logger.info(`User "${message.author.tag}" was blocked from using command "${command.id}" because of reason "${reason}"`);
     }
 }
 

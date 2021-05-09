@@ -10,7 +10,7 @@ class CooldownListener extends Listener {
     }
 
     async exec(message, command) {
-        console.debug(`User "${message.author.tag}" triggered cooldown of command "${command}"`);
+        global.logger.debug(`User "${message.author.tag}" triggered cooldown of command "${command}"`);
 
         let sent = await message.channel.send(new MessageEmbed()
             .setDescription(`:stopwatch: Chill out, ${message.author}! Please don't spam \`${command}\`.`)

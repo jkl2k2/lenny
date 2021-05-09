@@ -19,7 +19,7 @@ class PlayNowCommand extends Command {
     }
 
     exec(message, args) {
-        console.log(args);
+        global.logger.info(args);
         if (args.searchInput == null) {
             return message.channel.send(new MessageEmbed()
                 .setDescription(`:information_source: Please enter at least one search term or URL`)

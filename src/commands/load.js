@@ -24,7 +24,7 @@ class LoadCommand extends Command {
         try {
             this.handler.load(commandPath);
         } catch (error) {
-            console.debug(err);
+            global.logger.debug(err);
             return message.channel.send(new MessageEmbed()
                 .setDescription(`<:cross:729019052571492434> Error loading command module \`${args.commandID}\`\n\`\`\`${err}\`\`\``)
                 .setColor(`#36393f`));

@@ -5,7 +5,7 @@ const { MessageEmbed } = require(`discord.js`);
 //#region sendDetails
 const sendDetails = async (input, c) => {
     if (!input) {
-        console.warn(`Failed to send info regarding song. Input undefined.`);
+        global.logger.warn(`Failed to send info regarding song. Input undefined.`);
         return c.send(new MessageEmbed()
             .setDescription(`<:cross:729019052571492434> Failed to get info on currently playing song.`)
             .setColor(`#FF3838`));
@@ -57,19 +57,19 @@ const sendDetails = async (input, c) => {
 
 //#region play
 const play = async message => {
-    console.debug(`Beginning play() command execution`);
+    global.logger.debug(`Beginning play() command execution`);
 
     const client = message.client;
 
     const queue = message.guild.music.queue;
 
-    if (queue == undefined) return console.debug("play() called, but queue undefined");
-    if (queue[0] == undefined) return console.debug("play() called, but queue[0] is undefined");
+    if (queue == undefined) return global.logger.debug("play() called, but queue undefined");
+    if (queue[0] == undefined) return global.logger.debug("play() called, but queue[0] is undefined");
 
     if (queue[0].getType() == "video" || queue[0].getType() == "livestream") {
         // If regular video
 
-        console.debug(`Input is a regular video`);
+        global.logger.debug(`Input is a regular video`);
 
         // Download YouTube video
         const input = ytdl(queue[0].getURL(), {
@@ -79,9 +79,9 @@ const play = async message => {
         });
 
         if (input) {
-            console.debug(`YTDL output is NOT undefined`);
+            global.logger.debug(`YTDL output is NOT undefined`);
         } else {
-            console.debug(`YTDL output IS undefined`);
+            global.logger.debug(`YTDL output IS undefined`);
         }
 
         // Set dispatcher
@@ -108,7 +108,7 @@ const play = async message => {
     } else if (queue[0].getType() == "soundcloud") {
         // If SoundCloud
 
-        console.debug(`Input is a SoundCloud song`);
+        global.logger.debug(`Input is a SoundCloud song`);
 
         // Download SoundCloud song
         scdl.download(queue[0].getURL())
@@ -125,7 +125,7 @@ const play = async message => {
     } else if (queue[0].getType() == "radio") {
         // If radio station
 
-        console.debug(`Input is a radio station`);
+        global.logger.debug(`Input is a radio station`);
 
         // Get stream URL
         const input = await iheart.streamURL(queue[0].getStation());
@@ -152,7 +152,7 @@ const play = async message => {
     client.voice.connections.get(message.guild.id).player.streamingData.pausedTime = 0;
 
     message.guild.music.dispatcher.on("close", async () => {
-        console.debug(`Dispatcher fired "close" event`);
+        global.logger.debug(`Dispatcher fired "close" event`);
 
         /*
         // Add time playing to server stats
@@ -168,18 +168,18 @@ const play = async message => {
         }
 
         if (queue[0]) {
-            console.debug(`queue[0] is ${queue[0].getTitle()}, calling play()`);
+            global.logger.debug(`queue[0] is ${queue[0].getTitle()}, calling play()`);
             message.guild.music.dispatcher = undefined;
             return await play(message);
         } else {
-            console.log(`queue[0] NOT found, stopping and resetting playing`);
+            global.logger.info(`queue[0] NOT found, stopping and resetting playing`);
             message.guild.music.playing = false;
             message.guild.music.dispatcher = undefined;
         }
     });
 
     message.guild.music.dispatcher.on("finish", async () => {
-        console.debug(`Dispatcher fired "finish" event (not being used)`);
+        global.logger.debug(`Dispatcher fired "finish" event (not being used)`);
 
         /*
         // Add time playing to server stats
@@ -194,11 +194,11 @@ const play = async message => {
         }
 
         if (queue[0]) {
-            console.debug(`queue[0] is ${queue[0].getTitle()}, calling play()`);
+            global.logger.debug(`queue[0] is ${queue[0].getTitle()}, calling play()`);
             message.guild.music.dispatcher = undefined;
             return await play(message);
         } else {
-            console.log(`queue[0] NOT found, stopping and resetting playing`);
+            global.logger.info(`queue[0] NOT found, stopping and resetting playing`);
             message.guild.music.playing = false;
             message.guild.music.dispatcher = undefined;
         }

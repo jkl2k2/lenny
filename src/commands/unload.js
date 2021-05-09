@@ -21,7 +21,7 @@ class UnloadCommand extends Command {
         try {
             this.handler.remove(args.commandID);
         } catch (error) {
-            console.debug(error);
+            global.logger.debug(error);
             return message.channel.send(new MessageEmbed()
                 .setDescription(`<:cross:729019052571492434> Error unloading command module \`${args.commandID}\`\n\`\`\`${error}\`\`\``)
                 .setColor(`#36393f`));

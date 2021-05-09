@@ -21,7 +21,7 @@ class ReloadCommand extends Command {
         try {
             this.handler.reload(args.commandID);
         } catch (err) {
-            console.error(err.message);
+            global.logger.error(err.message);
             return message.channel.send(new MessageEmbed()
                 .setDescription(`<:cross:729019052571492434> Error reloading command module \`${args.commandID}\`\n\`\`\`${err}\`\`\``)
                 .setColor(`#36393f`));

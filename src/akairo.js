@@ -3,20 +3,23 @@ const { AkairoClient, CommandHandler, InhibitorHandler, ListenerHandler } = requ
 module.exports = class Akairo extends AkairoClient {
     constructor() {
         super({
-            ownerID: `125109015632936960`
+            ownerID: `125109015632936960`,
+            partials: [`MESSAGE`, `CHANNEL`, `REACTION`]
         }, {
-            disableMentions: `everyone`
+            disableMentions: `everyone`,
+            partials: [`MESSAGE`, `CHANNEL`, `REACTION`]
         });
 
         // Define commandHandler
         this.commandHandler = new CommandHandler(this, {
             directory: `./commands`,
-            prefix: msg => {
-                // Get prefix specific to server
-
-                // Placeholder
-                let prefix = `!`;
-                return prefix;
+            prefix: message => {
+                if (message.guild) {
+                    const serverConfig = this.settings.ensure(message.guild.id, this.settings.default);
+                    return serverConfig[`prefix`];
+                } else {
+                    return "!";
+                }
             },
             defaultCooldown: 1000,
             allowMention: true

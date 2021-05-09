@@ -10,10 +10,10 @@ if (result.error) throw result.error;
 
 //#region Winston logger
 winston.addColors({
-    error: 'red',
-    warn: 'yellow',
-    info: 'cyan',
-    debug: 'green',
+    error: 'bold white redBG',
+    warn: 'bold white yellowBG',
+    info: 'black whiteBG',
+    debug: 'bold white greenBG',
 });
 
 global.logger = winston.createLogger({
@@ -25,7 +25,7 @@ global.logger = winston.createLogger({
                 winston.format.uncolorize(),
                 winston.format.printf(log => `[${log.level.toUpperCase()}] - ${log.message}`)
             ),
-            filename: `./logs/info-%DATE%.log`,
+            filename: `../logs/info-%DATE%.log`,
             datePattern: `YYYY-MM-DD`,
             level: `info`
         }),
@@ -36,7 +36,7 @@ global.logger = winston.createLogger({
                 winston.format.uncolorize(),
                 winston.format.printf(log => `[${log.level.toUpperCase()}] - ${log.message}`)
             ),
-            filename: `./logs/error-%DATE%.log`,
+            filename: `../logs/error-%DATE%.log`,
             datePattern: `YYYY-MM-DD`,
             level: `error`
         }),
@@ -47,7 +47,7 @@ global.logger = winston.createLogger({
                 winston.format.uncolorize(),
                 winston.format.printf(log => `[${log.level.toUpperCase()}] - ${log.message}`)
             ),
-            filename: `./logs/debug-%DATE%.log`,
+            filename: `../logs/debug-%DATE%.log`,
             datePattern: `YYYY-MM-DD`,
             level: `debug`
         }),

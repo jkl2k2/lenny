@@ -12,9 +12,12 @@ class PingCommand extends Command {
 
     }
 
-    exec(message) {
-        return message.channel.send(new MessageEmbed()
-            .setDescription(`:ping_pong: API Ping: \`${Math.round(message.client.ws.ping)} ms\``)
+    async exec(message) {
+        const sent = await message.channel.send(new MessageEmbed()
+            .setDescription(`:ping_pong: Pong \nReply Time: \`Testing...\`\nAPI Ping: \`${Math.round(message.client.ws.ping)} ms\``)
+            .setColor(`#36393f`));
+        return sent.edit(new MessageEmbed()
+            .setDescription(`:ping_pong: Pong \n Reply Time: \`${(sent.editedAt || sent.createdAt) - (message.editedAt || message.createdAt)} ms\`\nAPI Ping: \`${Math.round(message.client.ws.ping)} ms\``)
             .setColor(`#36393f`));
     }
 }

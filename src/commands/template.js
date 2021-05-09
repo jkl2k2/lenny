@@ -7,7 +7,7 @@ class TemplateCommand extends Command {
             aliases: [`alias`],
             category: `category`,
             description: `Description`,
-            channel: `guild` // If guild-only
+            channel: `guild`
         });
     }
 

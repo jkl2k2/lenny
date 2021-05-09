@@ -23,7 +23,7 @@ class LoadCommand extends Command {
         // "this" refers to the command object
         try {
             this.handler.load(commandPath);
-        } catch (error) {
+        } catch (err) {
             global.logger.debug(err);
             return message.channel.send(new MessageEmbed()
                 .setDescription(`<:cross:729019052571492434> Error loading command module \`${args.commandID}\`\n\`\`\`${err}\`\`\``)

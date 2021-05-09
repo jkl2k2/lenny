@@ -21,7 +21,7 @@ module.exports = class Akairo extends AkairoClient {
                     return "!";
                 }
             },
-            defaultCooldown: 1000,
+            defaultCooldown: 3000,
             allowMention: true
         });
 

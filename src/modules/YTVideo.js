@@ -1,7 +1,6 @@
 const api = process.env.API1;
 const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
-const prettyMs = require(`pretty-ms`);
 
 //#region YTVideo class
 module.exports = class YTVideo {

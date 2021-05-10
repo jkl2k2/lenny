@@ -18,16 +18,22 @@ function queueOverflowResolver(arr) {
     }
 }
 
-async function sendEmbed(page, message) {
+async function sendEmbed(page, message, sent) {
     let queue = message.guild.music.queue;
 
-    let queueEmbed = new MessageEmbed()
-
-        // .setDescription(`${queueResolver(parsedQueue, 0)}\n\n${queueResolver(parsedQueue, 1)}\n\n${queueResolver(parsedQueue, 2)}\n\n${queueResolver(parsedQueue, 3)}\n\n${queueResolver(parsedQueue, 4)}\n\n${queueOverflowResolver(parsedQueue)}`)
-        .setDescription(`${await queueResolver(queue, 0 + page * 5)}\n\n${await queueResolver(queue, 1 + page * 5)}\n\n${await queueResolver(queue, 2 + page * 5)}\n\n${await queueResolver(queue, 3 + page * 5)}\n\n${await queueResolver(queue, 4 + page * 5)}\n\n${await queueOverflowResolver(queue)}`)
-        .setAuthor(`Current queue - Page ${page + 1}`, message.guild.iconURL())
-        .setColor(`#36393f`);
-    return await message.channel.send(queueEmbed);
+    if (!sent) {
+        let queueEmbed = new MessageEmbed()
+            .setDescription(`${await queueResolver(queue, 0 + page * 5)}\n\n${await queueResolver(queue, 1 + page * 5)}\n\n${await queueResolver(queue, 2 + page * 5)}\n\n${await queueResolver(queue, 3 + page * 5)}\n\n${await queueResolver(queue, 4 + page * 5)}\n\n${await queueOverflowResolver(queue)}`)
+            .setAuthor(`Current queue - Page ${page + 1}`, message.guild.iconURL())
+            .setColor(`#36393f`);
+        return await message.channel.send(queueEmbed);
+    } else {
+        let queueEmbed = new MessageEmbed()
+            .setDescription(`${await queueResolver(queue, 0 + page * 5)}\n\n${await queueResolver(queue, 1 + page * 5)}\n\n${await queueResolver(queue, 2 + page * 5)}\n\n${await queueResolver(queue, 3 + page * 5)}\n\n${await queueResolver(queue, 4 + page * 5)}\n\n${await queueOverflowResolver(queue)}`)
+            .setAuthor(`Current queue - Page ${page + 1}`, message.guild.iconURL())
+            .setColor(`#36393f`);
+        return await sent.edit(queueEmbed);
+    }
 }
 
 async function reactionHandler(sent, message, page) {
@@ -67,18 +73,18 @@ async function reactionHandler(sent, message, page) {
 
             if (reaction.emoji.name === '◀️') {
                 // Previous page
-                sent.delete();
-                let newSent = await sendEmbed(page - 1, message);
+                let newSent = await sendEmbed(page - 1, message, sent);
+                newSent.reactions.removeAll();
                 reactionHandler(newSent, message, page - 1);
             } else if (reaction.emoji.name === "🔘") {
                 // Home page (first page)
-                sent.delete();
-                let newSent = await sendEmbed(0, message);
+                let newSent = await sendEmbed(0, message, sent);
+                newSent.reactions.removeAll();
                 reactionHandler(newSent, message, 0);
             } else if (reaction.emoji.name === "▶️") {
                 // Next page
-                sent.delete();
-                let newSent = await sendEmbed(page + 1, message);
+                let newSent = await sendEmbed(page + 1, message, sent);
+                newSent.reactions.removeAll();
                 reactionHandler(newSent, message, page + 1);
             }
         })

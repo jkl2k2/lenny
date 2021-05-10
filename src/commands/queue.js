@@ -67,7 +67,7 @@ async function reactionHandler(sent, message, page) {
 
     }
 
-    sent.awaitReactions(filter, { max: 1, time: 30000, errors: ['time'] })
+    sent.awaitReactions(filter, { max: 1, time: 120000, errors: ['time'] })
         .then(async collected => {
             const reaction = collected.first();
 

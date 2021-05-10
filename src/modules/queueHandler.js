@@ -78,7 +78,9 @@ const queue = async (message, args, type) => {
                                     global.logger.debug(`Connection speaking`);
                                 }
                             })
-                            .catch(global.logger.error);
+                            .catch(err => {
+                                global.logger.error(err);
+                            });
                     } else {
                         global.logger.warn(`User not in voice channel after playlist processing`);
                     }

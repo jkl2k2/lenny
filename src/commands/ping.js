@@ -14,10 +14,29 @@ class PingCommand extends Command {
 
     async exec(message) {
         const sent = await message.channel.send(new MessageEmbed()
-            .setDescription(`:ping_pong: Pong \nReply Time: \`Testing...\`\nAPI Ping: \`${Math.round(message.client.ws.ping)} ms\``)
+            .setDescription(`\n:clock3: **Reply Time**\n\`Testing...\`\n\n:heartbeat: **API Ping**\n\`${Math.round(message.client.ws.ping)} ms\``)
             .setColor(`#36393f`));
+
+        let description = ``;
+
+        if ((sent.editedAt || sent.createdAt) - (message.editedAt || message.createdAt) > 300) {
+            // High reply time
+            description += `:clock3: **Reply Time** - :warning: \`High\`\n\`${(sent.editedAt || sent.createdAt) - (message.editedAt || message.createdAt)} ms\`\n\n`;
+        } else {
+            // Normal reply time
+            description += `:clock3: **Reply Time** - <:check:728881238970073090> \`Normal\`\n\`${(sent.editedAt || sent.createdAt) - (message.editedAt || message.createdAt)} ms\`\n\n`;
+        }
+
+        if (Math.round(message.client.ws.ping) > 100) {
+            // High heartbeat ping
+            description += `:heartbeat: **API Ping:** - :warning: \`High\`\n\`${Math.round(message.client.ws.ping)}`;
+        } else {
+            // Normal heartbeat ping
+            description += `:heartbeat: **API Ping:** - <:check:728881238970073090> \`Normal\`\n\`${Math.round(message.client.ws.ping)}\``;
+        }
+
         return sent.edit(new MessageEmbed()
-            .setDescription(`:ping_pong: Pong \n Reply Time: \`${(sent.editedAt || sent.createdAt) - (message.editedAt || message.createdAt)} ms\`\nAPI Ping: \`${Math.round(message.client.ws.ping)} ms\``)
+            .setDescription(description)
             .setColor(`#36393f`));
     }
 }

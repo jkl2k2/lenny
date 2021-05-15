@@ -63,8 +63,20 @@ const play = async message => {
 
     const queue = message.guild.music.queue;
 
-    if (queue == undefined) return global.logger.debug("play() called, but queue undefined");
-    if (queue[0] == undefined) return global.logger.debug("play() called, but queue[0] is undefined");
+    if (queue == undefined) {
+        message.guild.music.playing = false;
+        return global.logger.debug("play() called, but queue undefined");
+    }
+
+    if (queue[0] == undefined) {
+        message.guild.music.playing = false;
+        return global.logger.debug("play() called, but queue[0] is undefined");
+        /*
+        return message.channel.send(new MessageEmbed()
+            .setDescription(`<:cross:729019052571492434> Seems that I've hit an error trying to load a song. Sorry about that. Feel free to try to requeue it.`)
+            .setColor(`#FF3838`));
+        */
+    }
 
     if (queue[0].getType() == "video" || queue[0].getType() == "livestream") {
         // If regular video

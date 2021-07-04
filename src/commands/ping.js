@@ -13,9 +13,13 @@ class PingCommand extends Command {
     }
 
     async exec(message) {
-        const sent = await message.channel.send(new MessageEmbed()
-            .setDescription(`\n:clock3: **Reply Time**\n\`Testing...\`\n\n:heartbeat: **API Ping**\n\`${Math.round(message.client.ws.ping)} ms\``)
-            .setColor(`#36393f`));
+        const sent = await message.reply({
+            embeds: [
+                new MessageEmbed()
+                    .setDescription(`\n:clock3: **Reply Time**\n\`Testing...\`\n\n:heartbeat: **API Ping**\n\`${Math.round(message.client.ws.ping)} ms\``)
+                    .setColor(`#36393f`)
+            ]
+        });
 
         let description = ``;
 
@@ -35,9 +39,15 @@ class PingCommand extends Command {
             description += `:heartbeat: **API Ping:** - <:check:728881238970073090> \`Normal\`\n\`${Math.round(message.client.ws.ping)}\``;
         }
 
-        return sent.edit(new MessageEmbed()
-            .setDescription(description)
-            .setColor(`#36393f`));
+        return sent.edit(
+            {
+                embeds: [
+                    new MessageEmbed()
+                        .setDescription(description)
+                        .setColor(`#36393f`)
+                ],
+            }
+        );
     }
 }
 

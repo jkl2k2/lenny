@@ -4,10 +4,12 @@ module.exports = class Akairo extends AkairoClient {
     constructor() {
         super({
             ownerID: `125109015632936960`,
-            partials: [`MESSAGE`, `CHANNEL`, `REACTION`]
+            partials: [`MESSAGE`, `CHANNEL`, `REACTION`],
+            intents: [`GUILDS`, `GUILD_MESSAGES`, `GUILD_VOICE_STATES`],
         }, {
             disableMentions: `everyone`,
-            partials: [`MESSAGE`, `CHANNEL`, `REACTION`]
+            partials: [`MESSAGE`, `CHANNEL`, `REACTION`],
+            intents: [`GUILDS`, `GUILD_MESSAGES`, `GUILD_VOICE_STATES`],
         });
 
         // Define commandHandler
@@ -22,7 +24,8 @@ module.exports = class Akairo extends AkairoClient {
                 }
             },
             defaultCooldown: 3000,
-            allowMention: true
+            allowMention: true,
+            autoDefer: false,
         });
 
         // Define inhibitorHandler

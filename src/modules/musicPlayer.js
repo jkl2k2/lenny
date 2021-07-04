@@ -1,6 +1,7 @@
 // Requires
 const ytdl = require(`ytdl-core`);
 const { MessageEmbed } = require(`discord.js`);
+const voice = require(`@discordjs/voice`);
 
 //#region sendDetails
 const sendDetails = async (input, c) => {

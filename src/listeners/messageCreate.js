@@ -2,11 +2,11 @@ const { Listener } = require(`discord-akairo`);
 const { MessageEmbed } = require(`discord.js`);
 const chalk = require(`chalk`);
 
-class MessageListener extends Listener {
+class MessageCreateListener extends Listener {
     constructor() {
-        super(`message`, {
+        super(`messageCreate`, {
             emitter: `client`,
-            event: `message`
+            event: `messageCreate`
         });
     }
 
@@ -58,5 +58,4 @@ class MessageListener extends Listener {
     }
 }
 
-//! Remember to change export
-module.exports = MessageListener;
+module.exports = MessageCreateListener;

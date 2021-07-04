@@ -23,7 +23,7 @@
   "homepage": "https://github.com/jkl2k2/L-Bot-Rewrite#readme",
   "dependencies": {
     "@discordjs/opus": "^0.5.3",
-    "@discordjs/voice": "^0.5.2",
+    "@discordjs/voice": "^0.5.3",
     "chalk": "^4.1.1",
     "discord-akairo": "github:SkyBlockDev/discord-akairo",
     "discord.js": "^13.0.0-dev.610b0b4.1625357028",
@@ -35,6 +35,6 @@
     "tweetnacl": "^1.0.3",
     "winston": "^3.3.3",
     "winston-daily-rotate-file": "^4.5.5",
-    "ytdl-core": "^4.8.0"
+    "youtube-dl-exec": "^1.2.4"
   }
 }

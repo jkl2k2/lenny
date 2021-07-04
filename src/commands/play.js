@@ -12,20 +12,26 @@ class PlayCommand extends Command {
                     match: `content`
                 }
             ],
+            options: [
+                {
+                    name: 'song',
+                    type: 'STRING',
+                    description: 'The URL of the song to play',
+                    required: true,
+                }
+            ],
             category: `music`,
             description: `Plays a song from YouTube`,
-            channel: `guild`
+            channel: `guild`,
+            slash: true
         });
     }
 
     exec(message, args) {
-        if (args.searchInput == null) {
-            return message.channel.send(new MessageEmbed()
-                .setDescription(`:information_source: Please enter at least one search term or URL`)
-                .setColor(`#36393f`));
-        }
-
-        queueHandler.queue(message, args.searchInput.split(` `), `play`);
+        message.reply(`Please use the slash command instead`);
+    }
+    execSlash(message, args) {
+        message.interaction.reply(`Working!`);
     }
 }
 

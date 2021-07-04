@@ -65,10 +65,11 @@ global.logger = winston.createLogger({
 });
 //#endregion
 
-const subscriptions = new Collection();
-
 // Create client
 const client = new Akairo();
+
+// Map guild IDs to music subscriptions
+client.subscriptions = new Collection();
 
 //#region Initialize enmap
 client.settings = new Enmap({

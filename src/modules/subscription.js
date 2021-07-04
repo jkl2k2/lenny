@@ -70,7 +70,7 @@ module.exports = class MusicSubscription {
                 // Entered idle from non-idle state, need to play next track
                 oldState.resource.metadata.onFinish();
                 this.processQueue();
-            } else if (newState.status === AudioPlayerStatus.Playing) {
+            } else if (newState.status === AudioPlayerStatus.Playing && oldState.status !== AudioPlayerStatus.Paused) {
                 // Entered playing state, new track has started
                 newState.resource.metadata.onStart();
             }

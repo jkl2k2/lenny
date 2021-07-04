@@ -1,10 +1,9 @@
 // Requires
-const musicConstructor = require(`./YTVideo`);
 const player = require(`./musicPlayer`);
 const api = process.env.API1;
 const { MessageEmbed } = require(`discord.js`);
 const YouTube = require(`simple-youtube-api`);
-const YTVideo = require("./YTVideo");
+const YTVideo = require("./track");
 const youtube = new YouTube(api);
 
 const queue = async (message, args, type) => {

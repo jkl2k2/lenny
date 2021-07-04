@@ -34,7 +34,8 @@ class PauseCommand extends Command {
                     new MessageEmbed()
                         .setColor(`#FF3838`)
                         .setDescription(`<:cross:729019052571492434> There's nothing playing`)
-                ], ephemeral: true
+                ],
+                ephemeral: true
             });
         }
     }

@@ -12,25 +12,22 @@ class SkipCommand extends Command {
     }
 
     exec(message) {
-        if (!message.guild.music.playing) {
-            return message.channel.send(new MessageEmbed()
-                .setDescription(`:information_source: There is nothing to skip`)
-                .setColor(`#36393f`));
+        return;
+    }
+    async execSlash(message) {
+        const subscription = this.client.subscriptions.get(message.guild.id);
+
+        if (subscription) {
+            subscription.audioPlayer.stop();
+            return await message.interaction.reply({
+                embeds: [
+                    new MessageEmbed()
+                        .setColor(`#36393f`)
+                        .setDescription(`:fast_forward: Skipped **[${subscription.audioPlayer._state.resource.metadata.title}](${subscription.audioPlayer._state.resource.metadata.url})**`)
+                        .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
+                ]
+            });
         }
-
-        if (message.guild.music.repeat) message.guild.music.repeat = false;
-
-        if (message.guild.music.lastPlayed != undefined && message.guild.music.lastPlayed.getTitle() != undefined) {
-            message.channel.send(new MessageEmbed()
-                .setDescription(`:track_next: ${message.author.username} skipped **[${message.guild.music.lastPlayed.getTitle()}](${message.guild.music.lastPlayed.getURL()})**`)
-                .setColor(`#36393f`));
-        } else {
-            message.channel.send(new MessageEmbed()
-                .setDescription(`:track_next: ${message.author.username} skipped the current song`)
-                .setColor(`#36393f`));
-        }
-
-        message.guild.music.dispatcher.end();
     }
 }
 

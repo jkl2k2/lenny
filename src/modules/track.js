@@ -2,6 +2,7 @@ const api = process.env.API1;
 const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
 const { AudioResource, createAudioResource, demuxProbe } = require(`@discordjs/voice`);
+const { raw } = require(`youtube-dl-exec`);
 
 const noop = () => { };
 
@@ -14,18 +15,19 @@ const noop = () => { };
  * we use tracks as they don't pre-emptively load the videos. Instead, once a Track is taken from the
  * queue, it is converted into an AudioResource just in time for playback.
  */
-class Track {
+module.exports = class Track {
     /**
      * Creates a new Track.
-     * @param {string} title The title of the track.
-     * @param {string} url The URL of the track.
+     * @param {Video} video The full video object returned by simple-youtube-api
      * @param {function} onStart A function to call when the track is started.
      * @param {function} onFinish A function to call when the track is finished.
      * @param {function} onError A function to call when the track has an error.
      */
-    constructor(title, url, onStart, onFinish, onError) {
-        this.title = title;
-        this.url = url;
+    constructor(video, onStart, onFinish, onError) {
+        this.video = video;
+        this.title = video.title;
+        this.url = video.url;
+        this.video = video;
         this.onStart = onStart;
         this.onFinish = onFinish;
         this.onError = onError;
@@ -36,7 +38,16 @@ class Track {
      */
     createAudioResource() {
         return new Promise((resolve, reject) => {
-            const process = ytdl(this.url, { filter: `audioonly` });
+            const process = raw(
+                this.url,
+                {
+                    o: '-',
+                    q: '',
+                    f: 'bestaudio[ext=webm+acodec=opus+asr=48000]/bestaudio',
+                    r: '100K',
+                },
+                { stdio: ['ignore', 'pipe', 'ignore'] },
+            );
             if (!process.stdout) {
                 reject(new Error(`No output stream found for ${this.url}`));
                 return;
@@ -49,7 +60,7 @@ class Track {
             };
             process.once(`spawn`, () => {
                 demuxProbe(stream)
-                    .then((probe) => resolve(createAudioResource(probe.stream), { metadata: this, inputType: probe.type }))
+                    .then((probe) => resolve(createAudioResource(probe.stream, { metadata: this, inputType: probe.type })))
                     .catch(onError);
             });
         });
@@ -62,7 +73,7 @@ class Track {
      * @param methods Lifecycle callbacks
      * @returns The created Track
      */
-    static from(url, methods) {
+    static async from(url, methods) {
         const wrappedMethods = {
             onStart() {
                 wrappedMethods.onStart = noop;
@@ -78,13 +89,8 @@ class Track {
             }
         };
 
-        const info = youtube.getInfo(url)
-            .then((info) => {
-                return new Track({
-                    title: info.title,
-                    url,
-                    ...wrappedMethods
-                });
-            });
+        const info = await youtube.getVideo(url);
+
+        return new Track(info, wrappedMethods.onStart, wrappedMethods.onFinish, wrappedMethods.onError);
     }
-}
+};

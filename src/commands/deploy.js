@@ -15,12 +15,12 @@ class DeployCommand extends Command {
         await message.guild.commands.set([
             {
                 name: 'play',
-                description: 'Plays a song',
+                description: 'Plays a song from YouTube',
                 options: [
                     {
                         name: 'song',
                         type: 'STRING',
-                        description: 'The URL of the song to play',
+                        description: 'URL or search terms',
                         required: true,
                     },
                 ],

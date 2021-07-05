@@ -27,6 +27,16 @@ class SkipCommand extends Command {
                         .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
                 ]
             });
+        } else {
+            // No subscription found
+            return await message.interaction.reply({
+                embeds: [
+                    new MessageEmbed()
+                        .setColor(`#FF3838`)
+                        .setDescription(`<:cross:729019052571492434> There's nothing playing`)
+                ],
+                ephemeral: true,
+            });
         }
     }
 }

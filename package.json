@@ -26,7 +26,7 @@
     "@discordjs/voice": "^0.5.3",
     "chalk": "^4.1.1",
     "discord-akairo": "github:SkyBlockDev/discord-akairo",
-    "discord.js": "^13.0.0-dev.610b0b4.1625357028",
+    "discord.js": "^13.0.0-dev.676118a.1625486570",
     "dotenv": "^8.2.0",
     "enmap": "^5.8.5",
     "sequelize": "^6.6.2",

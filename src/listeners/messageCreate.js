@@ -38,9 +38,13 @@ class MessageCreateListener extends Listener {
 
         // If message is only bot mention, show prefix
         if (message.content == `<@!${message.client.user.id}>`) {
-            return message.channel.send(new MessageEmbed()
-                .setDescription(`:information_source: The prefix for the server \`${message.guild.name}\` is currently \`${serverConfig[`prefix`]}\``)
-                .setColor(`#36393f`));
+            return message.channel.send({
+                embeds: [
+                    new MessageEmbed()
+                        .setDescription(`:information_source: The prefix for the server \`${message.guild.name}\` is currently \`${serverConfig[`prefix`]}\``)
+                        .setColor(`#36393f`)
+                ]
+            });
         }
 
         // Put args into array

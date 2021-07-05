@@ -7,6 +7,9 @@ const { Command } = require(`discord-akairo`);
 const discord_js_1 = require(`discord.js`);
 const MusicSubscription = require(`../modules/subscription`);
 const Track = require(`../modules/track`);
+const api = process.env.API1;
+const YouTube = require(`simple-youtube-api`);
+const youtube = new YouTube(api);
 
 //#region Adapter
 const adapters = new Map();
@@ -93,7 +96,7 @@ class PlayCommand extends Command {
                 {
                     name: 'song',
                     type: 'STRING',
-                    description: 'The URL of the song to play',
+                    description: 'URL or search terms',
                     required: true,
                 }
             ],
@@ -114,9 +117,26 @@ class PlayCommand extends Command {
         await message.interaction.defer();
 
         // Get URL from args
-        const url = args.song;
+        let url = ``;
 
-        console.log(url);
+        if (args.song.includes("watch?v=") || args.song.includes('youtu.be')) {
+            url = args.song;
+        } else {
+            await youtube.searchVideos(args.song, 1)
+                .then(async results => {
+                    if (results[0]) {
+                        url = results[0].url;
+                    } else {
+                        message.interaction.editReply({
+                            embeds: [
+                                new discord_js_1.MessageEmbed()
+                                    .setDescription(`:information_source: YouTube could not find a video with that input`)
+                                    .setColor(`#36393f`)
+                            ]
+                        });
+                    }
+                });
+        }
 
         // If connection doesn't exist, and the user is in a voice channel, create a connection and a subscription
         if (!subscription && message.interaction.member.voice.channel) {
@@ -129,7 +149,7 @@ class PlayCommand extends Command {
                 }),
             );
             subscription.voiceConnection.on(`error`, global.logger.warn);
-            message.client.subscriptions.set(message.interaction.guildID, subscription);
+            message.client.subscriptions.set(channel.guild.id, subscription);
         }
 
         // If no subscription, tell user to join a voice channel

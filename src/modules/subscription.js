@@ -16,7 +16,7 @@ function wait(time) {
  */
 module.exports = class MusicSubscription {
     /**
-     * The VoiceConnection this subscription is attached to.
+     * @param voiceConnection The VoiceConnection this subscription is attached to.
      */
     constructor(voiceConnection) {
         this.voiceConnection = voiceConnection;
@@ -33,19 +33,23 @@ module.exports = class MusicSubscription {
                         await entersState(this.voiceConnection, VoiceConnectionStatus.Connecting, 5000);
                         // Probably moved voice channel
                     } catch (err) {
+                        console.log(`Destroying connection, probably removed from voice channel`);
                         this.voiceConnection.destroy();
                         // Probably removed from voice channel
                     }
                 } else if (this.voiceConnection.rejoinAttempts < 5) {
                     // Recoverable disconnect
+                    console.log(`Recoverable disconnect, reconnecting to voice channel`);
                     await wait((this.voiceConnection.rejoinAttempts + 1) * 5000);
                     this.voiceConnection.rejoin();
                 } else {
                     // Unrecoverable disconnect, no more remaining attempts to reconnect, no choice but to destroy
+                    console.log(`Unrecoverable disconnect, destroying voice connection`);
                     this.voiceConnection.destroy();
                 }
             } else if (newState.status === VoiceConnectionStatus.Destroyed) {
                 // When destroyed, stop the subscription
+                console.log(`Voice connection destroyed, stopping subscription`);
                 this.stop();
             } else if (!this.readyLock && (newState.status === VoiceConnectionStatus.Connecting || newState.status === VoiceConnectionStatus.Signalling)) {
                 /*
@@ -103,6 +107,13 @@ module.exports = class MusicSubscription {
     }
 
     /**
+     * Clear out the queue, but don't stop playback
+     */
+    clearQueue() {
+        this.queue = [];
+    }
+
+    /**
      * Attempts to play a track from the queue
      */
     async processQueue() {
@@ -121,7 +132,7 @@ module.exports = class MusicSubscription {
             this.audioPlayer.play(resource);
             this.queueLock = false;
         } catch (err) {
-            console.log(err);
+            console.log(`Playing track from queue failed.\nError: ${err}`);
             // On fail, try next item of queue instead
             nextTrack.onError(err);
             this.queueLock = false;

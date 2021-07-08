@@ -47,6 +47,8 @@ class MessageCreateListener extends Listener {
             });
         }
 
+        if (message.content.substring(0, serverConfig[`prefix`].length) !== serverConfig[`prefix`]) return;
+
         // Put args into array
         const args = message.content.slice(serverConfig[`prefix`].length).split(/ +/);
 

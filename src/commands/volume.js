@@ -41,37 +41,16 @@ class VolumeCommand extends Command {
     }
 
     exec(message, args) {
-        if (args.newVolume == null) {
-            if (message.guild.music.dispatcher == undefined) {
-                return message.channel.send(new MessageEmbed()
-                    .setDescription(`:loud_sound: Current volume: 100%`)
-                    .setColor(`#36393f`));
-            }
-            return message.channel.send(new MessageEmbed()
-                .setDescription(`:loud_sound: Current volume: \`${(message.guild.music.volume) * 100}%\``)
-                .setColor(`#36393f`));
-        }
+        return;
+    }
 
-        volume = args[0];
-        const dispatcher = message.guild.music.dispatcher;
-        if (!message.guild.music.playing) {
-            return message.channel.send(new MessageEmbed()
-                .setDescription(`:information_source: Nothing is currently playing`)
-                .setColor(`#36393f`));
-        }
-        raisedVolume = this.compareVolume(volume, dispatcher);
+    execSlash(message, args) {
+        // Get subscription from message's guild
+        let subscription = this.client.subscriptions.get(message.guild.id);
 
-        let newVolume = volume / 100;
-        if ((volume >= 0 && volume <= 500) || message.author.id == `245002786343878657` || message.author.id == `125109015632936960`) {
-            dispatcher.setVolume(newVolume);
-            message.guild.music.volume = newVolume;
-            return message.channel.send(new MessageEmbed()
-                .setDescription(`:loud_sound: ${message.author.username}${this.decideWording(raisedVolume)} \`${volume}%\``)
-                .setColor(`#36393f`));
-        } else {
-            return message.channel.send(new MessageEmbed()
-                .addField(`<:cross:729019052571492434> Failed to change volume`, `You can't set the volume to that number (max is 500%)`)
-                .setColor(`#FF3838`));
+        if (subscription) {
+            subscription.audioPlayer._state.setVolume(args.newVolume / 100);
+            return message.interaction.reply(`Changed volume to ${args.newVolume / 100}%`);
         }
     }
 }

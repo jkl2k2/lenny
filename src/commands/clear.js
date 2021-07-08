@@ -14,6 +14,23 @@ class ClearCommand extends Command {
     exec(message) {
         return;
     }
+
+    execSlash(message) {
+        const subscription = this.client.subscriptions.get(message.guild.id);
+
+        if (!subscription) {
+            return message.interaction.reply({
+                embeds: [
+                    new MessageEmbed()
+                        .setDescription(`:information_source: The queue is currently empty`)
+                        .setColor(`#36393f`)
+                ],
+                ephemeral: true
+            });
+        } else {
+            subscription.clearQueue();
+        }
+    }
 }
 
 module.exports = ClearCommand;

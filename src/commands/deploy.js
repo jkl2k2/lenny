@@ -45,6 +45,10 @@ class DeployCommand extends Command {
                 name: 'leave',
                 description: 'Leave the voice channel',
             },
+            {
+                name: 'clear',
+                description: 'Clears the music queue',
+            },
         ]);
 
         await message.reply('Deployed!');

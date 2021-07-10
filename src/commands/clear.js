@@ -29,6 +29,15 @@ class ClearCommand extends Command {
             });
         } else {
             subscription.clearQueue();
+
+            return message.interaction.reply({
+                embeds: [
+                    new MessageEmbed()
+                        .setDescription(`:put_litter_in_its_place: Cleared the queue`)
+                        .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                        .setColor(`#36393f`)
+                ],
+            });
         }
     }
 }

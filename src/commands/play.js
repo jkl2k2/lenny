@@ -53,7 +53,7 @@ class PlayCommand extends Command {
                 joinVoiceChannel({
                     channelId: channel.id,
                     guildId: channel.guild.id,
-                    adapterCreator: channel,
+                    adapterCreator: channel.guild.voiceAdapterCreator,
                 }),
             );
             subscription.voiceConnection.on(`error`, global.logger.warn);

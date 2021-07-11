@@ -1,6 +1,7 @@
 const { Command } = require(`discord-akairo`);
 const { MessageEmbed } = require(`discord.js`);
 
+/*eslint class-methods-use-this: ["error", { "exceptMethods": ["exec", "execSlash"] }] */
 class SkipCommand extends Command {
     constructor() {
         super(`skip`, {
@@ -12,25 +13,32 @@ class SkipCommand extends Command {
     }
 
     exec(message) {
-        if (!message.guild.music.playing) {
-            return message.channel.send(new MessageEmbed()
-                .setDescription(`:information_source: There is nothing to skip`)
-                .setColor(`#36393f`));
-        }
+        return;
+    }
+    async execSlash(message) {
+        const subscription = this.client.subscriptions.get(message.guild.id);
 
-        if (message.guild.music.repeat) message.guild.music.repeat = false;
-
-        if (message.guild.music.lastPlayed != undefined && message.guild.music.lastPlayed.getTitle() != undefined) {
-            message.channel.send(new MessageEmbed()
-                .setDescription(`:track_next: ${message.author.username} skipped **[${message.guild.music.lastPlayed.getTitle()}](${message.guild.music.lastPlayed.getURL()})**`)
-                .setColor(`#36393f`));
+        if (subscription) {
+            subscription.audioPlayer.stop();
+            return await message.interaction.reply({
+                embeds: [
+                    new MessageEmbed()
+                        .setColor(`#36393f`)
+                        .setDescription(`:fast_forward: Skipped **[${subscription.audioPlayer._state.resource.metadata.title}](${subscription.audioPlayer._state.resource.metadata.url})**`)
+                        .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
+                ]
+            });
         } else {
-            message.channel.send(new MessageEmbed()
-                .setDescription(`:track_next: ${message.author.username} skipped the current song`)
-                .setColor(`#36393f`));
+            // No subscription found
+            return await message.interaction.reply({
+                embeds: [
+                    new MessageEmbed()
+                        .setColor(`#FF3838`)
+                        .setDescription(`<:cross:729019052571492434> There's nothing playing`)
+                ],
+                ephemeral: true,
+            });
         }
-
-        message.guild.music.dispatcher.end();
     }
 }
 

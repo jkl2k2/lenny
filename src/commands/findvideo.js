@@ -4,6 +4,7 @@ const api = process.env.API1;
 const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
 
+/*eslint class-methods-use-this: ["error", { "exceptMethods": ["exec", "execSlash"] }] */
 class FindVideoCommand extends Command {
     constructor() {
         super(`findvideo`, {

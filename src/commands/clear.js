@@ -1,6 +1,7 @@
 const { Command } = require(`discord-akairo`);
 const { MessageEmbed } = require(`discord.js`);
 
+/*eslint class-methods-use-this: ["error", { "exceptMethods": ["exec", "execSlash"] }] */
 class ClearCommand extends Command {
     constructor() {
         super(`clear`, {
@@ -12,15 +13,32 @@ class ClearCommand extends Command {
     }
 
     exec(message) {
-        if (message.guild.music.queue == undefined || message.guild.music.queue.length == 0) {
-            return message.channel.send(new MessageEmbed()
-                .setDescription(`<:cross:729019052571492434> There is nothing to skip`)
-                .setColor(`#FF3838`));
+        return;
+    }
+
+    execSlash(message) {
+        const subscription = this.client.subscriptions.get(message.guild.id);
+
+        if (!subscription) {
+            return message.interaction.reply({
+                embeds: [
+                    new MessageEmbed()
+                        .setDescription(`:information_source: The queue is currently empty`)
+                        .setColor(`#36393f`)
+                ],
+                ephemeral: true
+            });
         } else {
-            message.guild.music.queue = [];
-            return message.channel.send(new MessageEmbed()
-                .setDescription(`:arrow_double_up: ${message.author.username} cleared the queue`)
-                .setColor(`#36393f`));
+            subscription.clearQueue();
+
+            return message.interaction.reply({
+                embeds: [
+                    new MessageEmbed()
+                        .setDescription(`:put_litter_in_its_place: Cleared the queue`)
+                        .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                        .setColor(`#36393f`)
+                ],
+            });
         }
     }
 }

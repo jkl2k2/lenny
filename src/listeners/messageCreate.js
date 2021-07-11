@@ -2,11 +2,11 @@ const { Listener } = require(`discord-akairo`);
 const { MessageEmbed } = require(`discord.js`);
 const chalk = require(`chalk`);
 
-class MessageListener extends Listener {
+class MessageCreateListener extends Listener {
     constructor() {
-        super(`message`, {
+        super(`messageCreate`, {
             emitter: `client`,
-            event: `message`
+            event: `messageCreate`
         });
     }
 
@@ -38,10 +38,16 @@ class MessageListener extends Listener {
 
         // If message is only bot mention, show prefix
         if (message.content == `<@!${message.client.user.id}>`) {
-            return message.channel.send(new MessageEmbed()
-                .setDescription(`:information_source: The prefix for the server \`${message.guild.name}\` is currently \`${serverConfig[`prefix`]}\``)
-                .setColor(`#36393f`));
+            return message.channel.send({
+                embeds: [
+                    new MessageEmbed()
+                        .setDescription(`:information_source: The prefix for the server \`${message.guild.name}\` is currently \`${serverConfig[`prefix`]}\``)
+                        .setColor(`#36393f`)
+                ]
+            });
         }
+
+        if (message.content.substring(0, serverConfig[`prefix`].length) !== serverConfig[`prefix`]) return;
 
         // Put args into array
         const args = message.content.slice(serverConfig[`prefix`].length).split(/ +/);
@@ -58,5 +64,4 @@ class MessageListener extends Listener {
     }
 }
 
-//! Remember to change export
-module.exports = MessageListener;
+module.exports = MessageCreateListener;

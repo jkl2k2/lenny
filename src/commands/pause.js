@@ -1,6 +1,7 @@
 const { Command } = require(`discord-akairo`);
 const { MessageEmbed } = require(`discord.js`);
 
+/*eslint class-methods-use-this: ["error", { "exceptMethods": ["exec", "execSlash"] }] */
 class PauseCommand extends Command {
     constructor() {
         super(`pause`, {
@@ -12,17 +13,31 @@ class PauseCommand extends Command {
     }
 
     exec(message) {
-        const dispatcher = message.guild.music.dispatcher;
+        return;
+    }
 
-        if (dispatcher != undefined && dispatcher.paused == false) {
-            dispatcher.pause();
-            message.channel.send(new MessageEmbed()
-                .setDescription(`:pause_button: ${message.author.username} paused playback`)
-                .setColor(`#36393f`));
+    async execSlash(message) {
+        const subscription = this.client.subscriptions.get(message.guild.id);
+
+        if (subscription) {
+            subscription.audioPlayer.pause();
+            return await message.interaction.reply({
+                embeds: [
+                    new MessageEmbed()
+                        .setColor(`#36393f`)
+                        .setDescription(`:pause_button: Paused playback`)
+                        .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
+                ]
+            });
         } else {
-            message.channel.send(new MessageEmbed
-                .setDescription(`<:cross:729019052571492434> ${message.author.username}, the music is already paused`)
-                .setColor(`#FF3838`));
+            return await message.interaction.reply({
+                embeds: [
+                    new MessageEmbed()
+                        .setColor(`#FF3838`)
+                        .setDescription(`<:cross:729019052571492434> There's nothing playing`)
+                ],
+                ephemeral: true
+            });
         }
     }
 }

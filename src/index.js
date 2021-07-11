@@ -1,10 +1,11 @@
 // Requires
 const result = require(`dotenv`).config();
 const Akairo = require(`./akairo`);
-const { Structures } = require(`discord.js`);
+const { Structures, Collection } = require(`discord.js`);
 const winston = require(`winston`);
 const winstonRotate = require(`winston-daily-rotate-file`);
 const Enmap = require(`enmap`);
+const { createAudioPlayer, AudioPlayer, AudioPlayerStatus } = require(`@discordjs/voice`);
 
 // Throw if dotenv error
 if (result.error) throw result.error;
@@ -64,30 +65,11 @@ global.logger = winston.createLogger({
 });
 //#endregion
 
-//#region Extend Guild to support music
-Structures.extend('Guild', Guild => {
-    class ExtendedGuild extends Guild {
-        constructor(client, data) {
-            super(client, data);
-            this.music = {
-                queue: [],
-                lastPlayed: undefined,
-                lastEmbed: undefined,
-                playing: false,
-                paused: false,
-                repeat: false,
-                volume: 1,
-                oldVolume: 1,
-                dispatcher: undefined,
-            };
-        }
-    }
-    return ExtendedGuild;
-});
-//#endregion
-
 // Create client
 const client = new Akairo();
+
+// Map guild IDs to music subscriptions
+client.subscriptions = new Collection();
 
 //#region Initialize enmap
 client.settings = new Enmap({

@@ -148,34 +148,20 @@ async function sendEmbed(page, message) {
 //#endregion
 
 //#region Music info message sending
-async function sendDetails(input, c) {
-    if (input.getType() == "livestream") {
-        // Construct embed
-        let musicEmbed = new MessageEmbed()
-            .setAuthor(`In queue - Video #${input.getPosition()}`, await input.getChannelThumbnail())
-            .setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${input.getChannelName()}](${input.getChannelURL()})\n\n\`YouTube Livestream\``)
-            .setThumbnail(input.getThumbnail())
-            .setTimestamp()
-            .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar())
-            .setColor(`#36393f`);
-        // Send message
-        c.send(musicEmbed);
-        // Set last embed
-        input.getRequester().guild.music.lastEmbed = musicEmbed;
-    } else {
-        // Construct embed
-        let musicEmbed = new MessageEmbed()
-            .setAuthor(`In queue - Video #${input.getPosition()}`, await input.getChannelThumbnail())
-            .setDescription(`**[${input.getTitle()}](${input.getURL()})**\n[${input.getChannelName()}](${input.getChannelURL()})\n\nLength: \`${await input.getLength()}\``)
-            .setThumbnail(input.getThumbnail())
-            .setTimestamp()
-            .setFooter(`Requested by ${input.getRequesterName()}`, input.getRequesterAvatar())
-            .setColor(`#36393f`);
-        // Send message
-        c.send(musicEmbed);
-        // Set last embed
-        input.getRequester().guild.music.lastEmbed = musicEmbed;
-    }
+async function sendDetails(track, message, pos) {
+    const musicEmbed = new MessageEmbed()
+        .setAuthor(`Currently Queued (#${pos})`)
+        .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.title}](${track.video.channel.url})`)
+        .setThumbnail(track.video.maxRes.url)
+        .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
+        .setColor(`#36393f`)
+        .setTimestamp();
+    // Send message
+    return await message.interaction.editReply({
+        embeds: [
+            musicEmbed
+        ],
+    });
 }
 //#endregion
 
@@ -188,6 +174,14 @@ class QueueCommand extends Command {
                     id: `position`,
                     type: `integer`,
                 }
+            ],
+            options: [
+                {
+                    name: 'position',
+                    type: 'INTEGER',
+                    description: 'Position of the song in queue to view',
+                    required: false,
+                },
             ],
             category: `music`,
             description: `Shows all queue songs`,
@@ -235,11 +229,8 @@ class QueueCommand extends Command {
         }
 
         if (args.position && queue[reqIndex]) {
-            sendDetails(queue[reqIndex], message.channel, args.position);
+            sendDetails(queue[reqIndex], message, args.position);
         } else if (args.position && !queue[reqIndex]) {
-            message.channel.send(new MessageEmbed()
-                .setDescription(`<:cross:729019052571492434> There is not a video at that spot in the queue`)
-                .setColor(`#FF3838`));
             return message.interaction.editReply({
                 embeds: [
                     new MessageEmbed()

@@ -32,6 +32,18 @@ class DeployCommand extends Command {
             {
                 name: 'queue',
                 description: 'See the music queue',
+                options: [
+                    {
+                        name: 'position',
+                        type: 'INTEGER',
+                        description: 'Position of the song in queue to view',
+                        required: false,
+                    },
+                ],
+            },
+            {
+                name: 'shuffle',
+                description: 'Shuffle the music queue',
             },
             {
                 name: 'pause',

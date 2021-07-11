@@ -165,6 +165,7 @@ async function sendDetails(track, message, pos) {
 }
 //#endregion
 
+/*eslint class-methods-use-this: ["error", { "exceptMethods": ["exec", "execSlash"] }] */
 class QueueCommand extends Command {
     constructor() {
         super(`queue`, {

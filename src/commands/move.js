@@ -1,6 +1,7 @@
 const { Command } = require(`discord-akairo`);
 const { MessageEmbed } = require(`discord.js`);
 
+/*eslint class-methods-use-this: ["error", { "exceptMethods": ["exec", "execSlash"] }] */
 class MoveCommand extends Command {
     constructor() {
         super(`move`, {

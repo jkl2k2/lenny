@@ -46,7 +46,7 @@ class VolumeCommand extends Command {
 
     execSlash(message, args) {
         // Get subscription from message's guild
-        let subscription = this.client.subscriptions.get(message.guild.id);
+        const subscription = this.client.subscriptions.get(message.guild.id);
 
         if (subscription) {
             subscription.audioPlayer._state.setVolume(args.newVolume / 100);

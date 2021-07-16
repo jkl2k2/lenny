@@ -62,6 +62,10 @@ class DeployCommand extends Command {
                 name: 'clear',
                 description: 'Clears the music queue',
             },
+            {
+                name: 'np',
+                description: 'Shows the currently playing song',
+            }
         ]);
 
         await message.reply('Deployed!');

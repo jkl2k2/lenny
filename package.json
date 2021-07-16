@@ -29,6 +29,7 @@
     "discord.js": "^13.0.0-dev.d6c43a5.1625918569",
     "dotenv": "^8.2.0",
     "enmap": "^5.8.5",
+    "pretty-ms": "^7.0.1",
     "sequelize": "^6.6.2",
     "simple-youtube-api": "^5.2.1",
     "sqlite": "^4.0.21",

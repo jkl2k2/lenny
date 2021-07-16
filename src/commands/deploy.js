@@ -19,9 +19,9 @@ class DeployCommand extends Command {
                 description: 'Plays a song from YouTube',
                 options: [
                     {
-                        name: 'song',
+                        name: 'input',
                         type: 'STRING',
-                        description: 'URL or search terms',
+                        description: 'Video/playlist URL or video search terms',
                         required: true,
                     },
                 ],
@@ -63,7 +63,7 @@ class DeployCommand extends Command {
                 description: 'Clears the music queue',
             },
             {
-                name: 'np',
+                name: 'playing',
                 description: 'Shows the currently playing song',
             }
         ]);

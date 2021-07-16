@@ -4,12 +4,13 @@ const {
     VoiceConnectionStatus,
 } = require(`@discordjs/voice`);
 const { Command } = require(`discord-akairo`);
-const discord_js_1 = require(`discord.js`);
+const { MessageEmbed } = require(`discord.js`);
 const MusicSubscription = require(`../modules/subscription`);
 const Track = require(`../modules/track`);
 const api = process.env.API1;
 const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
+const pretty = require(`pretty-ms`);
 
 /*eslint class-methods-use-this: ["error", { "exceptMethods": ["exec", "execSlash"] }] */
 class PlayCommand extends Command {
@@ -82,13 +83,13 @@ class PlayCommand extends Command {
             url = args.song;
 
             // Create a Track from the user's input
-            const track = await Track.from(url, {
+            const track = await Track.from(url, message.interaction.user, {
                 async onStart() {
                     message.interaction.followUp({
                         embeds: [
-                            new discord_js_1.MessageEmbed()
+                            new MessageEmbed()
                                 .setAuthor(`▶️ Now playing`)
-                                .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.title}](${track.video.channel.url})`)
+                                .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.title}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
                                 .setThumbnail(track.video.maxRes.url)
                                 .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
                                 .setColor(`#36393f`)
@@ -109,9 +110,9 @@ class PlayCommand extends Command {
             subscription.enqueue(track);
             return await message.interaction.followUp({
                 embeds: [
-                    new discord_js_1.MessageEmbed()
+                    new MessageEmbed()
                         .setAuthor(`➕ Queued`)
-                        .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.title}](${track.video.channel.url})`)
+                        .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.title}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
                         .setThumbnail(track.video.maxRes.url)
                         .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
                         .setColor(`#36393f`)
@@ -126,13 +127,13 @@ class PlayCommand extends Command {
             const songs = await playlist.getVideos();
 
             for (const song of songs) {
-                const track = await Track.from(song.url, {
+                const track = await Track.from(song.url, message.interaction.user, {
                     async onStart() {
                         message.interaction.followUp({
                             embeds: [
-                                new discord_js_1.MessageEmbed()
+                                new MessageEmbed()
                                     .setAuthor(`▶️ Now playing`)
-                                    .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.title}](${track.video.channel.url})`)
+                                    .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.title}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
                                     .setThumbnail(track.video.maxRes.url)
                                     .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
                                     .setColor(`#36393f`)
@@ -154,7 +155,7 @@ class PlayCommand extends Command {
 
             return await message.interaction.editReply({
                 embeds: [
-                    new discord_js_1.MessageEmbed()
+                    new MessageEmbed()
                         .setAuthor(`➕ ${songs.length} songs queued`)
                         .setDescription(`**[${playlist.title}](${playlist.url})**\n[${playlist.channelTitle}](${playlist.channel.url})`)
                         .setThumbnail(playlist.thumbnails.default.url)
@@ -171,7 +172,7 @@ class PlayCommand extends Command {
                     } else {
                         message.interaction.editReply({
                             embeds: [
-                                new discord_js_1.MessageEmbed()
+                                new MessageEmbed()
                                     .setDescription(`:information_source: YouTube could not find a video with that input`)
                                     .setColor(`#36393f`)
                             ]
@@ -181,13 +182,13 @@ class PlayCommand extends Command {
 
             // Create a Track from the user's input
             try {
-                const track = await Track.from(url, {
+                const track = await Track.from(url, message.interaction.user, {
                     async onStart() {
                         message.interaction.followUp({
                             embeds: [
-                                new discord_js_1.MessageEmbed()
+                                new MessageEmbed()
                                     .setAuthor(`▶️ Now playing`)
-                                    .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.title}](${track.video.channel.url})`)
+                                    .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.title}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
                                     .setThumbnail(track.video.maxRes.url)
                                     .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
                                     .setColor(`#36393f`)
@@ -208,9 +209,9 @@ class PlayCommand extends Command {
                 subscription.enqueue(track);
                 await message.interaction.followUp({
                     embeds: [
-                        new discord_js_1.MessageEmbed()
+                        new MessageEmbed()
                             .setAuthor(`➕ Queued`)
-                            .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.title}](${track.video.channel.url})`)
+                            .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.title}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
                             .setThumbnail(track.video.maxRes.url)
                             .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
                             .setColor(`#36393f`)

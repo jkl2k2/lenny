@@ -3,6 +3,7 @@ const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
 const { AudioResource, createAudioResource, demuxProbe } = require(`@discordjs/voice`);
 const { raw } = require(`youtube-dl-exec`);
+const pretty = require(`pretty-ms`);
 
 const noop = () => { };
 
@@ -19,15 +20,16 @@ module.exports = class Track {
     /**
      * Creates a new Track.
      * @param {Video} video The full video object returned by simple-youtube-api
+     * @param {User} requester The user that requested this track
      * @param {function} onStart A function to call when the track is started.
      * @param {function} onFinish A function to call when the track is finished.
      * @param {function} onError A function to call when the track has an error.
      */
-    constructor(video, onStart, onFinish, onError) {
+    constructor(video, requester, onStart, onFinish, onError) {
         this.video = video;
+        this.requester = requester;
         this.title = video.title;
         this.url = video.url;
-        this.video = video;
         this.onStart = onStart;
         this.onFinish = onFinish;
         this.onError = onError;
@@ -43,7 +45,7 @@ module.exports = class Track {
                 {
                     o: '-',
                     q: '',
-                    f: 'bestaudio[ext=webm+acodec=opus+asr=48000]/bestaudio',
+                    f: 'bestaudio/best',
                     r: '100K',
                 },
                 { stdio: ['ignore', 'pipe', 'ignore'] },
@@ -54,6 +56,7 @@ module.exports = class Track {
             }
             const stream = process.stdout;
             const onError = (err) => {
+                global.logger.warn(`youtube-dl-exec job killed. Error demuxing probe.`);
                 if (!process.killed) process.kill();
                 stream.resume();
                 reject(err);
@@ -73,7 +76,7 @@ module.exports = class Track {
      * @param methods Lifecycle callbacks
      * @returns The created Track
      */
-    static async from(url, methods) {
+    static async from(url, requester, methods) {
         const wrappedMethods = {
             onStart() {
                 wrappedMethods.onStart = noop;
@@ -91,6 +94,11 @@ module.exports = class Track {
 
         const info = await youtube.getVideo(url);
 
-        return new Track(info, wrappedMethods.onStart, wrappedMethods.onFinish, wrappedMethods.onError);
+        return new Track(info, requester, wrappedMethods.onStart, wrappedMethods.onFinish, wrappedMethods.onError);
+    }
+
+    getDuration() {
+        const total = (this.video.duration.seconds + (this.video.duration.minutes * 60) + (this.video.duration.hours * 60 * 60)) * 1000;
+        return pretty(total, { colonNotation: true, secondsDecimalDigits: 0 });
     }
 };

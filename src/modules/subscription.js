@@ -40,6 +40,7 @@ module.exports = class MusicSubscription {
         this.queue = [];
         this.queueLock = false;
         this.readyLock = false;
+        this.lastEmbed = null;
 
         this.voiceConnection.on(`stateChange`, async (_, newState) => {
             if (newState.status === VoiceConnectionStatus.Disconnected) {
@@ -111,6 +112,13 @@ module.exports = class MusicSubscription {
     enqueue(track) {
         this.queue.push(track);
         this.processQueue();
+    }
+
+    /**
+     * Sets the last music embed sent
+     */
+    setLastEmbed(lastEmbed) {
+        this.lastEmbed = lastEmbed;
     }
 
     /**

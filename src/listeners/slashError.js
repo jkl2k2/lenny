@@ -9,8 +9,8 @@ class slashErrorListener extends Listener {
         });
     }
 
-    async exec(err) {
-        global.logger.error(`Slash command errored.\n\n${err}`);
+    async exec(err, message, command) {
+        global.logger.error(`Slash command ${command} errored.\n\nMessage that errored: "${message.content}"\n\nError text: "${err}"`);
     }
 }
 

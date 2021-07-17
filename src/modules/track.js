@@ -73,8 +73,9 @@ module.exports = class Track {
      * Creates a Track from a video URL and lifecycle callback methods.
      *
      * @param url The URL of the video
+     * @param requester The User that requested the song
      * @param methods Lifecycle callbacks
-     * @returns The created Track
+     * @return The created Track
      */
     static async from(url, requester, methods) {
         const wrappedMethods = {
@@ -97,6 +98,11 @@ module.exports = class Track {
         return new Track(info, requester, wrappedMethods.onStart, wrappedMethods.onFinish, wrappedMethods.onError);
     }
 
+    /**
+     * Get a formatted duration/length of the track
+     * 
+     * @return The formatted duration as a string
+     */
     getDuration() {
         const total = (this.video.duration.seconds + (this.video.duration.minutes * 60) + (this.video.duration.hours * 60 * 60)) * 1000;
         return pretty(total, { colonNotation: true, secondsDecimalDigits: 0 });

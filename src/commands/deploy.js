@@ -19,7 +19,7 @@ class DeployCommand extends Command {
                 description: 'Plays a song from YouTube',
                 options: [
                     {
-                        name: 'input',
+                        name: 'song',
                         type: 'STRING',
                         description: 'Video/playlist URL or video search terms',
                         required: true,

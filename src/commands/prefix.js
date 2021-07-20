@@ -62,11 +62,15 @@ class PrefixCommand extends Command {
 
         client.settings.set(message.guild.id, args.newPrefix, `prefix`);
 
-        message.channel.send(new MessageEmbed()
-            .setDescription(`<:check:728881238970073090> Prefix for \`${message.guild.name}\` successfully set to \`${client.settings.get(message.guild.id, `prefix`)}\``)
-            .setColor(`#2EC14E`)
-            .setFooter(`Changed by ${message.author.username}`, message.author.avatarURL())
-            .setTimestamp());
+        message.channel.send({
+            embeds: [
+                new MessageEmbed()
+                    .setDescription(`<:check:728881238970073090> Prefix for \`${message.guild.name}\` successfully set to \`${client.settings.get(message.guild.id, `prefix`)}\``)
+                    .setColor(`#2EC14E`)
+                    .setFooter(`Changed by ${message.author.username}`, message.author.avatarURL())
+                    .setTimestamp()
+            ]
+        });
     }
 }
 

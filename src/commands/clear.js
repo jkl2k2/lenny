@@ -8,7 +8,8 @@ class ClearCommand extends Command {
             aliases: [`clear`, `clearqueue`],
             category: `music`,
             description: `Clears out the queue`,
-            channel: `guild`
+            channel: `guild`,
+            slashOptions: [],
         });
     }
 

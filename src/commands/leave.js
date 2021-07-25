@@ -8,7 +8,8 @@ class LeaveCommand extends Command {
             aliases: [`leave`, `l`],
             category: `music`,
             description: `Makes the bot leave your voice channel`,
-            channel: `guild`
+            channel: `guild`,
+            slashOptions: [],
         });
     }
 

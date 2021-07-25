@@ -8,7 +8,8 @@ class ShuffleCommand extends Command {
             aliases: [`shuffle`],
             category: `music`,
             description: `Shuffle the queue`,
-            channel: `guild` // If guild-only
+            channel: `guild`, // If guild-only
+            slashOptions: [],
         });
     }
 

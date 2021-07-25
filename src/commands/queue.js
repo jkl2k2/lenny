@@ -176,7 +176,7 @@ class QueueCommand extends Command {
                     type: `integer`,
                 }
             ],
-            options: [
+            slashOptions: [
                 {
                     name: 'position',
                     type: 'INTEGER',
@@ -225,13 +225,13 @@ class QueueCommand extends Command {
 
         let reqIndex;
 
-        if (args.position) {
-            reqIndex = args.position - 1;
+        if (args.position.value) {
+            reqIndex = args.position.value - 1;
         }
 
-        if (args.position && queue[reqIndex]) {
-            sendDetails(queue[reqIndex], message, args.position);
-        } else if (args.position && !queue[reqIndex]) {
+        if (args.position.value && queue[reqIndex]) {
+            sendDetails(queue[reqIndex], message, args.position.value);
+        } else if (args.position.value && !queue[reqIndex]) {
             return message.interaction.editReply({
                 embeds: [
                     new MessageEmbed()
@@ -240,7 +240,7 @@ class QueueCommand extends Command {
                 ],
                 ephemeral: true
             });
-        } else if (!args.position) {
+        } else if (!args.position.value) {
             await sendEmbed(page, message);
         }
     }

@@ -8,7 +8,8 @@ class ResumeCommand extends Command {
             aliases: [`resume`, `unpause`],
             category: `music`,
             description: `Resumes playback`,
-            channel: `guild` // If guild-only
+            channel: `guild`, // If guild-only
+            slashOptions: [],
         });
     }
 

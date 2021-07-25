@@ -9,7 +9,8 @@ class PlayingCommand extends Command {
             aliases: [`playing`],
             category: `music`,
             description: `Shows the currently playing song`,
-            channel: `guild`
+            channel: `guild`,
+            slashOptions: [],
         });
     }
 

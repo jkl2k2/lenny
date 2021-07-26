@@ -85,7 +85,7 @@ class PlayCommand extends Command {
             // Create a Track from the user's input
             const track = await Track.from(url, message.interaction.user, {
                 async onStart() {
-                    message.interaction.followUp({
+                    message.channel.send({
                         embeds: [
                             new MessageEmbed()
                                 .setAuthor(`▶️ Now playing`)
@@ -129,7 +129,7 @@ class PlayCommand extends Command {
             for (const song of songs) {
                 const track = await Track.from(song.url, message.interaction.user, {
                     async onStart() {
-                        message.interaction.followUp({
+                        message.channel.send({
                             embeds: [
                                 new MessageEmbed()
                                     .setAuthor(`▶️ Now playing`)
@@ -184,7 +184,7 @@ class PlayCommand extends Command {
             try {
                 const track = await Track.from(url, message.interaction.user, {
                     async onStart() {
-                        message.interaction.followUp({
+                        message.channel.send({
                             embeds: [
                                 new MessageEmbed()
                                     .setAuthor(`▶️ Now playing`)

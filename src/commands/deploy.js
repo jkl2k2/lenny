@@ -65,6 +65,18 @@ class DeployCommand extends Command {
             {
                 name: 'playing',
                 description: 'Shows the currently playing song',
+            },
+            {
+                name: 'remove',
+                description: 'Removes a song from the music queue',
+                options: [
+                    {
+                        name: 'position',
+                        type: 'INTEGER',
+                        description: 'Position of the song in queue to remove',
+                        required: true,
+                    },
+                ]
             }
         ]);
 

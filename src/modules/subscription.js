@@ -99,6 +99,16 @@ module.exports = class MusicSubscription {
     }
 
     /**
+     * Removes a Track from the queue
+     * 
+     * @param pos The position of the track in queue to remove
+     * @return The removed Track
+     */
+    dequeue(pos) {
+        return this.queue.splice(pos, 1);
+    }
+
+    /**
      * Sets the last music embed sent
      */
     setLastEmbed(lastEmbed) {

@@ -114,6 +114,17 @@ client.casinoUser.default = {
     prestigeLevel: 0
 };
 
+client.blacklist = new Enmap({
+    name: "blacklist",
+    fetchAll: false,
+    autoFetch: true,
+    cloneLevel: 'deep'
+});
+
+client.blacklist.default = {
+    blacklist: []
+};
+
 client.on(`guildDelete`, guild => {
     // Remove deleted guild from Enmap
     client.settings.delete(guild.id);

@@ -65,6 +65,24 @@ class DeployCommand extends Command {
             {
                 name: 'playing',
                 description: 'Shows the currently playing song',
+            },
+            {
+                name: 'blacklist',
+                description: 'Blacklist a user from using the bot',
+                options: [
+                    {
+                        name: `action`,
+                        type: `STRING`,
+                        description: `Action to take on the blacklist. Options: "add", "remove", "view"`,
+                        required: true,
+                    },
+                    {
+                        name: `user`,
+                        type: `USER`,
+                        description: `Target user`,
+                        required: false,
+                    }
+                ],
             }
         ]);
 

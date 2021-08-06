@@ -45,7 +45,7 @@ class PlayCommand extends Command {
         // Get subscription from message's guild
         let subscription = this.client.subscriptions.get(message.guild.id);
 
-        await message.interaction.defer();
+        await message.interaction.deferReply();
 
         // If connection doesn't exist, and the user is in a voice channel, create a connection and a subscription
         if (!subscription && message.interaction.member.voice.channel) {

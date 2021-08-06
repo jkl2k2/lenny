@@ -195,7 +195,7 @@ class QueueCommand extends Command {
     }
 
     async execSlash(message, args) {
-        await message.interaction.defer();
+        await message.interaction.deferReply();
 
         const subscription = this.client.subscriptions.get(message.guild.id);
 
@@ -231,7 +231,7 @@ class QueueCommand extends Command {
 
         if (args.position && args.position.value && queue[reqIndex]) {
             sendDetails(queue[reqIndex], message, args.position.value);
-        } else if (args.position.value && !queue[reqIndex]) {
+        } else if (args.position && args.position.value && !queue[reqIndex]) {
             return message.interaction.editReply({
                 embeds: [
                     new MessageEmbed()
@@ -240,7 +240,7 @@ class QueueCommand extends Command {
                 ],
                 ephemeral: true
             });
-        } else if (!args.position.value) {
+        } else {
             await sendEmbed(page, message);
         }
     }

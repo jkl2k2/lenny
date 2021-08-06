@@ -23,7 +23,7 @@
   "homepage": "https://github.com/jkl2k2/L-Bot-Rewrite#readme",
   "dependencies": {
     "@discordjs/opus": "^0.5.3",
-    "@discordjs/voice": "^0.5.3",
+    "@discordjs/voice": "^0.5.5",
     "chalk": "^4.1.1",
     "discord-akairo": "github:SkyBlockDev/discord-akairo",
     "discord.js": "^13.0.0",

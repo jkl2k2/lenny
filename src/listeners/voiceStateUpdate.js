@@ -8,7 +8,7 @@ class VoiceStateUpdateListener extends Listener {
         });
     }
 
-    exec(oldState, newState) {
+    exec(oldState) {
         if (oldState.member.id !== this.client.user.id && oldState.channel && oldState.channel.members.size === 1 && oldState.channel.members.has(this.client.user.id)) {
             const subscription = this.client.subscriptions.get(oldState.guild.id);
 

@@ -77,6 +77,10 @@ class DeployCommand extends Command {
                         required: true,
                     },
                 ]
+            },
+            {
+                name: 'stfu',
+                description: 'stfu',
             }
         ]);
 

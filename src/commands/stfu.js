@@ -13,7 +13,6 @@ class StfuCommand extends Command {
     }
 
     exec() {
-        return;
     }
 
     execSlash(message) {

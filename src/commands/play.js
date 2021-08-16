@@ -126,33 +126,52 @@ class PlayCommand extends Command {
             // Get full list of songs from playlist
             const songs = await playlist.getVideos();
 
-            for (const song of songs) {
-                const track = await Track.from(song.url, message.interaction.user, {
-                    async onStart() {
-                        message.channel.send({
-                            embeds: [
-                                new MessageEmbed()
-                                    .setAuthor(`▶️ Now playing`)
-                                    .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.title}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
-                                    .setThumbnail(track.video.maxRes.url)
-                                    .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
-                                    .setColor(`#36393f`)
-                                    .setTimestamp()
-                            ]
-                        }).catch(global.logger.warn);
-                    },
-                    onFinish() {
-                        return;
-                    },
-                    onError(err) {
-                        global.logger.warn(err);
-                        message.interaction.followUp(`Failed to play: ${track.title}`).catch(global.logger.warn);
-                    }
-                });
+            // Count private videos
+            let privateVideos = 0;
 
-                subscription.enqueue(track);
+            // Create a Track from each song
+            for (const song of songs) {
+                if (song.raw.status.privacyStatus === `private`) {
+                    privateVideos++;
+                } else {
+                    const track = await Track.from(song.url, message.interaction.user, {
+                        async onStart() {
+                            message.channel.send({
+                                embeds: [
+                                    new MessageEmbed()
+                                        .setAuthor(`▶️ Now playing`)
+                                        .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.title}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
+                                        .setThumbnail(track.video.maxRes.url)
+                                        .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
+                                        .setColor(`#36393f`)
+                                        .setTimestamp()
+                                ]
+                            }).catch(global.logger.warn);
+                        },
+                        onFinish() {
+                            return;
+                        },
+                        onError(err) {
+                            global.logger.warn(err);
+                            message.interaction.followUp(`Failed to play: ${track.title}`).catch(global.logger.warn);
+                        }
+                    });
+
+                    subscription.enqueue(track);
+                }
             }
 
+            // If private videos are found, send a notice
+            if (privateVideos > 0) {
+                await message.channel.send({
+                    embeds: [
+                        new MessageEmbed()
+                            .setDescription(`:information_source: \`${privateVideos}\` video(s) in the playlist were private`)
+                    ]
+                });
+            }
+
+            // Reply with success message
             return await message.interaction.editReply({
                 embeds: [
                     new MessageEmbed()

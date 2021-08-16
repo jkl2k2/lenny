@@ -34,10 +34,10 @@ class PingCommand extends Command {
 
         if (Math.round(message.client.ws.ping) > 100) {
             // High heartbeat ping
-            description += `:heartbeat: **API Ping:** - :warning: \`High\`\n\`${Math.round(message.client.ws.ping)}\``;
+            description += `:heartbeat: **API Ping** - :warning: \`High\`\n\`${Math.round(message.client.ws.ping)} ms\``;
         } else {
             // Normal heartbeat ping
-            description += `:heartbeat: **API Ping:** - <:check:728881238970073090> \`Normal\`\n\`${Math.round(message.client.ws.ping)}\``;
+            description += `:heartbeat: **API Ping** - <:check:728881238970073090> \`Normal\`\n\`${Math.round(message.client.ws.ping)} ms\``;
         }
 
         return sent.edit(

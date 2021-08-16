@@ -167,6 +167,7 @@ class PlayCommand extends Command {
                     embeds: [
                         new MessageEmbed()
                             .setDescription(`:information_source: \`${privateVideos}\` video(s) in the playlist were private`)
+                            .setColor(`#36393f`)
                     ]
                 });
             }

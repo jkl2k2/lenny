@@ -26,5 +26,5 @@ jobs:
           script: |
             mkdir lenny
             cd lenny
-            git clone joshualomelin@gmail.com:jkl2k2/lenny.git
+            git clone https://github.com/jkl2k2/lenny.git
             echo 'Successfully deployed app to DigitalOcean'

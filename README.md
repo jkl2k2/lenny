@@ -1,3 +1,5 @@
+[![Build](https://github.com/jkl2k2/lenny/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/jkl2k2/lenny/actions/workflows/deploy.yml)
+
 # Lenny
 ### A multipurpose Discord bot utilizing discord.js, Node.js, and Google Cloud Platform
 

@@ -25,4 +25,5 @@ jobs:
      
           script: |
             cd ~/bots/lenny && git pull https://github.com/jkl2k2/lenny.git
+            npm install
             echo 'END OF DEPLOY ACTION'

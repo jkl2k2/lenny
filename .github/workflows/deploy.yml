@@ -24,7 +24,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }} # User of the server you want to ssh into
      
           script: |
-            mkdir test 
-            cd test 
+            mkdir lenny
+            cd lenny
             git clone git@github.com:jkl2k2/lenny.git
-            echo 'Successfully deployed app to DigitalOcean' 
+            echo 'Successfully deployed app to DigitalOcean'

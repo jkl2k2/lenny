@@ -52,5 +52,5 @@ jobs:
         with:
           app-name: 'lennybot'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_4DF4D2B724954F6BB40E85D701492E4D }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F4926C2ECC7E4A5E81B7667362C227BF }}
           package: .

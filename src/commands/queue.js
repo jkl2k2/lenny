@@ -225,13 +225,13 @@ class QueueCommand extends Command {
 
         let reqIndex;
 
-        if (args.position && args.position.value) {
-            reqIndex = args.position.value - 1;
+        if (args.position && args.position) {
+            reqIndex = args.position - 1;
         }
 
-        if (args.position && args.position.value && queue[reqIndex]) {
-            sendDetails(queue[reqIndex], message, args.position.value);
-        } else if (args.position && args.position.value && !queue[reqIndex]) {
+        if (args.position && args.position && queue[reqIndex]) {
+            sendDetails(queue[reqIndex], message, args.position);
+        } else if (args.position && args.position && !queue[reqIndex]) {
             return message.interaction.editReply({
                 embeds: [
                     new MessageEmbed()

@@ -25,6 +25,9 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }} # User of the server you want to ssh into
      
           script: |
-            cd ~/bots/lenny && git pull https://github.com/jkl2k2/lenny.git
+            echo '--BEGINNING OF DEPLOY SCRIPT--'
+            cd ~/bots/lenny
+            git pull https://github.com/jkl2k2/lenny.git
             npm install
-            echo 'END OF DEPLOY ACTION'
+            pm2 restart 0
+            echo '--END OF DEPLOY SCRIPT--'

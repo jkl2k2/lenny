@@ -7,6 +7,10 @@ const winstonRotate = require(`winston-daily-rotate-file`);
 const Enmap = require(`enmap`);
 const { createAudioPlayer, AudioPlayer, AudioPlayerStatus } = require(`@discordjs/voice`);
 
+const { generateDependencyReport } = require('@discordjs/voice');
+
+console.log(generateDependencyReport());
+
 // Throw if dotenv error
 if (result.error) throw result.error;
 

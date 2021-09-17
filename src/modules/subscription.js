@@ -72,12 +72,10 @@ module.exports = class MusicSubscription {
         this.audioPlayer.on(`stateChange`, (oldState, newState) => {
             if (newState.status === AudioPlayerStatus.Idle && oldState.status !== AudioPlayerStatus.Idle) {
                 // Entered idle from non-idle state, need to play next track
-                console.log(`Audio Player now idle, processing next song and calling onFinish()`);
                 oldState.resource.metadata.onFinish();
                 this.processQueue();
             } else if (newState.status === AudioPlayerStatus.Playing && oldState.status !== AudioPlayerStatus.Paused) {
                 // Entered playing state, new track has started
-                console.log(`Audio Player has started, playing audio and calling onStart()`);
                 newState.resource.metadata.onStart();
             }
         });

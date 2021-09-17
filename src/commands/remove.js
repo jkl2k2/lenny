@@ -38,7 +38,7 @@ class RemoveCommand extends Command {
                 ephemeral: true
             });
         } else {
-            const removed = subscription.dequeue(args.position.value - 1);
+            const removed = subscription.dequeue(args.position - 1);
 
             return message.interaction.reply({
                 embeds: [

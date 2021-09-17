@@ -79,8 +79,8 @@ class PlayCommand extends Command {
         // Get URL from args
         let url = ``;
 
-        if (args.song.value.includes("watch?v=") || args.song.value.includes('youtu.be')) {
-            url = args.song.value;
+        if (args.song.includes("watch?v=") || args.song.includes('youtu.be')) {
+            url = args.song;
 
             // Create a Track from the user's input
             const track = await Track.from(url, message.interaction.user, {
@@ -119,9 +119,9 @@ class PlayCommand extends Command {
                         .setTimestamp()
                 ]
             }).catch(global.logger.warn);
-        } else if (args.song.value.includes(`playlist`)) {
+        } else if (args.song.includes(`playlist`)) {
             // Get playlist from YouTube
-            const playlist = await youtube.getPlaylist(args.song.value);
+            const playlist = await youtube.getPlaylist(args.song);
 
             // Get full list of songs from playlist
             const songs = await playlist.getVideos();
@@ -185,7 +185,7 @@ class PlayCommand extends Command {
                 ]
             });
         } else {
-            await youtube.searchVideos(args.song.value, 1)
+            await youtube.searchVideos(args.song, 1)
                 .then(async results => {
                     if (results[0]) {
                         url = results[0].url;

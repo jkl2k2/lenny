@@ -1,11 +1,10 @@
 // Requires
 const result = require(`dotenv`).config();
 const Akairo = require(`./akairo`);
-const { Structures, Collection } = require(`discord.js`);
+const { Collection } = require(`discord.js`);
 const winston = require(`winston`);
 const winstonRotate = require(`winston-daily-rotate-file`);
 const Enmap = require(`enmap`);
-const { createAudioPlayer, AudioPlayer, AudioPlayerStatus } = require(`@discordjs/voice`);
 
 // Throw if dotenv error
 if (result.error) throw result.error;

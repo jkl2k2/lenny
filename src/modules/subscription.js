@@ -33,23 +33,23 @@ module.exports = class MusicSubscription {
                         await entersState(this.voiceConnection, VoiceConnectionStatus.Connecting, 5000);
                         // Probably moved voice channel
                     } catch (err) {
-                        console.log(`Destroying connection, probably removed from voice channel`);
+                        // console.log(`Destroying connection, probably removed from voice channel`);
                         this.voiceConnection.destroy();
                         // Probably removed from voice channel
                     }
                 } else if (this.voiceConnection.rejoinAttempts < 5) {
                     // Recoverable disconnect
-                    console.log(`Recoverable disconnect, reconnecting to voice channel`);
+                    // console.log(`Recoverable disconnect, reconnecting to voice channel`);
                     await wait((this.voiceConnection.rejoinAttempts + 1) * 5000);
                     this.voiceConnection.rejoin();
                 } else {
                     // Unrecoverable disconnect, no more remaining attempts to reconnect, no choice but to destroy
-                    console.log(`Unrecoverable disconnect, destroying voice connection`);
+                    // console.log(`Unrecoverable disconnect, destroying voice connection`);
                     this.voiceConnection.destroy();
                 }
             } else if (newState.status === VoiceConnectionStatus.Destroyed) {
                 // When destroyed, stop the subscription
-                console.log(`Voice connection destroyed, stopping subscription`);
+                // console.log(`Voice connection destroyed, stopping subscription`);
                 this.stop();
             } else if (!this.readyLock && (newState.status === VoiceConnectionStatus.Connecting || newState.status === VoiceConnectionStatus.Signalling)) {
                 /*

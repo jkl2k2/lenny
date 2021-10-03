@@ -24,11 +24,16 @@ class MessageCreateListener extends Listener {
         */
 
         // Banana reaction
-        if (message.content.toLowerCase().includes("banana") && message.channel.id != `713235946019094549`) {
+        if (message.content.toLowerCase().includes(`banana`) && message.channel.id != `713235946019094549`) {
             message.react('🍌')
                 .then(() => (message.react('🇴')))
                 .then(() => (message.react('🇼'))
                     .then(() => message.react('🅾️')));
+        }
+
+        // Down bad Rem reaction
+        if (message.content.toLowerCase().includes(`down bad`) && message.channel.id != `713235946019094549`) {
+            message.react(`<:RemBanana:717156806127779930>`);
         }
 
         // Ignore bots

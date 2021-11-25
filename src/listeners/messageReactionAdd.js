@@ -63,9 +63,13 @@ class MessageReactionAddListener extends Listener {
         const starChannel = message.client.guilds.cache.get(message.guild.id).channels.cache.find(channel => channel.name == `starboard`);
 
         // if no starboard found
-        if (!starChannel) return message.channel.send(new MessageEmbed()
-            .setDescription(`<:cross:729019052571492434> Unable to find a valid \`#starboard\` channel`)
-            .setColor(`#FF3838`));
+        if (!starChannel) return message.channel.send({
+            embeds: [
+                new MessageEmbed()
+                    .setDescription(`<:cross:729019052571492434> Unable to find a valid \`#starboard\` channel`)
+                    .setColor(`#FF3838`)
+            ]
+        });
 
         // fetch last 100 embeds in starChannel
         const fetch = await starChannel.messages.fetch({ limit: 100 });
@@ -83,21 +87,24 @@ class MessageReactionAddListener extends Listener {
             const foundStar = stars.embeds[0];
 
             // construct new embed to edit old one with
-            const embed = new MessageEmbed()
-                .setColor(foundStar.color)
-                .setDescription(foundStar.description)
-                .addField(`Channel`, message.channel, true)
-                .addField(`Source`, `[Jump](${message.url})`, true)
-                .setAuthor(message.author.username, message.author.avatarURL())
-                .setTimestamp()
-                .setFooter(`⭐ ${parseInt(star[1]) + 1} | ${message.id}`)
-                .setImage(checkImage(foundStar));
 
             // fetch previous embed's ID
             const starMsg = await starChannel.messages.fetch(stars.id);
 
             // edit old embed with new one
-            await starMsg.edit({ embed });
+            await starMsg.edit({
+                embeds: [
+                    new MessageEmbed()
+                        .setColor(foundStar.color)
+                        .setDescription(foundStar.description)
+                        .addField(`Channel`, message.channel, true)
+                        .addField(`Source`, `[Jump](${message.url})`, true)
+                        .setAuthor(message.author.username, message.author.avatarURL())
+                        .setTimestamp()
+                        .setFooter(`⭐ ${parseInt(star[1]) + 1} | ${message.id}`)
+                        .setImage(checkImage(foundStar))
+                ]
+            });
         } else {
             // check for attachment
             var image = message.attachments.size > 0 ? await extension(reaction, message.attachments.array()[0].url) : '';
@@ -113,16 +120,19 @@ class MessageReactionAddListener extends Listener {
                 image = `https://media1.tenor.com/images/be572fb0d07b6291065afb591eb1f714/tenor.gif`;
             }
 
-            const embed = new MessageEmbed()
-                .setColor(15844367)
-                .setDescription(getDescription(message))
-                .addField(`Channel`, message.channel, true)
-                .addField(`Source`, `[Jump](${message.url})`, true)
-                .setAuthor(message.author.username, message.author.avatarURL())
-                .setTimestamp()
-                .setFooter(`⭐ ${reaction.count} | ${message.id}`)
-                .setImage(image);
-            await starChannel.send({ embed });
+            await starChannel.send({
+                embeds: [
+                    new MessageEmbed()
+                        .setColor(15844367)
+                        .setDescription(getDescription(message))
+                        .addField(`Channel`, `<#${message.channel.id}>`, true)
+                        .addField(`Source`, `[Jump](${message.url})`, true)
+                        .setAuthor(message.author.username, message.author.avatarURL())
+                        .setTimestamp()
+                        .setFooter(`⭐ ${reaction.count} | ${message.id}`)
+                        .setImage(image)
+                ],
+            });
         }
     }
 }

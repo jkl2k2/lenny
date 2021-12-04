@@ -121,7 +121,7 @@ client.credit = new Enmap({
 });
 
 client.credit.default = {
-    socialCredit: 0
+    socialCredit: 1000
 };
 
 client.on(`guildDelete`, guild => {

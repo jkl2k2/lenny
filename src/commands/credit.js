@@ -13,16 +13,31 @@ class CreditCommand extends Command {
     }
 
     exec(message) {
-        const userCredit = message.client.credit.ensure(message.author.id, message.client.credit.default);
+        const target = message.mentions.users.first() || message.author;
 
-        return message.channel.send({
-            embeds: [
-                new MessageEmbed()
-                    .setAuthor(`Your social credit`)
-                    .setDescription(`<:comrade:916528736801812530> ${message.author.username}, you have \`${userCredit[`socialCredit`]}\` social credit`)
-                    .setColor(`#FF3838`)
-            ]
-        });
+        if (target === message.author) {
+            const userCredit = message.client.credit.ensure(message.author.id, message.client.credit.default);
+
+            return message.channel.send({
+                embeds: [
+                    new MessageEmbed()
+                        .setAuthor(`Your social credit`)
+                        .setDescription(`<:comrade:916528736801812530> ${message.author.username}, you have \`${userCredit[`socialCredit`]}\` social credit`)
+                        .setColor(`#FF3838`)
+                ]
+            });
+        } else {
+            const userCredit = message.client.credit.ensure(target.id, message.client.credit.default);
+
+            return message.channel.send({
+                embeds: [
+                    new MessageEmbed()
+                        .setAuthor(`${target.username}'s social credit`)
+                        .setDescription(`<:comrade:916528736801812530> ${target.username} has \`${userCredit[`socialCredit`]}\` social credit`)
+                        .setColor(`#FF3838`)
+                ]
+            });
+        }
     }
 }
 

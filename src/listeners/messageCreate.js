@@ -11,6 +11,12 @@ class MessageCreateListener extends Listener {
     }
 
     exec(message) {
+        // Bing chilling reaction
+        if (message.content.toLowerCase().includes(`bing chilling`)) {
+            message.react(`🥶`)
+                .then(message.react(`🍦`));
+        }
+
         // Cap reaction
         if (message.content.toLowerCase().includes(`no cap`)) {
             message.react('<:nocap:816621845229994014>');

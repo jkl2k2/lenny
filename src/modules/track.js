@@ -2,7 +2,7 @@ const api = process.env.API1;
 const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
 const { AudioResource, createAudioResource, demuxProbe } = require(`@discordjs/voice`);
-const { raw } = require(`youtube-dl-exec`);
+const { exec } = require(`youtube-dl-exec`);
 const pretty = require(`pretty-ms`);
 
 const noop = () => { };
@@ -40,7 +40,7 @@ module.exports = class Track {
      */
     createAudioResource() {
         return new Promise((resolve, reject) => {
-            const process = raw(
+            const process = exec(
                 this.url,
                 {
                     o: '-',

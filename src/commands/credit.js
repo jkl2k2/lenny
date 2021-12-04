@@ -51,7 +51,7 @@ class CreditCommand extends Command {
                 embeds: [
                     new MessageEmbed()
                         .setAuthor(`${target.username}'s social credit`)
-                        .setDescription(`<:comrade:916528736801812530> ${target.username} has 🇨🇳\`${userCredit[`socialCredit`]}\`🇨🇳 social credit\n\nTheir rank: **${determineRank(userCredit[`socialCredit`])}**`)
+                        .setDescription(`<:comrade:916528736801812530> **${target.username} has 🇨🇳\`${userCredit[`socialCredit`]}\`🇨🇳 social credit**\n\nTheir rank: **${determineRank(userCredit[`socialCredit`])}**`)
                         .setColor(`#FF3838`)
                 ]
             });

@@ -91,7 +91,7 @@ class MessageCreateListener extends Listener {
 
                 this.client.credit.set(repliedMessage.author.id, parseInt(userCredit[`socialCredit`]) + parseInt(amountToChange), `socialCredit`);
 
-                repliedMessage.react(`<:comrade:916528736801812530>`);
+                message.react(`<:comrade:916528736801812530>`);
             } else {
                 // subtracting social credit
                 const repliedMessage = await message.channel.messages.fetch(message.reference.messageId);
@@ -105,7 +105,7 @@ class MessageCreateListener extends Listener {
 
                 this.client.credit.set(repliedMessage.author.id, parseInt(userCredit[`socialCredit`]) - parseInt(amountToChange), `socialCredit`);
 
-                repliedMessage.react(`<:holyshit:916528747837018153>`);
+                message.react(`<:holyshit:916528747837018153>`);
             }
         }
 

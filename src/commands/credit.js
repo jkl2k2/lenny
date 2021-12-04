@@ -13,6 +13,24 @@ class CreditCommand extends Command {
     }
 
     exec(message) {
+        function determineRank(credit) {
+            if (credit === 600) {
+                return `ON VACATION`;
+            } else if (credit < 700) {
+                return `ENEMY OF THE STATE`;
+            } else if (credit < 900) {
+                return `UNTRUSTWORTHY`;
+            } else if (credit < 1000) {
+                return `AVERAGE CITIZEN`;
+            } else if (credit < 1100) {
+                return `GREAT CITIZEN`;
+            } else if (credit < 1200) {
+                return `IDEAL MEMBER OF SOCIETY`;
+            } else {
+                return `PRESIDENT XI'S CHOSEN`;
+            }
+        }
+
         const target = message.mentions.users.first() || message.author;
 
         if (target === message.author) {
@@ -22,7 +40,7 @@ class CreditCommand extends Command {
                 embeds: [
                     new MessageEmbed()
                         .setAuthor(`Your social credit`)
-                        .setDescription(`<:comrade:916528736801812530> ${message.author.username}, you have \`${userCredit[`socialCredit`]}\` social credit`)
+                        .setDescription(`<:comrade:916528736801812530> **${message.author.username}, you have 🇨🇳\`${userCredit[`socialCredit`]}\`🇨🇳 social credit**\n\nYour rank: **${determineRank(userCredit[`socialCredit`])}**`)
                         .setColor(`#FF3838`)
                 ]
             });
@@ -33,7 +51,7 @@ class CreditCommand extends Command {
                 embeds: [
                     new MessageEmbed()
                         .setAuthor(`${target.username}'s social credit`)
-                        .setDescription(`<:comrade:916528736801812530> ${target.username} has \`${userCredit[`socialCredit`]}\` social credit`)
+                        .setDescription(`<:comrade:916528736801812530> ${target.username} has 🇨🇳\`${userCredit[`socialCredit`]}\`🇨🇳 social credit\n\nTheir rank: **${determineRank(userCredit[`socialCredit`])}**`)
                         .setColor(`#FF3838`)
                 ]
             });

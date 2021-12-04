@@ -113,6 +113,17 @@ client.casinoUser.default = {
     prestigeLevel: 0
 };
 
+client.credit = new Enmap({
+    name: "credit",
+    fetchAll: false,
+    autoFetch: true,
+    cloneLevel: 'deep'
+});
+
+client.credit.default = {
+    socialCredit: 0
+};
+
 client.on(`guildDelete`, guild => {
     // Remove deleted guild from Enmap
     client.settings.delete(guild.id);

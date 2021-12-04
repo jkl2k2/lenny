@@ -10,7 +10,7 @@ class MessageCreateListener extends Listener {
         });
     }
 
-    exec(message) {
+    async exec(message) {
         // Bing chilling reaction
         if (message.content.toLowerCase().includes(`bing chilling`)) {
             message.react(`🥶`)
@@ -56,6 +56,43 @@ class MessageCreateListener extends Listener {
                         .setColor(`#36393f`)
                 ]
             });
+        }
+
+        // Social credit
+        if (message.reference && message.reference.messageId && message.content.toLowerCase().includes(`social credit`) && (message.content[0] === `+` || message.content[0] === `-`)) {
+            let amountToChange = ``;
+
+            for (let i = 1; i < message.content.length; i++) {
+                if (message.content[i] === ` `) break;
+
+                amountToChange += message.content[i];
+            }
+
+            if (message.content[0] === `+`) {
+                // adding social credit
+                const repliedMessage = await message.channel.messages.fetch(message.reference.messageId);
+                const userCredit = this.client.credit.ensure(repliedMessage.author.id, this.client.credit.default);
+
+                if (userCredit[`socialCredit`] + amountToChange > 999999999) {
+                    return message.channel.send(`${repliedMessage.author.username} cannot have more than 999,999,999 social credit!`);
+                }
+
+                this.client.credit.set(repliedMessage.author.id, userCredit[`socialCredit`] + parseInt(amountToChange), `socialCredit`);
+
+                message.react(`<:comrade:916528736801812530>`);
+            } else {
+                // subtracting social credit
+                const repliedMessage = await message.channel.messages.fetch(message.reference.messageId);
+                const userCredit = this.client.credit.ensure(repliedMessage.author.id, this.client.credit.default);
+
+                if (userCredit[`socialCredit`] - amountToChange < 999999999) {
+                    return message.channel.send(`${repliedMessage.author.username} cannot have less than -999,999,999 social credit!`);
+                }
+
+                this.client.credit.set(repliedMessage.author.id, userCredit[`socialCredit`] - parseInt(amountToChange), `socialCredit`);
+
+                message.react(`<:holyshit:916528747837018153>`);
+            }
         }
 
         if (message.content.substring(0, serverConfig[`prefix`].length) !== serverConfig[`prefix`]) return;

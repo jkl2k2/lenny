@@ -15,7 +15,14 @@ class CreditCommand extends Command {
     exec(message) {
         const userCredit = message.client.credit.ensure(message.author.id, message.client.credit.default);
 
-        return message.channel.send(`You have ${userCredit[`socialCredit`]} social credit`);
+        return message.channel.send({
+            embeds: [
+                new MessageEmbed()
+                    .setAuthor(`Your social credit`)
+                    .setDescription(`<:comrade:916528736801812530> ${message.author.username}, you have \`${userCredit[`socialCredit`]}\` social credit`)
+                    .setColor(`#FF3838`)
+            ]
+        });
     }
 }
 

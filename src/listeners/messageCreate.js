@@ -63,9 +63,13 @@ class MessageCreateListener extends Listener {
             let amountToChange = ``;
 
             for (let i = 1; i < message.content.length; i++) {
-                if (message.content[i] === ` `) break;
+                if (isNaN(message.content[i])) break;
 
                 amountToChange += message.content[i];
+            }
+
+            if (amountToChange > 10 && message.author.id != `125109015632936960`) {
+                return message.channel.send(`<:holyshit:916528747837018153> Please only add or subtract up to 10 at a time.`);
             }
 
             if (message.content[0] === `+`) {
@@ -73,25 +77,27 @@ class MessageCreateListener extends Listener {
                 const repliedMessage = await message.channel.messages.fetch(message.reference.messageId);
                 const userCredit = this.client.credit.ensure(repliedMessage.author.id, this.client.credit.default);
 
-                if (userCredit[`socialCredit`] + amountToChange > 999999999) {
-                    return message.channel.send(`${repliedMessage.author.username} cannot have more than 999,999,999 social credit!`);
+                console.log(parseInt(userCredit[`socialCredit`]) + parseInt(amountToChange));
+
+                if (parseInt(userCredit[`socialCredit`]) + parseInt(amountToChange) > 1300) {
+                    return message.channel.send(`${repliedMessage.author.username} cannot have more than 1300 social credit!`);
                 }
 
-                this.client.credit.set(repliedMessage.author.id, userCredit[`socialCredit`] + parseInt(amountToChange), `socialCredit`);
+                this.client.credit.set(repliedMessage.author.id, parseInt(userCredit[`socialCredit`]) + parseInt(amountToChange), `socialCredit`);
 
-                message.react(`<:comrade:916528736801812530>`);
+                repliedMessage.react(`<:comrade:916528736801812530>`);
             } else {
                 // subtracting social credit
                 const repliedMessage = await message.channel.messages.fetch(message.reference.messageId);
                 const userCredit = this.client.credit.ensure(repliedMessage.author.id, this.client.credit.default);
 
-                if (userCredit[`socialCredit`] - amountToChange < 999999999) {
-                    return message.channel.send(`${repliedMessage.author.username} cannot have less than -999,999,999 social credit!`);
+                if (parseInt(userCredit[`socialCredit`]) - parseInt(amountToChange) < 600) {
+                    return message.channel.send(`${repliedMessage.author.username} cannot have less than 600 social credit!`);
                 }
 
-                this.client.credit.set(repliedMessage.author.id, userCredit[`socialCredit`] - parseInt(amountToChange), `socialCredit`);
+                this.client.credit.set(repliedMessage.author.id, parseInt(userCredit[`socialCredit`]) - parseInt(amountToChange), `socialCredit`);
 
-                message.react(`<:holyshit:916528747837018153>`);
+                repliedMessage.react(`<:holyshit:916528747837018153>`);
             }
         }
 

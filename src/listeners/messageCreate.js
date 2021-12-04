@@ -68,6 +68,10 @@ class MessageCreateListener extends Listener {
                 amountToChange += message.content[i];
             }
 
+            if (isNaN(parseInt(amountToChange))) {
+                return message.channel.send(`<:holyshit:916528747837018153> Please input a number.`);
+            }
+
             if (amountToChange > 10 && message.author.id != `125109015632936960`) {
                 return message.channel.send(`<:holyshit:916528747837018153> Please only add or subtract up to 10 at a time.`);
             }
@@ -76,6 +80,8 @@ class MessageCreateListener extends Listener {
                 // adding social credit
                 const repliedMessage = await message.channel.messages.fetch(message.reference.messageId);
                 const userCredit = this.client.credit.ensure(repliedMessage.author.id, this.client.credit.default);
+
+                if (repliedMessage.author.id === message.author.id) return message.channel.send(`<:holyshit:916528747837018153> You cannot add or subtract from your own social credit!`);
 
                 console.log(parseInt(userCredit[`socialCredit`]) + parseInt(amountToChange));
 
@@ -90,6 +96,8 @@ class MessageCreateListener extends Listener {
                 // subtracting social credit
                 const repliedMessage = await message.channel.messages.fetch(message.reference.messageId);
                 const userCredit = this.client.credit.ensure(repliedMessage.author.id, this.client.credit.default);
+
+                if (repliedMessage.author.id === message.author.id) return message.channel.send(`<:holyshit:916528747837018153> You cannot add or subtract from your own social credit!`);
 
                 if (parseInt(userCredit[`socialCredit`]) - parseInt(amountToChange) < 600) {
                     return message.channel.send(`${repliedMessage.author.username} cannot have less than 600 social credit!`);

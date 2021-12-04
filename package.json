@@ -24,6 +24,7 @@
   "dependencies": {
     "@discordjs/opus": "^0.6.0",
     "@discordjs/voice": "^0.6.0",
+    "better-sqlite3": "^7.4.5",
     "chalk": "^4.1.1",
     "discord-akairo": "github:SkyBlockDev/discord-akairo",
     "discord.js": "^13.0.1",

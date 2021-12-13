@@ -10,7 +10,13 @@ class MessageCreateListener extends Listener {
         });
     }
 
-    exec(message) {
+    async exec(message) {
+        // Bing chilling reaction
+        if (message.content.toLowerCase().includes(`bing chilling`)) {
+            message.react(`🥶`)
+                .then(message.react(`🍦`));
+        }
+
         // Cap reaction
         if (message.content.toLowerCase().includes(`no cap`)) {
             message.react('<:nocap:816621845229994014>');
@@ -50,6 +56,57 @@ class MessageCreateListener extends Listener {
                         .setColor(`#36393f`)
                 ]
             });
+        }
+
+        // Social credit
+        if (message.reference && message.reference.messageId && message.content.toLowerCase().includes(`social credit`) && (message.content[0] === `+` || message.content[0] === `-`)) {
+            let amountToChange = ``;
+
+            for (let i = 1; i < message.content.length; i++) {
+                if (isNaN(message.content[i])) break;
+
+                amountToChange += message.content[i];
+            }
+
+            if (isNaN(parseInt(amountToChange))) {
+                return message.channel.send(`<:holyshit:916528747837018153> Please input a number.`);
+            }
+
+            if (amountToChange > 10 && message.author.id != `125109015632936960`) {
+                return message.channel.send(`<:holyshit:916528747837018153> Please only add or subtract up to 10 at a time.`);
+            }
+
+            if (message.content[0] === `+`) {
+                // adding social credit
+                const repliedMessage = await message.channel.messages.fetch(message.reference.messageId);
+                const userCredit = this.client.credit.ensure(repliedMessage.author.id, this.client.credit.default);
+
+                if (repliedMessage.author.id === message.author.id) return message.channel.send(`<:holyshit:916528747837018153> You cannot add or subtract from your own social credit!`);
+
+                console.log(parseInt(userCredit[`socialCredit`]) + parseInt(amountToChange));
+
+                if (parseInt(userCredit[`socialCredit`]) + parseInt(amountToChange) > 1300) {
+                    return message.channel.send(`${repliedMessage.author.username} cannot have more than 1300 social credit!`);
+                }
+
+                this.client.credit.set(repliedMessage.author.id, parseInt(userCredit[`socialCredit`]) + parseInt(amountToChange), `socialCredit`);
+
+                message.react(`<:comrade:916528736801812530>`);
+            } else {
+                // subtracting social credit
+                const repliedMessage = await message.channel.messages.fetch(message.reference.messageId);
+                const userCredit = this.client.credit.ensure(repliedMessage.author.id, this.client.credit.default);
+
+                if (repliedMessage.author.id === message.author.id) return message.channel.send(`<:holyshit:916528747837018153> You cannot add or subtract from your own social credit!`);
+
+                if (parseInt(userCredit[`socialCredit`]) - parseInt(amountToChange) < 600) {
+                    return message.channel.send(`${repliedMessage.author.username} cannot have less than 600 social credit!`);
+                }
+
+                this.client.credit.set(repliedMessage.author.id, parseInt(userCredit[`socialCredit`]) - parseInt(amountToChange), `socialCredit`);
+
+                message.react(`<:holyshit:916528747837018153>`);
+            }
         }
 
         if (message.content.substring(0, serverConfig[`prefix`].length) !== serverConfig[`prefix`]) return;

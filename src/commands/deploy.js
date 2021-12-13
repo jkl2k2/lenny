@@ -6,9 +6,10 @@ class DeployCommand extends Command {
     constructor() {
         super(`deploy`, {
             aliases: [`deploy`],
-            category: `general`,
+            category: `admin`,
             description: `Deploys slash commands`,
-            channel: `guild`
+            channel: `guild`,
+            userPermissions: [`MANAGE_GUILD`]
         });
     }
 

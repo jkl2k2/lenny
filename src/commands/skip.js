@@ -19,7 +19,7 @@ class SkipCommand extends Command {
     async execSlash(message) {
         const subscription = this.client.subscriptions.get(message.guild.id);
 
-        if (subscription) {
+        if (subscription && subscription.audioPlayer._state.status === `playing`) {
             subscription.audioPlayer.stop();
             return await message.interaction.reply({
                 embeds: [

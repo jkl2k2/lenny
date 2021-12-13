@@ -12,7 +12,7 @@ class slashErrorListener extends Listener {
     async exec(err, message, command) {
         global.logger.error(`Slash command ${command} errored.\n\nMessage that errored: "${message.content}"\n\nError text: "${err}"`);
 
-        message.interaction.editReply({
+        message.reply({
             embeds: [
                 new MessageEmbed()
                     .setDescription(`<:cross:729019052571492434> Command errored.\n\n:inbox_tray: **Input**\n\`\`\`${message.content}\`\`\`\n:outbox_tray: **Output**\n\`\`\`${err}\`\`\``)

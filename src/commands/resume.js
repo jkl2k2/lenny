@@ -9,6 +9,7 @@ class ResumeCommand extends Command {
             category: `music`,
             description: `Resumes playback`,
             channel: `guild`, // If guild-only
+            slash: true,
             slashOptions: [],
         });
     }

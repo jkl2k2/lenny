@@ -9,6 +9,7 @@ class ClearCommand extends Command {
             category: `music`,
             description: `Clears out the queue`,
             channel: `guild`,
+            slash: true,
             slashOptions: [],
         });
     }

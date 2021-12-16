@@ -9,6 +9,7 @@ class LeaveCommand extends Command {
             category: `music`,
             description: `Makes the bot leave your voice channel`,
             channel: `guild`,
+            slash: true,
             slashOptions: [],
         });
     }

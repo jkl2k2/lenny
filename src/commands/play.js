@@ -23,18 +23,18 @@ class PlayCommand extends Command {
                     match: `content`
                 }
             ],
+            slash: true,
             slashOptions: [
                 {
                     name: 'song',
                     type: 'STRING',
-                    description: 'URL or search terms',
+                    description: 'YouTube URL or search terms',
                     required: true,
                 }
             ],
             category: `music`,
             description: `Plays a song from YouTube`,
-            channel: `guild`,
-            slash: true
+            channel: `guild`
         });
     }
 

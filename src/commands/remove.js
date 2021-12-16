@@ -9,6 +9,7 @@ class RemoveCommand extends Command {
             category: `music`,
             description: `Removes a song from the queue`,
             channel: `guild`,
+            slash: true,
             slashOptions: [
                 {
                     name: 'position',

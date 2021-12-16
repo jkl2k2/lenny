@@ -9,6 +9,7 @@ class SkipCommand extends Command {
             category: `music`,
             description: `Skips the currently playing song`,
             channel: `guild`,
+            slash: true,
             slashOptions: [],
         });
     }

@@ -9,6 +9,7 @@ class ShuffleCommand extends Command {
             category: `music`,
             description: `Shuffle the queue`,
             channel: `guild`, // If guild-only
+            slash: true,
             slashOptions: [],
         });
     }

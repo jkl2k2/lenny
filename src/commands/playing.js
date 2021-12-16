@@ -10,6 +10,7 @@ class PlayingCommand extends Command {
             category: `music`,
             description: `Shows the currently playing song`,
             channel: `guild`,
+            slash: true,
             slashOptions: [],
         });
     }
@@ -75,7 +76,8 @@ class PlayingCommand extends Command {
                         .setFooter(`Requested by ${subscription.audioPlayer._state.resource.metadata.requester.username}`, subscription.audioPlayer._state.resource.metadata.requester.avatarURL())
                         .setColor(`#36393f`)
                         .setTimestamp()
-                ]
+                ],
+                ephemeral: true
             });
         } else {
             return await message.interaction.reply({

@@ -9,6 +9,7 @@ class PauseCommand extends Command {
             category: `music`,
             description: `Pauses playback`,
             channel: `guild`,
+            slash: true,
             slashOptions: [],
         });
     }

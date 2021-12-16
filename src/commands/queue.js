@@ -176,6 +176,7 @@ class QueueCommand extends Command {
                     type: `integer`,
                 }
             ],
+            slash: true,
             slashOptions: [
                 {
                     name: 'position',

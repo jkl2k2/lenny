@@ -26,6 +26,8 @@ module.exports = class Akairo extends AkairoClient {
             defaultCooldown: 3000,
             allowMention: true,
             autoDefer: false,
+            autoRegisterSlashCommands: true,
+            execSlash: true
         });
 
         // Define inhibitorHandler

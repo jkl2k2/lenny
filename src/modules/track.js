@@ -1,8 +1,8 @@
 const api = process.env.API1;
 const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
-const { AudioResource, createAudioResource, demuxProbe } = require(`@discordjs/voice`);
-const { exec } = require(`youtube-dl-exec`);
+const { createAudioResource } = require(`@discordjs/voice`);
+const play = require(`play-dl`);
 const pretty = require(`pretty-ms`);
 
 const noop = () => { };
@@ -39,33 +39,17 @@ module.exports = class Track {
      * Creates an AudioResource for the Track.
      */
     createAudioResource() {
-        return new Promise((resolve, reject) => {
-            const process = exec(
-                this.url,
-                {
-                    o: '-',
-                    q: '',
-                    f: 'bestaudio/best',
-                    r: '100K',
-                },
-                { stdio: ['ignore', 'pipe', 'ignore'] },
-            );
-            if (!process.stdout) {
-                reject(new Error(`No output stream found for ${this.url}`));
-                return;
+        return new Promise(async (resolve, reject) => {
+            let stream = await play.stream(this.url);
+
+            if (stream.stream) {
+                resolve(createAudioResource(stream.stream, {
+                    metadata: this,
+                    inputType: stream.type
+                }));
+            } else {
+                reject(new Error(`No stream acquirable for input ${this.url}`));
             }
-            const stream = process.stdout;
-            const onError = (err) => {
-                global.logger.warn(`youtube-dl-exec job killed. Error demuxing probe.`);
-                if (!process.killed) process.kill();
-                stream.resume();
-                reject(err);
-            };
-            process.once(`spawn`, () => {
-                demuxProbe(stream)
-                    .then((probe) => resolve(createAudioResource(probe.stream, { metadata: this, inputType: probe.type })))
-                    .catch(onError);
-            });
         });
     }
 

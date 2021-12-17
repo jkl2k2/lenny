@@ -10,7 +10,6 @@ const Track = require(`../modules/track`);
 const api = process.env.API1;
 const YouTube = require(`simple-youtube-api`);
 const youtube = new YouTube(api);
-const pretty = require(`pretty-ms`);
 
 /*eslint class-methods-use-this: ["error", { "exceptMethods": ["exec", "execSlash"] }] */
 class PlayCommand extends Command {
@@ -125,6 +124,18 @@ class PlayCommand extends Command {
 
             // Get full list of songs from playlist
             const songs = await playlist.getVideos();
+
+            message.interaction.editReply({
+                embeds: [
+                    new MessageEmbed()
+                        .setAuthor(`🟡 Processing ${songs.length} songs`)
+                        .setDescription(`**[${playlist.title}](${playlist.url})**\n[${playlist.channelTitle}](${playlist.channel.url})`)
+                        .setThumbnail(playlist.thumbnails.default.url)
+                        .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                        .setColor(`#36393f`)
+                        .setTimestamp()
+                ]
+            });
 
             // Count private videos
             let privateVideos = 0;

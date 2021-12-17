@@ -7,3 +7,4 @@ database.sqlite
 data/
 database2.sqlite
 .env
+.data/

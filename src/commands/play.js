@@ -7,9 +7,6 @@ const { Command } = require(`discord-akairo`);
 const { MessageEmbed } = require(`discord.js`);
 const MusicSubscription = require(`../modules/subscription`);
 const Track = require(`../modules/track`);
-const api = process.env.API1;
-const YouTube = require(`simple-youtube-api`);
-const youtube = new YouTube(api);
 const play = require(`play-dl`);
 
 /*eslint class-methods-use-this: ["error", { "exceptMethods": ["exec", "execSlash"] }] */

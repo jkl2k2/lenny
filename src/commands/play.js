@@ -223,7 +223,7 @@ class PlayCommand extends Command {
             }
         } else if (args.song.includes(`playlist`)) {
             // Get playlist from YouTube
-            const playlist = await play.playlist_info(`${args.song}`, { incomplete: true });
+            const playlist = await play.playlist_info(args.song, { incomplete: true });
 
             message.interaction.editReply({
                 embeds: [

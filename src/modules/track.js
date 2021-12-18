@@ -1,6 +1,3 @@
-const api = process.env.API1;
-const YouTube = require(`simple-youtube-api`);
-const youtube = new YouTube(api);
 const { createAudioResource } = require(`@discordjs/voice`);
 const play = require(`play-dl`);
 const pretty = require(`pretty-ms`);
@@ -19,7 +16,7 @@ const noop = () => { };
 module.exports = class Track {
     /**
      * Creates a new Track.
-     * @param {Video} video The full video object returned by simple-youtube-api
+     * @param {Video} video The full video object returned by play-dl
      * @param {User} requester The user that requested this track
      * @param {function} onStart A function to call when the track is started.
      * @param {function} onFinish A function to call when the track is finished.

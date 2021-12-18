@@ -1,6 +1,3 @@
-const api = process.env.API1;
-const YouTube = require(`simple-youtube-api`);
-const youtube = new YouTube(api);
 const { createAudioResource } = require(`@discordjs/voice`);
 const play = require(`play-dl`);
 const pretty = require(`pretty-ms`);
@@ -19,7 +16,7 @@ const noop = () => { };
 module.exports = class Track {
     /**
      * Creates a new Track.
-     * @param {Video} video The full video object returned by simple-youtube-api
+     * @param {Video} video The full video object returned by play-dl
      * @param {User} requester The user that requested this track
      * @param {function} onStart A function to call when the track is started.
      * @param {function} onFinish A function to call when the track is finished.
@@ -77,7 +74,7 @@ module.exports = class Track {
             }
         };
 
-        const info = await youtube.getVideo(url);
+        const info = (await play.video_info(url)).video_details;
 
         return new Track(info, requester, wrappedMethods.onStart, wrappedMethods.onFinish, wrappedMethods.onError);
     }
@@ -88,7 +85,7 @@ module.exports = class Track {
      * @return The formatted duration as a string
      */
     getDuration() {
-        const total = (this.video.duration.seconds + (this.video.duration.minutes * 60) + (this.video.duration.hours * 60 * 60)) * 1000;
+        const total = (this.video.durationInSec * 1000);
         return pretty(total, { colonNotation: true, secondsDecimalDigits: 0 });
     }
 };

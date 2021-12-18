@@ -10,15 +10,25 @@ class slashErrorListener extends Listener {
     }
 
     async exec(err, message, command) {
-        global.logger.error(`Slash command ${command} errored.\n\nMessage that errored: "${message.content}"\n\nError text: "${err}"`);
+        global.logger.error(`Slash command ${command} errored.\n\nMessage that errored: "${message.content}"\n\nError text: "${err.message}"`);
 
-        message.reply({
-            embeds: [
-                new MessageEmbed()
-                    .setDescription(`<:cross:729019052571492434> Command errored.\n\n:inbox_tray: **Input**\n\`\`\`${message.content}\`\`\`\n:outbox_tray: **Output**\n\`\`\`${err}\`\`\``)
-                    .setColor(`#FF3838`)
-            ]
-        });
+        if (message.interaction.replied || message.interaction.deferred) {
+            message.interaction.editReply({
+                embeds: [
+                    new MessageEmbed()
+                        .setDescription(`<:cross:729019052571492434> Command errored.\n\n:inbox_tray: **Input**\n\`\`\`${message.content}\`\`\`\n:outbox_tray: **Output**\n\`\`\`${err}\`\`\``)
+                        .setColor(`#FF3838`)
+                ]
+            });
+        } else {
+            message.interaction.reply({
+                embeds: [
+                    new MessageEmbed()
+                        .setDescription(`<:cross:729019052571492434> Command errored.\n\n:inbox_tray: **Input**\n\`\`\`${message.content}\`\`\`\n:outbox_tray: **Output**\n\`\`\`${err}\`\`\``)
+                        .setColor(`#FF3838`)
+                ]
+            });
+        }
     }
 }
 

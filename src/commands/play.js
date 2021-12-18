@@ -222,11 +222,9 @@ class PlayCommand extends Command {
                 console.log(`I somehow got to playlist processing code without it being a Spotify playlist?`);
             }
         } else if (args.song.includes(`playlist`)) {
-            console.log(`Getting playlist`);
             // Get playlist from YouTube
             const playlist = await play.playlist_info(`${args.song}`, { incomplete: true });
 
-            console.log(`Finished getting playlist`);
             message.interaction.editReply({
                 embeds: [
                     new MessageEmbed()

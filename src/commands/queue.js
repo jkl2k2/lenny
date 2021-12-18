@@ -4,7 +4,7 @@ const { MessageEmbed, MessageActionRow, MessageButton } = require(`discord.js`);
 //#region Helper Functions
 async function queueResolver(arr, index) {
     if (arr[index]) {
-        return `\`${index + 1}.\` **[${arr[index].title}](${arr[index].url})**\n\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0By: **${arr[index].video.channel.title}**`;
+        return `\`${index + 1}.\` **[${arr[index].title}](${arr[index].url})**\n\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0By: **[${arr[index].video.channel.name}](${arr[index].video.channel.url})**`;
     } else {
         return " ";
     }
@@ -151,8 +151,8 @@ async function sendEmbed(page, message) {
 async function sendDetails(track, message, pos) {
     const musicEmbed = new MessageEmbed()
         .setAuthor(`Currently Queued (#${pos})`)
-        .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.title}](${track.video.channel.url})`)
-        .setThumbnail(track.video.maxRes.url)
+        .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.name}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
+        .setThumbnail(track.video.thumbnails[0].url)
         .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
         .setColor(`#36393f`)
         .setTimestamp();

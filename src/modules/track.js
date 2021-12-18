@@ -77,7 +77,7 @@ module.exports = class Track {
             }
         };
 
-        const info = await youtube.getVideo(url);
+        const info = (await play.video_info(url)).video_details;
 
         return new Track(info, requester, wrappedMethods.onStart, wrappedMethods.onFinish, wrappedMethods.onError);
     }
@@ -88,7 +88,7 @@ module.exports = class Track {
      * @return The formatted duration as a string
      */
     getDuration() {
-        const total = (this.video.duration.seconds + (this.video.duration.minutes * 60) + (this.video.duration.hours * 60 * 60)) * 1000;
+        const total = (this.video.durationInSec * 1000);
         return pretty(total, { colonNotation: true, secondsDecimalDigits: 0 });
     }
 };

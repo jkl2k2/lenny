@@ -34,7 +34,6 @@
     "play-dl": "^1.6.1",
     "pretty-ms": "^7.0.1",
     "sequelize": "^6.6.2",
-    "simple-youtube-api": "^5.2.1",
     "sqlite": "^4.0.21",
     "winston": "^3.3.3",
     "winston-daily-rotate-file": "^4.5.5"

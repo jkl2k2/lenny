@@ -79,6 +79,11 @@ class PlayCommand extends Command {
         if (args.song.includes(`watch?v=`) || args.song.includes(`youtu.be`) || args.song.includes(`spotify.com/track`)) {
             url = args.song;
 
+            // Need to strip out "music" part of string
+            if (url.includes(`music.youtube`)) {
+                url = url.slice(0, 8) + url.slice(14);
+            }
+
             if (args.song.includes(`spotify.com/track`)) {
                 if (play.is_expired()) {
                     await play.refreshToken();
@@ -222,8 +227,17 @@ class PlayCommand extends Command {
                 console.log(`I somehow got to playlist processing code without it being a Spotify playlist?`);
             }
         } else if (args.song.includes(`playlist`)) {
+            let input = args.song;
+
+            // Need to strip out "music" part of string
+            if (input.includes(`music.youtube`)) {
+                input = input.slice(0, 8) + input.slice(14);
+            }
+
+            console.log(input);
+
             // Get playlist from YouTube
-            const playlist = await play.playlist_info(args.song, { incomplete: true });
+            const playlist = await play.playlist_info(input, { incomplete: true });
 
             message.interaction.editReply({
                 embeds: [

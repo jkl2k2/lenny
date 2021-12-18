@@ -1,8 +1,6 @@
 const { Command } = require(`discord-akairo`);
 const { MessageEmbed } = require(`discord.js`);
-const api = process.env.API1;
-const YouTube = require(`simple-youtube-api`);
-const youtube = new YouTube(api);
+const play = require(`play-dl`);
 
 /*eslint class-methods-use-this: ["error", { "exceptMethods": ["exec", "execSlash"] }] */
 class FindVideoCommand extends Command {
@@ -21,7 +19,7 @@ class FindVideoCommand extends Command {
     }
 
     exec(message, args) {
-        youtube.searchVideos(args.searchInput, 1)
+        play.search(args.searchInput, { limit: 1 })
             .then(videos => {
                 if (videos[0] != undefined && args.searchInput.length >= 1) {
                     message.channel.send(`**Best match:**\n${videos[0].url}`);

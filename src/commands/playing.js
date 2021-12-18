@@ -71,9 +71,9 @@ class PlayingCommand extends Command {
                 embeds: [
                     new MessageEmbed()
                         .setAuthor(`▶️ Now playing`)
-                        .setDescription(`**[${playing.title}](${playing.url})**\n[${playing.channel.title}](${playing.channel.url})\n\n${progressBar}`)
-                        .setThumbnail(playing.maxRes.url)
-                        .setFooter(`Requested by ${subscription.audioPlayer._state.resource.metadata.requester.username}`, subscription.audioPlayer._state.resource.metadata.requester.avatarURL())
+                        .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.name}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
+                        .setThumbnail(track.video.thumbnails[0].url)
+                        .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
                         .setColor(`#36393f`)
                         .setTimestamp()
                 ],

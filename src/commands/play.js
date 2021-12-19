@@ -25,12 +25,12 @@ class PlayCommand extends Command {
                 {
                     name: 'song',
                     type: 'STRING',
-                    description: 'Plays a song or playlist from YouTube, Spotify (albums as well), or SoundCloud',
+                    description: 'Plays a song or playlist from either YouTube, Spotify (albums as well), or SoundCloud',
                     required: true,
                 }
             ],
             category: `music`,
-            description: `Plays a song or playlist from YouTube, Spotify (albums as well), or SoundCloud`,
+            description: `Plays a song or playlist from either YouTube, Spotify (albums as well), or SoundCloud`,
             channel: `guild`
         });
     }

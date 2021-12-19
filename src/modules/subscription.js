@@ -34,7 +34,7 @@ module.exports = class MusicSubscription {
                         // Probably moved voice channel
                     } catch (err) {
                         // console.log(`Destroying connection, probably removed from voice channel`);
-                        this.voiceConnection.destroy();
+                        console.log(`Connection was destroyed, probably kicked by an admin.`);
                         // Probably removed from voice channel
                     }
                 } else if (this.voiceConnection.rejoinAttempts < 5) {

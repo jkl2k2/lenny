@@ -180,7 +180,7 @@ class PlayCommand extends Command {
                     embeds: [
                         new MessageEmbed()
                             .setAuthor(`🟡 Processing ${sp_data.total_tracks} Spotify songs`)
-                            .setDescription(`**[${sp_data.name}](${sp_data.url})**\n[${sp_data.owner.name}](${sp_data.owner.url})`)
+                            .setDescription(`**[${sp_data.name}](${sp_data.url})**\n[${sp_data.owner.name}](${sp_data.owner.url})\n\n\`~${1.25 * sp_data.total_tracks} seconds\` to process`)
                             .setThumbnail(sp_data.thumbnail.url)
                             .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
                             .setColor(`#36393f`)
@@ -229,7 +229,7 @@ class PlayCommand extends Command {
                     embeds: [
                         new MessageEmbed()
                             .setAuthor(`🟡 Processing ${sp_data.total_tracks} Spotify songs`)
-                            .setDescription(`**[${sp_data.name}](${sp_data.url})**\n[${sp_data.artists[0].name}](${sp_data.artists[0].url})`)
+                            .setDescription(`**[${sp_data.name}](${sp_data.url})**\n[${sp_data.artists[0].name}](${sp_data.artists[0].url})\n\n\`~${1.25 * sp_data.total_tracks} seconds\` to process`)
                             .setThumbnail(sp_data.thumbnail.url)
                             .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
                             .setColor(`#36393f`)
@@ -296,7 +296,7 @@ class PlayCommand extends Command {
                     embeds: [
                         new MessageEmbed()
                             .setAuthor(`🟡 Processing ${so_data.total_tracks} SoundCloud songs`)
-                            .setDescription(`**[${so_data.name}](${so_data.url})**\n[${so_data.user.name}](${so_data.user.url})`)
+                            .setDescription(`**[${so_data.name}](${so_data.url})**\n[${so_data.user.name}](${so_data.user.url})\n\n\`~${0.4 * so_data.total_tracks} seconds\` to process`)
                             .setThumbnail(so_data.fetched_tracks[0].thumbnail)
                             .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
                             .setColor(`#36393f`)
@@ -350,7 +350,7 @@ class PlayCommand extends Command {
                 embeds: [
                     new MessageEmbed()
                         .setAuthor(`🟡 Processing ${playlist.total_videos} YouTube songs`)
-                        .setDescription(`**[${playlist.title}](${playlist.url})**\n[${playlist.channel.name}](${playlist.channel.url})`)
+                        .setDescription(`**[${playlist.title}](${playlist.url})**\n[${playlist.channel.name}](${playlist.channel.url})\n\n\`~${0.75 * playlist.total_videos} seconds\` to process`)
                         .setThumbnail(playlist.thumbnail.url)
                         .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
                         .setColor(`#36393f`)

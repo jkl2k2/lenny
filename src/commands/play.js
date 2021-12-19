@@ -25,12 +25,12 @@ class PlayCommand extends Command {
                 {
                     name: 'song',
                     type: 'STRING',
-                    description: 'Plays a song (YouTube, Spotify, Soundcloud) or a playlist (YT and SPOTIFY only)',
+                    description: 'Plays a song or playlist from YouTube, Spotify (albums as well), or SoundCloud',
                     required: true,
                 }
             ],
             category: `music`,
-            description: `Plays a song (YouTube, Spotify, Soundcloud) or a playlist (YT and SPOTIFY only)`,
+            description: `Plays a song or playlist from YouTube, Spotify (albums as well), or SoundCloud`,
             channel: `guild`
         });
     }
@@ -108,7 +108,7 @@ class PlayCommand extends Command {
             return message.interaction.editReply({
                 embeds: [
                     new MessageEmbed()
-                        .setAuthor(`➕ Queued`)
+                        .setAuthor(`🟢 Queued`)
                         .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.name}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
                         .setThumbnail(track.video.thumbnails[0].url)
                         .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
@@ -118,41 +118,60 @@ class PlayCommand extends Command {
             }).catch(global.logger.warn);
         }
 
-        if (args.song.includes(`watch?v=`) || args.song.includes(`youtu.be`) || args.song.includes(`spotify.com/track`)) {
+        if (args.song.includes(`watch?v=`) || args.song.includes(`youtu.be`)) {
             // Need to strip out "music" part of string, if applicable
             if (args.song.includes(`music.youtube`)) {
                 return await process(args.song.slice(0, 8) + args.song.slice(14));
             }
 
-            if (args.song.includes(`spotify.com/track`)) {
-                if (play.is_expired()) {
-                    await play.refreshToken();
-                }
+            return sendEmbed(await process(args.song));
+        } else if (args.song.includes(`spotify.com/track`)) {
+            message.interaction.editReply({
+                embeds: [
+                    new MessageEmbed()
+                        .setAuthor(`🔎 Loading Spotify Song...`)
+                        .setDescription(`Finding closest YouTube match...`)
+                        .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                        .setColor(`#36393f`)
+                        .setTimestamp()
+                ]
+            });
 
-                const sp_data = await play.spotify(args.song);
-
-                await play.search(`${sp_data.name} by ${sp_data.artists[0].name}`, { limit: 1 })
-                    .then(async results => {
-                        if (results[0]) {
-                            return sendEmbed(await process(results[0].url));
-                        } else {
-                            message.interaction.editReply({
-                                embeds: [
-                                    new MessageEmbed()
-                                        .setDescription(`:information_source: YouTube could not find a video with that input`)
-                                        .setColor(`#36393f`)
-                                ]
-                            });
-                        }
-                    });
-            } else {
-                // Just a plain YouTube link
-                return sendEmbed(await process(args.song));
+            if (play.is_expired()) {
+                await play.refreshToken();
             }
+
+            const sp_data = await play.spotify(args.song);
+
+            await play.search(`${sp_data.name} by ${sp_data.artists[0].name}`, { limit: 1 })
+                .then(async results => {
+                    if (results[0]) {
+                        return sendEmbed(await process(results[0].url));
+                    } else {
+                        message.interaction.editReply({
+                            embeds: [
+                                new MessageEmbed()
+                                    .setDescription(`:information_source: YouTube could not find a video with that input`)
+                                    .setColor(`#36393f`)
+                            ]
+                        });
+                    }
+                });
         } else if (args.song.includes(`spotify.com/playlist`) || args.song.includes(`spotify.com/album`)) {
             if (play.is_expired()) {
                 await play.refreshToken();
             }
+
+            message.interaction.editReply({
+                embeds: [
+                    new MessageEmbed()
+                        .setAuthor(`🔎 Loading Spotify Playlist/Album...`)
+                        .setDescription(`Looking up info...`)
+                        .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                        .setColor(`#36393f`)
+                        .setTimestamp()
+                ]
+            });
 
             const sp_data = await play.spotify(args.song);
 
@@ -197,7 +216,7 @@ class PlayCommand extends Command {
                 return await message.interaction.editReply({
                     embeds: [
                         new MessageEmbed()
-                            .setAuthor(`➕ ${sp_data.total_tracks} Spotify songs queued`)
+                            .setAuthor(`🟢 ${sp_data.total_tracks} Spotify songs queued`)
                             .setDescription(`**[${sp_data.name}](${sp_data.url})**\n[${sp_data.owner.name}](${sp_data.owner.url})`)
                             .setThumbnail(sp_data.thumbnail.url)
                             .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
@@ -246,7 +265,7 @@ class PlayCommand extends Command {
                 return await message.interaction.editReply({
                     embeds: [
                         new MessageEmbed()
-                            .setAuthor(`➕ ${sp_data.total_tracks} Spotify songs queued`)
+                            .setAuthor(`🟢 ${sp_data.total_tracks} Spotify songs queued`)
                             .setDescription(`**[${sp_data.name}](${sp_data.url})**\n[${sp_data.artists[0].name}](${sp_data.artists[0].url})`)
                             .setThumbnail(sp_data.thumbnail.url)
                             .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
@@ -258,15 +277,51 @@ class PlayCommand extends Command {
 
         } else if (args.song.includes(`soundcloud.com/`)) {
             if (args.song.includes(`/sets/`) && !args.song.includes(`?in=`)) {
-                // Is a playlist, which I haven't supported yet
-                return message.interaction.editReply({
+                // Is a playlist
+                message.interaction.editReply({
                     embeds: [
                         new MessageEmbed()
-                            .setDescription(`:information_source: Sorry, SoundCloud playlists aren't supported yet`)
+                            .setAuthor(`🔎 Loading SoundCloud Playlist...`)
+                            .setDescription(`Looking up info...`)
+                            .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
                             .setColor(`#36393f`)
+                            .setTimestamp()
+                    ]
+                });
+
+                const so_data = await play.soundcloud(args.song);
+                await so_data.fetch();
+
+                message.interaction.editReply({
+                    embeds: [
+                        new MessageEmbed()
+                            .setAuthor(`🟡 Processing ${so_data.total_tracks} SoundCloud songs`)
+                            .setDescription(`**[${so_data.name}](${so_data.url})**\n[${so_data.user.name}](${so_data.user.url})`)
+                            .setThumbnail(so_data.fetched_tracks[0].thumbnail)
+                            .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                            .setColor(`#36393f`)
+                            .setTimestamp()
+                    ]
+                });
+
+                for (const song of so_data.fetched_tracks) {
+                    await process(song.url);
+                }
+
+                // Reply with success message
+                return await message.interaction.editReply({
+                    embeds: [
+                        new MessageEmbed()
+                            .setAuthor(`🟢 ${so_data.total_tracks} SoundCloud songs queued`)
+                            .setDescription(`**[${so_data.name}](${so_data.url})**\n[${so_data.user.name}](${so_data.user.url})`)
+                            .setThumbnail(so_data.fetched_tracks[0].thumbnail)
+                            .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                            .setColor(`#36393f`)
+                            .setTimestamp()
                     ]
                 });
             } else {
+                // Is a normal track
                 return sendEmbed(await process(args.song));
             }
         } else if (args.song.includes(`playlist`)) {
@@ -276,6 +331,17 @@ class PlayCommand extends Command {
             if (input.includes(`music.youtube`)) {
                 input = input.slice(0, 8) + input.slice(14);
             }
+
+            message.interaction.editReply({
+                embeds: [
+                    new MessageEmbed()
+                        .setAuthor(`🔎 Loading YouTube Playlist...`)
+                        .setDescription(`Looking up info...`)
+                        .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                        .setColor(`#36393f`)
+                        .setTimestamp()
+                ]
+            });
 
             // Get playlist from YouTube
             const playlist = await play.playlist_info(input, { incomplete: true });
@@ -319,7 +385,7 @@ class PlayCommand extends Command {
             return await message.interaction.editReply({
                 embeds: [
                     new MessageEmbed()
-                        .setAuthor(`➕ ${playlist.total_videos} YouTube songs queued`)
+                        .setAuthor(`🟢 ${playlist.total_videos} YouTube songs queued`)
                         .setDescription(`**[${playlist.title}](${playlist.url})**\n[${playlist.channel.name}](${playlist.channel.url})`)
                         .setThumbnail(playlist.thumbnail.url)
                         .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
@@ -328,6 +394,18 @@ class PlayCommand extends Command {
                 ]
             });
         } else {
+            // YouTube search
+            message.interaction.editReply({
+                embeds: [
+                    new MessageEmbed()
+                        .setAuthor(`🔎 Searching YouTube...`)
+                        .setDescription(`Finding closest match...`)
+                        .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                        .setColor(`#36393f`)
+                        .setTimestamp()
+                ]
+            });
+
             await play.search(args.song, { limit: 1 })
                 .then(async results => {
                     if (results[0]) {

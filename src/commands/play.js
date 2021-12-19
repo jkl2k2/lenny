@@ -255,6 +255,24 @@ class PlayCommand extends Command {
                     ]
                 });
             }
+
+        } else if (args.song.includes(`soundcloud.com/`)) {
+            const so_data = await play.soundcloud(args.song);
+
+            await play.search(`${so_data.name} ${so_data.publisher.artist || ``}`, { limit: 1 })
+                .then(async results => {
+                    if (results[0]) {
+                        return sendEmbed(await process(results[0].url));
+                    } else {
+                        message.interaction.editReply({
+                            embeds: [
+                                new MessageEmbed()
+                                    .setDescription(`:information_source: YouTube could not find a video with that input`)
+                                    .setColor(`#36393f`)
+                            ]
+                        });
+                    }
+                });
         } else if (args.song.includes(`playlist`)) {
             let input = args.song;
 

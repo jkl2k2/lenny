@@ -70,7 +70,7 @@ class PlayingCommand extends Command {
             return await message.interaction.reply({
                 embeds: [
                     new MessageEmbed()
-                        .setAuthor(`▶️ Now playing`)
+                        .setAuthor(`➡️ Currently playing`)
                         .setDescription(`**[${playing.title}](${playing.url})**\n[${playing.channel.name}](${playing.channel.url})\n\n\`${progressBar}\``)
                         .setThumbnail(playing.thumbnails[0].url)
                         .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())

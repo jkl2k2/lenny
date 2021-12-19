@@ -25,12 +25,12 @@ class PlayCommand extends Command {
                 {
                     name: 'song',
                     type: 'STRING',
-                    description: 'YouTube URL or search terms',
+                    description: 'Plays a song or playlist from YouTube or Spotify',
                     required: true,
                 }
             ],
             category: `music`,
-            description: `Plays a song from YouTube`,
+            description: `Plays a song or playlist from YouTube or Spotify`,
             channel: `guild`
         });
     }
@@ -73,40 +73,7 @@ class PlayCommand extends Command {
             return await message.interaction.followUp(`Failed to join voice channel within 20 seconds, please try again later.`);
         }
 
-        // Get URL from args
-        let url = ``;
-
-        if (args.song.includes(`watch?v=`) || args.song.includes(`youtu.be`) || args.song.includes(`spotify.com/track`)) {
-            url = args.song;
-
-            // Need to strip out "music" part of string
-            if (url.includes(`music.youtube`)) {
-                url = url.slice(0, 8) + url.slice(14);
-            }
-
-            if (args.song.includes(`spotify.com/track`)) {
-                if (play.is_expired()) {
-                    await play.refreshToken();
-                }
-
-                const sp_data = await play.spotify(args.song);
-
-                await play.search(`${sp_data.name} by ${sp_data.artists[0].name}`, { limit: 1 })
-                    .then(async results => {
-                        if (results[0]) {
-                            url = results[0].url;
-                        } else {
-                            message.interaction.editReply({
-                                embeds: [
-                                    new MessageEmbed()
-                                        .setDescription(`:information_source: YouTube could not find a video with that input`)
-                                        .setColor(`#36393f`)
-                                ]
-                            });
-                        }
-                    });
-            }
-
+        async function process(url) {
             // Create a Track from the user's input
             const track = await Track.from(url, message.interaction.user, {
                 async onStart() {
@@ -131,9 +98,14 @@ class PlayCommand extends Command {
                 }
             });
 
-            // Queue track and reply with success message
+            // Queue track
             subscription.enqueue(track);
-            return await message.interaction.followUp({
+
+            return track;
+        }
+
+        function sendEmbed(track) {
+            return message.interaction.editReply({
                 embeds: [
                     new MessageEmbed()
                         .setAuthor(`➕ Queued`)
@@ -144,6 +116,39 @@ class PlayCommand extends Command {
                         .setTimestamp()
                 ]
             }).catch(global.logger.warn);
+        }
+
+        if (args.song.includes(`watch?v=`) || args.song.includes(`youtu.be`) || args.song.includes(`spotify.com/track`)) {
+            // Need to strip out "music" part of string, if applicable
+            if (args.song.includes(`music.youtube`)) {
+                return await process(args.song.slice(0, 8) + args.song.slice(14));
+            }
+
+            if (args.song.includes(`spotify.com/track`)) {
+                if (play.is_expired()) {
+                    await play.refreshToken();
+                }
+
+                const sp_data = await play.spotify(args.song);
+
+                await play.search(`${sp_data.name} by ${sp_data.artists[0].name}`, { limit: 1 })
+                    .then(async results => {
+                        if (results[0]) {
+                            return sendEmbed(await process(results[0].url));
+                        } else {
+                            message.interaction.editReply({
+                                embeds: [
+                                    new MessageEmbed()
+                                        .setDescription(`:information_source: YouTube could not find a video with that input`)
+                                        .setColor(`#36393f`)
+                                ]
+                            });
+                        }
+                    });
+            } else {
+                // Just a plain YouTube link
+                return sendEmbed(await process(args.song));
+            }
         } else if (args.song.includes(`spotify.com/playlist`)) {
             if (play.is_expired()) {
                 await play.refreshToken();
@@ -171,30 +176,7 @@ class PlayCommand extends Command {
                     await play.search(`${song.name} by ${song.artists[0].name}`, { limit: 1 })
                         .then(async results => {
                             if (results[0]) {
-                                const track = await Track.from(results[0].url, message.interaction.user, {
-                                    async onStart() {
-                                        message.channel.send({
-                                            embeds: [
-                                                new MessageEmbed()
-                                                    .setAuthor(`▶️ Now playing`)
-                                                    .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.name}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
-                                                    .setThumbnail(track.video.thumbnails[0].url)
-                                                    .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
-                                                    .setColor(`#36393f`)
-                                                    .setTimestamp()
-                                            ]
-                                        }).catch(global.logger.warn);
-                                    },
-                                    onFinish() {
-                                        return;
-                                    },
-                                    onError(err) {
-                                        global.logger.warn(err);
-                                        message.interaction.followUp(`Failed to play: ${track.title}`).catch(global.logger.warn);
-                                    }
-                                });
-
-                                subscription.enqueue(track);
+                                await process(results[0].url);
                             } else {
                                 failedVideos++;
                             }
@@ -234,8 +216,6 @@ class PlayCommand extends Command {
                 input = input.slice(0, 8) + input.slice(14);
             }
 
-            console.log(input);
-
             // Get playlist from YouTube
             const playlist = await play.playlist_info(input, { incomplete: true });
 
@@ -259,30 +239,7 @@ class PlayCommand extends Command {
                 if (song.private) {
                     privateVideos++;
                 } else {
-                    const track = await Track.from(song.url, message.interaction.user, {
-                        async onStart() {
-                            message.channel.send({
-                                embeds: [
-                                    new MessageEmbed()
-                                        .setAuthor(`▶️ Now playing`)
-                                        .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.name}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
-                                        .setThumbnail(track.video.thumbnails[0].url)
-                                        .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
-                                        .setColor(`#36393f`)
-                                        .setTimestamp()
-                                ]
-                            }).catch(global.logger.warn);
-                        },
-                        onFinish() {
-                            return;
-                        },
-                        onError(err) {
-                            global.logger.warn(err);
-                            message.interaction.followUp(`Failed to play: ${track.title}`).catch(global.logger.warn);
-                        }
-                    });
-
-                    subscription.enqueue(track);
+                    await process(song.url);
                 }
             }
 
@@ -313,9 +270,14 @@ class PlayCommand extends Command {
             await play.search(args.song, { limit: 1 })
                 .then(async results => {
                     if (results[0]) {
-                        url = results[0].url;
+                        try {
+                            return sendEmbed(await process(results[0].url));
+                        } catch (err) {
+                            global.logger.warn(err);
+                            return await message.interaction.editReply(`Failed to play track`);
+                        }
                     } else {
-                        message.interaction.editReply({
+                        return message.interaction.editReply({
                             embeds: [
                                 new MessageEmbed()
                                     .setDescription(`:information_source: YouTube could not find a video with that input`)
@@ -324,49 +286,6 @@ class PlayCommand extends Command {
                         });
                     }
                 });
-
-            // Create a Track from the user's input
-            try {
-                const track = await Track.from(url, message.interaction.user, {
-                    async onStart() {
-                        message.channel.send({
-                            embeds: [
-                                new MessageEmbed()
-                                    .setAuthor(`▶️ Now playing`)
-                                    .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.name}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
-                                    .setThumbnail(track.video.thumbnails[0].url)
-                                    .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
-                                    .setColor(`#36393f`)
-                                    .setTimestamp()
-                            ]
-                        }).catch(global.logger.warn);
-                    },
-                    onFinish() {
-                        return;
-                    },
-                    onError(err) {
-                        global.logger.warn(err);
-                        message.interaction.followUp(`Failed to play: ${track.title}`).catch(global.logger.warn);
-                    }
-                });
-
-                // Queue track and reply with success message
-                subscription.enqueue(track);
-                await message.interaction.followUp({
-                    embeds: [
-                        new MessageEmbed()
-                            .setAuthor(`➕ Queued`)
-                            .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.name}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
-                            .setThumbnail(track.video.thumbnails[0].url)
-                            .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
-                            .setColor(`#36393f`)
-                            .setTimestamp()
-                    ]
-                }).catch(global.logger.warn);
-            } catch (err) {
-                global.logger.warn(err);
-                await message.interaction.editReply(`Failed to play track`);
-            }
         }
     }
 }

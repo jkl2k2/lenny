@@ -74,7 +74,30 @@ module.exports = class Track {
             }
         };
 
-        const info = (await play.video_info(url)).video_details;
+        let info;
+
+        if (url.includes(`soundcloud.com/`)) {
+            const so_info = await play.soundcloud(url);
+
+            const translatedInfo = {
+                title: so_info.name,
+                url: so_info.url,
+                channel: {
+                    name: so_info.user.name,
+                    url: so_info.user.url
+                },
+                durationInSec: so_info.durationInSec,
+                thumbnails: [
+                    {
+                        url: so_info.thumbnail
+                    }
+                ]
+            };
+
+            info = translatedInfo;
+        } else {
+            info = (await play.video_info(url)).video_details;
+        }
 
         return new Track(info, requester, wrappedMethods.onStart, wrappedMethods.onFinish, wrappedMethods.onError);
     }

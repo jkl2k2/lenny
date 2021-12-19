@@ -30,7 +30,7 @@ class PlayingCommand extends Command {
             const formattedTotal = subscription.audioPlayer._state.resource.metadata.getDuration();
 
             // Calculate the total duration of the song, used to compare to the running time
-            const total = playing.duration.seconds + (playing.duration.minutes * 60) + (playing.duration.hours * 60 * 60);
+            const total = playing.durationInSec;
 
             const formattedPlaying = pretty(subscription.audioPlayer._state.playbackDuration, { colonNotation: true, secondsDecimalDigits: 0 });
 
@@ -71,8 +71,8 @@ class PlayingCommand extends Command {
                 embeds: [
                     new MessageEmbed()
                         .setAuthor(`▶️ Now playing`)
-                        .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.name}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
-                        .setThumbnail(track.video.thumbnails[0].url)
+                        .setDescription(`**[${playing.title}](${playing.url})**\n[${playing.channel.name}](${playing.channel.url})\n\n\`${progressBar}\``)
+                        .setThumbnail(playing.thumbnails[0].url)
                         .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
                         .setColor(`#36393f`)
                         .setTimestamp()

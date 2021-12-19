@@ -149,7 +149,7 @@ class PlayCommand extends Command {
                 // Just a plain YouTube link
                 return sendEmbed(await process(args.song));
             }
-        } else if (args.song.includes(`spotify.com/playlist`)) {
+        } else if (args.song.includes(`spotify.com/playlist`) || args.song.includes(`spotify.com/album`)) {
             if (play.is_expired()) {
                 await play.refreshToken();
             }
@@ -205,8 +205,55 @@ class PlayCommand extends Command {
                             .setTimestamp()
                     ]
                 });
-            } else {
-                console.log(`I somehow got to playlist processing code without it being a Spotify playlist?`);
+            } else if (sp_data.type == `album`) {
+                message.interaction.editReply({
+                    embeds: [
+                        new MessageEmbed()
+                            .setAuthor(`🟡 Processing ${sp_data.total_tracks} Spotify songs`)
+                            .setDescription(`**[${sp_data.name}](${sp_data.url})**\n[${sp_data.artists[0].name}](${sp_data.artists[0].url})`)
+                            .setThumbnail(sp_data.thumbnail.url)
+                            .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                            .setColor(`#36393f`)
+                            .setTimestamp()
+                    ]
+                });
+
+                let failedVideos = 0;
+
+                // Create a Track from each song
+                for (const song of sp_data.fetched_tracks.get(`1`)) {
+                    await play.search(`${song.name} by ${song.artists[0].name}`, { limit: 1 })
+                        .then(async results => {
+                            if (results[0]) {
+                                await process(results[0].url);
+                            } else {
+                                failedVideos++;
+                            }
+                        });
+                }
+
+                if (failedVideos > 0) {
+                    await message.channel.send({
+                        embeds: [
+                            new MessageEmbed()
+                                .setDescription(`:information_source: \`${failedVideos}\` video(s) in the playlist were unable to be added`)
+                                .setColor(`#36393f`)
+                        ]
+                    });
+                }
+
+                // Reply with success message
+                return await message.interaction.editReply({
+                    embeds: [
+                        new MessageEmbed()
+                            .setAuthor(`➕ ${sp_data.total_tracks} Spotify songs queued`)
+                            .setDescription(`**[${sp_data.name}](${sp_data.url})**\n[${sp_data.artists[0].name}](${sp_data.artists[0].url})`)
+                            .setThumbnail(sp_data.thumbnail.url)
+                            .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                            .setColor(`#36393f`)
+                            .setTimestamp()
+                    ]
+                });
             }
         } else if (args.song.includes(`playlist`)) {
             let input = args.song;

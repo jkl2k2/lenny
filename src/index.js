@@ -5,6 +5,7 @@ const { Collection } = require(`discord.js`);
 const winston = require(`winston`);
 const winstonRotate = require(`winston-daily-rotate-file`);
 const Enmap = require(`enmap`);
+const { getFreeClientID, setToken } = require(`play-dl`);
 
 // Throw if dotenv error
 if (result.error) throw result.error;
@@ -132,6 +133,14 @@ client.on(`guildDelete`, guild => {
 });
 */
 //#endregion
+
+getFreeClientID().then((clientID) => {
+    setToken({
+        soundcloud: {
+            client_id: clientID
+        }
+    });
+});
 
 // Log in
 client.login(process.env.TOKEN);

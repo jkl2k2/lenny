@@ -8,6 +8,7 @@ const { MessageEmbed } = require(`discord.js`);
 const MusicSubscription = require(`../modules/subscription`);
 const Track = require(`../modules/track`);
 const play = require(`play-dl`);
+const amazon = require(`amazon-music-info`);
 
 /*eslint class-methods-use-this: ["error", { "exceptMethods": ["exec", "execSlash"] }] */
 class PlayCommand extends Command {
@@ -125,6 +126,111 @@ class PlayCommand extends Command {
             }
 
             return sendEmbed(await process(args.song));
+        } else if (args.song.includes(`music.amazon.com`)) {
+            if (amazon.isAmazonMusic(args.song)) {
+                if (amazon.isAmazonMusicUserPlaylist(args.song) || amazon.isAmazonMusicAlbum(args.song)) {
+                    message.interaction.editReply({
+                        embeds: [
+                            new MessageEmbed()
+                                .setAuthor(`🔎 Loading Amazon Music...`)
+                                .setDescription(`Finding playlist info...`)
+                                .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                                .setColor(`#36393f`)
+                                .setTimestamp()
+                        ]
+                    });
+
+                    try {
+                        const data = await amazon.getData(args.song);
+
+                        await message.interaction.editReply({
+                            embeds: [
+                                new MessageEmbed()
+                                    .setAuthor(`🟡 Processing ${data.items.length} Amazon Music songs`)
+                                    .setDescription(`**${data.title}**\nAmazon Music Playlist/Album\n\n\`~${1.25 * data.items.length} seconds\` to process`)
+                                    .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                                    .setColor(`#36393f`)
+                                    .setTimestamp()
+                            ]
+                        });
+
+                        console.log(data);
+
+                        let failedVideos = 0;
+
+                        // Create a Track from each song
+                        for (const song of data.items) {
+                            await play.search(`${song.name} by ${song.artist}`, { limit: 1 })
+                                .then(async results => {
+                                    if (results[0]) {
+                                        await process(results[0].url);
+                                    } else {
+                                        failedVideos++;
+                                    }
+                                });
+                        }
+
+                        if (failedVideos > 0) {
+                            await message.channel.send({
+                                embeds: [
+                                    new MessageEmbed()
+                                        .setDescription(`:information_source: \`${failedVideos}\` video(s) in the playlist were unable to be added`)
+                                        .setColor(`#36393f`)
+                                ]
+                            });
+                        }
+
+                        // Reply with success message
+                        return await message.interaction.editReply({
+                            embeds: [
+                                new MessageEmbed()
+                                    .setAuthor(`🟢 ${data.items.length} Amazon Music songs queued`)
+                                    .setDescription(`**${data.title}**\nAmazon Music User Playlist`)
+                                    .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                                    .setColor(`#36393f`)
+                                    .setTimestamp()
+                            ]
+                        });
+                    } catch (err) {
+                        console.log(err.message);
+
+                        return await message.interaction.editReply({
+                            embeds: [
+                                new MessageEmbed()
+                                    .setAuthor(`🔴 Error with Amazon Music`)
+                                    .setDescription(`**Amazon Music couldn't understand your link.**\nThat Amazon link may be invalid.`)
+                                    .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                                    .setColor(`#FF3838`)
+                                    .setTimestamp()
+                            ]
+                        });
+                    }
+                } else if (amazon.isAmazonMusicPlaylist(args.song) && !args.song.includes(`/my/playlists/`)) {
+                    return await message.interaction.editReply({
+                        embeds: [
+                            new MessageEmbed()
+                                .setAuthor(`🔴 Error with Amazon Music`)
+                                .setDescription(`**Sorry, official Amazon playlists are not supported.**\n Please submit a user-created playlist.`)
+                                .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                                .setColor(`#FF3838`)
+                                .setTimestamp()
+                        ]
+                    });
+                } else {
+                    return await message.interaction.editReply({
+                        embeds: [
+                            new MessageEmbed()
+                                .setAuthor(`🔴 Error with Amazon Music`)
+                                .setDescription(`**music.amazon.com links are only supported for albums and user-created playlists.**\n\n\`If you are trying to submit a user-created playlist, use the Share button and not the browser URL.\``)
+                                .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                                .setColor(`#FF3838`)
+                                .setTimestamp()
+                        ]
+                    });
+                }
+            } else {
+                return await message.interaction.editReply(`Invalid Amazon URL`);
+            }
         } else if (args.song.includes(`spotify.com/track`)) {
             message.interaction.editReply({
                 embeds: [

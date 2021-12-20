@@ -231,156 +231,218 @@ class PlayCommand extends Command {
             } else {
                 return await message.interaction.editReply(`Invalid Amazon URL`);
             }
-        } else if (args.song.includes(`spotify.com/track`)) {
-            message.interaction.editReply({
-                embeds: [
-                    new MessageEmbed()
-                        .setAuthor(`🔎 Loading Spotify Song...`)
-                        .setDescription(`Finding closest YouTube match...`)
-                        .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
-                        .setColor(`#36393f`)
-                        .setTimestamp()
-                ]
-            });
-
+        } else if (args.song.includes(`spotify.com`)) {
             if (play.is_expired()) {
                 await play.refreshToken();
             }
 
-            const sp_data = await play.spotify(args.song);
+            if (play.sp_validate(args.song) == `track`) {
+                message.interaction.editReply({
+                    embeds: [
+                        new MessageEmbed()
+                            .setAuthor(`🔎 Loading Spotify Song...`)
+                            .setDescription(`Finding closest YouTube match...`)
+                            .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                            .setColor(`#36393f`)
+                            .setTimestamp()
+                    ]
+                });
 
-            await play.search(`${sp_data.name} by ${sp_data.artists[0].name}`, { limit: 1 })
-                .then(async results => {
-                    if (results[0]) {
-                        return sendEmbed(await process(results[0].url));
-                    } else {
-                        message.interaction.editReply({
+                try {
+                    const sp_data = await play.spotify(args.song);
+
+                    await play.search(`${sp_data.name} by ${sp_data.artists[0].name}`, { limit: 1 })
+                        .then(async results => {
+                            if (results[0]) {
+                                return sendEmbed(await process(results[0].url));
+                            } else {
+                                message.interaction.editReply({
+                                    embeds: [
+                                        new MessageEmbed()
+                                            .setDescription(`:information_source: YouTube could not find a video with that input`)
+                                            .setColor(`#36393f`)
+                                    ]
+                                });
+                            }
+                        });
+                } catch (err) {
+                    console.log(err.message);
+                    return await message.interaction.editReply({
+                        embeds: [
+                            new MessageEmbed()
+                                .setAuthor(`🔴 Error with Spotify`)
+                                .setDescription(`**Spotify encountered an error when processing the song.**\nI unfortunately don't have any other info.`)
+                                .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                                .setColor(`#FF3838`)
+                                .setTimestamp()
+                        ]
+                    });
+                }
+            } else if (play.sp_validate(args.song) == `playlist`) {
+                message.interaction.editReply({
+                    embeds: [
+                        new MessageEmbed()
+                            .setAuthor(`🔎 Loading Spotify Playlist...`)
+                            .setDescription(`Looking up info...`)
+                            .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                            .setColor(`#36393f`)
+                            .setTimestamp()
+                    ]
+                });
+
+                try {
+                    const sp_data = await play.spotify(args.song);
+
+                    message.interaction.editReply({
+                        embeds: [
+                            new MessageEmbed()
+                                .setAuthor(`🟡 Processing ${sp_data.total_tracks} Spotify songs`)
+                                .setDescription(`**[${sp_data.name}](${sp_data.url})**\n[${sp_data.owner.name}](${sp_data.owner.url})\n\n\`~${1.25 * sp_data.total_tracks} seconds\` to process`)
+                                .setThumbnail(sp_data.thumbnail.url)
+                                .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                                .setColor(`#36393f`)
+                                .setTimestamp()
+                        ]
+                    });
+
+                    let failedVideos = 0;
+
+                    // Create a Track from each song
+                    for (const song of sp_data.fetched_tracks.get(`1`)) {
+                        await play.search(`${song.name} by ${song.artists[0].name}`, { limit: 1 })
+                            .then(async results => {
+                                if (results[0]) {
+                                    await process(results[0].url);
+                                } else {
+                                    failedVideos++;
+                                }
+                            });
+                    }
+
+                    if (failedVideos > 0) {
+                        await message.channel.send({
                             embeds: [
                                 new MessageEmbed()
-                                    .setDescription(`:information_source: YouTube could not find a video with that input`)
+                                    .setDescription(`:information_source: \`${failedVideos}\` video(s) in the playlist were unable to be added`)
                                     .setColor(`#36393f`)
                             ]
                         });
                     }
-                });
-        } else if (args.song.includes(`spotify.com/playlist`) || args.song.includes(`spotify.com/album`)) {
-            if (play.is_expired()) {
-                await play.refreshToken();
-            }
 
-            message.interaction.editReply({
-                embeds: [
-                    new MessageEmbed()
-                        .setAuthor(`🔎 Loading Spotify Playlist/Album...`)
-                        .setDescription(`Looking up info...`)
-                        .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
-                        .setColor(`#36393f`)
-                        .setTimestamp()
-                ]
-            });
-
-            const sp_data = await play.spotify(args.song);
-
-            if (sp_data.type == `playlist`) {
-                message.interaction.editReply({
-                    embeds: [
-                        new MessageEmbed()
-                            .setAuthor(`🟡 Processing ${sp_data.total_tracks} Spotify songs`)
-                            .setDescription(`**[${sp_data.name}](${sp_data.url})**\n[${sp_data.owner.name}](${sp_data.owner.url})\n\n\`~${1.25 * sp_data.total_tracks} seconds\` to process`)
-                            .setThumbnail(sp_data.thumbnail.url)
-                            .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
-                            .setColor(`#36393f`)
-                            .setTimestamp()
-                    ]
-                });
-
-                let failedVideos = 0;
-
-                // Create a Track from each song
-                for (const song of sp_data.fetched_tracks.get(`1`)) {
-                    await play.search(`${song.name} by ${song.artists[0].name}`, { limit: 1 })
-                        .then(async results => {
-                            if (results[0]) {
-                                await process(results[0].url);
-                            } else {
-                                failedVideos++;
-                            }
-                        });
-                }
-
-                if (failedVideos > 0) {
-                    await message.channel.send({
+                    // Reply with success message
+                    return await message.interaction.editReply({
                         embeds: [
                             new MessageEmbed()
-                                .setDescription(`:information_source: \`${failedVideos}\` video(s) in the playlist were unable to be added`)
+                                .setAuthor(`🟢 ${sp_data.total_tracks} Spotify songs queued`)
+                                .setDescription(`**[${sp_data.name}](${sp_data.url})**\n[${sp_data.owner.name}](${sp_data.owner.url})`)
+                                .setThumbnail(sp_data.thumbnail.url)
+                                .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
                                 .setColor(`#36393f`)
+                                .setTimestamp()
+                        ]
+                    });
+                } catch (err) {
+                    console.log(err.message);
+                    return await message.interaction.editReply({
+                        embeds: [
+                            new MessageEmbed()
+                                .setAuthor(`🔴 Error with Spotify`)
+                                .setDescription(`**Spotify encountered an error when processing the playlist.**\nI unfortunately don't have any other info.`)
+                                .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                                .setColor(`#FF3838`)
+                                .setTimestamp()
                         ]
                     });
                 }
-
-                // Reply with success message
-                return await message.interaction.editReply({
-                    embeds: [
-                        new MessageEmbed()
-                            .setAuthor(`🟢 ${sp_data.total_tracks} Spotify songs queued`)
-                            .setDescription(`**[${sp_data.name}](${sp_data.url})**\n[${sp_data.owner.name}](${sp_data.owner.url})`)
-                            .setThumbnail(sp_data.thumbnail.url)
-                            .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
-                            .setColor(`#36393f`)
-                            .setTimestamp()
-                    ]
-                });
-            } else if (sp_data.type == `album`) {
+            } else if (play.sp_validate(args.song) == `album`) {
                 message.interaction.editReply({
                     embeds: [
                         new MessageEmbed()
-                            .setAuthor(`🟡 Processing ${sp_data.total_tracks} Spotify songs`)
-                            .setDescription(`**[${sp_data.name}](${sp_data.url})**\n[${sp_data.artists[0].name}](${sp_data.artists[0].url})\n\n\`~${1.25 * sp_data.total_tracks} seconds\` to process`)
-                            .setThumbnail(sp_data.thumbnail.url)
+                            .setAuthor(`🔎 Loading Spotify Album...`)
+                            .setDescription(`Looking up info...`)
                             .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
                             .setColor(`#36393f`)
                             .setTimestamp()
                     ]
                 });
 
-                let failedVideos = 0;
+                try {
+                    const sp_data = await play.spotify(args.song);
 
-                // Create a Track from each song
-                for (const song of sp_data.fetched_tracks.get(`1`)) {
-                    await play.search(`${song.name} by ${song.artists[0].name}`, { limit: 1 })
-                        .then(async results => {
-                            if (results[0]) {
-                                await process(results[0].url);
-                            } else {
-                                failedVideos++;
-                            }
-                        });
-                }
-
-                if (failedVideos > 0) {
-                    await message.channel.send({
+                    message.interaction.editReply({
                         embeds: [
                             new MessageEmbed()
-                                .setDescription(`:information_source: \`${failedVideos}\` video(s) in the playlist were unable to be added`)
+                                .setAuthor(`🟡 Processing ${sp_data.total_tracks} Spotify songs`)
+                                .setDescription(`**[${sp_data.name}](${sp_data.url})**\n[${sp_data.artists[0].name}](${sp_data.artists[0].url})\n\n\`~${1.25 * sp_data.total_tracks} seconds\` to process`)
+                                .setThumbnail(sp_data.thumbnail.url)
+                                .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
                                 .setColor(`#36393f`)
+                                .setTimestamp()
+                        ]
+                    });
+
+                    let failedVideos = 0;
+
+                    // Create a Track from each song
+                    for (const song of sp_data.fetched_tracks.get(`1`)) {
+                        await play.search(`${song.name} by ${song.artists[0].name}`, { limit: 1 })
+                            .then(async results => {
+                                if (results[0]) {
+                                    await process(results[0].url);
+                                } else {
+                                    failedVideos++;
+                                }
+                            });
+                    }
+
+                    if (failedVideos > 0) {
+                        await message.channel.send({
+                            embeds: [
+                                new MessageEmbed()
+                                    .setDescription(`:information_source: \`${failedVideos}\` video(s) in the playlist were unable to be added`)
+                                    .setColor(`#36393f`)
+                            ]
+                        });
+                    }
+
+                    // Reply with success message
+                    return await message.interaction.editReply({
+                        embeds: [
+                            new MessageEmbed()
+                                .setAuthor(`🟢 ${sp_data.total_tracks} Spotify songs queued`)
+                                .setDescription(`**[${sp_data.name}](${sp_data.url})**\n[${sp_data.artists[0].name}](${sp_data.artists[0].url})`)
+                                .setThumbnail(sp_data.thumbnail.url)
+                                .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                                .setColor(`#36393f`)
+                                .setTimestamp()
+                        ]
+                    });
+                } catch (err) {
+                    console.log(err.message);
+                    return await message.interaction.editReply({
+                        embeds: [
+                            new MessageEmbed()
+                                .setAuthor(`🔴 Error with Spotify`)
+                                .setDescription(`**Spotify encountered an error when processing the album.**\nI unfortunately don't have any other info.`)
+                                .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                                .setColor(`#FF3838`)
+                                .setTimestamp()
                         ]
                     });
                 }
-
-                // Reply with success message
+            } else {
+                // Invalid Spotify URL
                 return await message.interaction.editReply({
                     embeds: [
                         new MessageEmbed()
-                            .setAuthor(`🟢 ${sp_data.total_tracks} Spotify songs queued`)
-                            .setDescription(`**[${sp_data.name}](${sp_data.url})**\n[${sp_data.artists[0].name}](${sp_data.artists[0].url})`)
-                            .setThumbnail(sp_data.thumbnail.url)
+                            .setAuthor(`🔴 Error with Spotify`)
+                            .setDescription(`**Your Spotify Link appears to be invalid.**\n\`Only Spotify songs, albums, and playlists are supported.\``)
                             .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
-                            .setColor(`#36393f`)
+                            .setColor(`#FF3838`)
                             .setTimestamp()
                     ]
                 });
             }
-
         } else if (args.song.includes(`soundcloud.com/`)) {
             if (args.song.includes(`/sets/`) && !args.song.includes(`?in=`)) {
                 // Is a playlist

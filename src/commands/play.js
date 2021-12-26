@@ -245,7 +245,7 @@ class PlayCommand extends Command {
                     embeds: [
                         new MessageEmbed()
                             .setAuthor(`🔎 Loading Spotify Song...`)
-                            .setDescription(`Finding closest YouTube match...`)
+                            .setDescription(`Looking up info...`)
                             .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
                             .setColor(`#36393f`)
                             .setTimestamp()
@@ -253,22 +253,7 @@ class PlayCommand extends Command {
                 });
 
                 try {
-                    const sp_data = await play.spotify(args.song);
-
-                    await play.search(`${sp_data.name} by ${sp_data.artists[0].name}`, { limit: 1 })
-                        .then(async results => {
-                            if (results[0]) {
-                                return sendEmbed(await process(results[0].url));
-                            } else {
-                                message.interaction.editReply({
-                                    embeds: [
-                                        new MessageEmbed()
-                                            .setDescription(`:information_source: YouTube could not find a video with that input`)
-                                            .setColor(`#36393f`)
-                                    ]
-                                });
-                            }
-                        });
+                    return sendEmbed(await process(args.song));
                 } catch (err) {
                     console.log(err.message);
                     return await message.interaction.editReply({
@@ -301,7 +286,7 @@ class PlayCommand extends Command {
                         embeds: [
                             new MessageEmbed()
                                 .setAuthor(`🟡 Processing ${sp_data.total_tracks} Spotify songs`)
-                                .setDescription(`**[${sp_data.name}](${sp_data.url})**\n[${sp_data.owner.name}](${sp_data.owner.url})\n\n\`~${1.25 * sp_data.total_tracks} seconds\` to process`)
+                                .setDescription(`**[${sp_data.name}](${sp_data.url})**\n[${sp_data.owner.name}](${sp_data.owner.url})\n\n\`~${0.15 * sp_data.total_tracks} seconds\` to process`)
                                 .setThumbnail(sp_data.thumbnail.url)
                                 .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
                                 .setColor(`#36393f`)
@@ -313,21 +298,18 @@ class PlayCommand extends Command {
 
                     // Create a Track from each song
                     for (const song of sp_data.fetched_tracks.get(`1`)) {
-                        await play.search(`${song.name} by ${song.artists[0].name}`, { limit: 1 })
-                            .then(async results => {
-                                if (results[0]) {
-                                    await process(results[0].url);
-                                } else {
-                                    failedVideos++;
-                                }
-                            });
+                        if (!song.url) {
+                            failedVideos++;
+                        } else {
+                            await process(song.url);
+                        }
                     }
 
                     if (failedVideos > 0) {
                         await message.channel.send({
                             embeds: [
                                 new MessageEmbed()
-                                    .setDescription(`:information_source: \`${failedVideos}\` video(s) in the playlist were unable to be added`)
+                                    .setDescription(`:information_source: \`${failedVideos}\` song(s) in the playlist were unavailable on Spotify and could not be added`)
                                     .setColor(`#36393f`)
                             ]
                         });
@@ -389,14 +371,11 @@ class PlayCommand extends Command {
 
                     // Create a Track from each song
                     for (const song of sp_data.fetched_tracks.get(`1`)) {
-                        await play.search(`${song.name} by ${song.artists[0].name}`, { limit: 1 })
-                            .then(async results => {
-                                if (results[0]) {
-                                    await process(results[0].url);
-                                } else {
-                                    failedVideos++;
-                                }
-                            });
+                        if (!song.url) {
+                            failedVideos++;
+                        } else {
+                            await process(song.url);
+                        }
                     }
 
                     if (failedVideos > 0) {

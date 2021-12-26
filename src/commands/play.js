@@ -154,27 +154,22 @@ class PlayCommand extends Command {
                             ]
                         });
 
-                        console.log(data);
-
                         let failedVideos = 0;
 
                         // Create a Track from each song
                         for (const song of data.items) {
-                            await play.search(`${song.name} by ${song.artist}`, { limit: 1 })
-                                .then(async results => {
-                                    if (results[0]) {
-                                        await process(results[0].url);
-                                    } else {
-                                        failedVideos++;
-                                    }
-                                });
+                            if (!song.url) {
+                                failedVideos++;
+                            } else {
+                                await process(song.url);
+                            }
                         }
 
                         if (failedVideos > 0) {
                             await message.channel.send({
                                 embeds: [
                                     new MessageEmbed()
-                                        .setDescription(`:information_source: \`${failedVideos}\` video(s) in the playlist were unable to be added`)
+                                        .setDescription(`:information_source: \`${failedVideos}\` song(s) were unavailable on Amazon Music and could not be added`)
                                         .setColor(`#36393f`)
                                 ]
                             });
@@ -229,7 +224,16 @@ class PlayCommand extends Command {
                     });
                 }
             } else {
-                return await message.interaction.editReply(`Invalid Amazon URL`);
+                return await message.interaction.editReply({
+                    embeds: [
+                        new MessageEmbed()
+                            .setAuthor(`🔴 Error with Amazon Music`)
+                            .setDescription(`**Amazon Music couldn't understand your link.**\nThat Amazon link may be invalid.`)
+                            .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                            .setColor(`#FF3838`)
+                            .setTimestamp()
+                    ]
+                });
             }
         } else if (args.song.includes(`spotify.com`)) {
             if (play.is_expired()) {

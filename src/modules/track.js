@@ -1,6 +1,7 @@
 const { createAudioResource } = require(`@discordjs/voice`);
 const play = require(`play-dl`);
 const pretty = require(`pretty-ms`);
+const amazon = require(`amazon-music-info`);
 
 const noop = () => { };
 
@@ -38,9 +39,25 @@ module.exports = class Track {
     createAudioResource() {
         return new Promise(async (resolve, reject) => {
             if (this.url.includes(`spotify.com/`)) {
-                const song = await play.spotify(this.url);
+                return await play.search(`${this.video.title} by ${this.video.channel.name}`, { limit: 1 })
+                    .then(async results => {
+                        if (results[0]) {
+                            let stream = await play.stream(results[0].url);
 
-                return await play.search(`${song.name} by ${song.artists[0].name}`, { limit: 1 })
+                            if (stream.stream) {
+                                resolve(createAudioResource(stream.stream, {
+                                    metadata: this,
+                                    inputType: stream.type
+                                }));
+                            } else {
+                                reject(new Error(`No stream acquirable for input ${this.url}`));
+                            }
+                        } else {
+                            failedVideos++;
+                        }
+                    });
+            } else if (this.url.includes(`amazon.com/`)) {
+                return await play.search(`${this.video.title} by ${this.video.channel.name}`, { limit: 1 })
                     .then(async results => {
                         if (results[0]) {
                             let stream = await play.stream(results[0].url);
@@ -80,7 +97,7 @@ module.exports = class Track {
      * @param methods Lifecycle callbacks
      * @return The created Track
      */
-    static async from(url, requester, methods) {
+    static async from(input, requester, methods) {
         const wrappedMethods = {
             onStart() {
                 wrappedMethods.onStart = noop;
@@ -98,8 +115,23 @@ module.exports = class Track {
 
         let info;
 
-        if (url.includes(`soundcloud.com/`)) {
-            const so_info = await play.soundcloud(url);
+        if (input.url && input.url.includes(`amazon.com/`)) {
+            info = {
+                title: input.name,
+                url: input.url,
+                channel: {
+                    name: input.artist,
+                    url: input.artist_url
+                },
+                durationInSec: input.duration,
+                thumbnails: [
+                    {
+                        url: ``
+                    }
+                ]
+            };
+        } else if (input.includes(`soundcloud.com/`)) {
+            const so_info = await play.soundcloud(input);
 
             const translatedInfo = {
                 title: so_info.name,
@@ -117,10 +149,10 @@ module.exports = class Track {
             };
 
             info = translatedInfo;
-        } else if (url.includes(`spotify.com/`)) {
-            const sp_info = await play.spotify(url);
+        } else if (input.includes(`spotify.com/`)) {
+            const sp_info = await play.spotify(input);
 
-            const translatedInfo = {
+            info = {
                 title: sp_info.name,
                 url: sp_info.url,
                 channel: {
@@ -134,8 +166,6 @@ module.exports = class Track {
                     }
                 ]
             };
-
-            info = translatedInfo;
         } else {
             info = (await play.video_info(url)).video_details;
         }

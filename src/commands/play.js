@@ -61,8 +61,6 @@ class PlayCommand extends Command {
 
         // If no subscription, tell user to join a voice channel
         if (!subscription) {
-            console.log(subscription);
-            console.log(message.interaction.member.voice.channel);
             return await message.interaction.followUp(`You need to join a voice channel first!`);
         }
 
@@ -74,9 +72,9 @@ class PlayCommand extends Command {
             return await message.interaction.followUp(`Failed to join voice channel within 20 seconds, please try again later.`);
         }
 
-        async function process(url) {
+        async function process(input) {
             // Create a Track from the user's input
-            const track = await Track.from(url, message.interaction.user, {
+            const track = await Track.from(input, message.interaction.user, {
                 async onStart() {
                     message.channel.send({
                         embeds: [
@@ -147,7 +145,7 @@ class PlayCommand extends Command {
                             embeds: [
                                 new MessageEmbed()
                                     .setAuthor(`🟡 Processing ${data.items.length} Amazon Music songs`)
-                                    .setDescription(`**${data.title}**\nAmazon Music Playlist/Album\n\n\`~${1.25 * data.items.length} seconds\` to process`)
+                                    .setDescription(`**${data.title}**\nAmazon Music Playlist/Album`)
                                     .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
                                     .setColor(`#36393f`)
                                     .setTimestamp()
@@ -161,7 +159,7 @@ class PlayCommand extends Command {
                             if (!song.url) {
                                 failedVideos++;
                             } else {
-                                await process(song.url);
+                                await process(song);
                             }
                         }
 
@@ -180,7 +178,7 @@ class PlayCommand extends Command {
                             embeds: [
                                 new MessageEmbed()
                                     .setAuthor(`🟢 ${data.items.length} Amazon Music songs queued`)
-                                    .setDescription(`**${data.title}**\nAmazon Music User Playlist`)
+                                    .setDescription(`**${data.title}**\nAmazon Music Playlist/Album`)
                                     .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
                                     .setColor(`#36393f`)
                                     .setTimestamp()
@@ -319,7 +317,7 @@ class PlayCommand extends Command {
                     return await message.interaction.editReply({
                         embeds: [
                             new MessageEmbed()
-                                .setAuthor(`🟢 ${sp_data.total_tracks} Spotify songs queued`)
+                                .setAuthor(`🟢 ${sp_data.total_tracks - failedVideos} Spotify songs queued`)
                                 .setDescription(`**[${sp_data.name}](${sp_data.url})**\n[${sp_data.owner.name}](${sp_data.owner.url})`)
                                 .setThumbnail(sp_data.thumbnail.url)
                                 .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
@@ -392,7 +390,7 @@ class PlayCommand extends Command {
                     return await message.interaction.editReply({
                         embeds: [
                             new MessageEmbed()
-                                .setAuthor(`🟢 ${sp_data.total_tracks} Spotify songs queued`)
+                                .setAuthor(`🟢 ${sp_data.total_tracks - failedVideos} Spotify songs queued`)
                                 .setDescription(`**[${sp_data.name}](${sp_data.url})**\n[${sp_data.artists[0].name}](${sp_data.artists[0].url})`)
                                 .setThumbnail(sp_data.thumbnail.url)
                                 .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())

@@ -26,12 +26,12 @@ class PlayCommand extends Command {
                 {
                     name: 'song',
                     type: 'STRING',
-                    description: 'Plays a song or playlist from either YouTube, Spotify (albums as well), or SoundCloud',
+                    description: 'Plays a song or playlist from either YouTube, Spotify (albums as well), SoundCloud, or Amazon Music',
                     required: true,
                 }
             ],
             category: `music`,
-            description: `Plays a song or playlist from either YouTube, Spotify (albums as well), or SoundCloud`,
+            description: `Plays a song or playlist from either YouTube, Spotify (albums as well), SoundCloud, or Amazon Music`,
             channel: `guild`
         });
     }
@@ -118,11 +118,6 @@ class PlayCommand extends Command {
         }
 
         if (args.song.includes(`watch?v=`) || args.song.includes(`youtu.be`)) {
-            // Need to strip out "music" part of string, if applicable
-            if (args.song.includes(`music.youtube`)) {
-                return await process(args.song.slice(0, 8) + args.song.slice(14));
-            }
-
             return sendEmbed(await process(args.song));
         } else if (args.song.includes(`music.amazon.com`)) {
             if (amazon.isAmazonMusic(args.song)) {
@@ -515,7 +510,7 @@ class PlayCommand extends Command {
                 if (song.private) {
                     privateVideos++;
                 } else {
-                    await process(song.url);
+                    await process(song);
                 }
             }
 

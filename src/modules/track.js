@@ -115,7 +115,7 @@ module.exports = class Track {
 
         let info;
 
-        if (input.url && input.url.includes(`amazon.com/`)) {
+        if (typeof input === `object` && input.url.includes(`amazon.com/`)) {
             info = {
                 title: input.name,
                 url: input.url,
@@ -127,6 +127,21 @@ module.exports = class Track {
                 thumbnails: [
                     {
                         url: ``
+                    }
+                ]
+            };
+        } else if (typeof input === `object` && input.url.includes(`youtube.com/`)) {
+            info = {
+                title: input.title,
+                url: input.url,
+                channel: {
+                    name: input.channel.name,
+                    url: input.channel.url
+                },
+                durationInSec: input.durationInSec,
+                thumbnails: [
+                    {
+                        url: input.thumbnails[0].url
                     }
                 ]
             };

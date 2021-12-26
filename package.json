@@ -32,7 +32,7 @@
     "dotenv": "^8.2.0",
     "enmap": "^5.8.5",
     "libsodium-wrappers": "^0.7.9",
-    "play-dl": "^1.6.1",
+    "play-dl": "^1.6.7",
     "pretty-ms": "^7.0.1",
     "sequelize": "^6.6.2",
     "sqlite": "^4.0.21",

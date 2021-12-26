@@ -167,7 +167,7 @@ module.exports = class Track {
                 ]
             };
         } else {
-            info = (await play.video_info(url)).video_details;
+            info = (await play.video_info(input)).video_details;
         }
 
         return new Track(info, requester, wrappedMethods.onStart, wrappedMethods.onFinish, wrappedMethods.onError);

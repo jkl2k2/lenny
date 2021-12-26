@@ -61,8 +61,6 @@ class PlayCommand extends Command {
 
         // If no subscription, tell user to join a voice channel
         if (!subscription) {
-            console.log(subscription);
-            console.log(message.interaction.member.voice.channel);
             return await message.interaction.followUp(`You need to join a voice channel first!`);
         }
 
@@ -74,9 +72,9 @@ class PlayCommand extends Command {
             return await message.interaction.followUp(`Failed to join voice channel within 20 seconds, please try again later.`);
         }
 
-        async function process(url) {
+        async function process(input) {
             // Create a Track from the user's input
-            const track = await Track.from(url, message.interaction.user, {
+            const track = await Track.from(input, message.interaction.user, {
                 async onStart() {
                     message.channel.send({
                         embeds: [
@@ -147,34 +145,29 @@ class PlayCommand extends Command {
                             embeds: [
                                 new MessageEmbed()
                                     .setAuthor(`🟡 Processing ${data.items.length} Amazon Music songs`)
-                                    .setDescription(`**${data.title}**\nAmazon Music Playlist/Album\n\n\`~${1.25 * data.items.length} seconds\` to process`)
+                                    .setDescription(`**${data.title}**\nAmazon Music Playlist/Album`)
                                     .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
                                     .setColor(`#36393f`)
                                     .setTimestamp()
                             ]
                         });
 
-                        console.log(data);
-
                         let failedVideos = 0;
 
                         // Create a Track from each song
                         for (const song of data.items) {
-                            await play.search(`${song.name} by ${song.artist}`, { limit: 1 })
-                                .then(async results => {
-                                    if (results[0]) {
-                                        await process(results[0].url);
-                                    } else {
-                                        failedVideos++;
-                                    }
-                                });
+                            if (!song.url) {
+                                failedVideos++;
+                            } else {
+                                await process(song);
+                            }
                         }
 
                         if (failedVideos > 0) {
                             await message.channel.send({
                                 embeds: [
                                     new MessageEmbed()
-                                        .setDescription(`:information_source: \`${failedVideos}\` video(s) in the playlist were unable to be added`)
+                                        .setDescription(`:information_source: \`${failedVideos}\` song(s) were unavailable on Amazon Music and could not be added`)
                                         .setColor(`#36393f`)
                                 ]
                             });
@@ -185,7 +178,7 @@ class PlayCommand extends Command {
                             embeds: [
                                 new MessageEmbed()
                                     .setAuthor(`🟢 ${data.items.length} Amazon Music songs queued`)
-                                    .setDescription(`**${data.title}**\nAmazon Music User Playlist`)
+                                    .setDescription(`**${data.title}**\nAmazon Music Playlist/Album`)
                                     .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
                                     .setColor(`#36393f`)
                                     .setTimestamp()
@@ -229,7 +222,16 @@ class PlayCommand extends Command {
                     });
                 }
             } else {
-                return await message.interaction.editReply(`Invalid Amazon URL`);
+                return await message.interaction.editReply({
+                    embeds: [
+                        new MessageEmbed()
+                            .setAuthor(`🔴 Error with Amazon Music`)
+                            .setDescription(`**Amazon Music couldn't understand your link.**\nThat Amazon link may be invalid.`)
+                            .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                            .setColor(`#FF3838`)
+                            .setTimestamp()
+                    ]
+                });
             }
         } else if (args.song.includes(`spotify.com`)) {
             if (play.is_expired()) {
@@ -315,7 +317,7 @@ class PlayCommand extends Command {
                     return await message.interaction.editReply({
                         embeds: [
                             new MessageEmbed()
-                                .setAuthor(`🟢 ${sp_data.total_tracks} Spotify songs queued`)
+                                .setAuthor(`🟢 ${sp_data.total_tracks - failedVideos} Spotify songs queued`)
                                 .setDescription(`**[${sp_data.name}](${sp_data.url})**\n[${sp_data.owner.name}](${sp_data.owner.url})`)
                                 .setThumbnail(sp_data.thumbnail.url)
                                 .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
@@ -388,7 +390,7 @@ class PlayCommand extends Command {
                     return await message.interaction.editReply({
                         embeds: [
                             new MessageEmbed()
-                                .setAuthor(`🟢 ${sp_data.total_tracks} Spotify songs queued`)
+                                .setAuthor(`🟢 ${sp_data.total_tracks - failedVideos} Spotify songs queued`)
                                 .setDescription(`**[${sp_data.name}](${sp_data.url})**\n[${sp_data.artists[0].name}](${sp_data.artists[0].url})`)
                                 .setThumbnail(sp_data.thumbnail.url)
                                 .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())

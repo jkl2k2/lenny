@@ -494,7 +494,7 @@ class PlayCommand extends Command {
                 embeds: [
                     new MessageEmbed()
                         .setAuthor(`🟡 Processing ${playlist.total_videos} YouTube songs`)
-                        .setDescription(`**[${playlist.title}](${playlist.url})**\n[${playlist.channel.name}](${playlist.channel.url})\n\n\`~${0.75 * playlist.total_videos} seconds\` to process`)
+                        .setDescription(`**[${playlist.title}](${playlist.url})**\n[${playlist.channel.name}](${playlist.channel.url})`)
                         .setThumbnail(playlist.thumbnail.url)
                         .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
                         .setColor(`#36393f`)

@@ -37,6 +37,28 @@ module.exports = class Track {
      */
     createAudioResource() {
         return new Promise(async (resolve, reject) => {
+            if (this.url.includes(`spotify.com/`)) {
+                const song = await play.spotify(this.url);
+
+                return await play.search(`${song.name} by ${song.artists[0].name}`, { limit: 1 })
+                    .then(async results => {
+                        if (results[0]) {
+                            let stream = await play.stream(results[0].url);
+
+                            if (stream.stream) {
+                                resolve(createAudioResource(stream.stream, {
+                                    metadata: this,
+                                    inputType: stream.type
+                                }));
+                            } else {
+                                reject(new Error(`No stream acquirable for input ${this.url}`));
+                            }
+                        } else {
+                            failedVideos++;
+                        }
+                    });
+            }
+
             let stream = await play.stream(this.url);
 
             if (stream.stream) {
@@ -90,6 +112,25 @@ module.exports = class Track {
                 thumbnails: [
                     {
                         url: so_info.thumbnail
+                    }
+                ]
+            };
+
+            info = translatedInfo;
+        } else if (url.includes(`spotify.com/`)) {
+            const sp_info = await play.spotify(url);
+
+            const translatedInfo = {
+                title: sp_info.name,
+                url: sp_info.url,
+                channel: {
+                    name: sp_info.artists[0].name,
+                    url: sp_info.artists[0].url
+                },
+                durationInSec: sp_info.durationInSec,
+                thumbnails: [
+                    {
+                        url: sp_info.thumbnail.url
                     }
                 ]
             };

@@ -1,3 +1,5 @@
+/*jshint esversion: 11 */
+
 const { createAudioResource } = require(`@discordjs/voice`);
 const play = require(`play-dl`);
 const pretty = require(`pretty-ms`);
@@ -145,6 +147,38 @@ module.exports = class Track {
                     }
                 ]
             };
+        } else if (typeof input === `object` && input.url.includes(`spotify.com/`)) {
+            info = {
+                title: input.name,
+                url: input.url || `https://www.spotify.com/us/`,
+                channel: {
+                    name: input.artists[0].name,
+                    url: input.artists[0].url || `https://www.spotify.com/us/`
+                },
+                durationInSec: input.durationInSec,
+                thumbnails: [
+                    {
+                        url: input.thumbnail?.url
+                    }
+                ]
+            };
+        } else if (input.includes(`spotify.com/`)) {
+            const sp_data = await play.spotify(input);
+
+            info = {
+                title: sp_data.name,
+                url: sp_data.url || `https://www.spotify.com/us/`,
+                channel: {
+                    name: sp_data.artists[0].name,
+                    url: sp_data.artists[0].url || `https://www.spotify.com/us/`
+                },
+                durationInSec: sp_data.durationInSec,
+                thumbnails: [
+                    {
+                        url: sp_data.thumbnail?.url
+                    }
+                ]
+            };
         } else if (input.includes(`soundcloud.com/`)) {
             const so_info = await play.soundcloud(input);
 
@@ -164,23 +198,6 @@ module.exports = class Track {
             };
 
             info = translatedInfo;
-        } else if (input.includes(`spotify.com/`)) {
-            const sp_info = await play.spotify(input);
-
-            info = {
-                title: sp_info.name,
-                url: sp_info.url,
-                channel: {
-                    name: sp_info.artists[0].name,
-                    url: sp_info.artists[0].url
-                },
-                durationInSec: sp_info.durationInSec,
-                thumbnails: [
-                    {
-                        url: sp_info.thumbnail.url
-                    }
-                ]
-            };
         } else {
             info = (await play.video_info(input)).video_details;
         }

@@ -274,6 +274,7 @@ class PlayCommand extends Command {
 
                 try {
                     const sp_data = await play.spotify(args.song);
+                    await sp_data.fetch();
 
                     message.interaction.editReply({
                         embeds: [
@@ -287,22 +288,27 @@ class PlayCommand extends Command {
                         ]
                     });
 
-                    let failedVideos = 0;
+                    let incompleteSongs = 0;
 
                     // Create a Track from each song
-                    for (const song of sp_data.fetched_tracks.get(`1`)) {
-                        if (!song.url) {
-                            failedVideos++;
-                        } else {
-                            await process(song.url);
+                    for (let i = 1; i <= sp_data.total_pages; i++) {
+                        const page = sp_data.page(i);
+                        for (const song of page) {
+                            if (!song.url) {
+                                song.url = `https://www.spotify.com/us/`;
+                                await process(song);
+                                incompleteSongs++;
+                            } else {
+                                await process(song);
+                            }
                         }
                     }
 
-                    if (failedVideos > 0) {
+                    if (incompleteSongs > 0) {
                         await message.channel.send({
                             embeds: [
                                 new MessageEmbed()
-                                    .setDescription(`:information_source: \`${failedVideos}\` song(s) in the playlist were unavailable on Spotify and could not be added`)
+                                    .setDescription(`:information_source: \`${incompleteSongs}\` song(s) in the playlist were unavailable on Spotify, so less information was available. Incorrect songs may be accidentally played.`)
                                     .setColor(`#36393f`)
                             ]
                         });
@@ -312,7 +318,7 @@ class PlayCommand extends Command {
                     return await message.interaction.editReply({
                         embeds: [
                             new MessageEmbed()
-                                .setAuthor(`🟢 ${sp_data.total_tracks - failedVideos} Spotify songs queued`)
+                                .setAuthor(`🟢 ${sp_data.total_tracks} Spotify songs queued`)
                                 .setDescription(`**[${sp_data.name}](${sp_data.url})**\n[${sp_data.owner.name}](${sp_data.owner.url})`)
                                 .setThumbnail(sp_data.thumbnail.url)
                                 .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())

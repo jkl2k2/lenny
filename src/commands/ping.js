@@ -5,7 +5,7 @@ const { MessageEmbed } = require(`discord.js`);
 class PingCommand extends Command {
     constructor() {
         super(`ping`, {
-            aliases: [`ping`, `test`],
+            aliases: [`ping`],
             category: `general`,
             description: `Displays the Discord websocket heartbeat ping`,
             ratelimit: 2

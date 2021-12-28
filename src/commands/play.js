@@ -375,7 +375,7 @@ class PlayCommand extends Command {
                     embeds: [
                         new MessageEmbed()
                             .setAuthor(`🟡 Processing ${so_data.total_tracks} SoundCloud songs`)
-                            .setDescription(`**[${so_data.name}](${so_data.url})**\n[${so_data.user.name}](${so_data.user.url})\n\n\`~${0.4 * so_data.total_tracks} seconds\` to process`)
+                            .setDescription(`**[${so_data.name}](${so_data.url})**\n[${so_data.user.name}](${so_data.user.url})`)
                             .setThumbnail(so_data.fetched_tracks[0].thumbnail)
                             .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
                             .setColor(`#36393f`)
@@ -384,7 +384,7 @@ class PlayCommand extends Command {
                 });
 
                 for (const song of so_data.fetched_tracks) {
-                    await process(song.url);
+                    await process(song);
                 }
 
                 // Reply with success message

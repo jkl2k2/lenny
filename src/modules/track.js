@@ -162,6 +162,21 @@ module.exports = class Track {
                     }
                 ]
             };
+        } else if (typeof input === `object` && input.url.includes(`soundcloud.com/`)) {
+            info = {
+                title: input.name,
+                url: input.url,
+                channel: {
+                    name: input.user.name,
+                    url: input.user.url
+                },
+                durationInSec: input.durationInSec,
+                thumbnails: [
+                    {
+                        url: input.thumbnail
+                    }
+                ]
+            };
         } else if (input.includes(`spotify.com/`)) {
             const sp_data = await play.spotify(input);
 
@@ -182,7 +197,7 @@ module.exports = class Track {
         } else if (input.includes(`soundcloud.com/`)) {
             const so_info = await play.soundcloud(input);
 
-            const translatedInfo = {
+            info = {
                 title: so_info.name,
                 url: so_info.url,
                 channel: {
@@ -196,8 +211,6 @@ module.exports = class Track {
                     }
                 ]
             };
-
-            info = translatedInfo;
         } else {
             info = (await play.video_info(input)).video_details;
         }

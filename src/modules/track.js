@@ -1,3 +1,5 @@
+/*jshint esversion: 11 */
+
 const { createAudioResource } = require(`@discordjs/voice`);
 const play = require(`play-dl`);
 const pretty = require(`pretty-ms`);
@@ -157,6 +159,23 @@ module.exports = class Track {
                 thumbnails: [
                     {
                         url: input.thumbnail?.url
+                    }
+                ]
+            };
+        } else if (input.includes(`spotify.com/`)) {
+            const sp_data = await play.spotify(input);
+
+            info = {
+                title: sp_data.name,
+                url: sp_data.url || `https://www.spotify.com/us/`,
+                channel: {
+                    name: sp_data.artists[0].name,
+                    url: sp_data.artists[0].url || `https://www.spotify.com/us/`
+                },
+                durationInSec: sp_data.durationInSec,
+                thumbnails: [
+                    {
+                        url: sp_data.thumbnail?.url
                     }
                 ]
             };

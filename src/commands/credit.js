@@ -14,9 +14,9 @@ class CreditCommand extends Command {
 
     exec(message) {
         function determineRank(credit) {
-            if (credit === 600) {
+            if (credit < 700) {
                 return `ON VACATION`;
-            } else if (credit < 700) {
+            } else if (credit < 800) {
                 return `ENEMY OF THE STATE`;
             } else if (credit < 900) {
                 return `UNTRUSTWORTHY`;

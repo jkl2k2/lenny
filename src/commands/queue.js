@@ -30,6 +30,14 @@ function queueOverflowResolver(arr) {
 async function generateEmbed(page, message, end) {
     const subscription = message.client.subscriptions.get(message.guild.id);
 
+    if (!subscription) {
+        return {
+            embed: new MessageEmbed()
+                .setDescription(`:information_source: The queue is now empty`)
+                .setColor(`#36393f`)
+        };
+    }
+
     const queue = subscription.queue;
 
     const playing = subscription.audioPlayer._state.resource.metadata.video;

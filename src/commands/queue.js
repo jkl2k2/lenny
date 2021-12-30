@@ -34,7 +34,26 @@ async function generateEmbed(page, message, end) {
         return {
             embed: new MessageEmbed()
                 .setDescription(`:information_source: The queue is now empty`)
-                .setColor(`#36393f`)
+                .setColor(`#36393f`),
+            row:
+                new MessageActionRow()
+                    .addComponents([
+                        new MessageButton()
+                            .setCustomId(`Home`)
+                            .setLabel(`Home`)
+                            .setStyle(`SUCCESS`)
+                            .setDisabled(true),
+                        new MessageButton()
+                            .setCustomId(`Previous`)
+                            .setLabel(`Previous`)
+                            .setStyle(`SECONDARY`)
+                            .setDisabled(true),
+                        new MessageButton()
+                            .setCustomId(`Next`)
+                            .setLabel(`Next`)
+                            .setStyle(`SECONDARY`)
+                            .setDisabled(true)
+                    ])
         };
     }
 

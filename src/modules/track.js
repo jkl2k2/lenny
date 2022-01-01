@@ -55,7 +55,7 @@ module.exports = class Track {
                                 reject(new Error(`No stream acquirable for input ${this.url}`));
                             }
                         } else {
-                            failedVideos++;
+                            reject(new Error(`Could not find the song "${this.video.title} by ${this.video.channel.name}" on YouTube`));
                         }
                     });
             } else if (this.url.includes(`amazon.com/`)) {
@@ -73,7 +73,7 @@ module.exports = class Track {
                                 reject(new Error(`No stream acquirable for input ${this.url}`));
                             }
                         } else {
-                            failedVideos++;
+                            reject(new Error(`Could not find the song "${this.video.title} by ${this.video.channel.name}" on YouTube`));
                         }
                     });
             }

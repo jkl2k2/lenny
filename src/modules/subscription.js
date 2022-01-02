@@ -164,13 +164,12 @@ module.exports = class MusicSubscription {
         // Get next track
         const nextTrack = this.queue.shift();
         try {
-            console.log(`Playing ${nextTrack.title}`);
+            global.logger.debug(`Playing ${nextTrack.title}`);
             // Convert Track to AudioResource
             const resource = await nextTrack.createAudioResource();
             this.audioPlayer.play(resource);
             this.queueLock = false;
         } catch (err) {
-            console.log(`Playing track from queue failed.\nError: ${err}`);
             // On fail, try next item of queue instead
             nextTrack.onError(err);
             this.queueLock = false;

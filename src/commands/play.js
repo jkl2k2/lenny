@@ -94,8 +94,19 @@ class PlayCommand extends Command {
                     return;
                 },
                 onError(err) {
-                    global.logger.warn(err);
-                    message.interaction.followUp(`Failed to play: ${track.title}`).catch(global.logger.warn);
+                    global.logger.error(`Playing track from queue failed.`);
+                    global.logger.error(`Error: ${err.message}`);
+                    message.interaction.followUp({
+                        embeds: [
+                            new MessageEmbed()
+                                .setAuthor(`🔴 Failed to play`)
+                                .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.name}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
+                                .setThumbnail(track.video.thumbnails[0].url)
+                                .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
+                                .setColor(`#36393f`)
+                                .setTimestamp()
+                        ]
+                    }).catch(global.logger.error);
                 }
             });
 
@@ -406,9 +417,11 @@ class PlayCommand extends Command {
         } else if (args.song.includes(`playlist`)) {
             let input = args.song;
 
-            // Need to strip out "music" part of string
-            if (input.includes(`music.youtube`)) {
-                input = input.slice(0, 8) + input.slice(14);
+            // Temporary fix for YouTube Music playlists/albums until next play-dl update
+            if (input.includes('music.youtube.com')) {
+                const urlObj = new URL(input);
+                urlObj.hostname = 'www.youtube.com';
+                input = urlObj.toString();
             }
 
             message.interaction.editReply({
@@ -423,14 +436,17 @@ class PlayCommand extends Command {
             });
 
             // Get playlist from YouTube
-            const playlist = await play.playlist_info(input, { incomplete: true });
+            const playlist = await play.playlist_info(input, { incomplete: true })
+                .catch(e => {
+                    global.logger.error(e.message);
+                });
 
             message.interaction.editReply({
                 embeds: [
                     new MessageEmbed()
                         .setAuthor(`🟡 Processing ${playlist.total_videos} YouTube songs`)
-                        .setDescription(`**[${playlist.title}](${playlist.url})**\n[${playlist.channel.name}](${playlist.channel.url})`)
-                        .setThumbnail(playlist.thumbnail.url)
+                        .setDescription(`**[${playlist.title}](${playlist.url})**\n[${playlist.channel.name ?? `YouTube Playlist`}](${playlist.channel.url ?? ``})`)
+                        .setThumbnail(playlist.thumbnail?.url ?? playlist.videos[0].thumbnails[0]?.url)
                         .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
                         .setColor(`#36393f`)
                         .setTimestamp()
@@ -465,8 +481,8 @@ class PlayCommand extends Command {
                 embeds: [
                     new MessageEmbed()
                         .setAuthor(`🟢 ${playlist.total_videos} YouTube songs queued`)
-                        .setDescription(`**[${playlist.title}](${playlist.url})**\n[${playlist.channel.name}](${playlist.channel.url})`)
-                        .setThumbnail(playlist.thumbnail.url)
+                        .setDescription(`**[${playlist.title}](${playlist.url})**\n[${playlist.channel.name ?? `YouTube Playlist`}](${playlist.channel.url ?? ``})`)
+                        .setThumbnail(playlist.thumbnail?.url ?? playlist.videos[0].thumbnails[0]?.url)
                         .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
                         .setColor(`#36393f`)
                         .setTimestamp()

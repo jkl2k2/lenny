@@ -224,6 +224,10 @@ module.exports = class Track {
      * @return The formatted duration as a string
      */
     getDuration() {
+        if (this.video.type == `video` && this.video.live) {
+            return `YouTube Livestream`;
+        }
+
         const total = (this.video.durationInSec * 1000);
         return pretty(total, { colonNotation: true, secondsDecimalDigits: 0 });
     }

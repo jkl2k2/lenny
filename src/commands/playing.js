@@ -26,59 +26,75 @@ class PlayingCommand extends Command {
             // Shorthand for the guild's current song
             const playing = subscription.audioPlayer._state.resource.metadata.video;
 
-            // Get the formatted total duration of the song
-            const formattedTotal = subscription.audioPlayer._state.resource.metadata.getDuration();
-
-            // Calculate the total duration of the song, used to compare to the running time
-            const total = playing.durationInSec;
-
-            const formattedPlaying = pretty(subscription.audioPlayer._state.playbackDuration, { colonNotation: true, secondsDecimalDigits: 0 });
-
-            // Calculate what percent of the song is complete
-            const frac = (subscription.audioPlayer._state.playbackDuration / 1000) / total;
-
-            // Prepare string for formatting
-            let progressBar = ``;
-
-            // Generate progress bar
-            if (frac >= 0.9) {
-                progressBar = (`\`<——————————⚪> (${formattedPlaying}/${formattedTotal})\``);
-            } else if (frac >= 0.8) {
-                progressBar = (`\`<—————————⚪—> (${formattedPlaying}/${formattedTotal})\``);
-            } else if (frac >= 0.7) {
-                progressBar = (`\`<————————⚪——> (${formattedPlaying}/${formattedTotal})\``);
-            } else if (frac >= 0.7) {
-                progressBar = (`\`<———————⚪———> (${formattedPlaying}/${formattedTotal})\``);
-            } else if (frac >= 0.6) {
-                progressBar = (`\`<——————⚪————> (${formattedPlaying}/${formattedTotal})\``);
-            } else if (frac >= 0.5) {
-                progressBar = (`\`<—————⚪—————> (${formattedPlaying}/${formattedTotal})\``);
-            } else if (frac >= 0.4) {
-                progressBar = (`\`<————⚪——————> (${formattedPlaying}/${formattedTotal})\``);
-            } else if (frac >= 0.3) {
-                progressBar = (`\`<———⚪———————> (${formattedPlaying}/${formattedTotal})\``);
-            } else if (frac >= 0.2) {
-                progressBar = (`\`<——⚪————————> (${formattedPlaying}/${formattedTotal})\``);
-            } else if (frac >= 0.1) {
-                progressBar = (`\`<—⚪—————————> (${formattedPlaying}/${formattedTotal})\``);
-            } else if (frac >= 0) {
-                progressBar = (`\`<⚪——————————> (${formattedPlaying}/${formattedTotal})\``);
+            if (playing.live) {
+                // is a livestream
+                return await message.interaction.reply({
+                    embeds: [
+                        new MessageEmbed()
+                            .setAuthor(`➡️ Currently playing`)
+                            .setDescription(`**[${playing.title}](${playing.url})**\n[${playing.channel.name}](${playing.channel.url})\n\n\`YouTube Livestream\``)
+                            .setThumbnail(playing.thumbnails[0].url)
+                            .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
+                            .setColor(`#36393f`)
+                            .setTimestamp()
+                    ],
+                    ephemeral: true
+                });
             } else {
-                global.logger.warn(chalk.black.bgYellow(`Failed to generate progress bar`));
-            }
+                // Get the formatted total duration of the song
+                const formattedTotal = subscription.audioPlayer._state.resource.metadata.getDuration();
 
-            return await message.interaction.reply({
-                embeds: [
-                    new MessageEmbed()
-                        .setAuthor(`➡️ Currently playing`)
-                        .setDescription(`**[${playing.title}](${playing.url})**\n[${playing.channel.name}](${playing.channel.url})\n\n\`${progressBar}\``)
-                        .setThumbnail(playing.thumbnails[0].url)
-                        .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
-                        .setColor(`#36393f`)
-                        .setTimestamp()
-                ],
-                ephemeral: true
-            });
+                // Calculate the total duration of the song, used to compare to the running time
+                const total = playing.durationInSec;
+
+                const formattedPlaying = pretty(subscription.audioPlayer._state.playbackDuration, { colonNotation: true, secondsDecimalDigits: 0 });
+
+                // Calculate what percent of the song is complete
+                const frac = (subscription.audioPlayer._state.playbackDuration / 1000) / total;
+
+                // Prepare string for formatting
+                let progressBar = ``;
+
+                // Generate progress bar
+                if (frac >= 0.9) {
+                    progressBar = (`\`<——————————⚪> (${formattedPlaying}/${formattedTotal})\``);
+                } else if (frac >= 0.8) {
+                    progressBar = (`\`<—————————⚪—> (${formattedPlaying}/${formattedTotal})\``);
+                } else if (frac >= 0.7) {
+                    progressBar = (`\`<————————⚪——> (${formattedPlaying}/${formattedTotal})\``);
+                } else if (frac >= 0.7) {
+                    progressBar = (`\`<———————⚪———> (${formattedPlaying}/${formattedTotal})\``);
+                } else if (frac >= 0.6) {
+                    progressBar = (`\`<——————⚪————> (${formattedPlaying}/${formattedTotal})\``);
+                } else if (frac >= 0.5) {
+                    progressBar = (`\`<—————⚪—————> (${formattedPlaying}/${formattedTotal})\``);
+                } else if (frac >= 0.4) {
+                    progressBar = (`\`<————⚪——————> (${formattedPlaying}/${formattedTotal})\``);
+                } else if (frac >= 0.3) {
+                    progressBar = (`\`<———⚪———————> (${formattedPlaying}/${formattedTotal})\``);
+                } else if (frac >= 0.2) {
+                    progressBar = (`\`<——⚪————————> (${formattedPlaying}/${formattedTotal})\``);
+                } else if (frac >= 0.1) {
+                    progressBar = (`\`<—⚪—————————> (${formattedPlaying}/${formattedTotal})\``);
+                } else if (frac >= 0) {
+                    progressBar = (`\`<⚪——————————> (${formattedPlaying}/${formattedTotal})\``);
+                } else {
+                    global.logger.warn(chalk.black.bgYellow(`Failed to generate progress bar`));
+                }
+
+                return await message.interaction.reply({
+                    embeds: [
+                        new MessageEmbed()
+                            .setAuthor(`➡️ Currently playing`)
+                            .setDescription(`**[${playing.title}](${playing.url})**\n[${playing.channel.name}](${playing.channel.url})\n\n\`${progressBar}\``)
+                            .setThumbnail(playing.thumbnails[0].url)
+                            .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
+                            .setColor(`#36393f`)
+                            .setTimestamp()
+                    ],
+                    ephemeral: true
+                });
+            }
         } else {
             return await message.interaction.reply({
                 embeds: [

@@ -40,54 +40,35 @@ module.exports = class Track {
      */
     createAudioResource() {
         return new Promise(async (resolve, reject) => {
-            if (this.url.includes(`spotify.com/`)) {
+            if (this.url.includes(`spotify.com/`) || this.url.includes(`spotify.com/`)) {
                 return await play.search(`${this.video.title} by ${this.video.channel.name}`, { limit: 1 })
                     .then(async results => {
                         if (results[0]) {
-                            let stream = await play.stream(results[0].url);
-
-                            if (stream.stream) {
-                                resolve(createAudioResource(stream.stream, {
-                                    metadata: this,
-                                    inputType: stream.type
-                                }));
-                            } else {
-                                reject(new Error(`No stream acquirable for input ${this.url}`));
-                            }
-                        } else {
-                            reject(new Error(`Could not find the song "${this.video.title} by ${this.video.channel.name}" on YouTube`));
-                        }
-                    });
-            } else if (this.url.includes(`amazon.com/`)) {
-                return await play.search(`${this.video.title} by ${this.video.channel.name}`, { limit: 1 })
-                    .then(async results => {
-                        if (results[0]) {
-                            let stream = await play.stream(results[0].url);
-
-                            if (stream.stream) {
-                                resolve(createAudioResource(stream.stream, {
-                                    metadata: this,
-                                    inputType: stream.type
-                                }));
-                            } else {
-                                reject(new Error(`No stream acquirable for input ${this.url}`));
-                            }
+                            await play.stream(this.url)
+                                .then(stream => {
+                                    resolve(createAudioResource(stream.stream, {
+                                        metadata: this,
+                                        inputType: stream.type
+                                    }));
+                                }, err => {
+                                    reject(err);
+                                });
                         } else {
                             reject(new Error(`Could not find the song "${this.video.title} by ${this.video.channel.name}" on YouTube`));
                         }
                     });
             }
 
-            let stream = await play.stream(this.url);
-
-            if (stream.stream) {
-                resolve(createAudioResource(stream.stream, {
-                    metadata: this,
-                    inputType: stream.type
-                }));
-            } else {
-                reject(new Error(`No stream acquirable for input ${this.url}`));
-            }
+            // YouTube or SoundCloud, can stream directly
+            await play.stream(this.url)
+                .then(stream => {
+                    resolve(createAudioResource(stream.stream, {
+                        metadata: this,
+                        inputType: stream.type
+                    }));
+                }, err => {
+                    reject(err);
+                });
         });
     }
 

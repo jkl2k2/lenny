@@ -414,16 +414,7 @@ class PlayCommand extends Command {
                 // Is a normal track
                 return sendEmbed(await process(args.song));
             }
-        } else if (args.song.includes(`playlist`)) {
-            let input = args.song;
-
-            // Temporary fix for YouTube Music playlists/albums until next play-dl update
-            if (input.includes('music.youtube.com')) {
-                const urlObj = new URL(input);
-                urlObj.hostname = 'www.youtube.com';
-                input = urlObj.toString();
-            }
-
+        } else if (args.song.includes(`/playlist?list=`)) {
             message.interaction.editReply({
                 embeds: [
                     new MessageEmbed()
@@ -436,58 +427,69 @@ class PlayCommand extends Command {
             });
 
             // Get playlist from YouTube
-            const playlist = await play.playlist_info(input, { incomplete: true })
-                .catch(e => {
-                    global.logger.error(e.message);
+            await play.playlist_info(args.song, { incomplete: true })
+                .then(async playlist => {
+                    message.interaction.editReply({
+                        embeds: [
+                            new MessageEmbed()
+                                .setAuthor(`🟡 Processing ${playlist.total_videos} YouTube songs`)
+                                .setDescription(`**[${playlist.title}](${playlist.url})**\n[${playlist.channel.name ?? `YouTube Playlist`}](${playlist.channel.url ?? ``})`)
+                                .setThumbnail(playlist.thumbnail?.url ?? playlist.videos[0].thumbnails[0]?.url)
+                                .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                                .setColor(`#36393f`)
+                                .setTimestamp()
+                        ]
+                    });
+
+                    // Count private videos
+                    let privateVideos = 0;
+
+                    // Create a Track from each song
+                    for (const song of playlist.videos) {
+                        if (song.private) {
+                            privateVideos++;
+                        } else {
+                            await process(song);
+                        }
+                    }
+
+                    // If private videos are found, send a notice
+                    if (privateVideos > 0) {
+                        await message.channel.send({
+                            embeds: [
+                                new MessageEmbed()
+                                    .setDescription(`:information_source: \`${privateVideos}\` video(s) in the playlist were private`)
+                                    .setColor(`#36393f`)
+                            ]
+                        });
+                    }
+
+                    // Reply with success message
+                    return await message.interaction.editReply({
+                        embeds: [
+                            new MessageEmbed()
+                                .setAuthor(`🟢 ${playlist.total_videos} YouTube songs queued`)
+                                .setDescription(`**[${playlist.title}](${playlist.url})**\n[${playlist.channel.name ?? `YouTube Playlist`}](${playlist.channel.url ?? ``})`)
+                                .setThumbnail(playlist.thumbnail?.url ?? playlist.videos[0].thumbnails[0]?.url)
+                                .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                                .setColor(`#36393f`)
+                                .setTimestamp()
+                        ]
+                    });
+                }, err => {
+                    global.logger.error(err.message);
+
+                    return message.interaction.editReply({
+                        embeds: [
+                            new MessageEmbed()
+                                .setAuthor(`🔴 Failed to process playlist`)
+                                .setDescription(`The playlist link you sent did not bring up an accessible playlist.\nKeep in mind that special **user mixes like "My Mix/Supermix" are not supported**, as they are different depending on who is viewing it.`)
+                                .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                                .setColor(`#36393f`)
+                                .setTimestamp()
+                        ]
+                    });
                 });
-
-            message.interaction.editReply({
-                embeds: [
-                    new MessageEmbed()
-                        .setAuthor(`🟡 Processing ${playlist.total_videos} YouTube songs`)
-                        .setDescription(`**[${playlist.title}](${playlist.url})**\n[${playlist.channel.name ?? `YouTube Playlist`}](${playlist.channel.url ?? ``})`)
-                        .setThumbnail(playlist.thumbnail?.url ?? playlist.videos[0].thumbnails[0]?.url)
-                        .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
-                        .setColor(`#36393f`)
-                        .setTimestamp()
-                ]
-            });
-
-            // Count private videos
-            let privateVideos = 0;
-
-            // Create a Track from each song
-            for (const song of playlist.videos) {
-                if (song.private) {
-                    privateVideos++;
-                } else {
-                    await process(song);
-                }
-            }
-
-            // If private videos are found, send a notice
-            if (privateVideos > 0) {
-                await message.channel.send({
-                    embeds: [
-                        new MessageEmbed()
-                            .setDescription(`:information_source: \`${privateVideos}\` video(s) in the playlist were private`)
-                            .setColor(`#36393f`)
-                    ]
-                });
-            }
-
-            // Reply with success message
-            return await message.interaction.editReply({
-                embeds: [
-                    new MessageEmbed()
-                        .setAuthor(`🟢 ${playlist.total_videos} YouTube songs queued`)
-                        .setDescription(`**[${playlist.title}](${playlist.url})**\n[${playlist.channel.name ?? `YouTube Playlist`}](${playlist.channel.url ?? ``})`)
-                        .setThumbnail(playlist.thumbnail?.url ?? playlist.videos[0].thumbnails[0]?.url)
-                        .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
-                        .setColor(`#36393f`)
-                        .setTimestamp()
-                ]
-            });
         } else {
             // YouTube search
             message.interaction.editReply({

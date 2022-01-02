@@ -117,17 +117,21 @@ class PlayCommand extends Command {
         }
 
         function sendEmbed(track) {
-            return message.interaction.editReply({
-                embeds: [
-                    new MessageEmbed()
-                        .setAuthor(`🟢 Queued`)
-                        .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.name}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
-                        .setThumbnail(track.video.thumbnails[0].url)
-                        .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
-                        .setColor(`#36393f`)
-                        .setTimestamp()
-                ]
-            }).catch(global.logger.warn);
+            if (track?.video) {
+                return message.interaction.editReply({
+                    embeds: [
+                        new MessageEmbed()
+                            .setAuthor(`🟢 Queued`)
+                            .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.name}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
+                            .setThumbnail(track.video.thumbnails[0].url)
+                            .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
+                            .setColor(`#36393f`)
+                            .setTimestamp()
+                    ]
+                }).catch(err => {
+                    global.logger.error(err.message);
+                });
+            }
         }
 
         if (args.song.includes(`watch?v=`) || args.song.includes(`youtu.be`)) {
@@ -340,7 +344,7 @@ class PlayCommand extends Command {
                         ]
                     });
                 } catch (err) {
-                    console.log(err.message);
+                    global.logger.error(err.message);
                     return await message.interaction.editReply({
                         embeds: [
                             new MessageEmbed()
@@ -379,40 +383,69 @@ class PlayCommand extends Command {
                     ]
                 });
 
-                const so_data = await play.soundcloud(args.song);
-                await so_data.fetch();
+                await play.soundcloud(args.song)
+                    .then(async so_data => {
+                        await so_data.fetch();
 
-                message.interaction.editReply({
-                    embeds: [
-                        new MessageEmbed()
-                            .setAuthor(`🟡 Processing ${so_data.total_tracks} SoundCloud songs`)
-                            .setDescription(`**[${so_data.name}](${so_data.url})**\n[${so_data.user.name}](${so_data.user.url})`)
-                            .setThumbnail(so_data.fetched_tracks[0].thumbnail)
-                            .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
-                            .setColor(`#36393f`)
-                            .setTimestamp()
-                    ]
-                });
+                        message.interaction.editReply({
+                            embeds: [
+                                new MessageEmbed()
+                                    .setAuthor(`🟡 Processing ${so_data.total_tracks} SoundCloud songs`)
+                                    .setDescription(`**[${so_data.name}](${so_data.url})**\n[${so_data.user.name}](${so_data.user.url})`)
+                                    .setThumbnail(so_data.fetched_tracks[0].thumbnail)
+                                    .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                                    .setColor(`#36393f`)
+                                    .setTimestamp()
+                            ]
+                        });
 
-                for (const song of so_data.fetched_tracks) {
-                    await process(song);
-                }
+                        for (const song of so_data.fetched_tracks) {
+                            await process(song);
+                        }
 
-                // Reply with success message
-                return await message.interaction.editReply({
-                    embeds: [
-                        new MessageEmbed()
-                            .setAuthor(`🟢 ${so_data.total_tracks} SoundCloud songs queued`)
-                            .setDescription(`**[${so_data.name}](${so_data.url})**\n[${so_data.user.name}](${so_data.user.url})`)
-                            .setThumbnail(so_data.fetched_tracks[0].thumbnail)
-                            .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
-                            .setColor(`#36393f`)
-                            .setTimestamp()
-                    ]
-                });
+                        // Reply with success message
+                        return await message.interaction.editReply({
+                            embeds: [
+                                new MessageEmbed()
+                                    .setAuthor(`🟢 ${so_data.total_tracks} SoundCloud songs queued`)
+                                    .setDescription(`**[${so_data.name}](${so_data.url})**\n[${so_data.user.name}](${so_data.user.url})`)
+                                    .setThumbnail(so_data.fetched_tracks[0].thumbnail)
+                                    .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                                    .setColor(`#36393f`)
+                                    .setTimestamp()
+                            ]
+                        });
+                    }, err => {
+                        global.logger.error(err.message);
+
+                        return message.interaction.editReply({
+                            embeds: [
+                                new MessageEmbed()
+                                    .setAuthor(`🔴 Failed to process playlist`)
+                                    .setDescription(`The playlist link you sent did not bring up an accessible playlist.`)
+                                    .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                                    .setColor(`#36393f`)
+                                    .setTimestamp()
+                            ]
+                        });
+                    });
             } else {
                 // Is a normal track
-                return sendEmbed(await process(args.song));
+                return sendEmbed(await process(args.song)
+                    .catch(err => {
+                        global.logger.error(err.message);
+
+                        return message.interaction.editReply({
+                            embeds: [
+                                new MessageEmbed()
+                                    .setAuthor(`🔴 Failed to process song`)
+                                    .setDescription(`An error occurred when processing the SoundCloud track. The link may be invalid.`)
+                                    .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                                    .setColor(`#36393f`)
+                                    .setTimestamp()
+                            ]
+                        });
+                    }));
             }
         } else if (args.song.includes(`/playlist?list=`)) {
             message.interaction.editReply({
@@ -509,15 +542,18 @@ class PlayCommand extends Command {
                         try {
                             return sendEmbed(await process(results[0].url));
                         } catch (err) {
-                            global.logger.warn(err);
+                            global.logger.error(err);
                             return await message.interaction.editReply(`Failed to play track`);
                         }
                     } else {
                         return message.interaction.editReply({
                             embeds: [
                                 new MessageEmbed()
-                                    .setDescription(`:information_source: YouTube could not find a video with that input`)
+                                    .setAuthor(`🔴 Failed to find a video`)
+                                    .setDescription(`**YouTube could not find a video with those search terms**`)
+                                    .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
                                     .setColor(`#36393f`)
+                                    .setTimestamp()
                             ]
                         });
                     }

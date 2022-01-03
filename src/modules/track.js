@@ -44,7 +44,7 @@ module.exports = class Track {
                 return await play.search(`${this.video.title} by ${this.video.channel.name}`, { limit: 1 })
                     .then(async results => {
                         if (results[0]) {
-                            await play.stream(this.url)
+                            await play.stream(results[0].url)
                                 .then(stream => {
                                     resolve(createAudioResource(stream.stream, {
                                         metadata: this,

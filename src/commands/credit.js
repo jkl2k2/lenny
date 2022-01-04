@@ -13,6 +13,8 @@ class CreditCommand extends Command {
     }
 
     exec(message) {
+        if (message.guild.id !== `717141100766298203`) return;
+
         function determineRank(credit) {
             if (credit < 700) {
                 return `ON VACATION`;

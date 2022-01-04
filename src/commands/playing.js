@@ -34,7 +34,7 @@ class PlayingCommand extends Command {
                             .setAuthor(`➡️ Currently playing`)
                             .setDescription(`**[${playing.title}](${playing.url})**\n[${playing.channel.name}](${playing.channel.url})\n\n\`YouTube Livestream\``)
                             .setThumbnail(playing.thumbnails[0].url)
-                            .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
+                            .setFooter(`Requested by ${subscription.audioPlayer._state.resource.metadata.requester.username}`, subscription.audioPlayer._state.resource.metadata.requester.avatarURL())
                             .setColor(`#36393f`)
                             .setTimestamp()
                     ],
@@ -88,7 +88,7 @@ class PlayingCommand extends Command {
                             .setAuthor(`➡️ Currently playing`)
                             .setDescription(`**[${playing.title}](${playing.url})**\n[${playing.channel.name}](${playing.channel.url})\n\n\`${progressBar}\``)
                             .setThumbnail(playing.thumbnails[0].url)
-                            .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
+                            .setFooter(`Requested by ${subscription.audioPlayer._state.resource.metadata.requester.username}`, subscription.audioPlayer._state.resource.metadata.requester.avatarURL())
                             .setColor(`#36393f`)
                             .setTimestamp()
                     ],

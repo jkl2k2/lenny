@@ -96,7 +96,7 @@ class PlayCommand extends Command {
                 onError(err) {
                     global.logger.error(`Playing track from queue failed.`);
                     global.logger.error(`Error: ${err.message}`);
-                    message.interaction.followUp({
+                    message.channel.send({
                         embeds: [
                             new MessageEmbed()
                                 .setAuthor(`🔴 Failed to play`)

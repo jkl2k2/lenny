@@ -22,11 +22,6 @@ module.exports = {
             return message.channel.send("Prune target too low (minimum is 1)");
         }
 
-        // Ban Nathan lmao
-        if (message.author.id == `216228980431388672`) {
-            return;
-        }
-
         await message.channel.messages.fetch({ limit: (parseInt(args[0])) + 1 }).then(messages => {
             message.channel.bulkDelete(messages);
         });

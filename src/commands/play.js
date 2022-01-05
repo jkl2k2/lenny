@@ -86,7 +86,7 @@ class PlayCommand extends Command {
                                 .setThumbnail(track.video.thumbnails[0].url)
                                 .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
                                 .setColor(`#36393f`)
-                                .setTimestamp()
+                                .setTimestamp(track.timestamp)
                         ]
                     }).catch(global.logger.warn);
                 },
@@ -104,7 +104,7 @@ class PlayCommand extends Command {
                                 .setThumbnail(track.video.thumbnails[0].url)
                                 .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
                                 .setColor(`#36393f`)
-                                .setTimestamp()
+                                .setTimestamp(track.timestamp)
                         ]
                     }).catch(global.logger.error);
                 }
@@ -126,7 +126,7 @@ class PlayCommand extends Command {
                             .setThumbnail(track.video.thumbnails[0].url)
                             .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
                             .setColor(`#36393f`)
-                            .setTimestamp()
+                            .setTimestamp(track.timestamp)
                     ]
                 }).catch(err => {
                     global.logger.error(err.message);

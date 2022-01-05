@@ -36,7 +36,7 @@ class PlayingCommand extends Command {
                             .setThumbnail(playing.thumbnails[0].url)
                             .setFooter(`Requested by ${subscription.audioPlayer._state.resource.metadata.requester.username}`, subscription.audioPlayer._state.resource.metadata.requester.avatarURL())
                             .setColor(`#36393f`)
-                            .setTimestamp()
+                            .setTimestamp(subscription.audioPlayer._state.resource.metadata.timestamp)
                     ],
                     ephemeral: true
                 });
@@ -90,7 +90,7 @@ class PlayingCommand extends Command {
                             .setThumbnail(playing.thumbnails[0].url)
                             .setFooter(`Requested by ${subscription.audioPlayer._state.resource.metadata.requester.username}`, subscription.audioPlayer._state.resource.metadata.requester.avatarURL())
                             .setColor(`#36393f`)
-                            .setTimestamp()
+                            .setTimestamp(subscription.audioPlayer._state.resource.metadata.timestamp)
                     ],
                     ephemeral: true
                 });

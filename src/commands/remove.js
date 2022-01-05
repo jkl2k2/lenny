@@ -44,7 +44,7 @@ class RemoveCommand extends Command {
             return message.interaction.reply({
                 embeds: [
                     new MessageEmbed()
-                        .setDescription(`:put_litter_in_its_place: Removed **${removed[0].title}**`)
+                        .setDescription(`:put_litter_in_its_place: Removed **[${removed[0].video.title}](${removed[0].video.url})**`)
                         .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
                         .setColor(`#36393f`)
                 ],

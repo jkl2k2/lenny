@@ -19,8 +19,9 @@ const noop = () => { };
 module.exports = class Track {
     /**
      * Creates a new Track.
-     * @param {Video} video The full video object returned by play-dl
+     * @param {Video} video The full video/song object returned by play-dl
      * @param {User} requester The user that requested this track
+     * @param {Date} timestamp The exact time the track was created
      * @param {function} onStart A function to call when the track is started.
      * @param {function} onFinish A function to call when the track is finished.
      * @param {function} onError A function to call when the track has an error.
@@ -28,8 +29,7 @@ module.exports = class Track {
     constructor(video, requester, onStart, onFinish, onError) {
         this.video = video;
         this.requester = requester;
-        this.title = video.title;
-        this.url = video.url;
+        this.timestamp = Date.now();
         this.onStart = onStart;
         this.onFinish = onFinish;
         this.onError = onError;
@@ -40,7 +40,7 @@ module.exports = class Track {
      */
     createAudioResource() {
         return new Promise(async (resolve, reject) => {
-            if (this.url.includes(`spotify.com/`) || this.url.includes(`spotify.com/`)) {
+            if (this.video.url.includes(`spotify.com/`) || this.video.url.includes(`spotify.com/`)) {
                 return await play.search(`${this.video.title} by ${this.video.channel.name}`, { limit: 1 })
                     .then(async results => {
                         if (results[0]) {
@@ -60,7 +60,7 @@ module.exports = class Track {
             }
 
             // YouTube or SoundCloud, can stream directly
-            await play.stream(this.url)
+            await play.stream(this.video.url)
                 .then(stream => {
                     resolve(createAudioResource(stream.stream, {
                         metadata: this,

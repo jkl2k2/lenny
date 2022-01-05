@@ -164,7 +164,7 @@ module.exports = class MusicSubscription {
         // Get next track
         const nextTrack = this.queue.shift();
         try {
-            global.logger.debug(`Playing ${nextTrack.title}`);
+            global.logger.debug(`Playing ${nextTrack.video.title}`);
             // Convert Track to AudioResource
             const resource = await nextTrack.createAudioResource();
             this.audioPlayer.play(resource);

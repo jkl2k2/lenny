@@ -26,7 +26,7 @@ class SkipCommand extends Command {
                 embeds: [
                     new MessageEmbed()
                         .setColor(`#36393f`)
-                        .setDescription(`:track_next: Skipped **[${subscription.audioPlayer._state.resource.metadata.title}](${subscription.audioPlayer._state.resource.metadata.url})**`)
+                        .setDescription(`:track_next: Skipped **[${subscription.audioPlayer._state.resource.metadata.video.title}](${subscription.audioPlayer._state.resource.metadata.video.url})**`)
                         .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
                 ]
             });

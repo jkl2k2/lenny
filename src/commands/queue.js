@@ -5,7 +5,7 @@ const pretty = require(`pretty-ms`);
 //#region Helper Functions
 async function queueResolver(arr, index) {
     if (arr[index]) {
-        return `\`${index + 1}.\` **[${arr[index].title}](${arr[index].url})**\n\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0By: **[${arr[index].video.channel.name}](${arr[index].video.channel.url})**`;
+        return `\`${index + 1}.\` **[${arr[index].video.title}](${arr[index].video.url})**\n\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0By: **[${arr[index].video.channel.name}](${arr[index].video.channel.url})**`;
     } else {
         return " ";
     }
@@ -214,9 +214,9 @@ async function sendDetails(track, message, pos) {
         .setAuthor(`Currently Queued (#${pos})`)
         .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.name}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
         .setThumbnail(track.video.thumbnails[0].url)
-        .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
+        .setFooter(`Requested by ${track.requester.username}`, track.requester.avatarURL())
         .setColor(`#36393f`)
-        .setTimestamp();
+        .setTimestamp(track.timestamp);
     // Send message
     return await message.interaction.editReply({
         embeds: [

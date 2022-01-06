@@ -16,6 +16,21 @@ class MoveCommand extends Command {
                     type: `integer`
                 }
             ],
+            slash: true,
+            slashOptions: [
+                {
+                    name: 'start',
+                    type: 'INTEGER',
+                    description: 'The video to move',
+                    required: true,
+                },
+                {
+                    name: 'end',
+                    type: 'INTEGER',
+                    description: 'The position to move the video to',
+                    required: true,
+                }
+            ],
             category: `music`,
             description: `Moves a song's position in queue`,
             channel: `guild`
@@ -23,34 +38,73 @@ class MoveCommand extends Command {
     }
 
     exec(message, args) {
-        const queue = message.guild.music.queue;
+        return;
+    }
+
+    async execSlash(message, args) {
+        const subscription = this.client.subscriptions.get(message.guild.id);
+
+        await message.interaction.deferReply();
+
+        if (!subscription) {
+            return message.interaction.editReply({
+                embeds: [
+                    new MessageEmbed()
+                        .setDescription(`:information_source: The queue is currently empty`)
+                        .setColor(`#36393f`)
+                ]
+            });
+        }
+
+        const queue = subscription.queue;
+
+        if (queue == undefined || queue.length == 0) {
+            return message.interaction.editReply({
+                embeds: [
+                    new MessageEmbed()
+                        .setDescription(`:information_source: The queue is currently empty`)
+                        .setColor(`#36393f`)
+                ]
+            });
+        }
+
         const startPos = args.start - 1;
         const targetPos = args.end - 1;
 
-        if (queue == undefined) {
-            return message.channel.send(new MessageEmbed()
-                .setDescription(`<:cross:729019052571492434> The queue is empty`)
-                .setColor(`#FF3838`));
-        }
-
         if (!args.start) {
-            return message.channel.send(new MessageEmbed()
-                .setDescription(`<:cross:729019052571492434> Please specify a start position`)
-                .setColor(`#FF3838`));
+            return message.interaction.editReply({
+                embeds: [
+                    new MessageEmbed()
+                        .setDescription(`<:cross:729019052571492434> Please specify a start position`)
+                        .setColor(`#FF3838`)
+                ]
+            });
         } else if (!args.end) {
-            return message.channel.send(new MessageEmbed()
-                .setDescription(`<:cross:729019052571492434> Please specify a target position`)
-                .setColor(`#FF3838`));
+            return message.interaction.editReply({
+                embeds: [
+                    new MessageEmbed()
+                        .setDescription(`<:cross:729019052571492434> Please specify a target position`)
+                        .setColor(`#FF3838`)
+                ]
+            });
         }
 
         if (isNaN(args.start)) {
-            return message.channel.send(new MessageEmbed()
-                .setDescription(`<:cross:729019052571492434> Start position must be a number`)
-                .setColor(`#FF3838`));
+            return message.interaction.editReply({
+                embeds: [
+                    new MessageEmbed()
+                        .setDescription(`<:cross:729019052571492434> Start position must be a number`)
+                        .setColor(`#FF3838`)
+                ]
+            });
         } else if (isNaN(args.end)) {
-            return message.channel.send(new MessageEmbed()
-                .setDescription(`<:cross:729019052571492434> Target position must be a number`)
-                .setColor(`#FF3838`));
+            return message.interaction.editReply({
+                embeds: [
+                    new MessageEmbed()
+                        .setDescription(`<:cross:729019052571492434> Target position must be a number`)
+                        .setColor(`#FF3838`)
+                ]
+            });
         }
 
         // If target video exists at that position
@@ -59,29 +113,44 @@ class MoveCommand extends Command {
             if (targetPos >= 0 && targetPos < queue.length) {
                 queue.splice(targetPos, 0, queue.splice(startPos, 1)[0]);
                 if (targetPos == 0) {
-                    message.channel.send(new MessageEmbed()
-                        .setDescription(`<:check:728881238970073090> Moved from position \`#${startPos + 1}\` to \`#${targetPos + 1}\`:\n**[${queue[targetPos].getTitle()}](${queue[targetPos].getURL()})**
+                    message.interaction.editReply({
+                        embeds: [
+                            new MessageEmbed()
+                                .setDescription(`<:check:728881238970073090> Moved from position \`#${startPos + 1}\` to \`#${targetPos + 1}\`:\n**[${queue[targetPos].video.title}](${queue[targetPos].video.url})**
 
-                                         It will now play after:
-                                         **[${message.guild.music.lastPlayed.getTitle()}](${message.guild.music.lastPlayed.getURL()})**`)
-                        .setColor(`#2EC14E`));
+                                         It will now play after the current song is finished.`)
+                                .setColor(`#2EC14E`)
+                        ]
+                    });
                 } else {
-                    message.channel.send(new MessageEmbed()
-                        .setDescription(`<:check:728881238970073090> Moved from position \`#${startPos + 1}\` to \`#${targetPos + 1}\`:\n**[${queue[targetPos].getTitle()}](${queue[targetPos].getURL()})**
+                    message.interaction.editReply({
+                        embeds: [
+                            new MessageEmbed()
+                                .setDescription(`<:check:728881238970073090> Moved from position \`#${startPos + 1}\` to \`#${targetPos + 1}\`:\n**[${queue[targetPos].video.title}](${queue[targetPos].video.url})**
 
                                          It will now play after:
-                                         **[${queue[targetPos - 1].getTitle()}](${queue[targetPos - 1].getURL()})**`)
-                        .setColor(`#2EC14E`));
+                                         **[${queue[targetPos - 1].video.title}](${queue[targetPos - 1].video.url})**`)
+                                .setColor(`#2EC14E`)
+                        ]
+                    });
                 }
             } else {
-                message.channel.send(new MessageEmbed()
-                    .setDescription(`<:cross:729019052571492434> Sorry, target position \`#${targetPos + 1}\` isn't valid`)
-                    .setColor(`#FF3838`));
+                message.interaction.editReply({
+                    embeds: [
+                        new MessageEmbed()
+                            .setDescription(`<:cross:729019052571492434> Sorry, target position \`#${targetPos + 1}\` isn't valid`)
+                            .setColor(`#FF3838`)
+                    ]
+                });
             }
         } else {
-            message.channel.send(new MessageEmbed()
-                .setDescription(`<:cross:729019052571492434> Sorry, there isn't a video at position \`#${startPos + 1}\``)
-                .setColor(`#FF3838`));
+            message.interaction.editReply({
+                embeds: [
+                    new MessageEmbed()
+                        .setDescription(`<:cross:729019052571492434> Sorry, there isn't a video at position \`#${startPos + 1}\``)
+                        .setColor(`#FF3838`)
+                ]
+            });
         }
     }
 }

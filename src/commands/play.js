@@ -16,7 +16,7 @@ const amazon = require(`amazon-music-info`);
 class PlayCommand extends Command {
     constructor() {
         super(`play`, {
-            aliases: [`play`, `p`],
+            aliases: [`play`],
             args: [
                 {
                     id: `song`,

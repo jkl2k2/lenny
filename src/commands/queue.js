@@ -154,56 +154,58 @@ async function sendEmbed(page, message, end) {
     const { embed, row } = await generateEmbed(page, message, end);
 
     // Send the interaction reply
-    await message.interaction.editReply({
+    message.interaction.editReply({
         embeds: [
             embed
         ],
         components: [
             row
         ]
-    });
+    }).then(() => {
+        const filter = i => (i.customId === `Next` || i.customId === `Previous`) || i.customId === `Home` && i.user.id === message.interaction.user.id;
 
-    const filter = i => (i.customId === `Next` || i.customId === `Previous`) || i.customId === `Home` && i.user.id === message.interaction.user.id;
+        const collector = message.interaction.channel.createMessageComponentCollector({ filter, time: 60000, max: 1, componentType: `BUTTON` });
 
-    const collector = message.interaction.channel.createMessageComponentCollector({ filter, time: 60000, max: 1, componentType: `BUTTON` });
+        collector.on(`collect`, async i => {
+            await i.deferUpdate();
+            if (i.customId === `Next`) {
+                /*
+                await i.editReply({
+                    embeds: [
+                        (await generateEmbed(page + 1, message)).embed
+                    ],
+                    components: [
+                        (await generateEmbed(page + 1, message)).row
+                    ],
+                });
+                */
+                await sendEmbed(page + 1, message);
+            } else if (i.customId === `Previous`) {
+                /*
+                await i.editReply({
+                    embeds: [
+                        (await generateEmbed(page - 1, message)).embed
+                    ],
+                    components: [
+                        (await generateEmbed(page - 1, message)).row
+                    ],
+                });
+                */
+                await sendEmbed(page - 1, message);
+            } else {
+                await sendEmbed(0, message);
+            }
+        });
 
-    collector.on(`collect`, async i => {
-        await i.deferUpdate();
-        if (i.customId === `Next`) {
-            /*
-            await i.editReply({
-                embeds: [
-                    (await generateEmbed(page + 1, message)).embed
-                ],
-                components: [
-                    (await generateEmbed(page + 1, message)).row
-                ],
-            });
-            */
-            await sendEmbed(page + 1, message);
-        } else if (i.customId === `Previous`) {
-            /*
-            await i.editReply({
-                embeds: [
-                    (await generateEmbed(page - 1, message)).embed
-                ],
-                components: [
-                    (await generateEmbed(page - 1, message)).row
-                ],
-            });
-            */
-            await sendEmbed(page - 1, message);
-        } else {
-            await sendEmbed(0, message);
-        }
-    });
-
-    collector.once('end', (collected, reason) => {
-        if (reason === `time`) {
-            return sendEmbed(page, message, true);
-        } else {
-            return;
-        }
+        collector.once('end', (collected, reason) => {
+            if (reason === `time`) {
+                return sendEmbed(page, message, true);
+            } else {
+                return;
+            }
+        });
+    }, err => {
+        return global.logger.error(err.message);
     });
 }
 //#endregion

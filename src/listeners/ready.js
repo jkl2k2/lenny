@@ -25,6 +25,30 @@ class ReadyListener extends Listener {
         }
         // global.logger.info(chalk.white.bgRed(`Timestamp: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} - ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`));
         global.logger.info(chalk.whiteBright.bgRed.bold(`———————Awaiting Commands———————`));
+
+        let first = false;
+
+        this.client.user.setActivity(`updating...`, { type: `PLAYING` });
+        this.client.user.setStatus(`dnd`);
+
+        const updatingMessage = setInterval(() => {
+            if (first) {
+                this.client.user.setActivity(`updating...`, { type: `PLAYING` });
+                this.client.user.setStatus(`dnd`);
+
+                first = false;
+            } else {
+                this.client.user.setActivity(`commands may not work...`, { type: `PLAYING` });
+
+                first = true;
+            }
+        }, 15000);
+
+        setTimeout(() => {
+            clearInterval(updatingMessage);
+            this.client.user.setActivity(`music with ${this.client.users.cache.size} users`, { type: `LISTENING` });
+            this.client.user.setStatus(`online`);
+        }, 605000);
     }
 }
 

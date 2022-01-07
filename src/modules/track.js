@@ -39,12 +39,12 @@ module.exports = class Track {
      * Creates an AudioResource for the Track.
      */
     createAudioResource() {
-        return new Promise(async (resolve, reject) => {
-            if (this.video.url.includes(`spotify.com/`) || this.video.url.includes(`spotify.com/`)) {
-                return await play.search(`${this.video.title} by ${this.video.channel.name}`, { limit: 1 })
-                    .then(async results => {
+        return new Promise((resolve, reject) => {
+            if (this.video.url.includes(`spotify.com/`)) {
+                return play.search(`${this.video.title} by ${this.video.channel.name}`, { limit: 1 })
+                    .then(results => {
                         if (results[0]) {
-                            await play.stream(results[0].url)
+                            play.stream(results[0].url, { seek: 0.1 })
                                 .then(stream => {
                                     resolve(createAudioResource(stream.stream, {
                                         metadata: this,
@@ -60,7 +60,7 @@ module.exports = class Track {
             }
 
             // YouTube or SoundCloud, can stream directly
-            await play.stream(this.video.url)
+            play.stream(this.video.url, { seek: 0.1 })
                 .then(stream => {
                     resolve(createAudioResource(stream.stream, {
                         metadata: this,

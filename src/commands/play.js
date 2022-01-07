@@ -10,7 +10,6 @@ const { MessageEmbed } = require(`discord.js`);
 const MusicSubscription = require(`../modules/subscription`);
 const Track = require(`../modules/track`);
 const play = require(`play-dl`);
-const amazon = require(`amazon-music-info`);
 
 /*eslint class-methods-use-this: ["error", { "exceptMethods": ["exec", "execSlash"] }] */
 class PlayCommand extends Command {
@@ -43,9 +42,11 @@ class PlayCommand extends Command {
     }
     async execSlash(message, args) {
         // Get subscription from message's guild
-        let subscription = this.client.subscriptions.get(message.guild.id);
+        let subscription = this.client?.subscriptions.get(message.guild.id) || message.client.subscriptions.get(message.guild.id);
 
-        await message.interaction.deferReply();
+        if (!message.interaction.deferred && !message.interaction.replied) {
+            await message.interaction.deferReply();
+        }
 
         // If connection doesn't exist, and the user is in a voice channel, create a connection and a subscription
         if (!subscription && message.interaction.member.voice.channel) {
@@ -136,115 +137,6 @@ class PlayCommand extends Command {
 
         if (args.song.includes(`watch?v=`) || args.song.includes(`youtu.be`)) {
             return sendEmbed(await process(args.song));
-        } else if (args.song.includes(`music.amazon.com`)) {
-            if (amazon.isAmazonMusic(args.song)) {
-                if (amazon.isAmazonMusicUserPlaylist(args.song) || amazon.isAmazonMusicAlbum(args.song)) {
-                    message.interaction.editReply({
-                        embeds: [
-                            new MessageEmbed()
-                                .setAuthor(`🔎 Loading Amazon Music...`)
-                                .setDescription(`Finding playlist info...`)
-                                .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
-                                .setColor(`#36393f`)
-                                .setTimestamp()
-                        ]
-                    });
-
-                    try {
-                        const data = await amazon.getData(args.song);
-
-                        await message.interaction.editReply({
-                            embeds: [
-                                new MessageEmbed()
-                                    .setAuthor(`🟡 Processing ${data.items.length} Amazon Music songs`)
-                                    .setDescription(`**${data.title}**\nAmazon Music Playlist/Album`)
-                                    .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
-                                    .setColor(`#36393f`)
-                                    .setTimestamp()
-                            ]
-                        });
-
-                        let failedVideos = 0;
-
-                        // Create a Track from each song
-                        for (const song of data.items) {
-                            if (!song.url) {
-                                failedVideos++;
-                            } else {
-                                await process(song);
-                            }
-                        }
-
-                        if (failedVideos > 0) {
-                            await message.channel.send({
-                                embeds: [
-                                    new MessageEmbed()
-                                        .setDescription(`:information_source: \`${failedVideos}\` song(s) were unavailable on Amazon Music and could not be added`)
-                                        .setColor(`#36393f`)
-                                ]
-                            });
-                        }
-
-                        // Reply with success message
-                        return await message.interaction.editReply({
-                            embeds: [
-                                new MessageEmbed()
-                                    .setAuthor(`🟢 ${data.items.length} Amazon Music songs queued`)
-                                    .setDescription(`**${data.title}**\nAmazon Music Playlist/Album`)
-                                    .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
-                                    .setColor(`#36393f`)
-                                    .setTimestamp()
-                            ]
-                        });
-                    } catch (err) {
-                        console.log(err.message);
-
-                        return await message.interaction.editReply({
-                            embeds: [
-                                new MessageEmbed()
-                                    .setAuthor(`🔴 Error with Amazon Music`)
-                                    .setDescription(`**Amazon Music couldn't understand your link.**\nThat Amazon link may be invalid.`)
-                                    .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
-                                    .setColor(`#FF3838`)
-                                    .setTimestamp()
-                            ]
-                        });
-                    }
-                } else if (amazon.isAmazonMusicPlaylist(args.song) && !args.song.includes(`/my/playlists/`)) {
-                    return await message.interaction.editReply({
-                        embeds: [
-                            new MessageEmbed()
-                                .setAuthor(`🔴 Error with Amazon Music`)
-                                .setDescription(`**Sorry, official Amazon playlists are not supported.**\n Please submit a user-created playlist.`)
-                                .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
-                                .setColor(`#FF3838`)
-                                .setTimestamp()
-                        ]
-                    });
-                } else {
-                    return await message.interaction.editReply({
-                        embeds: [
-                            new MessageEmbed()
-                                .setAuthor(`🔴 Error with Amazon Music`)
-                                .setDescription(`**music.amazon.com links are only supported for albums and user-created playlists.**\n\n\`If you are trying to submit a user-created playlist, use the Share button and not the browser URL.\``)
-                                .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
-                                .setColor(`#FF3838`)
-                                .setTimestamp()
-                        ]
-                    });
-                }
-            } else {
-                return await message.interaction.editReply({
-                    embeds: [
-                        new MessageEmbed()
-                            .setAuthor(`🔴 Error with Amazon Music`)
-                            .setDescription(`**Amazon Music couldn't understand your link.**\nThat Amazon link may be invalid.`)
-                            .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
-                            .setColor(`#FF3838`)
-                            .setTimestamp()
-                    ]
-                });
-            }
         } else if (args.song.includes(`spotify.com`)) {
             if (play.is_expired()) {
                 await play.refreshToken();
@@ -383,7 +275,7 @@ class PlayCommand extends Command {
                     ]
                 });
 
-                await play.soundcloud(args.song)
+                play.soundcloud(args.song)
                     .then(async so_data => {
                         await so_data.fetch();
 
@@ -460,7 +352,7 @@ class PlayCommand extends Command {
             });
 
             // Get playlist from YouTube
-            await play.playlist_info(args.song, { incomplete: true })
+            play.playlist_info(args.song, { incomplete: true })
                 .then(async playlist => {
                     message.interaction.editReply({
                         embeds: [

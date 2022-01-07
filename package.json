@@ -24,7 +24,6 @@
   "dependencies": {
     "@discordjs/opus": "^0.6.0",
     "@discordjs/voice": "^0.7.5",
-    "amazon-music-info": "^1.0.5",
     "better-sqlite3": "^7.4.5",
     "chalk": "^4.1.1",
     "discord-akairo": "npm:@notenoughupdates/discord-akairo@^9.0.9",

@@ -86,7 +86,7 @@ class HelpCommand extends Command {
                     new MessageEmbed()
                         .setAuthor(`Category: Music`, client.user.avatarURL())
                         .setDescription(`**Use \`${prefix}help [command]\` to view a specific command**\n\n**Music commands are all accessed with \`/\`**`)
-                        .addField(`play`, `Play a song or playlist from YouTube, Spotify, SoundCloud, or Amazon Music`)
+                        .addField(`play`, `Play a song or playlist from YouTube, Spotify, or SoundCloud`)
                         .addField(`playlists`, `Add, manage, and play from your saved playlists`)
                         .addField(`skip`, `Skips the current song`)
                         .addField(`clear`, `Clears the queue`)

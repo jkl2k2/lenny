@@ -4,7 +4,6 @@ const { Command } = require(`discord-akairo`);
 const { MessageEmbed, MessageButton } = require(`discord.js`);
 const play = require(`play-dl`);
 const paginationEmbed = require(`discordjs-button-pagination`);
-const amazon = require(`amazon-music-info`);
 const PlayCommand = require(`./play`);
 
 async function listResolver(arr, index) {

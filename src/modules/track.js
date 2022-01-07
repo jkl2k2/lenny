@@ -3,7 +3,6 @@
 const { createAudioResource } = require(`@discordjs/voice`);
 const play = require(`play-dl`);
 const pretty = require(`pretty-ms`);
-const amazon = require(`amazon-music-info`);
 
 const noop = () => { };
 
@@ -98,22 +97,7 @@ module.exports = class Track {
 
         let info;
 
-        if (typeof input === `object` && input.url.includes(`amazon.com/`)) {
-            info = {
-                title: input.name,
-                url: input.url,
-                channel: {
-                    name: input.artist,
-                    url: input.artist_url
-                },
-                durationInSec: input.duration,
-                thumbnails: [
-                    {
-                        url: ``
-                    }
-                ]
-            };
-        } else if (typeof input === `object` && input.url.includes(`youtube.com/`)) {
+        if (typeof input === `object` && input.url.includes(`youtube.com/`)) {
             info = {
                 title: input.title,
                 url: input.url,

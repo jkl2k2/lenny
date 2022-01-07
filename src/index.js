@@ -125,6 +125,17 @@ client.credit.default = {
     socialCredit: 1000
 };
 
+client.userPlaylists = new Enmap({
+    name: `userPlaylists`,
+    fetchAll: false,
+    autoFetch: true,
+    cloneLevel: `deep`
+});
+
+client.userPlaylists.default = {
+    savedPlaylists: []
+};
+
 /*
 client.on(`guildDelete`, guild => {
     // Remove deleted guild from Enmap

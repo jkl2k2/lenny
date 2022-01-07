@@ -3,7 +3,6 @@
 const { createAudioResource } = require(`@discordjs/voice`);
 const play = require(`play-dl`);
 const pretty = require(`pretty-ms`);
-const amazon = require(`amazon-music-info`);
 
 const noop = () => { };
 
@@ -39,12 +38,12 @@ module.exports = class Track {
      * Creates an AudioResource for the Track.
      */
     createAudioResource() {
-        return new Promise(async (resolve, reject) => {
-            if (this.video.url.includes(`spotify.com/`) || this.video.url.includes(`spotify.com/`)) {
-                return await play.search(`${this.video.title} by ${this.video.channel.name}`, { limit: 1 })
-                    .then(async results => {
+        return new Promise((resolve, reject) => {
+            if (this.video.url.includes(`spotify.com/`)) {
+                return play.search(`${this.video.title} by ${this.video.channel.name}`, { limit: 1 })
+                    .then(results => {
                         if (results[0]) {
-                            await play.stream(results[0].url)
+                            play.stream(results[0].url, { seek: 0.1 })
                                 .then(stream => {
                                     resolve(createAudioResource(stream.stream, {
                                         metadata: this,
@@ -60,7 +59,7 @@ module.exports = class Track {
             }
 
             // YouTube or SoundCloud, can stream directly
-            await play.stream(this.video.url)
+            play.stream(this.video.url, { seek: 0.1 })
                 .then(stream => {
                     resolve(createAudioResource(stream.stream, {
                         metadata: this,
@@ -98,22 +97,7 @@ module.exports = class Track {
 
         let info;
 
-        if (typeof input === `object` && input.url.includes(`amazon.com/`)) {
-            info = {
-                title: input.name,
-                url: input.url,
-                channel: {
-                    name: input.artist,
-                    url: input.artist_url
-                },
-                durationInSec: input.duration,
-                thumbnails: [
-                    {
-                        url: ``
-                    }
-                ]
-            };
-        } else if (typeof input === `object` && input.url.includes(`youtube.com/`)) {
+        if (typeof input === `object` && input.url.includes(`youtube.com/`)) {
             info = {
                 title: input.title,
                 url: input.url,

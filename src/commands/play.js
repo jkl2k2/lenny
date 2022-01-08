@@ -157,7 +157,7 @@ class PlayCommand extends Command {
                 try {
                     return sendEmbed(await process(args.song));
                 } catch (err) {
-                    console.log(err.message);
+                    global.logger.error(err.message);
                     return await message.interaction.editReply({
                         embeds: [
                             new MessageEmbed()

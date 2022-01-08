@@ -83,8 +83,6 @@ class MessageCreateListener extends Listener {
 
                 if (repliedMessage.author.id === message.author.id) return message.channel.send(`<:holyshit:916528747837018153> You cannot add or subtract from your own social credit!`);
 
-                console.log(parseInt(userCredit[`socialCredit`]) + parseInt(amountToChange));
-
                 if (parseInt(userCredit[`socialCredit`]) + parseInt(amountToChange) > 1300) {
                     return message.channel.send(`${repliedMessage.author.username} cannot have more than 1300 social credit!`);
                 }

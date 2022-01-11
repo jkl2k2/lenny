@@ -11,7 +11,7 @@ function levelToRank(level) {
         return `Unranked`;
     }
 
-    const ranks = [`Bronze`, `Silver`, `Gold`, `Platinum`, `Diamond`, `How do you have this`];
+    const ranks = [`Bronze`, `Silver`, `Gold`, `Platinum`, `Diamond`, `Onyx`, `Jade`, `Sapphire`, `Ruby`];
     const subRanks = [`I`, `II`, `III`];
 
     let determinedSub = 0;

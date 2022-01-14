@@ -366,15 +366,20 @@ class PlayCommand extends Command {
                         ]
                     });
 
+                    await playlist.fetch();
+
                     // Count private videos
                     let privateVideos = 0;
 
                     // Create a Track from each song
-                    for (const song of playlist.videos) {
-                        if (song.private) {
-                            privateVideos++;
-                        } else {
-                            await process(song);
+                    for (let i = 1; i < playlist.total_pages; i++) {
+                        const page = playlist.page(i);
+                        for (const song of page) {
+                            if (song.private) {
+                                privateVideos++;
+                            } else {
+                                await process(song);
+                            }
                         }
                     }
 

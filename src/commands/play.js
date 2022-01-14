@@ -372,7 +372,7 @@ class PlayCommand extends Command {
                     let privateVideos = 0;
 
                     // Create a Track from each song
-                    for (let i = 1; i < playlist.total_pages; i++) {
+                    for (let i = 1; i <= playlist.total_pages; i++) {
                         const page = playlist.page(i);
                         for (const song of page) {
                             if (song.private) {

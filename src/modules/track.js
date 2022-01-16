@@ -50,8 +50,20 @@ module.exports = class Track {
                                         metadata: this,
                                         inputType: stream.type
                                     }));
-                                }, err => {
-                                    reject(err);
+                                }, () => {
+                                    // Seeking requires WebM/Opus stream format
+                                    // In the event such a format is not available, it errors
+                                    // So, we can handle this by streaming without the seek
+                                    global.logger.warn(`createAudioResource: unable to seek because stream does not use WebM/Opus`);
+                                    play.stream(results[0].url)
+                                        .then(stream => {
+                                            resolve(createAudioResource(stream.stream, {
+                                                metadata: this,
+                                                inputType: stream.type
+                                            }));
+                                        }, err => {
+                                            reject(err);
+                                        });
                                 });
                         } else {
                             reject(new Error(`Could not find the song "${this.video.title} by ${this.video.channel.name}" on YouTube`));
@@ -66,8 +78,20 @@ module.exports = class Track {
                         metadata: this,
                         inputType: stream.type
                     }));
-                }, err => {
-                    reject(err);
+                }, () => {
+                    // Seeking requires WebM/Opus stream format
+                    // In the event such a format is not available, it errors
+                    // So, we can handle this by streaming without the seek
+                    global.logger.warn(`createAudioResource: unable to seek because stream does not use WebM/Opus`);
+                    play.stream(this.video.url)
+                        .then(stream => {
+                            resolve(createAudioResource(stream.stream, {
+                                metadata: this,
+                                inputType: stream.type
+                            }));
+                        }, err => {
+                            reject(err);
+                        });
                 });
         });
     }

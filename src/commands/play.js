@@ -40,7 +40,8 @@ class PlayCommand extends Command {
     exec(message, args) {
         return;
     }
-    async execSlash(message, args) {
+
+    async execSlash(message, args, options) {
         // Get subscription from message's guild
         let subscription = this.client?.subscriptions.get(message.guild.id) || message.client.subscriptions.get(message.guild.id);
 
@@ -112,7 +113,12 @@ class PlayCommand extends Command {
             });
 
             // Queue track
-            subscription.enqueue(track);
+            subscription.enqueue(track, options ?? {
+                next: false,
+                force: false,
+                client: message.client,
+                guildId: message.guild.id
+            });
 
             return track;
         }

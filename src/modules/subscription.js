@@ -91,12 +91,15 @@ module.exports = class MusicSubscription {
      * Adds a new Track to the queue.
      *
      * @param track The track to add to the queue
+     * @param options An object containing next, force, client, and guildId
      */
     enqueue(track, options) {
         if (options.next) {
+            // Need to queue at front of array
             this.queue.unshift(track);
 
             if (options.force) {
+                // Force skip the current song
                 const subscription = options.client.subscriptions.get(options.guildId);
 
                 if (subscription && subscription.audioPlayer._state.status === `playing`) {
@@ -104,6 +107,7 @@ module.exports = class MusicSubscription {
                 }
             }
         } else {
+            // Normal queue behavior
             this.queue.push(track);
         }
 
@@ -122,6 +126,8 @@ module.exports = class MusicSubscription {
 
     /**
      * Sets the last music embed sent
+     * 
+     * @param lastEmbed The last MessageEmbed that has been sent
      */
     setLastEmbed(lastEmbed) {
         this.lastEmbed = lastEmbed;

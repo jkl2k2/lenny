@@ -92,8 +92,21 @@ module.exports = class MusicSubscription {
      *
      * @param track The track to add to the queue
      */
-    enqueue(track) {
-        this.queue.push(track);
+    enqueue(track, options) {
+        if (options.next) {
+            this.queue.unshift(track);
+
+            if (options.force) {
+                const subscription = options.client.subscriptions.get(options.guildId);
+
+                if (subscription && subscription.audioPlayer._state.status === `playing`) {
+                    subscription.audioPlayer.stop();
+                }
+            }
+        } else {
+            this.queue.push(track);
+        }
+
         this.processQueue();
     }
 

@@ -61,7 +61,7 @@ module.exports = class MusicSubscription {
                 try {
                     await entersState(this.voiceConnection, VoiceConnectionStatus.Ready, 20000);
                 } catch (err) {
-                    if (this.voiceConnectionl.state.status !== VoiceConnectionStatus.Destroyed) this.voiceConnection.destroy();
+                    if (this.voiceConnection.state.status !== VoiceConnectionStatus.Destroyed) this.voiceConnection.destroy();
                 } finally {
                     this.readyLock = false;
                 }

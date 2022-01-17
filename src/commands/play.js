@@ -10,6 +10,7 @@ const { MessageEmbed } = require(`discord.js`);
 const MusicSubscription = require(`../modules/subscription`);
 const Track = require(`../modules/track`);
 const play = require(`play-dl`);
+const pretty = require(`pretty-ms`);
 
 /*eslint class-methods-use-this: ["error", { "exceptMethods": ["exec", "execSlash"] }] */
 class PlayCommand extends Command {
@@ -78,52 +79,103 @@ class PlayCommand extends Command {
 
         async function process(input) {
             // Create a Track from the user's input
-            const track = await Track.from(input, message.interaction.user, {
-                async onStart() {
-                    message.channel.send({
-                        embeds: [
-                            new MessageEmbed()
-                                .setAuthor(`▶️ Now playing`)
-                                .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.name}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
-                                .setThumbnail(track.video.thumbnails[0].url)
-                                .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
-                                .setColor(`#36393f`)
-                                .setTimestamp(track.timestamp)
-                        ]
-                    }).catch(global.logger.warn);
-                },
-                onFinish() {
-                    return;
-                },
-                onError(err) {
-                    global.logger.error(`Playing track from queue failed.`);
-                    global.logger.error(`Error: ${err.message}`);
-                    message.channel.send({
-                        embeds: [
-                            new MessageEmbed()
-                                .setAuthor(`🔴 Failed to play`)
-                                .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.name}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
-                                .setThumbnail(track.video.thumbnails[0].url)
-                                .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
-                                .setColor(`#36393f`)
-                                .setTimestamp(track.timestamp)
-                        ]
-                    }).catch(global.logger.error);
-                }
-            });
+            let track;
+
+            if (options?.seek || options?.seek === 0) {
+                track = await Track.from(input, message.interaction.user, {
+                    async onStart() {
+                        message.channel.send({
+                            embeds: [
+                                new MessageEmbed()
+                                    .setAuthor(`⏩ Playing from ${pretty(options.seek * 1000, { colonNotation: true })}`)
+                                    .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.name}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
+                                    .setThumbnail(track.video.thumbnails[0].url)
+                                    .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
+                                    .setColor(`#36393f`)
+                                    .setTimestamp(track.timestamp)
+                            ]
+                        }).catch(global.logger.warn);
+                    },
+                    onFinish() {
+                        return;
+                    },
+                    onError(err) {
+                        global.logger.error(`Playing track from queue failed.`);
+                        global.logger.error(`Error: ${err.message}`);
+                        message.channel.send({
+                            embeds: [
+                                new MessageEmbed()
+                                    .setAuthor(`🔴 Failed to play`)
+                                    .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.name}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
+                                    .setThumbnail(track.video.thumbnails[0].url)
+                                    .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
+                                    .setColor(`#36393f`)
+                                    .setTimestamp(track.timestamp)
+                            ]
+                        }).catch(global.logger.error);
+                    }
+                });
+
+                track.seekTime = options.seek;
+            } else {
+                track = await Track.from(input, message.interaction.user, {
+                    async onStart() {
+                        message.channel.send({
+                            embeds: [
+                                new MessageEmbed()
+                                    .setAuthor(`▶️ Now playing`)
+                                    .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.name}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
+                                    .setThumbnail(track.video.thumbnails[0].url)
+                                    .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
+                                    .setColor(`#36393f`)
+                                    .setTimestamp(track.timestamp)
+                            ]
+                        }).catch(global.logger.warn);
+                    },
+                    onFinish() {
+                        return;
+                    },
+                    onError(err) {
+                        global.logger.error(`Playing track from queue failed.`);
+                        global.logger.error(`Error: ${err.message}`);
+                        message.channel.send({
+                            embeds: [
+                                new MessageEmbed()
+                                    .setAuthor(`🔴 Failed to play`)
+                                    .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.name}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
+                                    .setThumbnail(track.video.thumbnails[0].url)
+                                    .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
+                                    .setColor(`#36393f`)
+                                    .setTimestamp(track.timestamp)
+                            ]
+                        }).catch(global.logger.error);
+                    }
+                });
+            }
 
             // Queue track
             subscription.enqueue(track, options ?? {
                 next: false,
                 force: false,
                 client: message.client,
-                guildId: message.guild.id
+                guildId: message.guild.id,
+                seek: null
             });
 
             return track;
         }
 
         function sendEmbed(track) {
+            if (track.seekTime || track?.seekTime === 0) {
+                return message.interaction.editReply({
+                    embeds: [
+                        new MessageEmbed()
+                            .setDescription(`:arrows_counterclockwise: Seeking to \`${pretty(track.seekTime * 1000, { colonNotation: true })}\``)
+                            .setColor(`#36393f`)
+                    ]
+                });
+            }
+
             if (track?.video) {
                 return message.interaction.editReply({
                     embeds: [

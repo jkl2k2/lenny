@@ -91,7 +91,7 @@ module.exports = class MusicSubscription {
      * Adds a new Track to the queue.
      *
      * @param track The track to add to the queue
-     * @param options An object containing next, force, client, and guildId
+     * @param options An object containing next, force, client, guildId, and seek
      */
     enqueue(track, options) {
         if (options.next) {

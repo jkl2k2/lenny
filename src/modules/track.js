@@ -28,6 +28,8 @@ module.exports = class Track {
         this.video = video;
         this.requester = requester;
         this.timestamp = Date.now();
+        this.seekable = true;
+        this.seekTime = null;
         this.onStart = onStart;
         this.onFinish = onFinish;
         this.onError = onError;
@@ -55,6 +57,7 @@ module.exports = class Track {
                                     // In the event such a format is not available, it errors
                                     // So, we can handle this by streaming without the seek
                                     global.logger.warn(`createAudioResource: unable to seek because stream does not use WebM/Opus`);
+                                    this.seekable = false;
                                     play.stream(results[0].url)
                                         .then(stream => {
                                             resolve(createAudioResource(stream.stream, {
@@ -72,7 +75,7 @@ module.exports = class Track {
             }
 
             // YouTube or SoundCloud, can stream directly
-            play.stream(this.video.url, { seek: 0.1 })
+            play.stream(this.video.url, { seek: this.seekTime ?? 0.1 })
                 .then(stream => {
                     resolve(createAudioResource(stream.stream, {
                         metadata: this,
@@ -83,6 +86,7 @@ module.exports = class Track {
                     // In the event such a format is not available, it errors
                     // So, we can handle this by streaming without the seek
                     global.logger.warn(`createAudioResource: unable to seek because stream does not use WebM/Opus`);
+                    this.seekable = false;
                     play.stream(this.video.url)
                         .then(stream => {
                             resolve(createAudioResource(stream.stream, {

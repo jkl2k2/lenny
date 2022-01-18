@@ -1,3 +1,5 @@
+/*jshint esversion: 11 */
+
 const { Command } = require(`discord-akairo`);
 const { MessageEmbed, MessageActionRow, MessageButton } = require(`discord.js`);
 const pretty = require(`pretty-ms`);
@@ -59,10 +61,10 @@ async function generateEmbed(page, message, end) {
 
     const queue = subscription.queue;
 
-    const playing = subscription.audioPlayer._state.resource.metadata.video;
+    const playing = subscription.audioPlayer._state.resource?.metadata.video;
 
     const queueEmbed = new MessageEmbed()
-        .setDescription(`**Currently playing:\n\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0[${playing.title}](${playing.url})**\n\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0By: **[${playing.channel.name}](${playing.channel.url})**\n\`——————————————————\`\n${await queueResolver(queue, 0 + page * 5)}\n\n${await queueResolver(queue, 1 + page * 5)}\n\n${await queueResolver(queue, 2 + page * 5)}\n\n${await queueResolver(queue, 3 + page * 5)}\n\n${await queueResolver(queue, 4 + page * 5)}\n\n${await queueOverflowResolver(queue)}`)
+        .setDescription(`**Currently playing:\n\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0[${playing?.title ?? `-`}](${playing?.url})**\n\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0By: **[${playing?.channel.name ?? `-`}](${playing?.channel.url})**\n\`——————————————————\`\n${await queueResolver(queue, 0 + page * 5)}\n\n${await queueResolver(queue, 1 + page * 5)}\n\n${await queueResolver(queue, 2 + page * 5)}\n\n${await queueResolver(queue, 3 + page * 5)}\n\n${await queueResolver(queue, 4 + page * 5)}\n\n${await queueOverflowResolver(queue)}`)
         .setAuthor(`Current queue - Page ${page + 1}`, message.interaction.guild.iconURL())
         .setColor(`#36393f`);
 

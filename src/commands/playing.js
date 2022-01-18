@@ -34,7 +34,7 @@ class PlayingCommand extends Command {
                             .setAuthor(`➡️ Currently playing`)
                             .setDescription(`**[${playing.title}](${playing.url})**\n[${playing.channel.name}](${playing.channel.url})\n\n\`YouTube Livestream\``)
                             .setThumbnail(playing.thumbnails[0].url)
-                            .setFooter(`Requested by ${subscription.audioPlayer._state.resource.metadata.requester.username}`, subscription.audioPlayer._state.resource.metadata.requester.avatarURL())
+                            .setFooter(`Requested by ${subscription.audioPlayer._state.resource.metadata.requester.user.username}`, subscription.audioPlayer._state.resource.metadata.requester.displayAvatarURL())
                             .setColor(`#36393f`)
                             .setTimestamp(subscription.audioPlayer._state.resource.metadata.timestamp)
                     ],
@@ -88,7 +88,7 @@ class PlayingCommand extends Command {
                             .setAuthor(`➡️ Currently playing`)
                             .setDescription(`**[${playing.title}](${playing.url})**\n[${playing.channel.name}](${playing.channel.url})\n\n\`${progressBar}\``)
                             .setThumbnail(playing.thumbnails[0].url)
-                            .setFooter(`Requested by ${subscription.audioPlayer._state.resource.metadata.requester.username}`, subscription.audioPlayer._state.resource.metadata.requester.avatarURL())
+                            .setFooter(`Requested by ${subscription.audioPlayer._state.resource.metadata.requester.user.username}`, subscription.audioPlayer._state.resource.metadata.requester.displayAvatarURL())
                             .setColor(`#36393f`)
                             .setTimestamp(subscription.audioPlayer._state.resource.metadata.timestamp)
                     ],

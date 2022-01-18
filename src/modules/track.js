@@ -19,7 +19,7 @@ module.exports = class Track {
     /**
      * Creates a new Track.
      * @param {Video} video The full video/song object returned by play-dl
-     * @param {User} requester The user that requested this track
+     * @param {GuildMember} requester The user that requested this track
      * @param {function} onStart A function to call when the track is started.
      * @param {function} onFinish A function to call when the track is finished.
      * @param {function} onError A function to call when the track has an error.
@@ -104,7 +104,7 @@ module.exports = class Track {
      * Creates a Track from a video URL and lifecycle callback methods.
      *
      * @param url The URL of the video
-     * @param requester The User that requested the song
+     * @param requester The GuildMember that requested the song
      * @param methods Lifecycle callbacks
      * @return The created Track
      */

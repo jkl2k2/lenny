@@ -47,11 +47,17 @@ class ReadyListener extends Listener {
         setTimeout(() => {
             clearInterval(updatingMessage);
 
-            const serverStats = this.client.stats.ensure(message.guild.id, message.client.stats.default);
+            let totalMusicTimeMs = 0;
+
+            for (const guild of client.guilds.cache.array()) {
+                // Ensure serverStats exist
+                const serverStats = client.stats.ensure(guild.id, this.client.stats.default);
+                totalMusicTimeMs += serverStats[`musicTime`];
+            }
 
             setInterval(() => {
                 if (first) {
-                    this.client.user.setActivity(`music for ${Math.floor(serverStats[`musicTime`] / 1000 / 60 / 60)} hours`, { type: `LISTENING` });
+                    this.client.user.setActivity(`music for ${Math.floor(totalMusicTimeMs / 1000 / 60 / 60)} hours`, { type: `LISTENING` });
                     this.client.user.setStatus(`online`);
 
                     first = false;

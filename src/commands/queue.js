@@ -216,7 +216,7 @@ async function sendDetails(track, message, pos) {
         .setAuthor(`Currently Queued (#${pos})`)
         .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.name}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
         .setThumbnail(track.video.thumbnails[0].url)
-        .setFooter(`Requested by ${track.requester.username}`, track.requester.avatarURL())
+        .setFooter(`Requested by ${track.requester.user.username}`, track.requester.displayAvatarURL())
         .setColor(`#36393f`)
         .setTimestamp(track.timestamp);
     // Send message

@@ -9,6 +9,8 @@ class guildMemberAddListener extends Listener {
     }
 
     exec(message, member) {
+        if (!member) return;
+
         // Ensure settings exist
         message.client.settings.ensure(member.guild.id, client.settings.default);
 

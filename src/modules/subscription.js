@@ -72,7 +72,15 @@ module.exports = class MusicSubscription {
         this.audioPlayer.on(`stateChange`, (oldState, newState) => {
             if (newState.status === AudioPlayerStatus.Idle && oldState.status !== AudioPlayerStatus.Idle) {
                 // Entered idle from non-idle state, need to play next track
-                oldState.resource.metadata.onFinish();
+                const metadata = oldState.resource.metadata;
+
+                // Add to stats counter
+                const serverStats = metadata.requester.client.stats.ensure(metadata.requester.guild.id, metadata.requester.client.stats.default);
+
+                metadata.requester.client.stats.set(metadata.requester.guild.id, serverStats[`musicTime`] + (metadata.video.durationInSec * 1000), `musicTime`);
+
+                // Conclude playing and process queue
+                metadata.onFinish();
                 this.processQueue();
             } else if (newState.status === AudioPlayerStatus.Playing && oldState.status !== AudioPlayerStatus.Paused) {
                 // Entered playing state, new track has started

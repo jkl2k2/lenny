@@ -82,7 +82,7 @@ class PlayCommand extends Command {
             let track;
 
             if (options?.seek || options?.seek === 0) {
-                track = await Track.from(input, message.interaction.user, {
+                track = await Track.from(input, message.interaction.member, {
                     async onStart() {
                         message.channel.send({
                             embeds: [
@@ -90,7 +90,7 @@ class PlayCommand extends Command {
                                     .setAuthor(`⏩ Playing from ${pretty(options.seek * 1000, { colonNotation: true })}`)
                                     .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.name}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
                                     .setThumbnail(track.video.thumbnails[0].url)
-                                    .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
+                                    .setFooter(`Requested by ${message.interaction.member.user.username}`, message.interaction.member.displayAvatarURL())
                                     .setColor(`#36393f`)
                                     .setTimestamp(track.timestamp)
                             ]
@@ -108,7 +108,7 @@ class PlayCommand extends Command {
                                     .setAuthor(`🔴 Failed to play`)
                                     .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.name}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
                                     .setThumbnail(track.video.thumbnails[0].url)
-                                    .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
+                                    .setFooter(`Requested by ${message.interaction.member.user.username}`, message.interaction.member.displayAvatarURL())
                                     .setColor(`#36393f`)
                                     .setTimestamp(track.timestamp)
                             ]
@@ -118,7 +118,7 @@ class PlayCommand extends Command {
 
                 track.seekTime = options.seek;
             } else {
-                track = await Track.from(input, message.interaction.user, {
+                track = await Track.from(input, message.interaction.member, {
                     async onStart() {
                         message.channel.send({
                             embeds: [
@@ -126,7 +126,7 @@ class PlayCommand extends Command {
                                     .setAuthor(`▶️ Now playing`)
                                     .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.name}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
                                     .setThumbnail(track.video.thumbnails[0].url)
-                                    .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
+                                    .setFooter(`Requested by ${message.interaction.member.user.username}`, message.interaction.member.displayAvatarURL())
                                     .setColor(`#36393f`)
                                     .setTimestamp(track.timestamp)
                             ]
@@ -144,7 +144,7 @@ class PlayCommand extends Command {
                                     .setAuthor(`🔴 Failed to play`)
                                     .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.name}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
                                     .setThumbnail(track.video.thumbnails[0].url)
-                                    .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
+                                    .setFooter(`Requested by ${message.interaction.member.user.username}`, message.interaction.member.displayAvatarURL())
                                     .setColor(`#36393f`)
                                     .setTimestamp(track.timestamp)
                             ]
@@ -183,7 +183,7 @@ class PlayCommand extends Command {
                             .setAuthor(`🟢 Queued`)
                             .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.name}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
                             .setThumbnail(track.video.thumbnails[0].url)
-                            .setFooter(`Requested by ${message.interaction.user.username}`, message.interaction.user.avatarURL())
+                            .setFooter(`Requested by ${message.interaction.member.user.username}`, message.interaction.member.displayAvatarURL())
                             .setColor(`#36393f`)
                             .setTimestamp(track.timestamp)
                     ]
@@ -206,7 +206,7 @@ class PlayCommand extends Command {
                         new MessageEmbed()
                             .setAuthor(`🔎 Loading Spotify Song...`)
                             .setDescription(`Looking up info...`)
-                            .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                            .setFooter(`Requested by ${message.interaction.member.user.username}`, message.interaction.member.displayAvatarURL())
                             .setColor(`#36393f`)
                             .setTimestamp()
                     ]
@@ -221,7 +221,7 @@ class PlayCommand extends Command {
                             new MessageEmbed()
                                 .setAuthor(`🔴 Error with Spotify`)
                                 .setDescription(`**Spotify encountered an error when processing the song.**\nI unfortunately don't have any other info.`)
-                                .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                                .setFooter(`Requested by ${message.interaction.member.user.username}`, message.interaction.member.displayAvatarURL())
                                 .setColor(`#FF3838`)
                                 .setTimestamp()
                         ]
@@ -233,7 +233,7 @@ class PlayCommand extends Command {
                         new MessageEmbed()
                             .setAuthor(`🔎 Loading Spotify Playlist/Album...`)
                             .setDescription(`Looking up info...`)
-                            .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                            .setFooter(`Requested by ${message.interaction.member.user.username}`, message.interaction.member.displayAvatarURL())
                             .setColor(`#36393f`)
                             .setTimestamp()
                     ]
@@ -249,7 +249,7 @@ class PlayCommand extends Command {
                                 .setAuthor(`🟡 Processing ${sp_data.total_tracks} Spotify songs`)
                                 .setDescription(`**[${sp_data.name}](${sp_data.url})**\n[${sp_data.owner?.name || sp_data.artists[0].name}](${sp_data.owner?.url || sp_data.artists[0].url})`)
                                 .setThumbnail(sp_data.thumbnail?.url || sp_data.page(1)[0].thumbnail?.url)
-                                .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                                .setFooter(`Requested by ${message.interaction.member.user.username}`, message.interaction.member.displayAvatarURL())
                                 .setColor(`#36393f`)
                                 .setTimestamp()
                         ]
@@ -288,7 +288,7 @@ class PlayCommand extends Command {
                                 .setAuthor(`🟢 ${sp_data.total_tracks} Spotify songs queued`)
                                 .setDescription(`**[${sp_data.name}](${sp_data.url})**\n[${sp_data.owner?.name || sp_data.artists[0].name}](${sp_data.owner?.url || sp_data.artists[0].url})`)
                                 .setThumbnail(sp_data.thumbnail?.url || sp_data.page(1)[0].thumbnail?.url)
-                                .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                                .setFooter(`Requested by ${message.interaction.member.user.username}`, message.interaction.member.displayAvatarURL())
                                 .setColor(`#36393f`)
                                 .setTimestamp()
                         ]
@@ -300,7 +300,7 @@ class PlayCommand extends Command {
                             new MessageEmbed()
                                 .setAuthor(`🔴 Error with Spotify`)
                                 .setDescription(`**Spotify encountered an error when processing the playlist.**\nI unfortunately don't have any other info.`)
-                                .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                                .setFooter(`Requested by ${message.interaction.member.user.username}`, message.interaction.member.displayAvatarURL())
                                 .setColor(`#FF3838`)
                                 .setTimestamp()
                         ]
@@ -313,7 +313,7 @@ class PlayCommand extends Command {
                         new MessageEmbed()
                             .setAuthor(`🔴 Error with Spotify`)
                             .setDescription(`**Your Spotify Link appears to be invalid.**\n\`Only Spotify songs, albums, and playlists are supported.\``)
-                            .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                            .setFooter(`Requested by ${message.interaction.member.user.username}`, message.interaction.member.displayAvatarURL())
                             .setColor(`#FF3838`)
                             .setTimestamp()
                     ]
@@ -327,7 +327,7 @@ class PlayCommand extends Command {
                         new MessageEmbed()
                             .setAuthor(`🔎 Loading SoundCloud Playlist...`)
                             .setDescription(`Looking up info...`)
-                            .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                            .setFooter(`Requested by ${message.interaction.member.user.username}`, message.interaction.member.displayAvatarURL())
                             .setColor(`#36393f`)
                             .setTimestamp()
                     ]
@@ -343,7 +343,7 @@ class PlayCommand extends Command {
                                     .setAuthor(`🟡 Processing ${so_data.total_tracks} SoundCloud songs`)
                                     .setDescription(`**[${so_data.name}](${so_data.url})**\n[${so_data.user.name}](${so_data.user.url})`)
                                     .setThumbnail(so_data.fetched_tracks[0].thumbnail)
-                                    .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                                    .setFooter(`Requested by ${message.interaction.member.user.username}`, message.interaction.member.displayAvatarURL())
                                     .setColor(`#36393f`)
                                     .setTimestamp()
                             ]
@@ -360,7 +360,7 @@ class PlayCommand extends Command {
                                     .setAuthor(`🟢 ${so_data.total_tracks} SoundCloud songs queued`)
                                     .setDescription(`**[${so_data.name}](${so_data.url})**\n[${so_data.user.name}](${so_data.user.url})`)
                                     .setThumbnail(so_data.fetched_tracks[0].thumbnail)
-                                    .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                                    .setFooter(`Requested by ${message.interaction.member.user.username}`, message.interaction.member.displayAvatarURL())
                                     .setColor(`#36393f`)
                                     .setTimestamp()
                             ]
@@ -373,7 +373,7 @@ class PlayCommand extends Command {
                                 new MessageEmbed()
                                     .setAuthor(`🔴 Failed to process playlist`)
                                     .setDescription(`The playlist link you sent did not bring up an accessible playlist.`)
-                                    .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                                    .setFooter(`Requested by ${message.interaction.member.user.username}`, message.interaction.member.displayAvatarURL())
                                     .setColor(`#36393f`)
                                     .setTimestamp()
                             ]
@@ -390,7 +390,7 @@ class PlayCommand extends Command {
                                 new MessageEmbed()
                                     .setAuthor(`🔴 Failed to process song`)
                                     .setDescription(`An error occurred when processing the SoundCloud track. The link may be invalid.`)
-                                    .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                                    .setFooter(`Requested by ${message.interaction.member.user.username}`, message.interaction.member.displayAvatarURL())
                                     .setColor(`#36393f`)
                                     .setTimestamp()
                             ]
@@ -403,7 +403,7 @@ class PlayCommand extends Command {
                     new MessageEmbed()
                         .setAuthor(`🔎 Loading YouTube Playlist...`)
                         .setDescription(`Looking up info...`)
-                        .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                        .setFooter(`Requested by ${message.interaction.member.user.username}`, message.interaction.member.displayAvatarURL())
                         .setColor(`#36393f`)
                         .setTimestamp()
                 ]
@@ -418,7 +418,7 @@ class PlayCommand extends Command {
                                 .setAuthor(`🟡 Processing ${playlist.total_videos} YouTube songs`)
                                 .setDescription(`**[${playlist.title}](${playlist.url})**\n[${playlist.channel.name ?? `YouTube Playlist`}](${playlist.channel.url ?? ``})`)
                                 .setThumbnail(playlist.thumbnail?.url ?? playlist.videos[0].thumbnails[0]?.url)
-                                .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                                .setFooter(`Requested by ${message.interaction.member.user.username}`, message.interaction.member.displayAvatarURL())
                                 .setColor(`#36393f`)
                                 .setTimestamp()
                         ]
@@ -459,7 +459,7 @@ class PlayCommand extends Command {
                                 .setAuthor(`🟢 ${playlist.total_videos} YouTube songs queued`)
                                 .setDescription(`**[${playlist.title}](${playlist.url})**\n[${playlist.channel.name ?? `YouTube Playlist`}](${playlist.channel.url ?? ``})`)
                                 .setThumbnail(playlist.thumbnail?.url ?? playlist.videos[0].thumbnails[0]?.url)
-                                .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                                .setFooter(`Requested by ${message.interaction.member.user.username}`, message.interaction.member.displayAvatarURL())
                                 .setColor(`#36393f`)
                                 .setTimestamp()
                         ]
@@ -472,7 +472,7 @@ class PlayCommand extends Command {
                             new MessageEmbed()
                                 .setAuthor(`🔴 Failed to process playlist`)
                                 .setDescription(`The playlist link you sent did not bring up an accessible playlist.\nKeep in mind that special **user mixes like "My Mix/Supermix" are not supported**, as they are different depending on who is viewing it.`)
-                                .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                                .setFooter(`Requested by ${message.interaction.member.user.username}`, message.interaction.member.displayAvatarURL())
                                 .setColor(`#36393f`)
                                 .setTimestamp()
                         ]
@@ -485,7 +485,7 @@ class PlayCommand extends Command {
                     new MessageEmbed()
                         .setAuthor(`🔎 Searching YouTube...`)
                         .setDescription(`Finding closest match...`)
-                        .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                        .setFooter(`Requested by ${message.interaction.member.user.username}`, message.interaction.member.displayAvatarURL())
                         .setColor(`#36393f`)
                         .setTimestamp()
                 ]
@@ -506,7 +506,7 @@ class PlayCommand extends Command {
                                 new MessageEmbed()
                                     .setAuthor(`🔴 Failed to find a video`)
                                     .setDescription(`**YouTube could not find a video with those search terms**`)
-                                    .setFooter(`Requested by ${message.author.username}`, message.author.avatarURL())
+                                    .setFooter(`Requested by ${message.interaction.member.user.username}`, message.interaction.member.displayAvatarURL())
                                     .setColor(`#36393f`)
                                     .setTimestamp()
                             ]

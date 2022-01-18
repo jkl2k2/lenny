@@ -46,8 +46,22 @@ class ReadyListener extends Listener {
 
         setTimeout(() => {
             clearInterval(updatingMessage);
-            this.client.user.setActivity(`music with ${this.client.users.cache.size} users`, { type: `LISTENING` });
-            this.client.user.setStatus(`online`);
+
+            const serverStats = this.client.stats.ensure(message.guild.id, message.client.stats.default);
+
+            setInterval(() => {
+                if (first) {
+                    this.client.user.setActivity(`music for ${Math.floor(serverStats[`musicTime`] / 1000 / 60 / 60)} hours`, { type: `LISTENING` });
+                    this.client.user.setStatus(`online`);
+
+                    first = false;
+                } else {
+                    this.client.user.setActivity(`music with ${this.client.users.cache.size} users`, { type: `LISTENING` });
+                    this.client.user.setStatus(`online`);
+
+                    first = true;
+                }
+            }, 30000);
         }, 605000);
     }
 }

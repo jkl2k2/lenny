@@ -49,9 +49,9 @@ class ReadyListener extends Listener {
 
             let totalMusicTimeMs = 0;
 
-            for (const guild of client.guilds.cache.array()) {
+            for (const guild of this.client.guilds.cache.array()) {
                 // Ensure serverStats exist
-                const serverStats = client.stats.ensure(guild.id, this.client.stats.default);
+                const serverStats = this.client.stats.ensure(guild.id, this.client.stats.default);
                 totalMusicTimeMs += serverStats[`musicTime`];
             }
 

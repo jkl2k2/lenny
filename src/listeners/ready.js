@@ -49,11 +49,11 @@ class ReadyListener extends Listener {
 
             let totalMusicTimeMs = 0;
 
-            for (const guild of this.client.guilds.cache.array()) {
+            this.client.guilds.cache.each(guild => {
                 // Ensure serverStats exist
                 const serverStats = this.client.stats.ensure(guild.id, this.client.stats.default);
                 totalMusicTimeMs += serverStats[`musicTime`];
-            }
+            });
 
             setInterval(() => {
                 if (first) {

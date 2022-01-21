@@ -26,7 +26,7 @@ class PlaylistsCommand extends Command {
                 {
                     name: `action`,
                     type: `STRING`,
-                    description: `Choose what action to take (play, view, save/add, or delete)`,
+                    description: `Choose what action to take (play, view, save/add, or delete). Don't include any URLs.`,
                     required: false
                 }
             ],
@@ -90,7 +90,8 @@ class PlaylistsCommand extends Command {
             await message.interaction.reply({
                 embeds: [
                     new MessageEmbed()
-                        .setDescription(`:arrow_right: Enter the URL of the playlist you would like to save`)
+                        .setDescription(`:arrow_right: Next, send the URL of the playlist into the chat`)
+                        .setFooter(`Type "cancel" to stop`)
                         .setColor(`#36393f`)
                 ]
             });
@@ -103,7 +104,15 @@ class PlaylistsCommand extends Command {
 
                 urlCollector.stop();
 
-                if (url.content.includes(`/playlist?list=`)) {
+                if (url.content.includes(`cancel`)) {
+                    message.interaction.editReply({
+                        embeds: [
+                            new MessageEmbed()
+                                .setDescription(`:stop_button: Canceled saving playlist`)
+                                .setColor(`#36393f`)
+                        ]
+                    });
+                } else if (url.content.includes(`/playlist?list=`)) {
                     // YouTube playlist
                     const info = await play.playlist_info(url.content);
 
@@ -369,6 +378,7 @@ class PlaylistsCommand extends Command {
                 embeds: [
                     new MessageEmbed()
                         .setDescription(`Please enter the number next to the playlist you would like to delete`)
+                        .setFooter(`Type "cancel" to stop`)
                         .setColor(`#36393f`)
                 ]
             });
@@ -381,7 +391,17 @@ class PlaylistsCommand extends Command {
 
                 await sent.delete();
 
-                if (userPlaylists[`savedPlaylists`][parseInt(pos.content) - 1]) {
+                if (pos.content.includes(`cancel`)) {
+                    await pos.delete();
+
+                    message.interaction.editReply({
+                        embeds: [
+                            new MessageEmbed()
+                                .setDescription(`:stop_button: Canceled deleting playlist`)
+                                .setColor(`#36393f`)
+                        ]
+                    });
+                } else if (userPlaylists[`savedPlaylists`][parseInt(pos.content) - 1]) {
                     await message.interaction.deleteReply();
                     const sureMessage = await message.channel.send({
                         embeds: [
@@ -417,7 +437,13 @@ class PlaylistsCommand extends Command {
                             });
 
                         } else {
-                            message.channel.send(`Canceled deleting playlist`);
+                            message.interaction.editReply({
+                                embeds: [
+                                    new MessageEmbed()
+                                        .setDescription(`:stop_button: Canceled deleting playlist`)
+                                        .setColor(`#36393f`)
+                                ]
+                            });
                         }
                     });
                 } else {
@@ -472,6 +498,7 @@ class PlaylistsCommand extends Command {
                 embeds: [
                     new MessageEmbed()
                         .setDescription(`Please enter the number next to the playlist you want`)
+                        .setFooter(`Type "cancel" to stop`)
                         .setColor(`#36393f`)
                 ]
             });
@@ -485,7 +512,15 @@ class PlaylistsCommand extends Command {
                 await sent.delete();
                 await index.delete();
 
-                if (userPlaylists[`savedPlaylists`][parseInt(index) - 1]) {
+                if (index.content.includes(`cancel`)) {
+                    message.interaction.editReply({
+                        embeds: [
+                            new MessageEmbed()
+                                .setDescription(`:stop_button: Canceled playing playlist`)
+                                .setColor(`#36393f`)
+                        ]
+                    });
+                } else if (userPlaylists[`savedPlaylists`][parseInt(index) - 1]) {
                     PlayCommand.prototype.execSlash(message, {
                         song: userPlaylists[`savedPlaylists`][parseInt(index) - 1].url,
                     });

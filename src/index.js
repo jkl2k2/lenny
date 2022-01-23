@@ -145,6 +145,9 @@ client.currency = new Enmap({
 
 client.currency.default = {
     balance: 0,
+    dailyStreak: 0,
+    dailyLastClaim: null,
+    dailyStreakScaling: 0.5
 };
 
 /**
@@ -158,9 +161,12 @@ client.currency.add = (userID, amount) => {
     if (isNaN(parseInt(amount))) {
         return false;
     } else {
-        // Protect against negative balance
-        if (amount < 0 && userCurrency[`balance`] - amount < 0) {
-            client.currency.set(userID, parseInt(userCurrency[`balance`]) - parseInt(userCurrency[`balance`]), `balance`);
+        if (amount < 0 && userCurrency[`balance`] - parseInt(amount) < 0) {
+            // Protect against negative balance
+            client.currency.set(userID, 0, `balance`);
+        } else if (userCurrency[`balance`] + parseInt(amount) > 999999999999) {
+            // Protect against ridiculously high amounts of money
+            client.currency.set(userID, 999999999999, `balance`);
         } else {
             client.currency.set(userID, parseInt(userCurrency[`balance`]) + parseInt(amount), `balance`);
         }

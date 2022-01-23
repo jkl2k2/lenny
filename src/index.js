@@ -161,7 +161,7 @@ client.currency.add = (userID, amount) => {
     if (isNaN(parseInt(amount))) {
         return false;
     } else {
-        if (amount < 0 && userCurrency[`balance`] - parseInt(amount) < 0) {
+        if (amount < 0 && userCurrency[`balance`] + parseInt(amount) < 0) {
             // Protect against negative balance
             client.currency.set(userID, 0, `balance`);
         } else if (userCurrency[`balance`] + parseInt(amount) > 999999999999) {

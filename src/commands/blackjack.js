@@ -126,6 +126,32 @@ class BlackjackCommand extends Command {
     async execSlash(message, args) {
         await message.interaction.deferReply();
 
+        if (args.bet > message.client.currency.getBalance(message.author.id)) {
+            message.interaction.reply({
+                embeds: [
+                    new MessageEmbed()
+                        .setDescription(`<:cross:729019052571492434> You don't have enough money to bet that amount`)
+                        .setColor(`#FF3838`)
+                ]
+            });
+        } else if (args.bet < 0) {
+            message.interaction.reply({
+                embeds: [
+                    new MessageEmbed()
+                        .setDescription(`<:cross:729019052571492434> You can't bet a negative amount of money`)
+                        .setColor(`#FF3838`)
+                ]
+            });
+        } else if (isNaN(args.bet)) {
+            message.interaction.reply({
+                embeds: [
+                    new MessageEmbed()
+                        .setDescription(`<:cross:729019052571492434> Please enter a number value for your bet`)
+                        .setColor(`#FF3838`)
+                ]
+            });
+        }
+
         const deck = shuffle(createDeck());
 
         const player = {
@@ -152,12 +178,13 @@ class BlackjackCommand extends Command {
             new MessageButton()
                 .setCustomId(`double`)
                 .setLabel(`Double down`)
-                .setStyle(`SECONDARY`)
+                .setStyle(`PRIMARY`)
         ];
 
         if (args.bet * 2 > message.client.currency.getBalance(message.author.id)) {
             // Can't double down
             buttonList[2].setDisabled(true);
+            buttonList[2].setStyle(`SECONDARY`);
         }
 
         const row = new MessageActionRow().addComponents(buttonList);

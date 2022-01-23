@@ -127,7 +127,7 @@ class BlackjackCommand extends Command {
         await message.interaction.deferReply();
 
         if (args.bet > message.client.currency.getBalance(message.author.id)) {
-            message.interaction.editReply({
+            return message.interaction.editReply({
                 embeds: [
                     new MessageEmbed()
                         .setDescription(`<:cross:729019052571492434> You don't have enough money to bet that amount`)
@@ -135,7 +135,7 @@ class BlackjackCommand extends Command {
                 ]
             });
         } else if (args.bet < 0) {
-            message.interaction.editReply({
+            return message.interaction.editReply({
                 embeds: [
                     new MessageEmbed()
                         .setDescription(`<:cross:729019052571492434> You can't bet a negative amount of money`)
@@ -143,7 +143,7 @@ class BlackjackCommand extends Command {
                 ]
             });
         } else if (isNaN(args.bet)) {
-            message.interaction.editReply({
+            return message.interaction.editReply({
                 embeds: [
                     new MessageEmbed()
                         .setDescription(`<:cross:729019052571492434> Please enter a number value for your bet`)

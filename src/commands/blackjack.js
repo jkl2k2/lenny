@@ -208,9 +208,9 @@ class BlackjackCommand extends Command {
 
         const filter = (i) =>
             i.user.id === message.author.id &&
-            i.customId === buttonList[0].customId ||
-            i.customId === buttonList[1].customId ||
-            i.customId === buttonList[2].customId;
+            (i.customId === buttonList[0].customId ||
+                i.customId === buttonList[1].customId ||
+                i.customId === buttonList[2].customId);
 
         const collector = await currentView.createMessageComponentCollector({
             filter,

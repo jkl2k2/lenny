@@ -58,7 +58,7 @@ class ReadyListener extends Listener {
 
             setInterval(() => {
                 if (first) {
-                    this.client.user.setActivity(`music for ${moment.duration(totalMusicTimeMs, `milliseconds`).asHours()} hours`, { type: `LISTENING` });
+                    this.client.user.setActivity(`music for ${Math.round(moment.duration(totalMusicTimeMs, `milliseconds`).asHours())} hours`, { type: `LISTENING` });
                     this.client.user.setStatus(`online`);
 
                     first = false;

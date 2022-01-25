@@ -1,5 +1,6 @@
 const { Listener } = require(`discord-akairo`);
 const chalk = require(`chalk`);
+const moment = require(`moment`);
 class ReadyListener extends Listener {
     constructor() {
         super(`ready`, {
@@ -57,7 +58,7 @@ class ReadyListener extends Listener {
 
             setInterval(() => {
                 if (first) {
-                    this.client.user.setActivity(`music for ${Math.floor(totalMusicTimeMs / 1000 / 60 / 60)} hours`, { type: `LISTENING` });
+                    this.client.user.setActivity(`music for ${moment.duration(totalMusicTimeMs, `milliseconds`).asHours()} hours`, { type: `LISTENING` });
                     this.client.user.setStatus(`online`);
 
                     first = false;

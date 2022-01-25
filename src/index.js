@@ -136,6 +136,63 @@ client.userPlaylists.default = {
     savedPlaylists: []
 };
 
+client.currency = new Enmap({
+    name: `currency`,
+    fetchAll: false,
+    autoFetch: true,
+    cloneLevel: `deep`
+});
+
+client.currency.default = {
+    balance: 0,
+    dailyStreak: 0,
+    dailyLastClaim: null,
+    dailyStreakScaling: 0.5
+};
+
+/**
+ * Adds/subtracts an integer amount from a user's balance
+ * @param {Integer} userID The ID of the user to affect 
+ * @param {Integer} amount The amount of money to add/subtract
+ * @returns A boolean representing success/failure
+ */
+client.currency.add = (userID, amount) => {
+    const userCurrency = client.currency.ensure(userID, client.currency.default);
+    if (isNaN(parseInt(amount))) {
+        return false;
+    } else {
+        if (amount < 0 && userCurrency[`balance`] + parseInt(amount) < 0) {
+            // Protect against negative balance
+            client.currency.set(userID, 0, `balance`);
+        } else if (userCurrency[`balance`] + parseInt(amount) > 999999999999) {
+            // Protect against ridiculously high amounts of money
+            client.currency.set(userID, 999999999999, `balance`);
+        } else {
+            client.currency.set(userID, parseInt(userCurrency[`balance`]) + parseInt(amount), `balance`);
+        }
+        return true;
+    }
+};
+
+/**
+ * Returns the Enmap database entry for a user
+ * @param {Integer} userID The ID of the user to look up 
+ * @returns The Enmap entry for the user
+ */
+client.currency.getUser = (userID) => {
+    return client.currency.ensure(userID, client.currency.default);
+};
+
+/**
+ * Returns the user's current balance
+ * @param {Integer} userID 
+ * @returns The user's current balance
+ */
+client.currency.getBalance = (userID) => {
+    const userCurrency = client.currency.ensure(userID, client.currency.default);
+    return userCurrency[`balance`];
+};
+
 /*
 client.on(`guildDelete`, guild => {
     // Remove deleted guild from Enmap

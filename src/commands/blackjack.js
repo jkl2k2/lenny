@@ -248,6 +248,15 @@ class BlackjackCommand extends Command {
                     }
                     break;
                 case `stay`:
+                    // Check for natural blackjack
+                    updatePoints(player);
+                    if (player.altPoints === 21) {
+                        // Natural blackjack
+                        endMessage = `PLAYER BLACKJACK`;
+                        playerWon = true;
+                        collector.stop();
+                    }
+
                     // Dealer needs to hit until 17
                     while (dealer.points < 17 && dealer.altPoints < 17) {
                         dealer.hand.push(drawCard(deck));

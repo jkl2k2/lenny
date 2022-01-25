@@ -8,28 +8,27 @@ class DailyCommand extends Command {
         super(`daily`, {
             aliases: [`daily`],
             category: `economy`,
+            slash: true,
             description: `Get a daily reward`,
             channel: `guild`
         });
     }
 
-    exec(message) {
+    exec() {
+        return;
+    }
+
+    execSlash(message) {
         const user = message.client.currency.getUser(message.author.id);
         const dailyLastClaim = user[`dailyLastClaim`];
         const dailyStreak = user[`dailyStreak`];
         const dailyStreakScaling = user[`dailyStreakScaling`];
         const bonusBaseAmount = 500;
 
-        if (message.content.includes(`reset`)) {
-            message.client.currency.set(message.author.id, null, `dailyLastClaim`);
-            message.client.currency.set(message.author.id, 0, `dailyStreak`);
-            return global.logger.debug(`Detected reset`);
-        }
-
         if (!dailyLastClaim || moment().diff(moment(dailyLastClaim), `days`) === 1) {
             // First claim or been 1 day (valid claim)
             if (dailyStreak + 1 === 5) {
-                message.channel.send({
+                message.interaction.reply({
                     embeds: [
                         new MessageEmbed()
                             .setAuthor(`${message.author.tag}'s Daily Bonus`, message.author.avatarURL())
@@ -38,7 +37,7 @@ class DailyCommand extends Command {
                     ]
                 });
             } else {
-                message.channel.send({
+                message.interaction.reply({
                     embeds: [
                         new MessageEmbed()
                             .setAuthor(`${message.author.tag}'s Daily Bonus`, message.author.avatarURL())
@@ -53,7 +52,7 @@ class DailyCommand extends Command {
             message.client.currency.add(message.author.id, bonusBaseAmount + (bonusBaseAmount * (0.5 * dailyStreak)));
         } else if (moment().diff(moment(dailyLastClaim), `days`) >= 2) {
             // Lost streak from taking too long
-            message.channel.send({
+            message.interaction.reply({
                 embeds: [
                     new MessageEmbed()
                         .setAuthor(`${message.author.tag}'s Daily Bonus`, message.author.avatarURL())
@@ -67,7 +66,7 @@ class DailyCommand extends Command {
             message.client.currency.add(message.author.id, bonusBaseAmount);
         } else if (moment().diff(moment(dailyLastClaim), `days`) < 1) {
             // Hasn't been long enough
-            message.channel.send({
+            message.interaction.reply({
                 embeds: [
                     new MessageEmbed()
                         .setAuthor(`${message.author.tag}'s Daily Bonus`, message.author.avatarURL())
@@ -76,7 +75,7 @@ class DailyCommand extends Command {
                 ]
             });
         } else {
-            message.channel.send(`Catch (you should never see this)`);
+            message.interaction.reply(`Catch (you should never see this)`);
         }
     }
 }

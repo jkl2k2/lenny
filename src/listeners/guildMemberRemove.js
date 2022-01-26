@@ -8,15 +8,15 @@ class guildMemberRemoveListener extends Listener {
         });
     }
 
-    exec(message, member) {
+    exec(member) {
         // Ensure settings exist
-        message.client.settings.ensure(member.guild.id, client.settings.default);
+        member.client.settings.ensure(member.guild.id, member.client.settings.default);
 
         // Return if disabled
-        if (JSON.parse(message.client.settings.get(member.guild.id, `welcomeEnabled`)) != true) return;
+        if (JSON.parse(member.client.settings.get(member.guild.id, `welcomeEnabled`)) != true) return;
 
         // Get goodbye message
-        let goodbyeMessage = message.client.settings.get(member.guild.id, "goodbyeMessage");
+        let goodbyeMessage = member.client.settings.get(member.guild.id, "goodbyeMessage");
 
         // Fill placeholders
         goodbyeMessage = goodbyeMessage.replace(`{{user}}`, member.user.username);

@@ -258,7 +258,7 @@ class BlackjackCommand extends Command {
                     }
 
                     // Dealer needs to hit until 17
-                    while (dealer.points < 17 && dealer.altPoints < 17) {
+                    while (dealer.altPoints < 17 || (dealer.points < 17 && dealer.altPoints > 21)) {
                         dealer.hand.push(drawCard(deck));
                         updatePoints(dealer);
                     }
@@ -311,7 +311,7 @@ class BlackjackCommand extends Command {
 
                     // Use "stay" logic next
                     // Dealer needs to hit until 17
-                    while (dealer.points < 17 && dealer.altPoints < 17) {
+                    while (dealer.altPoints < 17 || (dealer.points < 17 && dealer.altPoints > 21)) {
                         dealer.hand.push(drawCard(deck));
                         updatePoints(dealer);
                     }

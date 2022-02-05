@@ -1,7 +1,7 @@
 /*jshint esversion: 11 */
 
 const { Command } = require(`discord-akairo`);
-const { MessageEmbed, MessageButton } = require(`discord.js`);
+const { MessageEmbed, MessageButton, MessageActionRow } = require(`discord.js`);
 const play = require(`play-dl`);
 const paginationEmbed = require(`discordjs-button-pagination`);
 const PlayCommand = require(`./play`);
@@ -494,17 +494,58 @@ class PlaylistsCommand extends Command {
                 await paginationEmbed(message.interaction, pages, buttons, 120000);
             }
 
+            const row = new MessageActionRow().addComponents([
+                new MessageButton()
+                    .setCustomId(`shufflebtn`)
+                    .setLabel(`Shuffle: on`)
+                    .setStyle(`PRIMARY`)
+            ]);
+
             const sent = await message.channel.send({
                 embeds: [
                     new MessageEmbed()
                         .setDescription(`Please enter the number next to the playlist you want`)
                         .setFooter(`Type "cancel" to stop`)
                         .setColor(`#36393f`)
-                ]
+                ],
+                components: [row]
             });
 
             const filter = m => m.author.id == message.author.id;
             const indexCollector = message.channel.createMessageCollector(filter, { time: 60000, max: 1 });
+            const buttonCollector = sent.createMessageComponentCollector(filter, { time: 60000, max: 1 });
+
+            buttonCollector.on(`collect`, async i => {
+                await i.deferUpdate();
+
+                if (i.component.style === `PRIMARY`) {
+                    const row = new MessageActionRow().addComponents([
+                        new MessageButton()
+                            .setCustomId(`shufflebtn`)
+                            .setLabel(`Shuffle: off`)
+                            .setStyle(`SECONDARY`)
+                    ]);
+
+                    await sent.edit({
+                        embeds: [sent.embeds[0]],
+                        components: [row]
+                    });
+                } else {
+                    const row = new MessageActionRow().addComponents([
+                        new MessageButton()
+                            .setCustomId(`shufflebtn`)
+                            .setLabel(`Shuffle: on`)
+                            .setStyle(`PRIMARY`)
+                    ]);
+
+                    await sent.edit({
+                        embeds: [sent.embeds[0]],
+                        components: [row]
+                    });
+                }
+
+                buttonCollector.resetTimer();
+            });
 
             indexCollector.on(`collect`, async index => {
                 indexCollector.stop();
@@ -521,9 +562,25 @@ class PlaylistsCommand extends Command {
                         ]
                     });
                 } else if (userPlaylists[`savedPlaylists`][parseInt(index) - 1]) {
-                    PlayCommand.prototype.execSlash(message, {
-                        song: userPlaylists[`savedPlaylists`][parseInt(index) - 1].url,
-                    });
+                    if (sent.components[0].components[0].style === `PRIMARY`) {
+                        PlayCommand.prototype.execSlash(message,
+                            {
+                                song: userPlaylists[`savedPlaylists`][parseInt(index) - 1].url,
+                            },
+                            {
+                                shufflePlaylist: true
+                            }
+                        );
+                    } else {
+                        PlayCommand.prototype.execSlash(message,
+                            {
+                                song: userPlaylists[`savedPlaylists`][parseInt(index) - 1].url,
+                            },
+                            {
+                                shufflePlaylist: false
+                            }
+                        );
+                    }
                 } else {
                     return message.interaction.editReply({
                         embeds: [

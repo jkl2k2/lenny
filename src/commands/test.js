@@ -1,5 +1,6 @@
 const { Command } = require(`discord-akairo`);
 const { MessageEmbed } = require(`discord.js`);
+const moment = require(`moment`);
 
 /*eslint class-methods-use-this: ["error", { "exceptMethods": ["exec", "execSlash"] }] */
 class TestCommand extends Command {
@@ -13,9 +14,15 @@ class TestCommand extends Command {
     }
 
     exec(message) {
-        const serverStats = message.client.stats.ensure(message.guild.id, message.client.stats.default);
+        let totalMusicTimeMs = 0;
 
-        console.log(`music for ${Math.floor(serverStats[`musicTime`] / 1000 / 60 / 60)} hours`);
+        this.client.guilds.cache.each(guild => {
+            // Ensure serverStats exist
+            const serverStats = this.client.stats.ensure(guild.id, this.client.stats.default);
+            totalMusicTimeMs += serverStats[`musicTime`];
+        });
+
+        console.log(totalMusicTimeMs, moment.duration(totalMusicTimeMs, `milliseconds`).asHours());
     }
 }
 

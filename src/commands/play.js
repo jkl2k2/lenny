@@ -12,6 +12,24 @@ const Track = require(`../modules/track`);
 const play = require(`play-dl`);
 const pretty = require(`pretty-ms`);
 
+function shuffle(array) {
+    var m = array.length, t, i;
+
+    // While there remain elements to shuffle…
+    while (m) {
+
+        // Pick a remaining element…
+        i = Math.floor(Math.random() * m--);
+
+        // And swap it with the current element.
+        t = array[m];
+        array[m] = array[i];
+        array[i] = t;
+    }
+
+    return array;
+}
+
 /*eslint class-methods-use-this: ["error", { "exceptMethods": ["exec", "execSlash"] }] */
 class PlayCommand extends Command {
     constructor() {
@@ -401,15 +419,38 @@ class PlayCommand extends Command {
                     // Count private videos
                     let privateVideos = 0;
 
+                    console.log(options?.shufflePlaylist);
+
                     // Create a Track from each song
-                    for (let i = 1; i <= playlist.total_pages; i++) {
-                        const page = playlist.page(i);
-                        for (const song of page) {
-                            if (song.private) {
-                                privateVideos++;
-                            } else {
-                                await process(song);
+                    if (!options?.shufflePlaylist) {
+                        for (let i = 1; i <= playlist.total_pages; i++) {
+                            const page = playlist.page(i);
+                            for (const song of page) {
+                                if (song.private) {
+                                    privateVideos++;
+                                } else {
+                                    await process(song);
+                                }
                             }
+                        }
+                    } else {
+                        const arrToShuffle = [];
+
+                        for (let i = 1; i <= playlist.total_pages; i++) {
+                            const page = playlist.page(i);
+                            for (const song of page) {
+                                if (song.private) {
+                                    privateVideos++;
+                                } else {
+                                    arrToShuffle.push(song);
+                                }
+                            }
+                        }
+
+                        const shuffled = shuffle(arrToShuffle);
+
+                        for (const song of shuffled) {
+                            await process(song);
                         }
                     }
 

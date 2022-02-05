@@ -12,6 +12,24 @@ const Track = require(`../modules/track`);
 const play = require(`play-dl`);
 const pretty = require(`pretty-ms`);
 
+function shuffle(array) {
+    var m = array.length, t, i;
+
+    // While there remain elements to shuffle…
+    while (m) {
+
+        // Pick a remaining element…
+        i = Math.floor(Math.random() * m--);
+
+        // And swap it with the current element.
+        t = array[m];
+        array[m] = array[i];
+        array[i] = t;
+    }
+
+    return array;
+}
+
 /*eslint class-methods-use-this: ["error", { "exceptMethods": ["exec", "execSlash"] }] */
 class PlayCommand extends Command {
     constructor() {
@@ -230,16 +248,39 @@ class PlayCommand extends Command {
                     let incompleteSongs = 0;
 
                     // Create a Track from each song
-                    for (let i = 1; i <= sp_data.total_pages; i++) {
-                        const page = sp_data.page(i);
-                        for (const song of page) {
-                            if (!song.url) {
-                                song.url = `https://www.spotify.com/us/`;
-                                await process(song);
-                                incompleteSongs++;
-                            } else {
-                                await process(song);
+                    if (!options?.shufflePlaylist) {
+                        for (let i = 1; i <= sp_data.total_pages; i++) {
+                            const page = sp_data.page(i);
+                            for (const song of page) {
+                                if (!song.url) {
+                                    song.url = `https://www.spotify.com/us/`;
+                                    await process(song);
+                                    incompleteSongs++;
+                                } else {
+                                    await process(song);
+                                }
                             }
+                        }
+                    } else {
+                        const arrToShuffle = [];
+
+                        for (let i = 1; i <= sp_data.total_pages; i++) {
+                            const page = sp_data.page(i);
+                            for (const song of page) {
+                                if (!song.url) {
+                                    song.url = `https://www.spotify.com/us/`;
+                                    await process(song);
+                                    incompleteSongs++;
+                                } else {
+                                    arrToShuffle.push(song);
+                                }
+                            }
+                        }
+
+                        const shuffled = shuffle(arrToShuffle);
+
+                        for (const song of shuffled) {
+                            await process(song);
                         }
                     }
 
@@ -314,15 +355,29 @@ class PlayCommand extends Command {
                                 new MessageEmbed()
                                     .setAuthor(`🟡 Processing ${so_data.total_tracks} SoundCloud songs`)
                                     .setDescription(`**[${so_data.name}](${so_data.url})**\n[${so_data.user.name}](${so_data.user.url})`)
-                                    .setThumbnail(so_data.fetched_tracks[0].thumbnail)
+                                    .setThumbnail(so_data.tracks[0].thumbnail)
                                     .setFooter(`Requested by ${message.interaction.member.user.username}`, message.interaction.member.displayAvatarURL())
                                     .setColor(`#36393f`)
                                     .setTimestamp()
                             ]
                         });
 
-                        for (const song of so_data.fetched_tracks) {
-                            await process(song);
+                        if (!options?.shufflePlaylist) {
+                            for (const song of so_data.tracks) {
+                                await process(song);
+                            }
+                        } else {
+                            const arrToShuffle = [];
+
+                            for (const song of so_data.tracks) {
+                                arrToShuffle.push(song);
+                            }
+
+                            const shuffled = shuffle(arrToShuffle);
+
+                            for (const song of arrToShuffle) {
+                                await process(song);
+                            }
                         }
 
                         // Reply with success message
@@ -331,7 +386,7 @@ class PlayCommand extends Command {
                                 new MessageEmbed()
                                     .setAuthor(`🟢 ${so_data.total_tracks} SoundCloud songs queued`)
                                     .setDescription(`**[${so_data.name}](${so_data.url})**\n[${so_data.user.name}](${so_data.user.url})`)
-                                    .setThumbnail(so_data.fetched_tracks[0].thumbnail)
+                                    .setThumbnail(so_data.tracks[0].thumbnail)
                                     .setFooter(`Requested by ${message.interaction.member.user.username}`, message.interaction.member.displayAvatarURL())
                                     .setColor(`#36393f`)
                                     .setTimestamp()
@@ -402,14 +457,35 @@ class PlayCommand extends Command {
                     let privateVideos = 0;
 
                     // Create a Track from each song
-                    for (let i = 1; i <= playlist.total_pages; i++) {
-                        const page = playlist.page(i);
-                        for (const song of page) {
-                            if (song.private) {
-                                privateVideos++;
-                            } else {
-                                await process(song);
+                    if (!options?.shufflePlaylist) {
+                        for (let i = 1; i <= playlist.total_pages; i++) {
+                            const page = playlist.page(i);
+                            for (const song of page) {
+                                if (song.private) {
+                                    privateVideos++;
+                                } else {
+                                    await process(song);
+                                }
                             }
+                        }
+                    } else {
+                        const arrToShuffle = [];
+
+                        for (let i = 1; i <= playlist.total_pages; i++) {
+                            const page = playlist.page(i);
+                            for (const song of page) {
+                                if (song.private) {
+                                    privateVideos++;
+                                } else {
+                                    arrToShuffle.push(song);
+                                }
+                            }
+                        }
+
+                        const shuffled = shuffle(arrToShuffle);
+
+                        for (const song of shuffled) {
+                            await process(song);
                         }
                     }
 

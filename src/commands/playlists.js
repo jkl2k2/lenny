@@ -262,7 +262,7 @@ class PlaylistsCommand extends Command {
                                 new MessageEmbed()
                                     .setAuthor(`💾 Saving SoundCloud playlist`)
                                     .setDescription(`**[${so_data.name}](${url.content})**\n[${so_data.user.name}](${so_data.user.url})\n\n**Is this correct? (yes/no)**`)
-                                    .setThumbnail(so_data.fetched_tracks[0].thumbnail)
+                                    .setThumbnail(so_data.tracks[0].thumbnail)
                                     .setColor(`#36393f`)
                             ]
                         });
@@ -288,7 +288,7 @@ class PlaylistsCommand extends Command {
                                         new MessageEmbed()
                                             .setAuthor(`🟢 Saved SoundCloud playlist`)
                                             .setDescription(`**[${so_data.name}](${so_data.url})**\n[${so_data.user.name}](${so_data.user.url})`)
-                                            .setThumbnail(so_data.fetched_tracks[0].thumbnail)
+                                            .setThumbnail(so_data.tracks[0].thumbnail)
                                             .setColor(`#36393f`)
                                     ]
                                 });

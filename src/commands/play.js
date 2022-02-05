@@ -79,79 +79,51 @@ class PlayCommand extends Command {
 
         async function process(input) {
             // Create a Track from the user's input
-            let track;
+            let authorField;
 
             if (options?.seek || options?.seek === 0) {
-                track = await Track.from(input, message.interaction.member, {
-                    async onStart() {
-                        message.channel.send({
-                            embeds: [
-                                new MessageEmbed()
-                                    .setAuthor(`⏩ Playing from ${pretty(options.seek * 1000, { colonNotation: true })}`)
-                                    .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.name}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
-                                    .setThumbnail(track.video.thumbnails[0].url)
-                                    .setFooter(`Requested by ${message.interaction.member.user.username}`, message.interaction.member.displayAvatarURL())
-                                    .setColor(`#36393f`)
-                                    .setTimestamp(track.timestamp)
-                            ]
-                        }).catch(global.logger.warn);
-                    },
-                    onFinish() {
-                        return;
-                    },
-                    onError(err) {
-                        global.logger.error(`Playing track from queue failed.`);
-                        global.logger.error(`Error: ${err.message}`);
-                        message.channel.send({
-                            embeds: [
-                                new MessageEmbed()
-                                    .setAuthor(`🔴 Failed to play`)
-                                    .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.name}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
-                                    .setThumbnail(track.video.thumbnails[0].url)
-                                    .setFooter(`Requested by ${message.interaction.member.user.username}`, message.interaction.member.displayAvatarURL())
-                                    .setColor(`#36393f`)
-                                    .setTimestamp(track.timestamp)
-                            ]
-                        }).catch(global.logger.error);
-                    }
-                });
-
-                track.seekTime = options.seek;
+                authorField = `⏩ Playing from ${pretty(options.seek * 1000, { colonNotation: true })}`;
             } else {
-                track = await Track.from(input, message.interaction.member, {
-                    async onStart() {
-                        message.channel.send({
-                            embeds: [
-                                new MessageEmbed()
-                                    .setAuthor(`▶️ Now playing`)
-                                    .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.name}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
-                                    .setThumbnail(track.video.thumbnails[0].url)
-                                    .setFooter(`Requested by ${message.interaction.member.user.username}`, message.interaction.member.displayAvatarURL())
-                                    .setColor(`#36393f`)
-                                    .setTimestamp(track.timestamp)
-                            ]
-                        }).catch(global.logger.warn);
-                    },
-                    onFinish() {
-                        return;
-                    },
-                    onError(err) {
-                        global.logger.error(`Playing track from queue failed.`);
-                        global.logger.error(`Error: ${err.message}`);
-                        message.channel.send({
-                            embeds: [
-                                new MessageEmbed()
-                                    .setAuthor(`🔴 Failed to play`)
-                                    .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.name}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
-                                    .setThumbnail(track.video.thumbnails[0].url)
-                                    .setFooter(`Requested by ${message.interaction.member.user.username}`, message.interaction.member.displayAvatarURL())
-                                    .setColor(`#36393f`)
-                                    .setTimestamp(track.timestamp)
-                            ]
-                        }).catch(global.logger.error);
-                    }
-                });
+                authorField = `▶️ Now playing`;
             }
+
+            const track = await Track.from(input, message.interaction.member, {
+                async onStart() {
+                    message.channel.send({
+                        embeds: [
+                            new MessageEmbed()
+                                .setAuthor(authorField)
+                                .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.name}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
+                                .setThumbnail(track.video.thumbnails[0].url)
+                                .setFooter(`Requested by ${message.interaction.member.user.username}`, message.interaction.member.displayAvatarURL())
+                                .setColor(`#36393f`)
+                                .setTimestamp(track.timestamp)
+                        ]
+                    }).catch(global.logger.warn);
+                },
+                onFinish() {
+                    return;
+                },
+                onError(err) {
+                    global.logger.error(`Playing track from queue failed.`);
+                    global.logger.error(`Error: ${err.message}`);
+                    message.channel.send({
+                        embeds: [
+                            new MessageEmbed()
+                                .setAuthor(`🔴 Failed to play`)
+                                .setDescription(`**[${track.video.title}](${track.video.url})**\n[${track.video.channel.name}](${track.video.channel.url})\n\nLength: \`${track.getDuration()}\``)
+                                .setThumbnail(track.video.thumbnails[0].url)
+                                .setFooter(`Requested by ${message.interaction.member.user.username}`, message.interaction.member.displayAvatarURL())
+                                .setColor(`#36393f`)
+                                .setTimestamp(track.timestamp)
+                        ]
+                    }).catch(global.logger.error);
+                }
+            });
+
+            // If seeking, then assign track.seekTime
+            // Can't do above because track isn't defined yet
+            track.seekTime = options?.seek;
 
             // Queue track
             subscription.enqueue(track, options ?? {

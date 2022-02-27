@@ -183,7 +183,7 @@ class PlayCommand extends Command {
             }
         }
 
-        if (args.song.includes(`watch?v=`) || args.song.includes(`youtu.be`)) {
+        if (args.song.includes(`watch?v=`) || args.song.includes(`youtu.be`) || args.song.includes(`youtube.com/shorts/`)) {
             return sendEmbed(await process(args.song));
         } else if (args.song.includes(`spotify.com`)) {
             if (play.is_expired()) {

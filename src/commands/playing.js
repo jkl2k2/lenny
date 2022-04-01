@@ -47,10 +47,13 @@ class PlayingCommand extends Command {
                 // Calculate the total duration of the song, used to compare to the running time
                 const total = playing.durationInSec;
 
-                const formattedPlaying = pretty(subscription.audioPlayer._state.playbackDuration, { colonNotation: true, secondsDecimalDigits: 0 });
+                // Convert the seek offset (if applicable) to milliseconds
+                const seekOffset = (subscription.audioPlayer._state.resource.metadata.seekTime * 1000) || 0;
+
+                const formattedPlaying = pretty(subscription.audioPlayer._state.playbackDuration + seekOffset, { colonNotation: true, secondsDecimalDigits: 0 });
 
                 // Calculate what percent of the song is complete
-                const frac = (subscription.audioPlayer._state.playbackDuration / 1000) / total;
+                const frac = ((subscription.audioPlayer._state.playbackDuration + seekOffset) / 1000) / total;
 
                 // Prepare string for formatting
                 let progressBar = ``;

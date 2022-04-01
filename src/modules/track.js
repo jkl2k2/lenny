@@ -77,6 +77,8 @@ module.exports = class Track {
             // YouTube or SoundCloud, can stream directly
             play.stream(this.video.url, { seek: this.seekTime ?? 0.1 })
                 .then(stream => {
+                    // Mark SoundCloud as not seekable
+                    if (this.video.type === `soundcloud`) this.seekable = false;
                     resolve(createAudioResource(stream.stream, {
                         metadata: this,
                         inputType: stream.type
@@ -128,6 +130,7 @@ module.exports = class Track {
 
         if (typeof input === `object` && input.url.includes(`youtube.com/`)) {
             info = {
+                type: `youtube`,
                 title: input.title,
                 url: input.url,
                 channel: {
@@ -143,6 +146,7 @@ module.exports = class Track {
             };
         } else if (typeof input === `object` && input.url.includes(`spotify.com/`)) {
             info = {
+                type: `spotify`,
                 title: input.name,
                 url: input.url || `https://www.spotify.com/us/`,
                 channel: {
@@ -158,6 +162,7 @@ module.exports = class Track {
             };
         } else if (typeof input === `object` && input.url.includes(`soundcloud.com/`)) {
             info = {
+                type: `soundcloud`,
                 title: input.name,
                 url: input.url,
                 channel: {
@@ -175,6 +180,7 @@ module.exports = class Track {
             const sp_data = await play.spotify(input);
 
             info = {
+                type: `spotify`,
                 title: sp_data.name,
                 url: sp_data.url || `https://www.spotify.com/us/`,
                 channel: {
@@ -192,6 +198,7 @@ module.exports = class Track {
             const so_info = await play.soundcloud(input);
 
             info = {
+                type: `soundcloud`,
                 title: so_info.name,
                 url: so_info.url,
                 channel: {
@@ -207,6 +214,7 @@ module.exports = class Track {
             };
         } else {
             info = (await play.video_info(input)).video_details;
+            info.type = `unknown`;
         }
 
         return new Track(info, requester, wrappedMethods.onStart, wrappedMethods.onFinish, wrappedMethods.onError);

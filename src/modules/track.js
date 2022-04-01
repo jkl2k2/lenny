@@ -77,8 +77,8 @@ module.exports = class Track {
             // YouTube or SoundCloud, can stream directly
             play.stream(this.video.url, { seek: this.seekTime ?? 0.1 })
                 .then(stream => {
-                    // Mark SoundCloud as not seekable
-                    if (this.video.type === `soundcloud`) this.seekable = false;
+                    // Mark SoundCloud and livestreams as not seekable
+                    if (this.video.type === `soundcloud` || this.video.durationInSec === 0) this.seekable = false;
                     resolve(createAudioResource(stream.stream, {
                         metadata: this,
                         inputType: stream.type

@@ -64,7 +64,41 @@ class SeekCommand extends Command {
         const subscription = this.client.subscriptions.get(message.guild.id);
 
         if (subscription && subscription.audioPlayer._state.status === `playing`) {
-            if (totalSeconds >= subscription.audioPlayer._state.resource.metadata.video.durationInSec || totalSeconds < 0) {
+            // Shortcut to the metadata
+            const meta = subscription.audioPlayer._state.resource.metadata;
+
+            if (!meta.seekable) {
+                // The video/song is not able to use seeking
+                if (meta.video.type === `youtube`) {
+                    return message.interaction.reply({
+                        embeds: [
+                            new MessageEmbed()
+                                .setDescription(`<:cross:729019052571492434> Sorry, this particular video does not support seeking.\nThe format that YouTube stores this video in doesn't support it.`)
+                                .setColor(`#FF3838`)
+                        ],
+                        ephemeral: true
+                    });
+                } else if (meta.video.type === `soundcloud`) {
+                    return message.interaction.reply({
+                        embeds: [
+                            new MessageEmbed()
+                                .setDescription(`<:cross:729019052571492434> Sorry, SoundCloud does not support seeking`)
+                                .setColor(`#FF3838`)
+                        ],
+                        ephemeral: true
+                    });
+                } else {
+                    // Catch-all message
+                    return message.interaction.reply({
+                        embeds: [
+                            new MessageEmbed()
+                                .setDescription(`<:cross:729019052571492434> Sorry, this video or song does not support seeking`)
+                                .setColor(`#FF3838`)
+                        ],
+                        ephemeral: true
+                    });
+                }
+            } else if (totalSeconds >= meta.video.durationInSec || totalSeconds < 0) {
                 // Seeking too far ahead or somehow put negative numbers
                 return message.interaction.reply({
                     embeds: [
@@ -74,31 +108,10 @@ class SeekCommand extends Command {
                     ],
                     ephemeral: true
                 });
-            } else if (!subscription.audioPlayer._state.resource.metadata.seekable) {
-                // The video is not able to use seeking because it's not WebM/Opus
-                if (subscription.audioPlayer._state.resource.metadata.video.type === `youtube`) {
-                    return message.interaction.reply({
-                        embeds: [
-                            new MessageEmbed()
-                                .setDescription(`<:cross:729019052571492434> Sorry, this particular video does not support seeking.\nThe format that YouTube stores this video in doesn't support it.`)
-                                .setColor(`#FF3838`)
-                        ],
-                        ephemeral: true
-                    });
-                } else if (subscription.audioPlayer._state.resource.metadata.video.type === `soundcloud`) {
-                    return message.interaction.reply({
-                        embeds: [
-                            new MessageEmbed()
-                                .setDescription(`<:cross:729019052571492434> Sorry, SoundCloud does not support seeking`)
-                                .setColor(`#FF3838`)
-                        ],
-                        ephemeral: true
-                    });
-                }
             } else {
                 // Same behavior as playnow command but with seek defined
                 PlayCommand.prototype.execSlash(message, {
-                    song: subscription.audioPlayer._state.resource.metadata.video.url,
+                    song: meta.video.url,
                 }, {
                     next: true,
                     force: true,

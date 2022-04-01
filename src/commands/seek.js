@@ -76,14 +76,25 @@ class SeekCommand extends Command {
                 });
             } else if (!subscription.audioPlayer._state.resource.metadata.seekable) {
                 // The video is not able to use seeking because it's not WebM/Opus
-                return message.interaction.reply({
-                    embeds: [
-                        new MessageEmbed()
-                            .setDescription(`<:cross:729019052571492434> Sorry, this particular video does not support seeking.\nThe format that YouTube stores this video in doesn't support it.`)
-                            .setColor(`#FF3838`)
-                    ],
-                    ephemeral: true
-                });
+                if (subscription.audioPlayer._state.resource.metadata.video.type === `youtube`) {
+                    return message.interaction.reply({
+                        embeds: [
+                            new MessageEmbed()
+                                .setDescription(`<:cross:729019052571492434> Sorry, this particular video does not support seeking.\nThe format that YouTube stores this video in doesn't support it.`)
+                                .setColor(`#FF3838`)
+                        ],
+                        ephemeral: true
+                    });
+                } else if (subscription.audioPlayer._state.resource.metadata.video.type === `soundcloud`) {
+                    return message.interaction.reply({
+                        embeds: [
+                            new MessageEmbed()
+                                .setDescription(`<:cross:729019052571492434> Sorry, SoundCloud does not support seeking`)
+                                .setColor(`#FF3838`)
+                        ],
+                        ephemeral: true
+                    });
+                }
             } else {
                 // Same behavior as playnow command but with seek defined
                 PlayCommand.prototype.execSlash(message, {

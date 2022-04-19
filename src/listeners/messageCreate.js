@@ -24,10 +24,8 @@ class MessageCreateListener extends Listener {
             message.react('🧢');
         }
 
-        /*
         if (message.content.toLowerCase().includes(`amogus`))
             message.react('<:amogus:814325340289761300>');
-        */
 
         // Banana reaction
         if (message.content.toLowerCase().includes(`banana`) && message.channel.id != `713235946019094549`) {

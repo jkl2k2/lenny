@@ -58,9 +58,8 @@ class MessageCreateListener extends Listener {
 
         // Auto remove credit for sending among fard gif
         if (message.content.toLowerCase().includes(`https://tenor.com/view/among-fard-breh-amogus-gif-21575202`)) {
-            const botMessage = await message.reply(`-1 social credit`);
-
-            const amountToChange = 1;
+            const amountToChange = 20;
+            const botMessage = await message.reply(`-${amountToChange} social credit`);
 
             // subtracting social credit
             const repliedMessage = await botMessage.channel.messages.fetch(botMessage.reference.messageId);

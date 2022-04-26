@@ -58,6 +58,27 @@ class MessageCreateListener extends Listener {
             });
         }
 
+        // Auto remove credit for sending among fard gif
+        if (message.content.toLowerCase().includes(`https://tenor.com/view/among-fard-breh-amogus-gif-21575202`)) {
+            const botMessage = await message.reply(`-1 social credit`);
+
+            const amountToChange = 1;
+
+            // subtracting social credit
+            const repliedMessage = await botMessage.channel.messages.fetch(botMessage.reference.messageId);
+            const userCredit = this.client.credit.ensure(repliedMessage.author.id, this.client.credit.default);
+
+            if (repliedMessage.author.id === botMessage.author.id) return botMessage.channel.send(`<:holyshit:916528747837018153> You cannot add or subtract from your own social credit!`);
+
+            if (parseInt(userCredit[`socialCredit`]) - parseInt(amountToChange) < 600) {
+                return botMessage.channel.send(`${repliedMessage.author.username} cannot have less than 600 social credit!`);
+            }
+
+            this.client.credit.set(repliedMessage.author.id, parseInt(userCredit[`socialCredit`]) - parseInt(amountToChange), `socialCredit`);
+
+            botMessage.react(`<:holyshit:916528747837018153>`);
+        }
+
         // Social credit
         if (message.reference && message.reference.messageId && message.content.toLowerCase().includes(`social credit`) && (message.content[0] === `+` || message.content[0] === `-`)) {
             let amountToChange = ``;

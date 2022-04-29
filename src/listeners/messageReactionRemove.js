@@ -30,9 +30,9 @@ class MessageReactionRemoveListener extends Listener {
                 if (embed.description) constructed += `\n${embed.description}`;
 
                 return constructed;
-            } else if (message.cleanContent.length < 1 && message.attachments.array()[0]) {
+            } else if (message.cleanContent.length < 1 && message.attachments.first()) {
                 // If attachment detected
-                return `[${message.attachments.array()[0].name}](${message.attachments.array()[0].url})`;
+                return `[${message.attachments.first().name}](${message.attachments.first().url})`;
             } else {
                 // If only text
                 return message.cleanContent;
@@ -98,7 +98,11 @@ class MessageReactionRemoveListener extends Listener {
                 const starMsg = await starChannel.messages.fetch(stars.id);
 
                 // edit old embed with new one
-                await starMsg.edit({ embed });
+                await starMsg.edit({
+                    embeds: [
+                        embed
+                    ]
+                });
             } else {
                 // fetch previous embed's ID
                 const starMsg = await starChannel.messages.fetch(stars.id);

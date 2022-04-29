@@ -30,9 +30,9 @@ class MessageReactionAddListener extends Listener {
                 if (embed.description) constructed += `\n${embed.description}`;
 
                 return constructed;
-            } else if (message.cleanContent.length < 1 && message.attachments.array()[0]) {
+            } else if (message.cleanContent.length < 1 && message.attachments.first()) {
                 // If attachment detected
-                return `[${message.attachments.array()[0].name}](${message.attachments.array()[0].url})`;
+                return `[${message.attachments.first().name}](${message.attachments.first().url})`;
             } else {
                 // If only text
                 return message.cleanContent;
@@ -86,7 +86,7 @@ class MessageReactionAddListener extends Listener {
             const embed = new MessageEmbed()
                 .setColor(foundStar.color)
                 .setDescription(foundStar.description)
-                .addField(`Channel`, message.channel, true)
+                .addField(`Channel`, message.channel.toString(), true)
                 .addField(`Source`, `[Jump](${message.url})`, true)
                 .setAuthor(message.author.username, message.author.avatarURL())
                 .setTimestamp()
@@ -97,10 +97,14 @@ class MessageReactionAddListener extends Listener {
             const starMsg = await starChannel.messages.fetch(stars.id);
 
             // edit old embed with new one
-            await starMsg.edit({ embed });
+            await starMsg.edit({
+                embeds: [
+                    embed
+                ]
+            });
         } else {
             // check for attachment
-            var image = message.attachments.size > 0 ? await extension(reaction, message.attachments.array()[0].url) : '';
+            var image = message.attachments.size > 0 ? await extension(reaction, message.attachments.first().url) : '';
 
             // if embed exists
             if (image == '' && message.embeds.length > 0 && message.embeds[0].image) {
@@ -116,13 +120,17 @@ class MessageReactionAddListener extends Listener {
             const embed = new MessageEmbed()
                 .setColor(15844367)
                 .setDescription(getDescription(message))
-                .addField(`Channel`, message.channel, true)
+                .addField(`Channel`, message.channel.toString(), true)
                 .addField(`Source`, `[Jump](${message.url})`, true)
                 .setAuthor(message.author.username, message.author.avatarURL())
                 .setTimestamp()
                 .setFooter(`⭐ ${reaction.count} | ${message.id}`)
                 .setImage(image);
-            await starChannel.send({ embed });
+            await starChannel.send({
+                embeds: [
+                    embed
+                ]
+            });
         }
     }
 }

@@ -5,11 +5,11 @@ module.exports = class Akairo extends AkairoClient {
         super({
             ownerID: `125109015632936960`,
             partials: [`MESSAGE`, `CHANNEL`, `REACTION`],
-            intents: [`GUILDS`, `GUILD_MESSAGES`, `GUILD_VOICE_STATES`, `GUILD_PRESENCES`, `GUILD_MEMBERS`],
+            intents: [`GUILDS`, `GUILD_MESSAGES`, `GUILD_VOICE_STATES`, `GUILD_PRESENCES`, `GUILD_MEMBERS`, `GUILD_MESSAGE_REACTIONS`],
         }, {
             disableMentions: `everyone`,
             partials: [`MESSAGE`, `CHANNEL`, `REACTION`],
-            intents: [`GUILDS`, `GUILD_MESSAGES`, `GUILD_VOICE_STATES`, `GUILD_PRESENCES`, `GUILD_MEMBERS`],
+            intents: [`GUILDS`, `GUILD_MESSAGES`, `GUILD_VOICE_STATES`, `GUILD_PRESENCES`, `GUILD_MEMBERS`, `GUILD_MESSAGE_REACTIONS`],
         });
 
         // Define commandHandler

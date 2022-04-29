@@ -10,6 +10,11 @@ class MessageReactionAddListener extends Listener {
     }
 
     async exec(reaction) {
+        // Stop if old Lenny is present in server
+        if (reaction.message.guild.members.cache.has(`771566996131282954`)) {
+            return;
+        }
+
         // ready check attachments function
         function extension(reaction, attachment) {
             const imageLink = attachment.split('.');

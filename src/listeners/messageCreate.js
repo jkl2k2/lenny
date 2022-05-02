@@ -57,7 +57,7 @@ class MessageCreateListener extends Listener {
         }
 
         // Auto remove credit for sending among fard gif
-        if (message.content.toLowerCase().includes(`https://tenor.com/view/among-fard-breh-amogus-gif-21575202`)) {
+        if (message.content.toLowerCase().includes(`https://media.discordapp.net/attachments/785943419851243550/970553626688892958/ezgif.com-gif-maker.gif`) || (message.content.toLowerCase().includes(`among`) && message.content.toLowerCase().includes(`fard`))) {
             const amountToChange = 20;
             const botMessage = await message.reply(`-${amountToChange} social credit`);
 

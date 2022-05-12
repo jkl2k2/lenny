@@ -56,24 +56,24 @@ class MessageCreateListener extends Listener {
             });
         }
 
-        // Auto remove credit for sending among fard gif
-        if (message.content.toLowerCase().includes(`https://media.discordapp.net/attachments/785943419851243550/970553626688892958/ezgif.com-gif-maker.gif`) || (message.content.toLowerCase().includes(`among`) && message.content.toLowerCase().includes(`fard`))) {
-            const amountToChange = 20;
-            const botMessage = await message.reply(`-${amountToChange} social credit`);
+        // Auto remove credit from chris for existing
+        if (message.author.id === `313825486839218177`) {
+            const amountToChange = 5;
+            // const botMessage = await message.reply(`-${amountToChange} social credit`);
 
             // subtracting social credit
-            const repliedMessage = await botMessage.channel.messages.fetch(botMessage.reference.messageId);
-            const userCredit = this.client.credit.ensure(repliedMessage.author.id, this.client.credit.default);
+            /// const repliedMessage = await botMessage.channel.messages.fetch(botMessage.reference.messageId);
+            const userCredit = this.client.credit.ensure(message.author.id, this.client.credit.default);
 
-            if (repliedMessage.author.id === botMessage.author.id) return botMessage.channel.send(`<:holyshit:916528747837018153> You cannot add or subtract from your own social credit!`);
+            // if (message.author.id === botMessage.author.id) return botMessage.channel.send(`<:holyshit:916528747837018153> You cannot add or subtract from your own social credit!`);
 
             // if (parseInt(userCredit[`socialCredit`]) - parseInt(amountToChange) < 600) {
             //     return botMessage.channel.send(`${repliedMessage.author.username} cannot have less than 600 social credit!`);
             // }
 
-            this.client.credit.set(repliedMessage.author.id, parseInt(userCredit[`socialCredit`]) - parseInt(amountToChange), `socialCredit`);
+            this.client.credit.set(message.author.id, parseInt(userCredit[`socialCredit`]) - parseInt(amountToChange), `socialCredit`);
 
-            botMessage.react(`<:holyshit:916528747837018153>`);
+            // botMessage.react(`<:holyshit:916528747837018153>`);
         }
 
         // Social credit

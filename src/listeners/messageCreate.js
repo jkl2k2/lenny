@@ -67,9 +67,9 @@ class MessageCreateListener extends Listener {
 
             if (repliedMessage.author.id === botMessage.author.id) return botMessage.channel.send(`<:holyshit:916528747837018153> You cannot add or subtract from your own social credit!`);
 
-            if (parseInt(userCredit[`socialCredit`]) - parseInt(amountToChange) < 600) {
-                return botMessage.channel.send(`${repliedMessage.author.username} cannot have less than 600 social credit!`);
-            }
+            // if (parseInt(userCredit[`socialCredit`]) - parseInt(amountToChange) < 600) {
+            //     return botMessage.channel.send(`${repliedMessage.author.username} cannot have less than 600 social credit!`);
+            // }
 
             this.client.credit.set(repliedMessage.author.id, parseInt(userCredit[`socialCredit`]) - parseInt(amountToChange), `socialCredit`);
 

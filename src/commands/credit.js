@@ -13,11 +13,13 @@ class CreditCommand extends Command {
     }
 
     exec(message) {
-        if (message.guild.id !== `717141100766298203`) return;
-
         function determineRank(credit) {
             if (credit < 700) {
-                return `ON VACATION`;
+                let counter = 0;
+                for (let i = credit; i < 700; i += 100) {
+                    counter++;
+                }
+                return `VACATION RANK ${counter}`;
             } else if (credit < 800) {
                 return `ENEMY OF THE STATE`;
             } else if (credit < 900) {

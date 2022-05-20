@@ -56,6 +56,9 @@ class MessageCreateListener extends Listener {
             });
         }
 
+        // Delete that stupid risk of sus gif oh my god
+        if (message.guild.id == `717141100766298203` && message.content.includes(`https://tenor.com/view/among-us-sus-baka-risk-of-rain-mods-gif-21271929`)) return await message.delete();
+
         // Auto remove credit from chris for existing
         if (message.author.id === `313825486839218177`) {
             const amountToChange = 5;

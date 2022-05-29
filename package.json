@@ -33,7 +33,7 @@
     "enmap": "^5.8.5",
     "libsodium-wrappers": "^0.7.9",
     "moment": "^2.29.1",
-    "play-dl": "^1.9.4",
+    "play-dl": "github:k2helix/play-dl-compiled",
     "pretty-ms": "^7.0.1",
     "sequelize": "^6.6.2",
     "sqlite": "^4.0.21",

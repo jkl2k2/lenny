@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/jkl2k2/L-Bot-Rewrite#readme",
   "dependencies": {
-    "@discordjs/opus": "^0.7.0",
+    "@discordjs/opus": "^0.8.0",
     "@discordjs/voice": "^0.7.5",
     "better-sqlite3": "^7.4.5",
     "chalk": "^4.1.1",

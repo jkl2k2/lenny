@@ -114,7 +114,7 @@ class PlaylistsCommand extends Command {
                     });
                 } else if (url.content.includes(`/playlist?list=`)) {
                     // YouTube playlist
-                    const info = await play.playlist_info(url.content);
+                    const info = await play.playlist_info(url.content, { incomplete: true });
 
                     const filter = m => m.author.id == message.author.id && (m.content.toLowerCase() === `yes` || m.content.toLowerCase() === `no`);
                     const confirmCollector = message.channel.createMessageCollector(filter, { time: 60000, max: 1 });

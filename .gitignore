@@ -8,3 +8,4 @@ data/
 database2.sqlite
 .env
 .data/
+.idea/

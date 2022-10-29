@@ -5,10 +5,12 @@ const { Collection } = require(`discord.js`);
 const winston = require(`winston`);
 const winstonRotate = require(`winston-daily-rotate-file`);
 const Enmap = require(`enmap`);
-const { getFreeClientID, setToken } = require(`play-dl`);
+const { getFreeClientID, setToken } = require(`play-dl2`);
 
 // Throw if dotenv error
 if (result.error) throw result.error;
+
+process.env.LEAGUE_API_PLATFORM_ID = 'na1';
 
 //#region Winston logger
 winston.addColors({

@@ -9,7 +9,7 @@ const { Command } = require(`discord-akairo`);
 const { MessageEmbed } = require(`discord.js`);
 const MusicSubscription = require(`../modules/subscription`);
 const Track = require(`../modules/track`);
-const play = require(`play-dl`);
+const play = require(`play-dl2`);
 const pretty = require(`pretty-ms`);
 
 function shuffle(array) {
@@ -539,7 +539,7 @@ class PlayCommand extends Command {
                 ]
             });
 
-            await play.search(args.song, { limit: 1 })
+            play.search(args.song, { limit: 1 })
                 .then(async results => {
                     if (results[0]) {
                         try {

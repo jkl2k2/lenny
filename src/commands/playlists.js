@@ -2,7 +2,7 @@
 
 const { Command } = require(`discord-akairo`);
 const { MessageEmbed, MessageButton, MessageActionRow } = require(`discord.js`);
-const play = require(`play-dl`);
+const play = require(`play-dl2`);
 const paginationEmbed = require(`discordjs-button-pagination`);
 const PlayCommand = require(`./play`);
 

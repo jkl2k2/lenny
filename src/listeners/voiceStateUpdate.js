@@ -13,7 +13,7 @@ class VoiceStateUpdateListener extends Listener {
         if ((oldState.member.id !== this.client.user.id && oldState.channel && oldState.channel.members.size === 1 && oldState.channel.members.has(this.client.user.id)) || (oldState.member.id === this.client.user.id && oldState.channel && !newState.channel)) {
             const subscription = this.client.subscriptions.get(oldState.guild.id);
 
-            if (subscription) {
+            if (subscription && subscription.voiceConnection) {
                 subscription.voiceConnection.destroy();
                 this.client.subscriptions.delete(oldState.guild.id);
             }

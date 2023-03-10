@@ -9,6 +9,11 @@ const { promisify } = require(`util`);
 
 const wait = promisify(setTimeout);
 
+const networkStateChangeHandler = (oldNetworkState, newNetworkState) => {
+    const newUdp = Reflect.get(newNetworkState, 'udp');
+    clearInterval(newUdp?.keepAliveInterval);
+};
+
 /**
  * A MusicSubscription exists for each active VoiceConnection. Each subscription has its own audio player and queue,
  * and it also attaches logic to the audio player and voice connection for error handling and reconnection logic.
@@ -26,6 +31,14 @@ module.exports = class MusicSubscription {
         this.lastEmbed = null;
 
         this.voiceConnection.on(`stateChange`, async (_, newState) => {
+            // Temp fix for discord.js voice issue
+            const oldNetworking = Reflect.get(oldState, 'networking');
+            const newNetworking = Reflect.get(newState, 'networking');
+
+            oldNetworking?.off('stateChange', networkStateChangeHandler);
+            newNetworking?.on('stateChange', networkStateChangeHandler);
+            // End temp fix
+
             if (newState.status === VoiceConnectionStatus.Disconnected) {
                 if (newState.reason === VoiceConnectionDisconnectReason.WebSocketClose && newState.closeCode == 4014) {
                     // Code 4014 means we should not make a manual reconnect attempt

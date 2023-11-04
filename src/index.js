@@ -5,7 +5,7 @@ const { Collection } = require(`discord.js`);
 const winston = require(`winston`);
 const winstonRotate = require(`winston-daily-rotate-file`);
 const Enmap = require(`enmap`);
-const { getFreeClientID, setToken } = require(`play-dl2`);
+const { getFreeClientID, setToken } = require(`play-dl`);
 
 // Throw if dotenv error
 if (result.error) throw result.error;

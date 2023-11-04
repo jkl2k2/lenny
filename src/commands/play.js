@@ -9,7 +9,7 @@ const { Command } = require(`discord-akairo`);
 const { MessageEmbed } = require(`discord.js`);
 const MusicSubscription = require(`../modules/subscription`);
 const Track = require(`../modules/track`);
-const play = require(`play-dl2`);
+const play = require(`play-dl`);
 const pretty = require(`pretty-ms`);
 
 function shuffle(array) {

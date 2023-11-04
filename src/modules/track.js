@@ -1,7 +1,7 @@
 /*jshint esversion: 11 */
 
 const { createAudioResource } = require(`@discordjs/voice`);
-const play = require(`play-dl2`);
+const play = require(`play-dl`);
 const pretty = require(`pretty-ms`);
 
 const noop = () => { };

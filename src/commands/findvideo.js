@@ -1,6 +1,6 @@
 const { Command } = require(`discord-akairo`);
 const { MessageEmbed } = require(`discord.js`);
-const play = require(`play-dl2`);
+const play = require(`play-dl`);
 
 /*eslint class-methods-use-this: ["error", { "exceptMethods": ["exec", "execSlash"] }] */
 class FindVideoCommand extends Command {

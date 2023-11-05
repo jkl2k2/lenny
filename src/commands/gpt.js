@@ -1,8 +1,6 @@
 const { Command } = require(`discord-akairo`);
 const { MessageEmbed } = require(`discord.js`);
-const chatgpt = import('chatgpt');
-
-const gptApiKey = process.env.GPT;
+const gpt = import(`chatgpt`);
 
 /*eslint class-methods-use-this: ["error", { "exceptMethods": ["exec", "execSlash"] }] */
 class GptCommand extends Command {
@@ -34,13 +32,33 @@ class GptCommand extends Command {
     }
 
     async execSlash(message, args) {
-        const api = new (await chatgpt).ChatGPTAPI({
-            apiKey: gptApiKey
+        const api = new (await gpt).ChatGPTUnofficialProxyAPI({
+            accessToken: process.env.GPT,
+            apiReverseProxyUrl: 'http://localhost:3000/v1/chat'
         });
 
-        const response = await api.sendMessage(args.input);
+        await message.interaction.deferReply();
 
-        return message.interaction.reply(response);
+        try {
+            api.sendMessage(args.input).then(msg => {
+                return message.interaction.editReply({
+                    embeds: [
+                        new MessageEmbed()
+                            .setAuthor({ name: message.author.username, iconURL: message.author.avatarURL() })
+                            .setDescription(args.input)
+                            .setColor(`#36393f`),
+                        new MessageEmbed()
+                            .setAuthor({ name: `ChatGPT`, iconURL: `https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ChatGPT_logo.svg/768px-ChatGPT_logo.svg.png` })
+                            .setDescription(msg.text)
+                            .setColor(`#36393f`)
+                    ]
+                });
+            }).catch(reason => {
+                global.logger.error(reason);
+            });
+        } catch (err) {
+            global.logger.error(err);
+        }
     }
 }
 

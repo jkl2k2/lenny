@@ -34,7 +34,7 @@ class GptCommand extends Command {
     async execSlash(message, args) {
         const api = new (await gpt).ChatGPTUnofficialProxyAPI({
             accessToken: process.env.GPT,
-            apiReverseProxyUrl: 'http://localhost:3000/v1/chat'
+            apiReverseProxyUrl: 'https://ai.fakeopen.com/api/conversation'
         });
 
         await message.interaction.deferReply();

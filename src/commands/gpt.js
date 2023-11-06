@@ -62,9 +62,35 @@ class GptCommand extends Command {
                 });
             }).catch(reason => {
                 global.logger.error(reason);
+
+                return message.interaction.editReply({
+                    embeds: [
+                        new MessageEmbed()
+                            .setAuthor({ name: message.author.username, iconURL: message.author.avatarURL() })
+                            .setDescription(args.input)
+                            .setColor(`#36393f`),
+                        new MessageEmbed()
+                            .setAuthor({ name: `ChatGPT`, iconURL: `https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ChatGPT_logo.svg/768px-ChatGPT_logo.svg.png` })
+                            .setDescription(`<:cross:729019052571492434> **ChatGPT Error**\n${reason.statusCode} - ${reason.statusText}`)
+                            .setColor(`#74AA9C`)
+                    ]
+                });
             });
-        } catch (err) {
-            global.logger.error(err);
+        } catch (reason) {
+            global.logger.error(reason);
+
+            return message.interaction.editReply({
+                embeds: [
+                    new MessageEmbed()
+                        .setAuthor({ name: message.author.username, iconURL: message.author.avatarURL() })
+                        .setDescription(args.input)
+                        .setColor(`#36393f`),
+                    new MessageEmbed()
+                        .setAuthor({ name: `ChatGPT`, iconURL: `https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ChatGPT_logo.svg/768px-ChatGPT_logo.svg.png` })
+                        .setDescription(`<:cross:729019052571492434> **ChatGPT Error**\n${reason.statusCode} - ${reason.statusText}`)
+                        .setColor(`#74AA9C`)
+                ]
+            });
         }
     }
 }

@@ -6,6 +6,7 @@ const winston = require(`winston`);
 const winstonRotate = require(`winston-daily-rotate-file`);
 const Enmap = require(`enmap`);
 const { getFreeClientID, setToken } = require(`play-dl`);
+const gpt = import(`chatgpt`);
 
 // Throw if dotenv error
 if (result.error) throw result.error;
@@ -203,6 +204,12 @@ client.on(`guildDelete`, guild => {
 });
 */
 //#endregion
+
+gpt.then(gpt => {
+    client.gptAPI = new gpt.ChatGPTAPI({
+        apiKey: process.env.GPT_API
+    });
+});
 
 getFreeClientID().then((clientID) => {
     setToken({

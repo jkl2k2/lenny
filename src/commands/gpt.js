@@ -1,6 +1,5 @@
 const { Command } = require(`discord-akairo`);
 const { MessageEmbed } = require(`discord.js`);
-const gpt = import(`chatgpt`);
 
 /*eslint class-methods-use-this: ["error", { "exceptMethods": ["exec", "execSlash"] }] */
 class GptCommand extends Command {
@@ -32,15 +31,23 @@ class GptCommand extends Command {
     }
 
     async execSlash(message, args) {
-        const api = new (await gpt).ChatGPTUnofficialProxyAPI({
-            accessToken: process.env.GPT,
-            apiReverseProxyUrl: 'https://ai.fakeopen.com/api/conversation'
-        });
-
         await message.interaction.deferReply();
 
+        message.interaction.editReply({
+            embeds: [
+                new MessageEmbed()
+                    .setAuthor({ name: message.author.username, iconURL: message.author.avatarURL() })
+                    .setDescription(args.input)
+                    .setColor(`#36393f`),
+                new MessageEmbed()
+                    .setAuthor({ name: `ChatGPT`, iconURL: `https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ChatGPT_logo.svg/768px-ChatGPT_logo.svg.png` })
+                    .setDescription(`<a:loading:1171011239418273853> Generating...`)
+                    .setColor(`#74AA9C`)
+            ]
+        });
+
         try {
-            api.sendMessage(args.input).then(msg => {
+            this.client.gptAPI.sendMessage(args.input).then(msg => {
                 return message.interaction.editReply({
                     embeds: [
                         new MessageEmbed()
@@ -50,7 +57,7 @@ class GptCommand extends Command {
                         new MessageEmbed()
                             .setAuthor({ name: `ChatGPT`, iconURL: `https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ChatGPT_logo.svg/768px-ChatGPT_logo.svg.png` })
                             .setDescription(msg.text)
-                            .setColor(`#36393f`)
+                            .setColor(`#74AA9C`)
                     ]
                 });
             }).catch(reason => {

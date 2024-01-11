@@ -40,10 +40,10 @@ class ImagineCommand extends Command {
                     .setDescription(args.input)
                     .setColor(`#36393f`),
                 new MessageEmbed()
-                    .setAuthor({ name: `DALL-E 3`, iconURL: `https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ChatGPT_logo.svg/768px-ChatGPT_logo.svg.png` })
+                    .setAuthor({ name: `DALL·E 3`, iconURL: `https://lirp.cdn-website.com/df735c7c/dms3rep/multi/opt/MicrosoftTeams-image+%28123%29-640w.png` })
                     .setDescription(`<a:loading:1171011239418273853> Generating...`)
                     .setImage(`https://www.solidbackgrounds.com/images/1024x1024/1024x1024-white-solid-color-background.jpg`)
-                    .setColor(`#74AA9C`)
+                    .setColor(`#000000`)
             ]
         });
 
@@ -54,8 +54,6 @@ class ImagineCommand extends Command {
                 n: 1,
                 size: "1024x1024",
             }).then(response => {
-                console.log(response);
-
                 message.interaction.editReply({
                     embeds: [
                         new MessageEmbed()
@@ -63,10 +61,10 @@ class ImagineCommand extends Command {
                             .setDescription(args.input)
                             .setColor(`#36393f`),
                         new MessageEmbed()
-                            .setAuthor({ name: `DALL-E 3`, iconURL: `https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ChatGPT_logo.svg/768px-ChatGPT_logo.svg.png` })
+                            .setAuthor({ name: `DALL·E 3`, iconURL: `https://lirp.cdn-website.com/df735c7c/dms3rep/multi/opt/MicrosoftTeams-image+%28123%29-640w.png` })
                             .setDescription(`Generated!`)
                             .setImage(response.data[0].url)
-                            .setColor(`#74AA9C`)
+                            .setColor(`#000000`)
                     ]
                 });
             }).catch(reason => {
@@ -79,9 +77,9 @@ class ImagineCommand extends Command {
                             .setDescription(args.input)
                             .setColor(`#36393f`),
                         new MessageEmbed()
-                            .setAuthor({ name: `ChatGPT`, iconURL: `https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ChatGPT_logo.svg/768px-ChatGPT_logo.svg.png` })
-                            .setDescription(`<:cross:729019052571492434> **ChatGPT Error**\n${reason.statusCode} - ${reason.statusText}`)
-                            .setColor(`#74AA9C`)
+                            .setAuthor({ name: `DALL·E 3`, iconURL: `https://lirp.cdn-website.com/df735c7c/dms3rep/multi/opt/MicrosoftTeams-image+%28123%29-640w.png` })
+                            .setDescription(`<:cross:729019052571492434> **OpenAI Error**\n${reason}`)
+                            .setColor(`#000000`)
                     ]
                 });
             });
@@ -95,9 +93,9 @@ class ImagineCommand extends Command {
                         .setDescription(args.input)
                         .setColor(`#36393f`),
                     new MessageEmbed()
-                        .setAuthor({ name: `DALL-E 3`, iconURL: `https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ChatGPT_logo.svg/768px-ChatGPT_logo.svg.png` })
-                        .setDescription(`<:cross:729019052571492434> **OpenAI Error**\n${reason.statusCode} - ${reason.statusText}`)
-                        .setColor(`#74AA9C`)
+                        .setAuthor({ name: `DALL·E 3`, iconURL: `https://lirp.cdn-website.com/df735c7c/dms3rep/multi/opt/MicrosoftTeams-image+%28123%29-640w.png` })
+                        .setDescription(`<:cross:729019052571492434> **OpenAI Error**\n${reason}`)
+                        .setColor(`#000000`)
                 ]
             });
         }

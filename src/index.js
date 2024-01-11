@@ -7,7 +7,6 @@ const winstonRotate = require(`winston-daily-rotate-file`);
 const Enmap = require(`enmap`);
 const { getFreeClientID, setToken } = require(`play-dl`);
 const gpt = import(`chatgpt`);
-const { OpenAI } = require(`openai`);
 
 // Throw if dotenv error
 if (result.error) throw result.error;
@@ -212,17 +211,13 @@ gpt.then(gpt => {
     });
 });
 
-client.aiClient = new OpenAI({
-    apiKey: process.env.GPT_API, // This is the default and can be omitted
+getFreeClientID().then((clientID) => {
+    setToken({
+        soundcloud: {
+            client_id: clientID
+        }
+    });
 });
-
-// getFreeClientID().then((clientID) => {
-//     setToken({
-//         soundcloud: {
-//             client_id: clientID
-//         }
-//     });
-// });
 
 // Log in
 client.login(process.env.TOKEN);

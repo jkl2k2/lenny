@@ -33,7 +33,6 @@
     "enmap": "^5.8.5",
     "libsodium-wrappers": "^0.7.9",
     "moment": "^2.29.1",
-    "openai": "^4.24.3",
     "play-dl": "^1.9.7",
     "play-dl2": "github:jkl2k2/play-dl2-compiled",
     "pretty-ms": "^7.0.1",

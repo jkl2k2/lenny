@@ -40,7 +40,12 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }} # User of the server you want to ssh into
           script: |
               echo '--BUILDING DOCKER IMAGE--'
-              cd ~/bots/lenny
+              cd ~/bots/lenny/src
+              touch .env
+              echo TOKEN=$LOGIN_TOKEN >> .env
+              echo GPT_API=$GPT_API >> .env
+
+              cd ~/bots/lenny/
               docker compose up -d --build
               echo '--END OF BUILD--'
   

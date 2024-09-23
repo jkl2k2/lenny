@@ -1,5 +1,5 @@
 // Requires
-// const result = require(`dotenv`).config();
+const result = require(`dotenv`).config();
 const Akairo = require(`./akairo`);
 const { Collection } = require(`discord.js`);
 const winston = require(`winston`);
@@ -10,7 +10,7 @@ const gpt = import(`chatgpt`);
 const { OpenAI } = require(`openai`);
 
 // Throw if dotenv error
-// if (result.error) throw result.error;
+if (result.error) throw result.error;
 
 process.env.LEAGUE_API_PLATFORM_ID = 'na1';
 

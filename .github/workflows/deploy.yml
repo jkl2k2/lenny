@@ -42,8 +42,8 @@ jobs:
               echo '--BUILDING DOCKER IMAGE--'
               cd ~/bots/lenny/src
               touch .env
-              echo TOKEN=$LOGIN_TOKEN >> .env
-              echo GPT_API=$GPT_API >> .env
+              echo TOKEN=${{ secrets.LOGIN_TOKEN }} >> .env
+              echo GPT_API=${{ secrets.GPT_API }} >> .env
 
               cd ~/bots/lenny/
               docker compose up -d --build

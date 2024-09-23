@@ -41,6 +41,7 @@ jobs:
           script: |
               echo '--BUILDING DOCKER IMAGE--'
               cd ~/bots/lenny/src
+              rm -f .env
               touch .env
               echo TOKEN=${{ secrets.LOGIN_TOKEN }} >> .env
               echo GPT_API=${{ secrets.GPT_API }} >> .env

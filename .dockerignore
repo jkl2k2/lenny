@@ -1,0 +1,12 @@
+node_modules
+Dockerfile
+.git
+.gitignore
+.idea/
+logs/
+.github/
+README.md
+License.md
+sider.yml
+run.bat
+auth.js

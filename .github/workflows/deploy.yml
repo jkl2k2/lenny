@@ -15,6 +15,9 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      TOKEN: ${{ secrets.LOGIN_TOKEN }}
+      GPT_API: ${{ secrets.GPT_API }}
     environment: Production
     steps:
       - name: Update Repo
@@ -40,9 +43,6 @@ jobs:
               cd ~/bots/lenny
               docker compose up -d --build
               echo '--END OF BUILD--'
-          env:
-            TOKEN: ${{ secrets.LOGIN_TOKEN }}
-            GPT_API: ${{ secrets.GPT_API }}
   
       - name: Prune Unused Images
         uses: appleboy/ssh-action@master

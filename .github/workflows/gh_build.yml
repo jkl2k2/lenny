@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Create .env
-        run: /
+        run: |
           touch .env
           echo TOKEN=${{ secrets.LOGIN_TOKEN }} >> .env
           echo GPT_API=${{ secrets.GPT_API }} >> .env

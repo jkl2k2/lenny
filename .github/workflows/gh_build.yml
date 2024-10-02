@@ -20,6 +20,7 @@ jobs:
 
       - name: Create .env
         run: |
+          cd src
           touch .env
           echo TOKEN=${{ secrets.LOGIN_TOKEN }} >> .env
           echo GPT_API=${{ secrets.GPT_API }} >> .env

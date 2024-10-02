@@ -1,4 +1,4 @@
-[![Build](https://github.com/jkl2k2/lenny/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/jkl2k2/lenny/actions/workflows/deploy.yml)
+[![Build and Push Image](https://github.com/jkl2k2/lenny/actions/workflows/gh_build.yml/badge.svg)](https://github.com/jkl2k2/lenny/actions/workflows/gh_build.yml)
 
 ## **Lenny**
 ### >> A multipurpose (but music-focused) Discord bot utilizing discord.js and Node.js
